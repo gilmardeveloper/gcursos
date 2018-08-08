@@ -1,6 +1,5 @@
 package com.gilmarcarlos.developer.gcursos.model;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -26,11 +25,18 @@ public class Usuario {
 
 	@ManyToMany
 	@JoinTable(name = "usuarios_autorizacoes", joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "autorizacao_id", referencedColumnName = "id"))
-	private Collection<Autorizacao> autorizacoes;
+	private List<Autorizacao> autorizacoes;
 	
 	public Usuario() {
 		this.habilitado = false;
 	}
+
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+
 
 	public Long getId() {
 		return id;
@@ -77,7 +83,7 @@ public class Usuario {
 	}
 
 	
-	public Collection<Autorizacao> getAutorizacoes() {
+	public List<Autorizacao> getAutorizacoes() {
 		return autorizacoes;
 	}
 	

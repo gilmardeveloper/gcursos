@@ -3,55 +3,119 @@ package com.gilmarcarlos.developer.gcursos.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gilmarcarlos.developer.gcursos.model.Usuario;
+import com.gilmarcarlos.developer.gcursos.security.exception.RegistroException;
 import com.gilmarcarlos.developer.gcursos.service.AutenticadorService;
+import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
 
 @Controller
 public class RegistroControler {
-	
+
 	@Autowired
 	private AutenticadorService autenticador;
 	
-	@GetMapping(value= {"/login", "/login/"})
+	@Autowired
+	private UsuarioService usuarioService;
+	
+	@GetMapping(value = { "/login", "/login/" })
 	public String login() {
-		return "login";
+		return "login-template";
 	}
-	
-	/*@GetMapping(value= {"/registro","/registro/"})
-	public String cotacoes() {
-		return "registro";
-	}
-	
 
-	@PostMapping(value= {"/registrar","/registrar"})
-	public String registrar(Usuario usuario, RedirectAttributes redirect) {
-		autenticador.registrarVerificacao(usuario);
-		redirect.addFlashAttribute("alerta", "verifique seu email");
-		return "redirect:/";
-	}*/
+	@GetMapping(value = { "/registro", "/registro/" })
+	public String cotacoes() {
+		return "registro-template";
+	}
 	
-	/*@GetMapping("/confirmar-registro")
-	public String confirmar(@RequestParam("token") String token, RedirectAttributes redirect) {
-		
+	@GetMapping(value = { "/esqueceu-senha", "/esqueceu-senha/" })
+	public String esqueceuSenha() {
+		return "esqueceu-senha-template";
+	}
+	
+	@GetMapping("/redefinir-senha")
+	public String redefinirSenha() {
+		return "redefinir-senha";
+	}
+	
+	@PostMapping("/redefinir-senha")
+	public String redefinirSenha(Usuario usuario, RedirectAttributes model) {
+		usuarioService.redefinirSenha(usuario);
+		model.addFlashAttribute("alert", "alert alert-fill-success");
+		model.addFlashAttribute("message", "sua senha foi redefinida com sucesso");
+		return "redirect:/redefinir-senha";
+	}
+	
+	@PostMapping(value = { "/solicitar-nova-senha", "/solicitar-nova-senha/" })
+	public String esqueceuSenha(String email, RedirectAttributes redirect) {
 		try {
-			
-			if(autenticador.validarVerificacao(token)) {
+			autenticador.registrarRedefinicao(email);
+			redirect.addFlashAttribute("alert", "alert alert-fill-success");
+			redirect.addFlashAttribute("message", "Agora verifique seu email e confirme a solicitação");
+			return "redirect:/esqueceu-senha";
+		} catch (Exception e) {
+			redirect.addFlashAttribute("alert", "alert alert-fill-danger");
+			redirect.addFlashAttribute("message", "Esse email não existe ou você ainda não ativou seu cadastro");
+			return "redirect:/esqueceu-senha";
+		}
+	}
+	
+	@PostMapping(value = { "/registrar", "/registrar" })
+	public String registrar(Usuario usuario, RedirectAttributes redirect) {
+		try {
+			autenticador.registrarVerificacao(usuario);
+			redirect.addFlashAttribute("alert", "alert alert-fill-success");
+			redirect.addFlashAttribute("message", "Agora verifique seu email e confirme o cadastro");
+			return "redirect:/registro";
+		} catch (RegistroException e) {
+			redirect.addFlashAttribute("alert", "alert alert-fill-danger");
+			redirect.addFlashAttribute("message", "Você já é cadastrado");
+			return "redirect:/registro";
+		}
+	}
+	
+	@GetMapping("/confirmar-registro/{token}")
+	public String confirmar(@PathVariable("token") String token, RedirectAttributes redirect) {
+
+		try {
+
+			if (autenticador.validarVerificacao(token)) {
 				return "redirect:/login";
-				
-			}else {
-				
+
+			} else {
+
 				autenticador.registrarNovaVerificacao(token);
 				redirect.addFlashAttribute("alerta", "um erro ocorreu.");
 				return "redirect:/";
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			redirect.addFlashAttribute("alerta", "um erro ocorreu.");
 			return "redirect:/";
 		}
-		
-	}*/
+
+	}
+	
+	
+	@GetMapping("/redefinir-senha/{token}")
+	public String redefinir(@PathVariable("token") String token, RedirectAttributes redirect) {
+
+		try {
+			    redirect.addFlashAttribute("usuario", autenticador.validarRedefinicao(token));
+			    return "redirect:/redefinir-senha";
+			
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			redirect.addFlashAttribute("alerta", "um erro ocorreu.");
+			return "redirect:/";
+		}
+
+	}
 
 }

@@ -1,6 +1,6 @@
 package com.gilmarcarlos.developer.gcursos.model;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,7 +18,7 @@ public class Privilegio {
     private String nome;
  
     @ManyToMany(mappedBy = "privilegios")
-    private Collection<Autorizacao> autorizacoes;
+    private List<Autorizacao> autorizacoes;
     
     public Privilegio() {
     	

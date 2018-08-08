@@ -13,17 +13,30 @@ public class EmailService {
 	@Autowired
     private JavaMailSender mailSender;
 	
-	public void enviar(Usuario usuario, String token) {
+	public void enviarConfirmacaoDeCadastro(Usuario usuario, String token) {
 		
 		String recipientAddress = usuario.getEmail();
-        String subject = "Registration Confirmation";
-        String url = "/login/confirmar-registro.html?token=" + token;
+        String subject = "Confirmação de registro";
+        String url = "/confirmar-registro/" + token;
                 
         SimpleMailMessage email = new SimpleMailMessage();
                 
         email.setTo(recipientAddress);
         email.setSubject(subject);
-        email.setText("Você se cadastrou no CNH+, para finalizar o registro, favor clicar no link ao lado " + "http://blog.cnhmais.com" + url);
+        email.setText("Você se cadastrou na plataforma de ensino, para finalizar o registro, favor clicar no link ao lado " + "http://localhost:8080" + url);
+        mailSender.send(email);
+	}
+	
+	public void enviarSolicitacaoDeNovaSenha(Usuario usuario, String token) {
+		String recipientAddress = usuario.getEmail();
+        String subject = "Redefinir senha";
+        String url = "/redefinir-senha/" + token;
+                
+        SimpleMailMessage email = new SimpleMailMessage();
+                
+        email.setTo(recipientAddress);
+        email.setSubject(subject);
+        email.setText("Uma solicitação para redefinir a senha foi realizada, caso tenha sido você, favor clicar no link " + "http://localhost:8080" + url);
         mailSender.send(email);
 	}
 

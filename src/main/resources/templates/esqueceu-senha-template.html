@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>GCURSOS | Redefinir senha</title>
+	<!-- plugins:css -->
+	<link rel="stylesheet" th:href="@{~/css/materialdesignicons.min.css}">
+	<link rel="stylesheet" th:href="@{~/css/simple-line-icons.css}">
+	<link rel="stylesheet" th:href="@{~/css/flag-icon.min.css}">
+	<link rel="stylesheet" th:href="@{~/css/perfect-scrollbar.min.css}">
+	<!-- endinject -->
+	<!-- plugin css for this page -->
+	<!-- End plugin css for this page -->
+	<!-- inject:css -->
+	<link rel="stylesheet" th:href="@{~/css/style.css}">
+	<!-- endinject -->
+	<link rel="shortcut icon" th:href="@{/images/favicon.png}" />
+</head>
+
+<body>
+	<div class="container-scroller">
+		<div class="container-fluid page-body-wrapper">
+
+
+			<div th:if="${param.logout}"></div>
+
+			<div class="row">
+				<div class="content-wrapper full-page-wrapper d-flex align-items-center auth register-full-bg">
+					<div class="row w-100">
+						<div class="col-lg-4 mx-auto">
+								<div class="auth-form-dark text-left p-5">
+									<h2>Esqueceu a senha?</h2>
+									<h4 class="font-weight-light">Favor informe o email do usuário cadastrado</h4>
+									<form th:action="@{/solicitar-nova-senha}" method="post" class="pt-4">
+										
+										<div th:if="${alert != null}">
+											<div th:class="${alert}" role="alert">
+												<i class="mdi mdi-alert-circle"></i>
+												<span th:text="${message}"></span>
+											</div>
+										</div>
+
+										<div th:if="${param.error != null}">
+											<div class="alert alert-fill-danger" role="alert">
+												<i class="mdi mdi-alert-circle"></i>
+												<span th:text="${session[SPRING_SECURITY_LAST_EXCEPTION].message}"></span>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label for="email">E-mail</label>
+											<input type="email" class="form-control" id="email" aria-describedby="username" placeholder="E-mail cadastrado"  name="email" required="true"/>
+											<i class="mdi mdi-account"></i>
+										</div>
+										
+										<div class="mt-5">
+											<button class="btn btn-block btn-primary btn-lg font-weight-medium" type="submit">Solicitar</button>
+										</div>
+												
+										<div class="col-lg-12">
+											<div class="row justify-content-between">
+												<div class="mt-3 col-lg-6">
+													<a th:href="@{/login}" class="auth-link text-white">Fazer login</a>
+												</div>
+												<div class="mt-3 col-lg-6">
+													<a th:href="@{/registro}" class="auth-link text-white">Cadastre-se</a>
+												</div>   
+											</div>
+										</div>		
+
+									</form>
+								</div>
+						</div>
+					</div>
+				</div>
+				<!-- content-wrapper ends -->
+			</div>
+			<!-- row ends -->
+		</div>
+		<!-- page-body-wrapper ends -->
+	</div>
+	<!-- container-scroller -->
+	<!-- plugins:js -->
+	<script th:src="@{~/js/jquery.min.js}"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script th:src="@{~/js/bootstrap.min.js}"></script>
+	<script th:src="@{~/js/perfect-scrollbar.jquery.min.js}"></script>
+	
+	<!-- endinject -->
+	<!-- inject:js -->
+	<script th:src="@{~/js/off-canvas.js}"></script>
+	<script th:src="@{~/js/hoverable-collapse.js}"></script>
+	<script th:src="@{~/js/misc.js}"></script>
+	<script th:src="@{~/js/settings.js}"></script>
+	<script th:src="@{~/js/todolist.js}"></script>
+	<!-- endinject -->
+
+	
+</body>
+
+</html>

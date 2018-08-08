@@ -1,6 +1,7 @@
 package com.gilmarcarlos.developer.gcursos.model;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +21,7 @@ public class Autorizacao {
     private String nome;
     
     @ManyToMany(mappedBy = "autorizacoes")
-    private Collection<Usuario> usuarios;
+    private List<Usuario> usuarios;
  
     @ManyToMany
     @JoinTable(
@@ -29,7 +30,7 @@ public class Autorizacao {
         name = "privilegio_id", referencedColumnName = "id"), 
         inverseJoinColumns = @JoinColumn(
         name = "autorizacao_id", referencedColumnName = "id"))
-    private Collection<Privilegio> privilegios;
+    private List<Privilegio> privilegios;
 
     public Autorizacao() {
 	}
@@ -38,12 +39,16 @@ public class Autorizacao {
     	this.nome = nome;
     }
     
-	public void setPrivilegios(Collection<Privilegio> privilegios) {
+	public void setPrivilegios(List<Privilegio> privilegios) {
 		this.privilegios = privilegios;
 		
 	}
 
-	public Collection<? extends Privilegio> getPrivilegios() {
+	public List<? extends Privilegio> getPrivilegios() {
 		return privilegios;
-	}   
+	}
+	
+	public List<Usuario> getUsuarios(){
+		return this.usuarios;
+	}
 }
