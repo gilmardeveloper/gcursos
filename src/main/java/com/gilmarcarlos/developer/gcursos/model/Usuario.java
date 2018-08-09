@@ -1,5 +1,6 @@
 package com.gilmarcarlos.developer.gcursos.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -9,9 +10,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+
+import com.gilmarcarlos.developer.gcursos.interfaces.Proprietario;
 
 @Entity
-public class Usuario {
+public class Usuario implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,16 +36,35 @@ public class Usuario {
 	@JoinTable(name = "usuarios_autorizacoes", joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "autorizacao_id", referencedColumnName = "id"))
 	private List<Autorizacao> autorizacoes;
 	
+	@OneToOne(mappedBy = "usuario")
+	private DadosPessoais dadosPessoais;
+	
+	@OneToOne(mappedBy = "usuarios")
+	private UnidadeTrabalho unidadeTrabalho;
+	
 	public Usuario() {
 		this.habilitado = false;
 	}
-
 	
+	public UnidadeTrabalho getUnidadeTrabalho() {
+		return unidadeTrabalho;
+	}
+
+	public void setUnidadeTrabalho(UnidadeTrabalho unidadeTrabalho) {
+		this.unidadeTrabalho = unidadeTrabalho;
+	}
+
+	public DadosPessoais getDadosPessoais() {
+		return dadosPessoais;
+	}
+
+	public void setDadosPessoais(DadosPessoais dadosPessoais) {
+		this.dadosPessoais = dadosPessoais;
+	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-
 
 	public Long getId() {
 		return id;

@@ -1,29 +1,13 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-	<!-- Required meta tags -->
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{})">
 	<title>GCURSOS | Login</title>
-	<!-- plugins:css -->
-	<link rel="stylesheet" th:href="@{~/css/materialdesignicons.min.css}">
-	<link rel="stylesheet" th:href="@{~/css/simple-line-icons.css}">
-	<link rel="stylesheet" th:href="@{~/css/flag-icon.min.css}">
-	<link rel="stylesheet" th:href="@{~/css/perfect-scrollbar.min.css}">
-	<!-- endinject -->
-	<!-- plugin css for this page -->
-	<!-- End plugin css for this page -->
-	<!-- inject:css -->
-	<link rel="stylesheet" th:href="@{~/css/style.css}">
-	<!-- endinject -->
-	<link rel="shortcut icon" th:href="@{/images/favicon.png}" />
 </head>
 
 <body>
 	<div class="container-scroller">
 		<div class="container-fluid page-body-wrapper">
-
-
 			<div th:if="${param.logout}"></div>
 
 			<div class="row">
@@ -81,19 +65,11 @@
 		<!-- page-body-wrapper ends -->
 	</div>
 	<!-- container-scroller -->
-	<!-- plugins:js -->
-	<script th:src="@{~/js/jquery.min.js}"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-	<script th:src="@{~/js/bootstrap.min.js}"></script>
-	<script th:src="@{~/js/perfect-scrollbar.jquery.min.js}"></script>
-	<!-- endinject -->
-	<!-- inject:js -->
-	<script th:src="@{~/js/off-canvas.js}"></script>
-	<script th:src="@{~/js/hoverable-collapse.js}"></script>
-	<script th:src="@{~/js/misc.js}"></script>
-	<script th:src="@{~/js/settings.js}"></script>
-	<script th:src="@{~/js/todolist.js}"></script>
-	<!-- endinject -->
+	
+	<span th:replace="fragments/base-script :: base"></span>
+	
+	<span th:replace="fragments/base-script :: plugins"></span>
+	
 </body>
 
 </html>

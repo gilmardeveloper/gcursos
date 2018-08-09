@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" >
+
+<head th:fragment="head(title, links)">
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title th:replace=${title}>GCURSOS</title>
+	<!-- plugins:css -->
+	<link rel="stylesheet" th:href="@{~/css/materialdesignicons.min.css}">
+	<link rel="stylesheet" th:href="@{~/css/simple-line-icons.css}">
+	<link rel="stylesheet" th:href="@{~/css/flag-icon.min.css}">
+	<link rel="stylesheet" th:href="@{~/css/perfect-scrollbar.min.css}">
+	<!-- endinject -->
+	<!-- plugin css for this page -->
+	<th:block th:replace="${links}" />
+	<!-- End plugin css for this page -->
+	<!-- inject:css -->
+	<link rel="stylesheet" th:href="@{~/css/style.css}">
+	<!-- endinject -->
+	<link rel="shortcut icon" th:href="@{/images/favicon.png}" />
+</head>
+

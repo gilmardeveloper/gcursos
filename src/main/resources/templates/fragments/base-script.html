@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" >
+
+<span th:fragment="base">
+	
+	<!-- plugins:js -->
+	<script th:src="@{~/js/jquery.min.js}"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script th:src="@{~/js/bootstrap.min.js}"></script>
+	<script th:src="@{~/js/perfect-scrollbar.jquery.min.js}"></script>
+	<!-- endinject -->
+</span>
+
+<span th:fragment="plugins">
+	
+	<!-- inject:js -->
+	<script th:src="@{~/js/off-canvas.js}"></script>
+	<script th:src="@{~/js/hoverable-collapse.js}"></script>
+	<script th:src="@{~/js/misc.js}"></script>
+	<script th:src="@{~/js/settings.js}"></script>
+	<script th:src="@{~/js/todolist.js}"></script>
+	<!-- endinject -->
+
+</span>

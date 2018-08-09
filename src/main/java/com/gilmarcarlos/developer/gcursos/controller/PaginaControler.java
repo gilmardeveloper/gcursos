@@ -10,13 +10,13 @@ public class PaginaControler {
 	
 	@GetMapping
 	public String home() {
-		return "login-template";
+		return "login/login-template";
 	}
 	
 	
-	@GetMapping("painel/")
+	@GetMapping("dashboard/")
 	public String painel() {
-		return "painel";
+		return "complete-perfil/complete-cadastro";
 	}
 	
 	

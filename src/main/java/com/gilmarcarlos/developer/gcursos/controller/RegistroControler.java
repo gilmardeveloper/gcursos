@@ -23,22 +23,22 @@ public class RegistroControler {
 	
 	@GetMapping(value = { "/login", "/login/" })
 	public String login() {
-		return "login-template";
+		return "login/login-template";
 	}
 
 	@GetMapping(value = { "/registro", "/registro/" })
 	public String cotacoes() {
-		return "registro-template";
+		return "login/registro-template";
 	}
 	
 	@GetMapping(value = { "/esqueceu-senha", "/esqueceu-senha/" })
 	public String esqueceuSenha() {
-		return "esqueceu-senha-template";
+		return "login/esqueceu-senha-template";
 	}
 	
 	@GetMapping("/redefinir-senha")
 	public String redefinirSenha() {
-		return "redefinir-senha";
+		return "login/redefinir-senha";
 	}
 	
 	@PostMapping("/redefinir-senha")

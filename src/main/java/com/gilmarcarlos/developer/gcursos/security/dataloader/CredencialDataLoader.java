@@ -41,13 +41,13 @@ public class CredencialDataLoader implements  ApplicationListener<ContextRefresh
   
         if (alreadySetup) return;
                 
-        Privilegio readPrivilege = createPrivilegeIfNotFound("ROLE_ADMIN");
-        Privilegio writePrivilege = createPrivilegeIfNotFound("ROLE_USER");
+        Privilegio adminPrivilege = createPrivilegeIfNotFound("ROLE_ADMIN");
+        Privilegio userPrivilege = createPrivilegeIfNotFound("ROLE_USER");
   
-        List<Privilegio> privilegios = Arrays.asList(readPrivilege, writePrivilege);        
+        //List<Privilegio> privilegios = Arrays.asList(adminPrivilege, userPrivilege);        
         
-        createRoleIfNotFound("ROLE_ADMIN", privilegios);
-        createRoleIfNotFound("ROLE_USER", Arrays.asList(writePrivilege));
+        createRoleIfNotFound("ROLE_ADMIN", Arrays.asList(adminPrivilege));
+        createRoleIfNotFound("ROLE_USER", Arrays.asList(userPrivilege));
  
         Autorizacao adminRole = autorizacaoRepository.findByNome("ROLE_ADMIN");
                
