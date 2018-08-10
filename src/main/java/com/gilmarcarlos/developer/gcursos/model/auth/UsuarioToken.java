@@ -1,4 +1,4 @@
-package com.gilmarcarlos.developer.gcursos.model;
+package com.gilmarcarlos.developer.gcursos.model.auth;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
 @Entity
 public class UsuarioToken {

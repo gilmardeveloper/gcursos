@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import com.gilmarcarlos.developer.gcursos.model.Usuario;
-import com.gilmarcarlos.developer.gcursos.model.UsuarioToken;
+import com.gilmarcarlos.developer.gcursos.model.auth.UsuarioToken;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.AutorizacaoRepository;
 import com.gilmarcarlos.developer.gcursos.repository.UsuarioRepository;
 import com.gilmarcarlos.developer.gcursos.repository.VerificacaoTokenRepository;
@@ -50,7 +50,7 @@ public class AutenticadorService {
 				registrarNovaVerificacao(temporario);
 			}
 		}else {
-			usuario.setAutorizacoes(Arrays.asList(autorizacaoRepository.findByNome("ROLE_USER")));
+			usuario.setAutorizacoes(Arrays.asList(autorizacaoRepository.findByNome("ROLE_Usuario")));
 			usuario.setSenha(passwordCrypt.encode(usuario.getSenha()));
 			Usuario usuarioRegistrado = usuarioRepository.save(usuario);
 			eventPublish.publishEvent(new AutenticaUsuario(usuarioRegistrado));

@@ -1,6 +1,6 @@
 package com.gilmarcarlos.developer.gcursos.security.token;
 
-import com.gilmarcarlos.developer.gcursos.model.Usuario;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
 public interface AutenticaToken {
 

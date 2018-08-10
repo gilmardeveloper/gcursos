@@ -1,4 +1,4 @@
-package com.gilmarcarlos.developer.gcursos.model;
+package com.gilmarcarlos.developer.gcursos.model.auth;
 
 import java.util.List;
 

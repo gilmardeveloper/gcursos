@@ -10,9 +10,9 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import com.gilmarcarlos.developer.gcursos.model.Autorizacao;
-import com.gilmarcarlos.developer.gcursos.model.Privilegio;
-import com.gilmarcarlos.developer.gcursos.model.Usuario;
+import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
+import com.gilmarcarlos.developer.gcursos.model.auth.Privilegio;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.AutorizacaoRepository;
 import com.gilmarcarlos.developer.gcursos.repository.PrivilegioRepository;
 import com.gilmarcarlos.developer.gcursos.repository.UsuarioRepository;
@@ -41,15 +41,15 @@ public class CredencialDataLoader implements  ApplicationListener<ContextRefresh
   
         if (alreadySetup) return;
                 
-        Privilegio adminPrivilege = createPrivilegeIfNotFound("ROLE_ADMIN");
-        Privilegio userPrivilege = createPrivilegeIfNotFound("ROLE_USER");
+        Privilegio adminPrivilege = createPrivilegeIfNotFound("ROLE_Administrador");
+        Privilegio userPrivilege = createPrivilegeIfNotFound("ROLE_Usuario");
   
         //List<Privilegio> privilegios = Arrays.asList(adminPrivilege, userPrivilege);        
         
-        createRoleIfNotFound("ROLE_ADMIN", Arrays.asList(adminPrivilege));
-        createRoleIfNotFound("ROLE_USER", Arrays.asList(userPrivilege));
+        createRoleIfNotFound("ROLE_Administrador", Arrays.asList(adminPrivilege));
+        createRoleIfNotFound("ROLE_Usuario", Arrays.asList(userPrivilege));
  
-        Autorizacao adminRole = autorizacaoRepository.findByNome("ROLE_ADMIN");
+        Autorizacao adminRole = autorizacaoRepository.findByNome("ROLE_Administrador");
                
         Usuario user = new Usuario();
         user.setNome("Gilmar Carlos");

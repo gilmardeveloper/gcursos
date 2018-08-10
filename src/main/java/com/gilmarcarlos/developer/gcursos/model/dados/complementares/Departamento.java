@@ -1,4 +1,4 @@
-package com.gilmarcarlos.developer.gcursos.model;
+package com.gilmarcarlos.developer.gcursos.model.dados.complementares;
 
 import java.io.Serializable;
 import java.util.List;
@@ -23,7 +23,7 @@ public class Departamento implements Serializable{
 	private String nome;
 	private String identidade;
 	
-	@OneToMany
+	@OneToMany(mappedBy = "departamento")
 	private List<UnidadeTrabalho> unidades;
 
 	public Long getId() {

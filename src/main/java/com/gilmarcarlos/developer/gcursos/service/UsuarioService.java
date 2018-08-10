@@ -7,7 +7,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.gilmarcarlos.developer.gcursos.model.Usuario;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.AutorizacaoRepository;
 import com.gilmarcarlos.developer.gcursos.repository.UsuarioRepository;
 import com.gilmarcarlos.developer.gcursos.security.crypt.PasswordCrypt;

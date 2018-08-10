@@ -1,4 +1,4 @@
-package com.gilmarcarlos.developer.gcursos.model;
+package com.gilmarcarlos.developer.gcursos.model.dados.complementares;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,10 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import com.gilmarcarlos.developer.gcursos.interfaces.Proprietario;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
 @Entity
-public class UnidadeTrabalho implements Serializable, Proprietario{
+public class UnidadeTrabalho implements Serializable{
 
 	/**
 	 * 
@@ -25,20 +25,20 @@ public class UnidadeTrabalho implements Serializable, Proprietario{
 	private Long id;
 	private Long qtdFuncionarios;
 	private String nome;
+	private String email;
+	private String gerente;
 	
-	@OneToMany(mappedBy = "proprietario")
-	private List<Telefone> telefones;
+	@OneToMany(mappedBy = "unidadeTrabalho")
+	private List<TelefoneUnidade> telefones;
 	
-	@OneToMany
-	private List<Usuario> usuarios;
+	@OneToMany(mappedBy = "unidadeTrabalho")
+	private List<CodigoFuncional> codigosFuncionais;
 	
-	@OneToOne(mappedBy = "unidadeTrabalho")
+	@OneToOne
 	private Departamento departamento;
 	
-	private String email;
-	
-	@OneToOne(mappedBy = "proprietario")
-	private Endereco endereco;
+	@OneToOne(mappedBy = "unidadeTrabalho")
+	private EnderecoUnidade endereco;
 
 	public Long getId() {
 		return id;
@@ -46,6 +46,14 @@ public class UnidadeTrabalho implements Serializable, Proprietario{
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getGerente() {
+		return gerente;
+	}
+
+	public void setGerente(String gerente) {
+		this.gerente = gerente;
 	}
 
 	public Long getQtdFuncionarios() {
@@ -64,20 +72,20 @@ public class UnidadeTrabalho implements Serializable, Proprietario{
 		this.nome = nome;
 	}
 
-	public List<Telefone> getTelefones() {
+	public List<TelefoneUnidade> getTelefones() {
 		return telefones;
 	}
 
-	public void setTelefones(List<Telefone> telefones) {
+	public void setTelefones(List<TelefoneUnidade> telefones) {
 		this.telefones = telefones;
 	}
 
-	public List<Usuario> getUsuarios() {
-		return usuarios;
+	public List<CodigoFuncional> getCodigosFuncionais() {
+		return codigosFuncionais;
 	}
 
-	public void setUsuarios(List<Usuario> usuarios) {
-		this.usuarios = usuarios;
+	public void setCodigosFuncionais(List<CodigoFuncional> codigosFuncionais) {
+		this.codigosFuncionais = codigosFuncionais;
 	}
 
 	public Departamento getDepartamento() {
@@ -96,11 +104,11 @@ public class UnidadeTrabalho implements Serializable, Proprietario{
 		this.email = email;
 	}
 
-	public Endereco getEndereco() {
+	public EnderecoUnidade getEndereco() {
 		return endereco;
 	}
 
-	public void setEndereco(Endereco endereco) {
+	public void setEndereco(EnderecoUnidade endereco) {
 		this.endereco = endereco;
 	}
 

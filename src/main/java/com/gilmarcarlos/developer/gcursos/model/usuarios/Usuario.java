@@ -1,5 +1,6 @@
-package com.gilmarcarlos.developer.gcursos.model;
+package com.gilmarcarlos.developer.gcursos.model.usuarios;
 
+import java.beans.Transient;
 import java.io.Serializable;
 import java.util.List;
 
@@ -12,7 +13,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
-import com.gilmarcarlos.developer.gcursos.interfaces.Proprietario;
+import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
+import com.gilmarcarlos.developer.gcursos.model.dados.complementares.CodigoFuncional;
+import com.gilmarcarlos.developer.gcursos.model.dados.complementares.DadosPessoais;
+import com.gilmarcarlos.developer.gcursos.model.dados.complementares.UnidadeTrabalho;
 
 @Entity
 public class Usuario implements Serializable {
@@ -39,21 +43,21 @@ public class Usuario implements Serializable {
 	@OneToOne(mappedBy = "usuario")
 	private DadosPessoais dadosPessoais;
 	
-	@OneToOne(mappedBy = "usuarios")
-	private UnidadeTrabalho unidadeTrabalho;
+	@OneToOne(mappedBy = "usuario")
+	private CodigoFuncional codigoFuncional;
 	
 	public Usuario() {
 		this.habilitado = false;
 	}
 	
-	public UnidadeTrabalho getUnidadeTrabalho() {
-		return unidadeTrabalho;
+	public CodigoFuncional getCodigoFuncional() {
+		return codigoFuncional;
 	}
 
-	public void setUnidadeTrabalho(UnidadeTrabalho unidadeTrabalho) {
-		this.unidadeTrabalho = unidadeTrabalho;
+	public void setCodigoFuncional(CodigoFuncional codigoFuncional) {
+		this.codigoFuncional = codigoFuncional;
 	}
-
+	
 	public DadosPessoais getDadosPessoais() {
 		return dadosPessoais;
 	}
@@ -98,14 +102,12 @@ public class Usuario implements Serializable {
 
 	public void setAutorizacoes(List<Autorizacao> autorizacoes) {
 		this.autorizacoes = autorizacoes;
-
 	}
 
 	public void setHabilitado(boolean habilitado) {
 		this.habilitado = habilitado;
-
 	}
-
+	
 	public boolean isHabilitado() {
 		return habilitado;
 	}
@@ -113,6 +115,11 @@ public class Usuario implements Serializable {
 	
 	public List<Autorizacao> getAutorizacoes() {
 		return autorizacoes;
+	}
+	
+	@Transient
+	public String getStatus() {
+		return autorizacoes.get(0).getNome().split("_")[1];
 	}
 	
 

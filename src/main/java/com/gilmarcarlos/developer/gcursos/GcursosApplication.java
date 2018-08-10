@@ -27,10 +27,12 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 @SpringBootApplication
 public class GcursosApplication {
-
+	
+	
 	public static void main(String[] args) {
 		SpringApplication.run(GcursosApplication.class, args);
 	}
+
 	
 	@Bean
 	public LocaleResolver localeResolver() {

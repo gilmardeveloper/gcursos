@@ -17,9 +17,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.gilmarcarlos.developer.gcursos.model.Autorizacao;
-import com.gilmarcarlos.developer.gcursos.model.Privilegio;
-import com.gilmarcarlos.developer.gcursos.model.Usuario;
+import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
+import com.gilmarcarlos.developer.gcursos.model.auth.Privilegio;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.AutorizacaoRepository;
 import com.gilmarcarlos.developer.gcursos.repository.UsuarioRepository;
 import com.gilmarcarlos.developer.gcursos.security.brute.force.AutenticacaoBlockForcaBruta;

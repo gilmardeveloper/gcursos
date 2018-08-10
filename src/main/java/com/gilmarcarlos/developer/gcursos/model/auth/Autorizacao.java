@@ -1,6 +1,5 @@
-package com.gilmarcarlos.developer.gcursos.model;
+package com.gilmarcarlos.developer.gcursos.model.auth;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -10,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
 @Entity
 public class Autorizacao {
@@ -23,7 +24,19 @@ public class Autorizacao {
     @ManyToMany(mappedBy = "autorizacoes")
     private List<Usuario> usuarios;
  
-    @ManyToMany
+    public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public void setUsuarios(List<Usuario> usuarios) {
+		this.usuarios = usuarios;
+	}
+
+	@ManyToMany
     @JoinTable(
         name = "autorizacoes_privilegios", 
         joinColumns = @JoinColumn(
@@ -51,4 +64,6 @@ public class Autorizacao {
 	public List<Usuario> getUsuarios(){
 		return this.usuarios;
 	}
+	
+	
 }

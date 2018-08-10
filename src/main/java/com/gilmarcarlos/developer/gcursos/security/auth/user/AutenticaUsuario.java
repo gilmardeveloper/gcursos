@@ -2,7 +2,7 @@ package com.gilmarcarlos.developer.gcursos.security.auth.user;
 
 import org.springframework.context.ApplicationEvent;
 
-import com.gilmarcarlos.developer.gcursos.model.Usuario;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
 public class AutenticaUsuario extends ApplicationEvent{
 

@@ -1,4 +1,4 @@
-package com.gilmarcarlos.developer.gcursos.model;
+package com.gilmarcarlos.developer.gcursos.model.dados.complementares;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -11,10 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import com.gilmarcarlos.developer.gcursos.interfaces.Proprietario;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
 @Entity
-public class DadosPessoais implements Serializable, Proprietario{
+public class DadosPessoais implements Serializable{
 
 	/**
 	 * 
@@ -29,11 +29,11 @@ public class DadosPessoais implements Serializable, Proprietario{
 	private String sexo;
 	private String escolaridade;
 	
-	@OneToMany(mappedBy = "proprietario")
-	private List<Telefone> telefones;
+	@OneToMany(mappedBy = "dadosPessoais")
+	private List<TelefoneUsuario> telefones;
 	
-	@OneToOne(mappedBy = "proprietario")
-	private Endereco endereco;
+	@OneToOne(mappedBy = "dadosPessoais")
+	private EnderecoUsuario endereco;
 
 	@OneToOne
 	private Usuario usuario;
@@ -69,13 +69,21 @@ public class DadosPessoais implements Serializable, Proprietario{
 	public void setSexo(String sexo) {
 		this.sexo = sexo;
 	}
-
-	public List<Telefone> getCelular() {
+	
+	public List<TelefoneUsuario> getTelefones() {
 		return telefones;
 	}
 
-	public void setCelular(List<Telefone> telefones) {
+	public void setTelefones(List<TelefoneUsuario> telefones) {
 		this.telefones = telefones;
+	}
+
+	public EnderecoUsuario getEndereco() {
+		return endereco;
+	}
+
+	public void setEndereco(EnderecoUsuario endereco) {
+		this.endereco = endereco;
 	}
 
 	public String getEscolaridade() {

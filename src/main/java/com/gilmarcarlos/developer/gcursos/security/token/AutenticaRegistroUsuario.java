@@ -5,8 +5,8 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.gilmarcarlos.developer.gcursos.model.Usuario;
-import com.gilmarcarlos.developer.gcursos.model.UsuarioToken;
+import com.gilmarcarlos.developer.gcursos.model.auth.UsuarioToken;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.UsuarioRepository;
 import com.gilmarcarlos.developer.gcursos.repository.VerificacaoTokenRepository;
 import com.gilmarcarlos.developer.gcursos.service.EmailService;
