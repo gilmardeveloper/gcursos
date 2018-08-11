@@ -1,7 +1,5 @@
 package com.gilmarcarlos.developer.gcursos.controller;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,26 +23,22 @@ public class RegistroControler {
 	private UsuarioService usuarioService;
 
 	@GetMapping(value = { "/login", "/login/" })
-	public String login(HttpServletResponse response) {
-		response.setHeader("Cache-Control", "max-age=14400");
+	public String login() {
 		return "login/login-template";
 	}
 
 	@GetMapping(value = { "/registro", "/registro/" })
-	public String cotacoes(HttpServletResponse response) {
-		response.setHeader("Cache-Control", "max-age=14400");
+	public String cotacoes() {
 		return "login/registro-template";
 	}
 
 	@GetMapping(value = { "/esqueceu-senha", "/esqueceu-senha/" })
-	public String esqueceuSenha(HttpServletResponse response) {
-		response.setHeader("Cache-Control", "max-age=14400");
+	public String esqueceuSenha() {
 		return "login/esqueceu-senha-template";
 	}
 
 	@GetMapping("/redefinir-senha")
-	public String redefinirSenha(HttpServletResponse response) {
-		response.setHeader("Cache-Control", "max-age=14400");
+	public String redefinirSenha() {
 		return "login/redefinir-senha";
 	}
 

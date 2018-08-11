@@ -13,6 +13,9 @@ public class EmailService {
 	@Autowired
     private JavaMailSender mailSender;
 	
+	private static final String URL_PRODUCE = "http://35.188.89.234";
+	private static final String URL_LOCAL = "http://localhost:8080";
+	
 	public void enviarConfirmacaoDeCadastro(Usuario usuario, String token) {
 		
 		String recipientAddress = usuario.getEmail();
@@ -23,7 +26,7 @@ public class EmailService {
                 
         email.setTo(recipientAddress);
         email.setSubject(subject);
-        email.setText("Você se cadastrou na plataforma de ensino, para finalizar o registro, favor clicar no link ao lado " + "http://localhost:8080" + url);
+        email.setText("Você se cadastrou na plataforma de ensino, para finalizar o registro, favor clicar no link ao lado " + URL_PRODUCE + url);
         mailSender.send(email);
 	}
 	
@@ -36,7 +39,7 @@ public class EmailService {
                 
         email.setTo(recipientAddress);
         email.setSubject(subject);
-        email.setText("Uma solicitação para redefinir a senha foi realizada, caso tenha sido você, favor clicar no link " + "http://localhost:8080" + url);
+        email.setText("Uma solicitação para redefinir a senha foi realizada, caso tenha sido você, favor clicar no link " + URL_PRODUCE + url);
         mailSender.send(email);
 	}
 

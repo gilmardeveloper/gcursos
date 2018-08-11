@@ -32,6 +32,14 @@ public class GcursosApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GcursosApplication.class, args);
 	}
+	
+	/*@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry
+			.addResourceHandler("/resources/**")
+			.addResourceLocations("/resources/")
+			.setCachePeriod(31556926);
+	}*/
 
 	
 	@Bean
@@ -100,4 +108,6 @@ public class GcursosApplication {
 		
 		return dataSource;
 	}
+	
+	
 }

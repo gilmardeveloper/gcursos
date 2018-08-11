@@ -1,7 +1,6 @@
 package com.gilmarcarlos.developer.gcursos.security.config;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,6 +23,7 @@ import com.gilmarcarlos.developer.gcursos.repository.AutorizacaoRepository;
 import com.gilmarcarlos.developer.gcursos.repository.UsuarioRepository;
 import com.gilmarcarlos.developer.gcursos.security.brute.force.AutenticacaoBlockForcaBruta;
 import com.gilmarcarlos.developer.gcursos.security.exception.BruteForceException;
+import com.gilmarcarlos.developer.gcursos.security.exception.RegistroNotFoundException;
 
 @Service("userDetailsService")
 @Transactional
@@ -55,11 +55,11 @@ public class UsuarioService implements UserDetailsService {
     	    	
         Usuario usuario = usuarioRepository.findByEmail(email);
         if (usuario == null) {
-        	
-            return new org.springframework.security.core.userdetails.User(
+        	throw new RegistroNotFoundException();
+           /* return new org.springframework.security.core.userdetails.User(
               " ", " ", true, true, true, true, 
               getAuthorities(Arrays.asList(
-                autorizacaoRepository.findByNome("ROLE_USER"))));
+                autorizacaoRepository.findByNome("ROLE_USER"))));*/
         }
         
                             

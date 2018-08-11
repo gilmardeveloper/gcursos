@@ -36,10 +36,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         .permitAll()
         .defaultSuccessUrl("/dashboard/", true)
         .and()
-        .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
+        .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+        .and()
+        .headers().defaultsDisabled().cacheControl();
 	}
 	
-		
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(authenticationProvider());
@@ -52,6 +54,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	    authProvider.setPasswordEncoder(passwordCrypt);
 	    return authProvider;
 	}
+	
+	
 	
 	
 }

@@ -1,7 +1,5 @@
 package com.gilmarcarlos.developer.gcursos.controller;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -72,14 +70,12 @@ public class PaginaControler {
 	private SexoService sexoService;
 
 	@GetMapping
-	public String home(HttpServletResponse response) {
-		response.setHeader("Cache-Control", "max-age=14400");
+	public String home() {
 		return "login/login-template";
 	}
 
 	@GetMapping("dashboard/")
-	public String painel(Model model, HttpServletResponse response) {
-		response.setHeader("Cache-Control", "max-age=14400");
+	public String painel(Model model) {
 		Usuario usuarioLogado = getUsuario();
 		model.addAttribute("usuario", usuarioLogado);
 		if (usuarioLogado.isPerfilCompleto()) {
