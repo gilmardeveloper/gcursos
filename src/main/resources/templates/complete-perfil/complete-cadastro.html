@@ -12,10 +12,9 @@
 	<div class="container-scroller">
 		<!-- navbar -->
 		<nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-			<div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
-				<a class="navbar-brand brand-logo" href="#"><span class="text-info">ZEUS</span></a>
-				<a class="navbar-brand brand-logo-mini" href="#"><span class="text-info">ZEUS</span></a>
-			</div>
+			
+			<span th:replace="fragments/navbar :: navbar-logo"></span>
+			
 			<div class="navbar-menu-wrapper d-flex align-items-center">
 				<button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
 					<span class="icon-menu"></span>
@@ -376,21 +375,8 @@
 				<nav class="sidebar sidebar-offcanvas" id="sidebar">
 					<ul class="nav">
 
-						<li class="nav-item nav-profile">
-							<div class="nav-link">
-								<div class="profile-image">
-									<img src="http://via.placeholder.com/100x100/f4f4f4/000000" alt="image"/>
-									<span class="online-status online"></span> <!--change class online to offline or busy as needed-->
-								</div>
-								<div class="profile-name">
-									<p class="name">
-										<span th:text="${usuario.nome}"></span>
-									</p>
-									<p class="designation" th:text="${usuario.status}">Administrador</p>
-								</div>
-							</div>
-						</li>
-				
+						<span th:replace="fragments/sidebar :: credenciais"></span>
+
 
 						<li class="nav-item">
 							<a class="nav-link" href="../../index.html">
@@ -730,30 +716,68 @@
 											<ul class="nav nav-tabs" id="myTab" role="tablist">
 												<!-- li tab control one -->
 												<li class="nav-item">
-												    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Funcionários</a>
-												  </li>
-												  <!-- li tab control two -->
-												  <li class="nav-item">
-												    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Outros</a>
-												  </li>
+													<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"  aria-selected="true">Funcionários</a>
+												</li>
+												<!-- li tab control two -->
+												<li class="nav-item">
+													<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Outros</a>
+												</li>
 											</ul>
-										   <!-- end ul tab -->
-
-										   <!-- div tab -->
-										   <div class="tab-content" id="myTabContent">
-											  <!-- tab content one -->
-											  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-												  	<h4 class="card-title">Apenas funcionários</h4>
+											<!-- end ul tab -->
+											
+											<!-- div tab -->
+											<div class="tab-content" id="myTabContent">
+												<!-- tab content one -->
+												<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+													<h4 class="card-title">Apenas funcionários</h4>
 													<p class="card-description">
-														Confirme seus dados
+														Por favor informe seu CPF, não é funcionário? Clique em Outros
 													</p>
 													<!-- form -->
-													<form class="">
+													
+													<!-- verificação -->
+													<form th:if="${dadosPessoais} == null and ${novoCpf} == null" class="" th:action="@{/dashboard/verifica-dados}" method="post">
 														<!-- row justify-content -->
 														<div class="row justify-content-between">
 
+															<!-- form item -->
+															<div class="col-lg-12">   
+																<div class="form-group">
+																	<label for="nome">Nome</label>
+																	<input type="text" class="form-control" aria-describedby="nomeHelp" placeholder="Nome completo" name="nome" required="true" th:value="${usuario.nome}" disabled="disabled"/>
+																	<small id="nomeHelp" class="form-text text-muted"></small>
+																</div>
+															</div>
+
+															<!-- form item -->
+															<div class="col-lg-6">
+																<div class="form-group">
+																	<label for="cpf">CPF</label>
+																	<input id="cpf" type="text" class="form-control" aria-describedby="cpfHelp" placeholder="digite apenas números" name="cpf" pattern="[0-9]+" required="true"  maxlength="11"/>
+																	<small id="cpfHelp" class="form-text text-muted"></small>
+																</div>
+															</div>
+
+															<!-- button -->
+															<div class="col-lg-12">
+																<button type="submit" class="btn bt-lg btn-success">Enviar</button>
+															</div>
+															<!-- end button -->
+
+														</div>
+													</form>		
+													<!-- end verificação -->
+
+													<!-- cadastrados -->
+													<form th:if="${dadosPessoais} != null" class="" th:action="@{/dashboard/confirmar-dados}" method="post">
+
+														<div class="row justify-content-between">
+
 															<input type="hidden" name="id" th:value="${usuario.id}" />
-															<input type="hidden" name="email" th:value="${usuario.email}" />
+															<input type="hidden" name="dadosPessoais" th:value="${dadosPessoais.id}" />
+															<input type="hidden" name="codigoFuncional" th:value="${codigoFuncional.id}" />
+															<input type="hidden" name="dadosPessoais.usuario" th:value="${usuario.id}" />
+															<input type="hidden" name="codigoFuncional.usuario" th:value="${usuario.id}" />
 
 															<!-- form item -->
 															<div class="col-lg-12">   
@@ -767,21 +791,20 @@
 															<!-- form item -->
 															<div class="col-lg-6">
 																<div class="form-group">
-																	<label for="nome">CPF</label>
-																	<input type="text" class="form-control" aria-describedby="cpfHelp" placeholder="digite apenas números" name="cpf" pattern="[0-9]+" required="true"  maxlength="11" />
+																	<label for="cpf">CPF</label>
+																	<input id="cpf" type="text" class="form-control" aria-describedby="cpfHelp" placeholder="digite apenas números" name="dadosPessoais.cpf" pattern="[0-9]+" required="true"  maxlength="11" th:value="${dadosPessoais.cpf}"/>
 																	<small id="cpfHelp" class="form-text text-muted"></small>
 																</div>
 															</div>
 
-															<input id="nascimento" type="hidden" name="nascimento" />
+															<input id="nascimento" type="hidden"  
+															th:value="${#temporals.format(dadosPessoais.nascimento, 'dd/MM/yyyy')}"/>
 
-
-															<!-- form item -->
 															<div class="col-lg-6">
 																<div class="form-group">
 																	<label for="nascimento">Nascimento</label>
 																	<div id="datepicker-popup" class="input-group date datepicker">
-																		<input id="datepicker" type="text" class="form-control" />
+																		<input id="datepicker" type="text" class="form-control" name="dadosPessoais.nascimento"/>
 																		<div class="input-group-addon input-group-text">
 																			<span class="mdi mdi-calendar"></span>
 																		</div>
@@ -793,29 +816,39 @@
 															<div class="col-lg-6">
 																<div class="form-group">
 																	<label for="sexo">Sexo</label>
-																	<Select cass="form-control" aria-describedby="sexoHelp" name="sexo" required="true" >
-																		<option value="masculino">Masculino</option>
-																		<option value="masculino">Feminino</option>
-																		<option value="masculino">Outro</option>
+																	<Select cass="form-control" aria-describedby="sexoHelp" name="dadosPessoais.sexo" required="true">
+																		<option th:if="${sexos != null}" th:each="sexo : ${sexos}"  
+																		th:text="${sexo.display}" 
+																		th:value="${sexo.nome}"
+																		th:selected="${sexo.nome == dadosPessoais.sexo}"></option>
 																	</Select>
 																	<small id="sexoHelp" class="form-text text-muted"></small>
 																</div>
 															</div>
 
 															<!-- form item -->
-															<div class="col-lg-6">
-																<div class="form-group">
-																	<label for="celular">Celular</label>
-																	<input type="text" class="form-control" aria-describedby="celularHelp" placeholder="Informe seu celular" name="celular" />
-																	<small id="celularHelp" class="form-text text-muted"></small>
-																</div>
+															<div class="col-lg-6" th:unless="${#lists.isEmpty(dadosPessoais.telefones)}">
+																	<div class="form-group" th:with="telefone=${dadosPessoais.telefones[0]}">
+																		<label for="celular">Celular</label>
+																		<input id="celular" type="text" class="form-control" aria-describedby="celularHelp" placeholder="Informe seu telefone" name="numero" th:value="${telefone.numero}" />
+																		<small id="celularHelp" class="form-text text-muted"></small>
+																	</div>
 															</div>
+
+														<!-- form item -->
+														<div class="col-lg-6" th:if="${#lists.isEmpty(dadosPessoais.telefones)}">	
+																<div class="form-group">
+																		<label for="celular">Celular</label>
+																		<input id="celular" type="text" class="form-control" aria-describedby="celularHelp" placeholder="Informe seu telefone" name="numero"/>
+																		<small id="celularHelp" class="form-text text-muted"></small>
+																</div>
+														</div>
 
 															<!-- form item -->
 															<div class="col-lg-6">
 																<div class="form-group">
 																	<label for="codigoFuncional">Código funcional</label>
-																	<input type="text" class="form-control" aria-describedby="codigoFuncionalHelp" placeholder="Informe sua matrícula" name="codigoFuncional.codigo" pattern="[0-9]+" />
+																	<input type="text" class="form-control" aria-describedby="codigoFuncionalHelp" placeholder="Informe sua matrícula" name="codigoFuncional.codigo" pattern="[0-9]+" th:value="${codigoFuncional.codigo}"/>
 																	<small id="codigoFuncionalHelp" class="form-text text-muted"></small>
 																</div>
 															</div>
@@ -825,8 +858,10 @@
 															<div class="col-lg-12">
 																<div class="form-group">
 																	<label for="unidade">Unidade de trabalho</label>
-																	<select type="text" class="form-control" aria-describedby="unidadeHelp" name="unidadeTrabalho">
-																		<option th:if="${unidades != null}" th:each="unidade : ${unidades}"  th:text="${unidade.nome}" th:value="${unidade.id}"></option>
+																	<select type="text" class="form-control" aria-describedby="unidadeHelp" name="codigoFuncional.unidadeTrabalho">
+																		<option th:if="${unidades != null}" th:each="unidade : ${unidades}"  th:text="${unidade.nome}" 
+																		th:value="${unidade.id}"
+																		th:selected="${unidade.id == codigoFuncional.unidadeTrabalho.id}"></option>
 																	</select>
 																	<small id="unidadeHelp" class="form-text text-muted"></small>
 																</div>
@@ -837,9 +872,12 @@
 																<div class="form-group">
 																	<label for="cargo">Cargo</label>
 																	<select type="text" class="form-control" aria-describedby="cargoHelp" name="codigoFuncional.cargo">
-																		<option th:if="${cargos != null}" th:each="cargo : ${cargos}"  th:text="${cargo.nome}" th:value="${cargo.id}"></option>
+																		<option th:if="${cargos != null}" th:each="cargo : ${cargos}"  
+																		th:text="${cargo.nome}" 
+																		th:value="${cargo.id}"
+																		th:selected="${cargo.id == codigoFuncional.cargo.id}"></option>
 																	</select>
-																	<small id="estadoHelp" class="form-text text-muted"></small>
+																	<small id="cargoHelp" class="form-text text-muted"></small>
 																</div>
 															</div>
 
@@ -847,8 +885,12 @@
 															<div class="col-lg-12">
 																<div class="form-group">
 																	<label for="escolaridade">Escolaridade</label>
-																	<select type="text" class="form-control" aria-describedby="escolaridadeHelp">
-																		<option>escolaridade</option>
+																	<select type="text" name="dadosPessoais.escolaridade" class="form-control" aria-describedby="escolaridadeHelp">
+																		<option th:if="${escolaridades != null}" th:each="escolaridade : ${escolaridades}"  
+																		th:text="${escolaridade.display}" 
+																		th:value="${escolaridade.nome}"
+																		th:selected="${escolaridade.nome == dadosPessoais.escolaridade}"></option>
+																		
 																	</select>
 																	<small id="escolaridadeHelp" class="form-text text-muted"></small>
 																</div>
@@ -863,20 +905,16 @@
 														</div>
 														<!-- end button -->
 													</form>
-													<!-- end form -->
-											  </div>
-											   <!-- end tab content one -->
+													<!-- end cadastrados -->
 
-											  <!-- tab content two -->
-											  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-											  		<h4 class="card-title">Outros colaboradores</h4>
-													<p class="card-description">
-														Confirme seus dados
-													</p>
-													<!-- form -->
-													<form class="">
-														<!-- row justify-content -->
+												<!-- novos -->
+												<form th:if="${novoCpf} != null" class="" th:action="@{/dashboard/novo/confirmar-dados}" method="post">
+
 														<div class="row justify-content-between">
+
+															<input type="hidden" name="id" th:value="${usuario.id}" />
+															<input type="hidden" name="dadosPessoais.usuario" th:value="${usuario.id}" />
+															<input type="hidden" name="codigoFuncional.usuario" th:value="${usuario.id}" />
 
 															<!-- form item -->
 															<div class="col-lg-12">   
@@ -890,21 +928,19 @@
 															<!-- form item -->
 															<div class="col-lg-6">
 																<div class="form-group">
-																	<label for="nome">CPF</label>
-																	<input type="text" class="form-control" aria-describedby="cpfHelp" placeholder="digite apenas números" name="cpf" pattern="[0-9]+" required="true"  maxlength="11" />
+																	<label for="cpf">CPF</label>
+																	<input id="cpf" type="text" class="form-control" aria-describedby="cpfHelp" placeholder="digite apenas números" name="dadosPessoais.cpf" pattern="[0-9]+" required="true"  maxlength="11" th:value="${novoCpf}"/>
 																	<small id="cpfHelp" class="form-text text-muted"></small>
 																</div>
 															</div>
 
-															<input id="nascimento" type="hidden" name="nascimento" />
+															<input id="novoNascimento" type="hidden" />
 
-
-															<!-- form item -->
 															<div class="col-lg-6">
 																<div class="form-group">
-																	<label for="nascimento">Nascimento</label>
-																	<div id="datepicker-popup" class="input-group date datepicker">
-																		<input id="datepicker" type="text" class="form-control" />
+																	<label for="novoNascimento">Nascimento</label>
+																	<div id="datepicker-popup-novo" class="input-group date datepicker">
+																		<input id="datepicker-novo" type="text" class="form-control" name="dadosPessoais.nascimento"/>
 																		<div class="input-group-addon input-group-text">
 																			<span class="mdi mdi-calendar"></span>
 																		</div>
@@ -916,8 +952,13 @@
 															<div class="col-lg-6">
 																<div class="form-group">
 																	<label for="sexo">Sexo</label>
-																	<input type="text" class="form-control" aria-describedby="sexoHelp" placeholder="Informe sua opção sexual" name="sexo" required="true" />
-																	<small id="sexoHelp" class="form-text text-muted"></small>
+																	<Select cass="form-control" aria-describedby="sexoHelp" name="dadosPessoais.sexo" required="true">
+																		<option th:if="${sexos != null}" th:each="sexo : ${sexos}"  
+																		th:text="${sexo.display}" 
+																		th:value="${sexo.nome}">
+																	</option>
+																</Select>
+																<small id="sexoHelp" class="form-text text-muted"></small>
 																</div>
 															</div>
 
@@ -925,19 +966,45 @@
 															<div class="col-lg-6">
 																<div class="form-group">
 																	<label for="celular">Celular</label>
-																	<input type="text" class="form-control" aria-describedby="celularHelp" placeholder="Informe seu celular" name="celular" />
+																	<input id="novoCelular" type="text" class="form-control" aria-describedby="celularHelp" placeholder="Informe seu telefone" name="numero"/>
 																	<small id="celularHelp" class="form-text text-muted"></small>
 																</div>
 															</div>
 
 															<!-- form item -->
+															<div class="col-lg-6">
+																<div class="form-group">
+																	<label for="codigoFuncional">Código funcional</label>
+																	<input type="text" class="form-control" aria-describedby="codigoFuncionalHelp" placeholder="Informe sua matrícula" name="codigoFuncional.codigo" pattern="[0-9]+"/>
+																	<small id="codigoFuncionalHelp" class="form-text text-muted"></small>
+																</div>
+															</div>
+
+
+															<!-- form item -->
 															<div class="col-lg-12">
 																<div class="form-group">
-																	<label for="unidade">Unidade de trabalho</label>
-																	<select type="text" class="form-control" aria-describedby="unidadeHelp">
-																		<option>unidade</option>
-																	</select>
-																	<small id="unidadeHelp" class="form-text text-muted"></small>
+																		<label for="unidade">Unidade de trabalho</label>
+																		<select type="text" class="form-control" aria-describedby="unidadeHelp" name="codigoFuncional.unidadeTrabalho">
+																			<option th:if="${unidades != null}" th:each="unidade : ${unidades}"  th:text="${unidade.nome}" 
+																			th:value="${unidade.id}">
+																			</option>
+																		</select>
+																		<small id="unidadeHelp" class="form-text text-muted"></small>
+																</div>
+															</div>
+
+																<!-- form item -->
+															<div class="col-lg-12">
+																<div class="form-group">
+																		<label for="cargo">Cargo</label>
+																		<select type="text" class="form-control" aria-describedby="cargoHelp" name="codigoFuncional.cargo">
+																			<option th:if="${cargos != null}" th:each="cargo : ${cargos}"  
+																			th:text="${cargo.nome}" 
+																			th:value="${cargo.id}">
+																			</option>
+																		</select>
+																		<small id="cargoHelp" class="form-text text-muted"></small>
 																</div>
 															</div>
 
@@ -945,78 +1012,489 @@
 															<div class="col-lg-12">
 																<div class="form-group">
 																	<label for="escolaridade">Escolaridade</label>
-																	<select type="text" class="form-control" aria-describedby="escolaridadeHelp">
-																		<option>escolaridade</option>
+																	<select type="text" name="dadosPessoais.escolaridade" class="form-control" aria-describedby="escolaridadeHelp">
+																		<option th:if="${escolaridades != null}" th:each="escolaridade : ${escolaridades}"  
+																		th:text="${escolaridade.display}" 
+																			th:value="${escolaridade.nome}">
+																		</option>
 																	</select>
 																	<small id="escolaridadeHelp" class="form-text text-muted"></small>
 																</div>
 															</div>
 
-														</div>
-														<!-- end row justify-content -->
+															</div>
+															<!-- end row justify-content -->
 
-														<!-- button -->
-														<div class="col-lg-12">
-															<button type="submit" class="btn bt-lg btn-success">Enviar</button>
-														</div>
-														<!-- end button -->
-													</form>
-													<!-- end form -->
-											  </div>
-											  <!-- end tab content two -->
+															<!-- button -->
+															<div class="col-lg-12">
+																<button type="submit" class="btn bt-lg btn-success">Enviar</button>
+															</div>
+															<!-- end button -->
+												</form>
+												<!-- end novos -->
 
-											</div>
-											<!-- end div tab -->
-											<!-- end tab content -->
-											
-										
-										</div>
-										<!-- end card body -->
-									</div>
-									<!-- end card -->
+									<!-- end form -->
 								</div>
-								<!-- end col -->
-							</div>	
-							<!-- end row -->
+								<!-- end tab content one -->
+
+								<!-- tab content two -->
+								<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+									<h4 class="card-title">Outros colaboradores</h4>
+									<p class="card-description">
+										Confirme seus dados
+									</p>
+
+									<!-- form -->	
+									<!-- verificação -->
+									<form th:if="${outrosDadosPessoais} == null and ${outroNovoCpf} == null" class="" th:action="@{/dashboard/outros/verifica-dados}" method="post">
+										<!-- row justify-content -->
+										<div class="row justify-content-between">
+
+											<!-- form item -->
+											<div class="col-lg-12">   
+												<div class="form-group">
+													<label for="nomeOutro">Nome</label>
+													<input type="text" class="form-control" aria-describedby="nomeOutroHelp" placeholder="Nome completo" name="nome" required="true" th:value="${usuario.nome}" disabled="disabled"/>
+													<small id="nomeOutroHelp" class="form-text text-muted"></small>
+												</div>
+											</div>
+
+											<!-- form item -->
+											<div class="col-lg-6">
+												<div class="form-group">
+													<label for="cpfOutro">CPF</label>
+													<input id="cpfOutro" type="text" class="form-control" aria-describedby="cpfOutroHelp" placeholder="digite apenas números" name="cpf" pattern="[0-9]+" required="true"  maxlength="11"/>
+													<small id="cpfOutroHelp" class="form-text text-muted"></small>
+												</div>
+											</div>
+
+											<!-- button -->
+											<div class="col-lg-12">
+												<button type="submit" class="btn bt-lg btn-success">Enviar</button>
+											</div>
+											<!-- end button -->
+
+										</div>
+									</form>
+									<!-- end verificação -->
+
+									<!-- cadastrados -->
+									<form th:if="${outrosDadosPessoais} != null" class="" th:action="@{/dashboard/outros/confirmar-dados}" method="post">
+
+										<div class="row justify-content-between">
+
+											<input type="hidden" name="id" th:value="${usuario.id}" />
+											<input type="hidden" name="dadosPessoais" th:value="${outrosDadosPessoais.id}" />
+											<input type="hidden" name="codigoFuncional" th:value="${outrosCodigoFuncional.id}" />
+											<input type="hidden" name="dadosPessoais.usuario" th:value="${usuario.id}" />
+											<input type="hidden" name="codigoFuncional.usuario" th:value="${usuario.id}" />
+											<input type="hidden" name="codigoFuncional.codigo" value="nf"/>
+											<input type="hidden" name="codigoFuncional.cargo" value="102"/>
+
+											<!-- form item -->
+											<div class="col-lg-12">   
+												<div class="form-group">
+													<label for="nome">Nome</label>
+													<input type="text" class="form-control" aria-describedby="nomeHelp" placeholder="Nome completo" name="nome" required="true" th:value="${usuario.nome}"/>
+													<small id="nomeHelp" class="form-text text-muted"></small>
+												</div>
+											</div>
+
+											<!-- form item -->
+											<div class="col-lg-6">
+												<div class="form-group">
+													<label for="outroCpf">CPF</label>
+													<input id="outroCpf" type="text" class="form-control" aria-describedby="outroCpfHelp" placeholder="digite apenas números" name="dadosPessoais.cpf" pattern="[0-9]+" required="true"  maxlength="11" th:value="${outrosDadosPessoais.cpf}"/>
+													<small id="outroCpfHelp" class="form-text text-muted"></small>
+												</div>
+											</div>
+
+											<input id="outroNascimento" type="hidden"  
+											th:value="${#temporals.format(outrosDadosPessoais.nascimento, 'dd/MM/yyyy')}"/>
+
+											<div class="col-lg-6">
+												<div class="form-group">
+													<label for="outroNascimento">Nascimento</label>
+													<div id="datepicker-popup-outro" class="input-group date datepicker">
+														<input id="datepicker-outro" type="text" class="form-control" name="dadosPessoais.nascimento"/>
+														<div class="input-group-addon input-group-text">
+															<span class="mdi mdi-calendar"></span>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<!-- form item -->
+											<div class="col-lg-6">
+												<div class="form-group">
+													<label for="outroSexo">Sexo</label>
+													<Select cass="form-control" aria-describedby="outroSexoHelp" name="dadosPessoais.sexo" required="true">
+														<option th:if="${sexos != null}" th:each="sexo : ${sexos}"  
+														th:text="${sexo.display}" 
+														th:value="${sexo.nome}"
+														th:selected="${sexo.nome == outrosDadosPessoais.sexo}"></option>
+													</Select>
+													<small id="outroSexoHelp" class="form-text text-muted"></small>
+												</div>
+											</div>
+
+											<!-- form item -->
+											<div class="col-lg-6" th:unless="${#lists.isEmpty(outrosDadosPessoais.telefones)}">
+														<div class="form-group" th:with="telefone=${outrosDadosPessoais.telefones[0]}">
+															<label for="outroCelular">Celular</label>
+																<input id="outroCelular" type="text" class="form-control" aria-describedby="outroCelularHelp" placeholder="Informe seu telefone" name="numero" th:value="${telefone.numero}" />
+																<small id="outroCelularHelp" class="form-text text-muted"></small>
+														</div>
+											</div>
+
+											<!-- form item -->
+											<div class="col-lg-6" th:if="${#lists.isEmpty(outrosDadosPessoais.telefones)}">
+													<div class="form-group">
+															<label for="outroCelular">Celular</label>
+															<input id="outroCelular" type="text" class="form-control" aria-describedby="outroCelularHelp" placeholder="Informe seu telefone" name="numero"/>
+															<small id="outroCelularHelp" class="form-text text-muted"></small>
+													</div>
+											</div>	
+
+											<!-- form item -->
+											<div class="col-lg-12">
+												<div class="form-group">
+													<label for="outroUnidade">Unidade de trabalho</label>
+													<select type="text" class="form-control" aria-describedby="outroUnidadeHelp" name="codigoFuncional.unidadeTrabalho">
+														<option th:if="${unidades != null}" th:each="unidade : ${unidades}"  th:text="${unidade.nome}" 
+														th:value="${unidade.id}"
+														th:selected="${unidade.id == outrosCodigoFuncional.unidadeTrabalho.id}"></option>
+													</select>
+													<small id="outroUnidadeHelp" class="form-text text-muted"></small>
+												</div>
+											</div>
+											
+											<!-- form item -->
+											<div class="col-lg-12">
+												<div class="form-group">
+													<label for="outroEscolaridade">Escolaridade</label>
+													<select type="text" name="dadosPessoais.escolaridade" class="form-control" aria-describedby="outroEscolaridadeHelp">
+														<option th:if="${escolaridades != null}" th:each="escolaridade : ${escolaridades}"  
+														th:text="${escolaridade.display}" 
+														th:value="${escolaridade.nome}"
+														th:selected="${escolaridade.nome == outrosDadosPessoais.escolaridade}"></option>
+
+													</select>
+													<small id="outroEscolaridadeHelp" class="form-text text-muted"></small>
+												</div>
+											</div>
+
+										</div>
+										<!-- end row justify-content -->
+
+										<!-- button -->
+										<div class="col-lg-12">
+											<button type="submit" class="btn bt-lg btn-success">Enviar</button>
+										</div>
+										<!-- end button -->
+									</form>
+									<!-- end cadastrados -->
+
+									<!-- novos -->
+									<form th:if="${outroNovoCpf} != null" class="" th:action="@{/dashboard/outros/novo/confirmar-dados}" method="post">
+
+														<div class="row justify-content-between">
+
+															<input type="hidden" name="id" th:value="${usuario.id}" />
+															<input type="hidden" name="dadosPessoais.usuario" th:value="${usuario.id}" />
+															<input type="hidden" name="codigoFuncional.usuario" th:value="${usuario.id}" />
+															<input type="hidden" name="codigoFuncional.codigo" value="nf"/>
+															<input type="hidden" name="codigoFuncional.cargo" value="102"/>
+
+															<!-- form item -->
+															<div class="col-lg-12">   
+																<div class="form-group">
+																	<label for="outroNovoNome">Nome</label>
+																	<input id="outroNovoNome" type="text" class="form-control" aria-describedby="outroNovoNomeHelp" placeholder="Nome completo" name="nome" required="true" th:value="${usuario.nome}"/>
+																	<small id="outroNovoNomeHelp" class="form-text text-muted"></small>
+																</div>
+															</div>
+
+															<!-- form item -->
+															<div class="col-lg-6">
+																<div class="form-group">
+																	<label for="outroNovoCpf">CPF</label>
+																	<input id="outroNovoCpf" type="text" class="form-control" aria-describedby="outroNovoCpfHelp" placeholder="digite apenas números" name="dadosPessoais.cpf" pattern="[0-9]+" required="true"  maxlength="11" th:value="${outroNovoCpf}"/>
+																	<small id="outroNovoCpfHelp" class="form-text text-muted"></small>
+																</div>
+															</div>
+
+															<input id="outroNovoNascimento" type="hidden"/>
+
+															<div class="col-lg-6">
+																<div class="form-group">
+																	<label for="outroNovoNascimento">Nascimento</label>
+																	<div id="datepicker-popup-outro-novo" class="input-group date datepicker">
+																		<input id="datepicker-outro-novo" type="text" class="form-control" name="dadosPessoais.nascimento" />
+																		<div class="input-group-addon input-group-text">
+																			<span class="mdi mdi-calendar"></span>
+																		</div>
+																	</div>
+																</div>
+															</div>
+
+															<!-- form item -->
+															<div class="col-lg-6">
+																<div class="form-group">
+																	<label for="outroNovoSexo">Sexo</label>
+																	<Select id="outroNovoSexo" cass="form-control" aria-describedby="outroNovoSexoHelp" name="dadosPessoais.sexo" required="true">
+																		<option th:if="${sexos != null}" th:each="sexo : ${sexos}"  
+																		th:text="${sexo.display}" 
+																		th:value="${sexo.nome}">
+																	</option>
+																</Select>
+																<small id="outroNovoSexoHelp" class="form-text text-muted"></small>
+																</div>
+															</div>
+
+															<!-- form item -->
+															<div class="col-lg-6">
+																<div class="form-group">
+																	<label for="outroNovoCelular">Celular</label>
+																	<input id="outroNovoCelular" type="text" class="form-control" aria-describedby="outroNovoCelularHelp" placeholder="Informe seu telefone" name="numero"/>
+																	<small id="outroNovoCelularHelp" class="form-text text-muted"></small>
+																</div>
+															</div>
+
+															<!-- form item -->
+															<div class="col-lg-12">
+																<div class="form-group">
+																		<label for="outroNovoUnidade">Unidade de trabalho</label>
+																		<select id="outroNovoUnidade" type="text" class="form-control" aria-describedby="outroNovoUnidadeHelp" name="codigoFuncional.unidadeTrabalho">
+																			<option th:if="${unidades != null}" th:each="unidade : ${unidades}"  th:text="${unidade.nome}" 
+																			th:value="${unidade.id}">
+																			</option>
+																		</select>
+																		<small id="outroNovoUnidadeHelp" class="form-text text-muted"></small>
+																</div>
+															</div>
+
+															<!-- form item -->
+															<div class="col-lg-12">
+																<div class="form-group">
+																	<label for="outroNovoEscolaridade">Escolaridade</label>
+																	<select type="text" name="dadosPessoais.escolaridade" class="form-control" aria-describedby="outroNovoEscolaridadeHelp">
+																		<option th:if="${escolaridades != null}" th:each="escolaridade : ${escolaridades}"  
+																		th:text="${escolaridade.display}" 
+																			th:value="${escolaridade.nome}">
+																		</option>
+																	</select>
+																	<small id="outroNovoEscolaridadeHelp" class="form-text text-muted"></small>
+																</div>
+															</div>
+
+															</div>
+															<!-- end row justify-content -->
+
+															<!-- button -->
+															<div class="col-lg-12">
+																<button type="submit" class="btn bt-lg btn-success">Enviar</button>
+															</div>
+															<!-- end button -->
+									</form>
+									<!-- end novos -->
+									
+									<!-- end form -->
+								</div>
+								<!-- end tab content two -->
+
+							</div>
+							<!-- end div tab -->
+							<!-- end tab content -->
+
 
 						</div>
-						<!-- end card formulario -->
+						<!-- end card body -->
 					</div>
-					<!-- end row justify-content -->		
+					<!-- end card -->
 				</div>
-				<!-- end content-wrapper -->
+				<!-- end col -->
+			</div>	
+			<!-- end row -->
 
-				<!--footer -->
-				<footer class="footer">
-					<div class="container-fluid clearfix">
-						<span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2017 <a href="#">UrbanUI</a>. All rights reserved.</span>
-						<span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
-					</div>
-				</footer>
-				<!-- end footer -->
-			</div>
-			<!-- end row-offcanvas -->
 		</div>
-		<!-- end container-fluid  -->
-
+		<!-- end card formulario -->
 	</div>
-	<!-- end container-scroller -->
+	<!-- end row justify-content -->		
+</div>
+<!-- end content-wrapper -->
 
-	<span th:replace="fragments/base-script :: base"></span>
-	<script th:src="@{~/js/bootstrap-datepicker.min.js}"></script>  
-	<span th:replace="fragments/base-script :: plugins"></span>
-	<script>
-		$(()=>{
-			$('#datepicker-popup').datepicker({
-				format: 'dd/mm/yyyy',
+<!--footer -->
+<footer class="footer">
+	<div class="container-fluid clearfix">
+		<span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2017 <a href="#">UrbanUI</a>. All rights reserved.</span>
+		<span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
+	</div>
+</footer>
+<!-- end footer -->
+</div>
+<!-- end row-offcanvas -->
+</div>
+<!-- end container-fluid  -->
 
-			});
-			$('#datepicker-popup').on('changeDate', function() {
-				console.log($('#datepicker').val());
-				$('#nascimento').val($('#datepicker').val());
-			});
+</div>
+<!-- end container-scroller -->
+
+<span th:replace="fragments/base-script :: base"></span>
+<script th:src="@{~/js/bootstrap-datepicker.min.js}"></script>
+<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script>  
+<span th:replace="fragments/base-script :: plugins"></span>
+
+
+
+<script th:if="${novoCpf} != null" th:inline="javascript">
+
+	/*<![CDATA[*/
+	$(()=>{
+
+		$('#datepicker-popup-novo').datepicker({
+			  format: 'dd/mm/yyyy',
+				language: 'pt-BR',
+				defaultViewDate: { year: 1960, month: 0, day: 1 }
 		});
-	</script>
+
+		$('#datepicker-popup-novo').on('changeDate', function() {
+			console.log($('#datepicker-novo').val());
+			$('#novoNascimento').val($('#datepicker-novo').val());
+		});
+
+		var selector = document.getElementById("novoCelular");
+		var im = new Inputmask("(99) 99999-9999");
+		im.mask(selector);
+
+		
+	});
+	/*]]>*/
+</script>
+
+<script th:if="${dadosPessoais} != null" th:inline="javascript">
+
+	/*<![CDATA[*/
+	$(()=>{
+
+		$('#datepicker-popup').datepicker({
+			format: 'dd/mm/yyyy',
+				language: 'pt-BR',
+				defaultViewDate: { year: 1960, month: 0, day: 1 }
+		});
+
+		$('#datepicker-popup').on('changeDate', function() {
+			console.log($('#datepicker').val());
+			$('#nascimento').val($('#datepicker').val());
+		});
+
+		var selector = document.getElementById("celular");
+		var im = new Inputmask("(99) 99999-9999");
+		im.mask(selector);
+
+		updateData();
+	});
+	
+	function updateData(){
+		if($('#nascimento').val() != ''){
+			console.log('nascimento foi executado');
+			$('#datepicker-popup').datepicker('update', $('#nascimento').val());
+		}
+	}
+	/*]]>*/
+</script>
+
+<script th:if="${outrosDadosPessoais} != null" th:inline="javascript">
+
+	/*<![CDATA[*/
+
+	$(()=>{
+
+		$('#datepicker-popup-outro').datepicker({
+			format: 'dd/mm/yyyy',
+				language: 'pt-BR',
+				defaultViewDate: { year: 1960, month: 0, day: 1 }
+		});
+
+		$('#datepicker-popup-outro').on('changeDate', function() {
+			console.log($('#datepicker-outro').val());
+			$('#outroNascimento').val($('#datepicker-outro').val());
+		});
+
+		var selector = document.getElementById("outroCelular");
+		var im = new Inputmask("(99) 99999-9999");
+		im.mask(selector);
+
+		updateData();
+		showTableForm();
+	});
+
+	function showTableForm(){
+
+		if($('#outroCpf').val().length != undefined){
+			var tam;
+			tam = $('#outroCpf').val().length;
+			if(tam == 11){
+				console.log("showtable")
+				$('.nav-tabs a:last').tab('show'); 
+			}
+		}
+	}
+
+		function updateData(){
+		if($('#outroNascimento').val() != ''){
+			console.log('outroNascimento foi executado');
+			$('#datepicker-popup-outro').datepicker('update', $('#outroNascimento').val());
+		}
+	}
+	/*]]>*/
+</script>
+
+<script th:if="${outroNovoCpf} != null" th:inline="javascript">
+
+	/*<![CDATA[*/
+
+	$(()=>{
+
+		$('#datepicker-popup-outro-novo').datepicker({
+				format: 'dd/mm/yyyy',
+				language: 'pt-BR',
+				defaultViewDate: { year: 1960, month: 0, day: 1 }
+		});
+
+		$('#datepicker-popup-outro-novo').on('changeDate', function() {
+			console.log($('#datepicker-outro-novo').val());
+			$('#outroNovoNascimento').val($('#datepicker-outro-novo').val());
+		});
+
+		var selector = document.getElementById("outroNovoCelular");
+		var im = new Inputmask("(99) 99999-9999");
+		im.mask(selector);
+
+		updateData();
+		showTableForm();
+	});
+
+	function showTableForm(){
+
+		if($('#outroNovoCpf').val().length != undefined){
+			var tam;
+			tam = $('#outroNovoCpf').val().length;
+			if(tam == 11){
+				console.log("showtable")
+				$('.nav-tabs a:last').tab('show'); 
+			}
+		}
+	}
+
+		function updateData(){
+		if($('#outroNovoNascimento').val() != ''){
+			console.log('outroNovoNascimento foi executado');
+			$('#datepicker-popup-outro-novo').datepicker('update', $('#outroNovoNascimento').val());
+		}
+	}
+	/*]]>*/
+</script>
 
 </body>
 

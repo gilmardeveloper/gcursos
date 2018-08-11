@@ -25,6 +25,10 @@ public class DadosPessoaisService {
 	public List<DadosPessoais> listarTodos(){
 		return repository.listAll();
 	}
+
+	public DadosPessoais buscarPor(String cpf) {
+		return repository.buscarPor(cpf);
+	}
 	
 	
 }

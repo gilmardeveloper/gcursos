@@ -6,18 +6,32 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title th:replace=${title}>ZEUS</title>
-	<!-- plugins:css -->
-	<link rel="stylesheet" th:href="@{~/css/materialdesignicons.min.css}">
-	<link rel="stylesheet" th:href="@{~/css/simple-line-icons.css}">
-	<link rel="stylesheet" th:href="@{~/css/flag-icon.min.css}">
-	<link rel="stylesheet" th:href="@{~/css/perfect-scrollbar.min.css}">
+
+	<link rel="preconnect" th:href="@{~/fonts/materialdesignicons-webfont.woff2?v=2.0.46}">	
+	<link rel="preconnect" th:href="@{~/fonts/Simple-Line-Icons.woff2?v=2.4.0}">
+	
+	<!-- inject:css -->
+	<link rel="preload" as="style" th:href="@{~/css/style.min.css}" onload="this.rel='stylesheet'">
 	<!-- endinject -->
+
+	<!-- plugins:css -->
+	<link rel="preload" as="style" th:href="@{~/css/materialdesignicons.min.css}" onload="this.rel='stylesheet'">
+	<link rel="preload" as="style" th:href="@{~/css/simple-line-icons.css}" onload="this.rel='stylesheet'">
+	<link rel="preload" as="style" th:href="@{~/css/flag-icon.min.css}" onload="this.rel='stylesheet'">
+	<link rel="preload" as="style" th:href="@{~/css/perfect-scrollbar.min.css}" onload="this.rel='stylesheet'">
+	<!-- <link rel="preload" as="style" href="resto.css" onload="this.rel='stylesheet'"> -->
+	<!-- endinject -->
+
+	<link rel="preload" th:href="@{~/fonts/Roboto/Roboto-Bold.ttf}" as="font" type="font/ttf">
+	<link rel="preload" th:href="@{~/fonts/Roboto/Roboto-Regular.ttf}" as="font" type="font/ttf">
+	<link rel="preload" th:href="@{~/fonts/Roboto/Roboto-Light.ttf}" as="font" type="font/ttf">
+	<link rel="preload" th:href="@{~/fonts/Roboto/Roboto-Medium.ttf}" as="font" type="font/ttf">
+
+	
 	<!-- plugin css for this page -->
 	<th:block th:replace="${links}" />
 	<!-- End plugin css for this page -->
-	<!-- inject:css -->
-	<link rel="stylesheet" th:href="@{~/css/style.css}">
-	<!-- endinject -->
+	
 	<link rel="shortcut icon" th:href="@{/images/favicon.png}" />
 </head>
 

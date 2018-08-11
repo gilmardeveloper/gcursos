@@ -30,12 +30,27 @@ public class UsuarioService {
 	}
 	
 	@CacheEvict(value="postCache", allEntries=true)
+	public Usuario atualizarNome(Usuario usuario) {
+		
+		Usuario temp = repository.findOne(usuario.getId());
+		temp.setNome(usuario.getNome());
+		return repository.save(temp);
+	}
+	
+	@CacheEvict(value="postCache", allEntries=true)
 	public Usuario redefinirSenha(Usuario usuario) {
 		
 		Usuario temp = repository.findOne(usuario.getId());
-		usuario.setAutorizacoes(temp.getAutorizacoes());
-		usuario.setHabilitado(temp.isHabilitado());
-		usuario.setSenha(passwordCrypt.encode(usuario.getSenha()));
+		//usuario.setAutorizacoes(temp.getAutorizacoes());
+		//usuario.setHabilitado(temp.isHabilitado());
+		temp.setSenha(passwordCrypt.encode(usuario.getSenha()));
+		
+		return repository.save(temp);
+	}
+	
+	@CacheEvict(value="postCache", allEntries=true)
+	public Usuario redefinirSenha(Usuario usuario, String senha) {
+		usuario.setSenha(passwordCrypt.encode(senha));
 		return repository.save(usuario);
 	}
 	

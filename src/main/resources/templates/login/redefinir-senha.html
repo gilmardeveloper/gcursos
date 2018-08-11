@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
-<head th:replace="fragments/head :: head(~{::title},~{})">
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
 	<title>ZEUS | Redefinir senha</title>
+	<link rel="preconnect" href="https://educationwp.thimpress.com/wp-content/uploads/2015/10/bg_register_now.jpg}">
 </head>
 
 <body>
 	<div class="container-scroller">
 		<div class="container-fluid page-body-wrapper">
 
-
-			<div th:if="${param.logout}"></div>
 
 			<div class="row">
 				<div class="content-wrapper full-page-wrapper d-flex align-items-center auth register-full-bg">
@@ -21,6 +20,8 @@
 									<h4 class="font-weight-light">Altere a sua senha</h4>
 									<form th:action="@{/redefinir-senha}" method="post" class="pt-4">
 										
+										<input type="hidden" name="token" th:value="${token}" />
+
 										<div th:if="${alert != null}">
 											<div th:class="${alert}" role="alert">
 												<i class="mdi mdi-alert-circle"></i>
@@ -34,11 +35,7 @@
 												<span th:text="${session[SPRING_SECURITY_LAST_EXCEPTION].message}"></span>
 											</div>
 										</div>
-
-										<input type="hidden" name="id" th:value="${usuario != null} ? ${usuario.id} : ''"/>
-										<input type="hidden" name="nome" th:value="${usuario != null} ? ${usuario.nome} : ''"/>
-										<input type="hidden" name="email" th:value="${usuario != null} ? ${usuario.email} : ''"/>
-																				
+										
 										<div class="form-group">
 											<label for="senha">Nova senha</label>
 											<input type="password" class="form-control" id="senha" placeholder="Password" name="senha" required="true" />

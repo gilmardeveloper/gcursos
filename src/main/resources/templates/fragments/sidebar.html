@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" >
+
+<span th:fragment="credenciais">
+	
+	<li class="nav-item nav-profile">
+		<div class="nav-link">
+			<div class="profile-image">
+				<img src="http://via.placeholder.com/100x100/f4f4f4/000000" alt="image"/>
+				<span class="online-status online"></span> <!--change class online to offline or busy as needed-->
+			</div>
+			<div class="profile-name">
+				<p class="name">
+					<span th:text="${usuario.nome}"></span>
+				</p>
+				<p class="designation" th:text="${usuario.status}">Administrador</p>
+				<a class="btn btn-info" th:href="@{/logout}">Deslogar</a>
+			</div>
+		</div>
+	</li>
+
+</span>
+

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.CodigoFuncional;
+import com.gilmarcarlos.developer.gcursos.model.dados.complementares.DadosPessoais;
 import com.gilmarcarlos.developer.gcursos.repository.CodigoFuncionalRepository;
 
 @Service
@@ -24,6 +25,14 @@ public class CodigoFuncionalService {
 			
 	public List<CodigoFuncional> listarTodos(){
 		return repository.listAll();
+	}
+
+	public CodigoFuncional buscarPor(String codigoFuncional) {
+		return repository.buscarPor(codigoFuncional);
+	}
+	
+	public CodigoFuncional buscarPor(DadosPessoais dadosPessoais) {
+		return repository.buscarPor(dadosPessoais.getId());
 	}
 	
 	

@@ -1,16 +1,15 @@
-package com.gilmarcarlos.developer.gcursos.model.dados.complementares;
+package com.gilmarcarlos.developer.gcursos.model.type;
 
 import java.io.Serializable;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.transaction.Transactional;
 
 @Entity
-public class TelefoneUsuario implements Serializable{
+public class Sexo implements Serializable{
 
 	/**
 	 * 
@@ -20,36 +19,29 @@ public class TelefoneUsuario implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String numero;
-		
-	@OneToOne
-	private DadosPessoais dadosPessoais;
+	private String nome;
 	
 	public Long getId() {
 		return id;
 	}
-
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	public String getNumero() {
-		return numero;
+	
+	public String getNome() {
+		return nome;
 	}
 
-	public void setNumero(String numero) {
-		this.numero = numero;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
-
-
-	public DadosPessoais getDadosPessoais() {
-		return dadosPessoais;
+	
+	@Transactional
+	public String getDisplay() {
+		return this.nome.toUpperCase();
 	}
-
-	public void setDadosPessoais(DadosPessoais dadosPessoais) {
-		this.dadosPessoais = dadosPessoais;
-	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -66,7 +58,7 @@ public class TelefoneUsuario implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TelefoneUsuario other = (TelefoneUsuario) obj;
+		Sexo other = (Sexo) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -76,4 +68,7 @@ public class TelefoneUsuario implements Serializable{
 	}
 	
 	
+	
+	
+
 }

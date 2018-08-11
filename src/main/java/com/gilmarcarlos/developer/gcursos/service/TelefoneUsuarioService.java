@@ -25,6 +25,10 @@ public class TelefoneUsuarioService {
 	public List<TelefoneUsuario> listarTodos(){
 		return repository.listAll();
 	}
+
+	public TelefoneUsuario buscarPor(String numero) {
+		return repository.buscarPor(numero);
+	}
 	
 	
 }

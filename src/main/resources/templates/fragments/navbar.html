@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" >
+
+<span th:fragment="navbar-logo">
+	<div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
+		<a class="navbar-brand brand-logo" href="#"><span class="text-info">ZEUS</span></a>
+		<a class="navbar-brand brand-logo-mini" href="#"><span class="text-info">ZEUS</span></a>
+	</div>
+</span>
+
+<span th:fragment="navbar-admin-menu">
+	<ul class="navbar-nav">
+          <li class="nav-item dropdown d-none d-lg-flex">
+            <a class="nav-link dropdown-toggle nav-btn" id="actionDropdown" href="#" data-toggle="dropdown">
+              <span class="btn">+ Create new</span>
+            </a>
+            <div class="dropdown-menu navbar-dropdown dropdown-left" aria-labelledby="actionDropdown">
+              <a class="dropdown-item" href="#">
+                <i class="icon-user text-primary"></i>
+                User Account
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">
+                <i class="icon-user-following text-warning"></i>
+                Admin User
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">
+                <i class="icon-docs text-success"></i>
+                Sales report
+              </a>
+            </div>
+          </li>
+        </ul>
+</span>

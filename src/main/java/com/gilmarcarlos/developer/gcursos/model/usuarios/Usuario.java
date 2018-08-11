@@ -16,7 +16,6 @@ import javax.persistence.OneToOne;
 import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.CodigoFuncional;
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.DadosPessoais;
-import com.gilmarcarlos.developer.gcursos.model.dados.complementares.UnidadeTrabalho;
 
 @Entity
 public class Usuario implements Serializable {
@@ -122,7 +121,11 @@ public class Usuario implements Serializable {
 		return autorizacoes.get(0).getNome().split("_")[1];
 	}
 	
-
+	@Transient
+	public Boolean isPerfilCompleto() {
+		return  (this.codigoFuncional != null && this.dadosPessoais != null) ;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
