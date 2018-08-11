@@ -81,7 +81,7 @@ public class RegistroControler {
 	
 
 	@PostMapping(value = { "/solicitar-nova-senha", "/solicitar-nova-senha/" })
-	public String esqueceuSenha(String email, RedirectAttributes redirect) {
+	public String esqueceuSenha(@RequestParam("email") String email, RedirectAttributes redirect) {
 		try {
 			autenticador.registrarRedefinicao(email);
 			redirect.addFlashAttribute("alert", "alert alert-fill-success");
