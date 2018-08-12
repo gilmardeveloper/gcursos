@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+	<title>ZEUS | Informações </title>
+	<link rel="stylesheet" th:href="@{~/css/dataTables.bootstrap4.css}" />
+</head>
+
+<body>
+	<!-- container-scroller -->
+	<div class="container-scroller">
+		
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+		
+		<!-- container-fluid -->
+		<div class="container-fluid page-body-wrapper">
+			<!-- row-offcanvas -->
+			<div class="row row-offcanvas row-offcanvas-right">
+				
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+				
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+				
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+				
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					<!-- row justify-content -->
+					<div class="row justify-content-center">
+						<!-- card table -->
+						<div th:unless="${#lists.isEmpty(atuais)}" class="card">
+				            <div class="card-body" th:with="usuarios=${atuais}">
+				              <h4 class="card-title">Informações</h4>
+				              <div class="row">
+				                <div class="col-12">
+				                  <div class="table-responsive">
+				                    <table id="order-listing-atuais" class="table">
+				                      <thead>
+				                        <tr>
+				                            <th>Nome</th>
+				                            <th>Email</th>
+				                            <th>CPF</th>
+				                            <th>Telefone</th>
+				                            <th>Código funcional</th>
+				                            <th>Cargo</th>
+				                            <th>Unidade de trabalho</th>
+				                            <th> :: </th>
+				                            <th> :: </th>
+				                        </tr>
+				                      </thead>
+				                      <tbody>
+				                        <tr th:each="user : ${usuarios}">
+				                            <td th:text="${user.nome}"></td>
+				                            <td th:text="${user.email}"></td>
+				                            <td th:text="${user.dadosPessoais.cpf} != null ? ${user.dadosPessoais.cpf} : ''"></td>
+				                            <td th:text="${user.dadosPessoais.telefones[0].numero} != null ? ${user.dadosPessoais.telefones[0].numero} : ''"></td>
+				                            <td th:text="${user.codigoFuncional.codigo} != null ? ${user.codigoFuncional.codigo} : ''"></td>
+				                            <td th:text="${user.codigoFuncional.cargo.nome} != null ? ${user.codigoFuncional.cargo.nome} : ''"></td>
+				                            <td th:text="${user.codigoFuncional.unidadeTrabalho.nome} != null ? ${user.codigoFuncional.unidadeTrabalho.nome} : ''"></td>
+				                            <td>
+				                              <label class="badge badge-info">On hold</label>
+				                            </td>
+				                            <td>
+				                              <button class="btn btn-outline-primary">View</button>
+				                            </td>
+				                        </tr>
+				                      </tbody>
+				                    </table>                    
+				                  </div>
+				                </div>
+				              </div>
+				            </div>
+				        </div>
+						<!-- end card table -->
+
+						<!-- card table -->
+						<div th:unless="${#lists.isEmpty(antigos)}" class="card">
+				            <div class="card-body" th:with="usuarios=${antigos}">
+				              <h4 class="card-title">Informações</h4>
+				              <div class="row">
+				                <div class="col-12">
+				                  <div class="table-responsive">
+				                    <table id="order-listing-antigos" class="table">
+				                      <thead>
+				                        <tr>
+				                        	<th>Id</th>
+				                            <th>Nome</th>
+				                            <th>CPF</th>
+				                            <th>Telefone</th>
+				                            <th>Código funcional</th>
+				                            <th>Cargo</th>
+				                            <th>Unidade de trabalho</th>
+				                            <th> :: </th>
+				                            <th> :: </th>
+				                        </tr>
+				                      </thead>
+				                      <tbody>
+				                        <tr th:each="user : ${usuarios}">
+				                        	<td th:text="${user.id}"></td>
+				                            <td th:text="${user.nome}"></td>
+				                            <td th:text="${user.dadosPessoais.cpf} != null ? ${user.dadosPessoais.cpf} : ''"></td>
+				                            <td th:text="${user.dadosPessoais.telefones[0].numero} != null ? ${user.dadosPessoais.telefones[0].numero} : ''"></td>
+				                            <td th:text="${user.codigoFuncional.codigo} != null ? ${user.codigoFuncional.codigo} : ''"></td>
+				                            <td th:text="${user.codigoFuncional.cargo.nome} != null ? ${user.codigoFuncional.cargo.nome} : ''"></td>
+				                            <td th:text="${user.codigoFuncional.unidadeTrabalho.nome} != null ? ${user.codigoFuncional.unidadeTrabalho.nome} : ''"></td>
+				                            <td>
+				                              <label class="badge badge-info">On hold</label>
+				                            </td>
+				                            <td>
+				                              <button class="btn btn-outline-primary">View</button>
+				                            </td>
+				                        </tr>
+				                      </tbody>
+				                    </table>                    
+				                  </div>
+				                </div>
+				              </div>
+				            </div>
+				        </div>
+						<!-- end card table -->
+
+						<!-- card table -->
+						<div th:unless="${#lists.isEmpty(unidades)}" class="card">
+				            <div class="card-body">
+				              <h4 class="card-title">Informações</h4>
+				              <div class="row">
+				                <div class="col-12">
+				                  <div class="table-responsive">
+				                    <table id="order-listing-unidades" class="table">
+				                      <thead>
+				                        <tr>
+				                        	<th>Id</th>
+				                            <th>Nome</th>
+				                            <th>QTD Funcionários</th>
+				                            <th>Telefone</th>
+				                            <th>Email</th>
+				                            <th>Gerente</th>
+				                            <th>Departamento</th>
+				                            <th> :: </th>
+				                            <th> :: </th>
+				                        </tr>
+				                      </thead>
+				                      <tbody>
+				                        <tr th:each="unidade : ${unidades}">
+				                        	<td th:text="${unidade.id}"></td>
+				                            <td th:text="${unidade.nome}"></td>
+				                            <td th:text="${unidade.qtdFuncionarios}"></td>
+				                            <td th:text="${unidade.telefones[0].numero}"></td>
+				                            <td th:text="${unidade.email}"></td>
+				                            <td th:text="${unidade.gerente}"></td>
+				                            <td th:text="${unidade.departamento.nome}"></td>
+				                            <td>
+				                              <label class="badge badge-info">On hold</label>
+				                            </td>
+				                            <td>
+				                              <button class="btn btn-outline-primary">View</button>
+				                            </td>
+				                        </tr>
+				                      </tbody>
+				                    </table>                    
+				                  </div>
+				                </div>
+				              </div>
+				            </div>
+				        </div>
+						<!-- end card table -->
+					</div>
+					<!-- end row justify-content -->		
+				</div>
+				<!-- end content-wrapper -->
+
+<!--footer -->
+<footer class="footer">
+	<div class="container-fluid clearfix">
+		<span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2017 <a href="#">UrbanUI</a>. All rights reserved.</span>
+		<span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
+	</div>
+</footer>
+<!-- end footer -->
+</div>
+<!-- end row-offcanvas -->
+</div>
+<!-- end container-fluid  -->
+
+</div>
+<!-- end container-scroller -->
+
+<span th:replace="fragments/base-script :: base"></span>
+<script th:src="@{~/js/jquery.dataTables.js}"></script>
+<script async="async" th:src="@{~/js/dataTables.bootstrap4.js}"></script> 
+<span th:replace="fragments/base-script :: plugins"></span>
+<!--<script  th:src="@{~/js/datatable-init.js}"></script> -->
+
+<script th:unless="${#lists.isEmpty(atuais)}" th:inline="javascript">
+	/*<![CDATA[*/
+	$(()=>{
+		 $('#order-listing-atuais').DataTable();
+	});
+	/*]]>*/
+</script>
+
+<script th:unless="${#lists.isEmpty(antigos)}" th:inline="javascript">
+	/*<![CDATA[*/
+	$(()=>{
+		 $('#order-listing-antigos').DataTable();
+	});
+	/*]]>*/
+</script>
+
+<script th:unless="${#lists.isEmpty(unidades)}" th:inline="javascript">
+	/*<![CDATA[*/
+	$(()=>{
+		 $('#order-listing-unidades').DataTable();
+	});
+	/*]]>*/
+</script>
+
+
+</body>
+
+</html>

@@ -10,10 +10,10 @@ import com.gilmarcarlos.developer.gcursos.model.dados.complementares.DadosPessoa
 
 public interface DadosPessoaisRepository extends CrudRepository<DadosPessoais, Long> {
 	
-	@Query("select u from DadosPessoais u")
+	@Query("select d from DadosPessoais d join fetch d.telefones")
 	List<DadosPessoais> listAll();
 	
-	@Query("select u from DadosPessoais u where u.cpf = :pcpf")
+	@Query("select d from DadosPessoais d join fetch d.telefones where d.cpf = :pcpf")
 	DadosPessoais buscarPor(@Param("pcpf") String cpf);
 
 }

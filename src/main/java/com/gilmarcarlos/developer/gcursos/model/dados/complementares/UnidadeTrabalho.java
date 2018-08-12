@@ -10,8 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
-
 @Entity
 public class UnidadeTrabalho implements Serializable{
 

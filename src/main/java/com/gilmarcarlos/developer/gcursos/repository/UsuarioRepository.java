@@ -15,6 +15,9 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
 	@Query("select u from Usuario u")
 	List<Usuario> listAll();
 	
+	@Query("select u from Usuario u join fetch u.dadosPessoais d where d.usuario.id = u.id")
+	List<Usuario> listCadastrosCompleto();
+	
 	@Query("select u from Usuario u where u.id = :pid")
 	Usuario findOne(@Param("pid") Long id);
 

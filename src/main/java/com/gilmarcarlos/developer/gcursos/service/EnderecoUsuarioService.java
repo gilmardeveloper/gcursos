@@ -14,14 +14,17 @@ public class EnderecoUsuarioService {
 	@Autowired
 	private EnderecoUsuarioRepository repository;
 	
+
 	public EnderecoUsuario salvar(EnderecoUsuario enderecoUsuario) {
 		return repository.save(enderecoUsuario);
 	}
-		
+	
+
 	public void deletar(Long id) {
 		repository.deleteById(id);
 	}
-			
+	
+
 	public List<EnderecoUsuario> listarTodos(){
 		return repository.listAll();
 	}

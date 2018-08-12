@@ -17,11 +17,11 @@ public class EnderecoUnidadeService {
 	public EnderecoUnidade salvar(EnderecoUnidade enderecoUnidade) {
 		return repository.save(enderecoUnidade);
 	}
-		
+	
 	public void deletar(Long id) {
 		repository.deleteById(id);
 	}
-			
+
 	public List<EnderecoUnidade> listarTodos(){
 		return repository.listAll();
 	}

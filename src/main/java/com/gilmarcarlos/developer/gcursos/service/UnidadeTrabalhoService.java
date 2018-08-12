@@ -14,14 +14,17 @@ public class UnidadeTrabalhoService {
 	@Autowired
 	private UnidadeTrabalhoRepository repository;
 	
+	
 	public UnidadeTrabalho salvar(UnidadeTrabalho unidadeTrabalho) {
 		return repository.save(unidadeTrabalho);
 	}
-		
+	
+	
 	public void deletar(Long id) {
 		repository.deleteById(id);
 	}
-			
+	
+
 	public List<UnidadeTrabalho> listarTodos(){
 		return repository.listAll();
 	}

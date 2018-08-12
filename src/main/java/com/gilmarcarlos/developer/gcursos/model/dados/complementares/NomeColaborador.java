@@ -8,10 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
-import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
-
 @Entity
-public class CodigoFuncional implements Serializable {
+public class NomeColaborador implements Serializable{
 
 	/**
 	 * 
@@ -21,19 +19,13 @@ public class CodigoFuncional implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String codigo;
+	private String nome;
 	
 	@OneToOne
-	private Cargo cargo;
+	private DadosPessoais dadosPessoais;
 	
 	@OneToOne
-	private UnidadeTrabalho unidadeTrabalho;
-	
-	@OneToOne(mappedBy = "codigoFuncional")
-	private NomeColaborador nomeColaborador;
-	
-	@OneToOne
-	private Usuario usuario;
+	private CodigoFuncional codigoFuncional;
 
 	public Long getId() {
 		return id;
@@ -43,36 +35,28 @@ public class CodigoFuncional implements Serializable {
 		this.id = id;
 	}
 
-	public String getCodigo() {
-		return codigo;
+	public String getNome() {
+		return nome;
 	}
 
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
-	public Cargo getCargo() {
-		return cargo;
+	public DadosPessoais getDadosPessoais() {
+		return dadosPessoais;
 	}
 
-	public void setCargo(Cargo cargo) {
-		this.cargo = cargo;
-	}
-
-	public Usuario getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
+	public void setDadosPessoais(DadosPessoais dadosPessoais) {
+		this.dadosPessoais = dadosPessoais;
 	}
 	
-	public UnidadeTrabalho getUnidadeTrabalho() {
-		return unidadeTrabalho;
+	public CodigoFuncional getCodigoFuncional() {
+		return codigoFuncional;
 	}
 
-	public void setUnidadeTrabalho(UnidadeTrabalho unidadeTrabalho) {
-		this.unidadeTrabalho = unidadeTrabalho;
+	public void setCodigoFuncional(CodigoFuncional codigoFuncional) {
+		this.codigoFuncional = codigoFuncional;
 	}
 
 	@Override
@@ -91,7 +75,7 @@ public class CodigoFuncional implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CodigoFuncional other = (CodigoFuncional) obj;
+		NomeColaborador other = (NomeColaborador) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -99,6 +83,7 @@ public class CodigoFuncional implements Serializable {
 			return false;
 		return true;
 	}
+	
 	
 	
 }

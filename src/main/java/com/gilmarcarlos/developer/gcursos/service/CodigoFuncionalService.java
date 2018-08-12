@@ -18,15 +18,16 @@ public class CodigoFuncionalService {
 	public CodigoFuncional salvar(CodigoFuncional codigoFuncional) {
 		return repository.save(codigoFuncional);
 	}
-		
+	
 	public void deletar(Long id) {
 		repository.deleteById(id);
 	}
-			
+	
 	public List<CodigoFuncional> listarTodos(){
 		return repository.listAll();
 	}
 
+	
 	public CodigoFuncional buscarPor(String codigoFuncional) {
 		return repository.buscarPor(codigoFuncional);
 	}

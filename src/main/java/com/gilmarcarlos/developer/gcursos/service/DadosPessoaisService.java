@@ -17,11 +17,11 @@ public class DadosPessoaisService {
 	public DadosPessoais salvar(DadosPessoais cargo) {
 		return repository.save(cargo);
 	}
-		
+	
 	public void deletar(Long id) {
 		repository.deleteById(id);
 	}
-			
+	
 	public List<DadosPessoais> listarTodos(){
 		return repository.listAll();
 	}

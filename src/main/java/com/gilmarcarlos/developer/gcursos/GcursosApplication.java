@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.MessageSource;
@@ -26,6 +27,7 @@ import com.github.benmanes.caffeine.cache.Ticker;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 @SpringBootApplication
+@EnableCaching
 public class GcursosApplication {
 	
 	
