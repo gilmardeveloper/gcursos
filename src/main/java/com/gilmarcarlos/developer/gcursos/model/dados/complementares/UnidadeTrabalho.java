@@ -47,7 +47,7 @@ public class UnidadeTrabalho implements Serializable{
 	}
 
 	public String getGerente() {
-		return gerente;
+		return gerente.toUpperCase();
 	}
 
 	public void setGerente(String gerente) {

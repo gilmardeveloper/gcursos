@@ -21,6 +21,7 @@
 								<h2>Registro</h2>
 								<h4 class="font-weight-light">Faça parte da nossa plataforma de ensino</h4>
 								<form th:action="@{/registrar}" method="post" class="pt-4">
+									
 									<div th:if="${alert != null}">
 										<div th:class="${alert}" role="alert">
 											<i class="mdi mdi-alert-circle"></i>

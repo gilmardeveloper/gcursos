@@ -78,7 +78,7 @@ public class Usuario implements Serializable {
 	}
 
 	public String getNome() {
-		return nome;
+		return nome.toUpperCase();
 	}
 	
 	public void setSenha(String senha) {
