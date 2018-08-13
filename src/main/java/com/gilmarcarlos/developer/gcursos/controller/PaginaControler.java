@@ -77,16 +77,29 @@ public class PaginaControler {
 	@GetMapping("dashboard/")
 	public String painel(Model model) {
 		Usuario usuarioLogado = getUsuario();
+		if(usuarioLogado.isPerfilCompleto()) {
 		model.addAttribute("usuario", usuarioLogado);
-		if (usuarioLogado.isPerfilCompleto()) {
-			return "dashboard/profile";
-		} else {
-			model.addAttribute("unidades", unidadeService.listarTodos());
-			model.addAttribute("cargos", cargoService.listarTodos());
-			model.addAttribute("sexos", sexoService.listarTodos());
-			model.addAttribute("escolaridades", escolaridadeService.listarTodos());
-			return "complete-perfil/complete-cadastro";
+		return "dashboard/profile";
+		}else {
+			return "redirect:/dashboard/complete-cadastro";
 		}
+
+	}
+
+	@GetMapping("dashboard/complete-cadastro")
+	public String completeCadastro(Model model) {
+		Usuario usuarioLogado = getUsuario();
+		if(usuarioLogado.isPerfilCompleto()) {
+			return "redirect:/dashboard/";
+		}
+		
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("unidades", unidadeService.listarTodos());
+		model.addAttribute("cargos", cargoService.listarTodos());
+		model.addAttribute("sexos", sexoService.listarTodos());
+		model.addAttribute("escolaridades", escolaridadeService.listarTodos());
+		return "complete-perfil/complete-cadastro";
+
 	}
 
 	@PostMapping("dashboard/verifica-dados")
@@ -100,7 +113,7 @@ public class PaginaControler {
 		} else {
 			model.addFlashAttribute("novoCpf", cpf);
 		}
-		return "redirect:/dashboard/";
+		return "redirect:/dashboard/complete-cadastro";
 	}
 
 	@PostMapping("dashboard/outros/verifica-dados")
@@ -113,21 +126,21 @@ public class PaginaControler {
 		} else {
 			model.addFlashAttribute("outroNovoCpf", cpf);
 		}
-		return "redirect:/dashboard/";
+		return "redirect:/dashboard/complete-cadastro";
 	}
 
 	@PostMapping("dashboard/confirmar-dados")
 	public String confirmarDados(Usuario usuario, @RequestParam("numero") String numero, RedirectAttributes model) {
 
 		salvarUsuario(usuario, numero);
-		return "redirect:/dashboard/";
+		return "redirect:/dashboard/complete-cadastro";
 	}
 
 	@PostMapping("dashboard/outros/confirmar-dados")
 	public String confirmarOutrosDados(Usuario usuario, @RequestParam("numero") String numero,
 			RedirectAttributes model) {
 		salvarUsuario(usuario, numero);
-		return "redirect:/dashboard/";
+		return "redirect:/dashboard/complete-cadastro";
 	}
 
 	@PostMapping("dashboard/outros/novo/confirmar-dados")
@@ -135,7 +148,7 @@ public class PaginaControler {
 			RedirectAttributes model) {
 
 		salvarUsuario(usuario, numero);
-		return "redirect:/dashboard/";
+		return "redirect:/dashboard/complete-cadastro";
 	}
 
 	@PostMapping("dashboard/novo/confirmar-dados")
@@ -143,10 +156,10 @@ public class PaginaControler {
 
 		salvarUsuario(usuario, numero);
 
-		return "redirect:/dashboard/";
+		return "redirect:/dashboard/complete-cadastro";
 	}
-	
-	//dashboard/redefinir-senha
+
+	// dashboard/redefinir-senha
 
 	private Usuario getUsuario() {
 		autenticado = SecurityContextHolder.getContext().getAuthentication();

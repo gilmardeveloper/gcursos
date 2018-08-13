@@ -9,10 +9,6 @@
 
 	<link rel="preconnect" th:href="@{~/fonts/materialdesignicons-webfont.woff2?v=2.0.46}">	
 	<link rel="preconnect" th:href="@{~/fonts/Simple-Line-Icons.woff2?v=2.4.0}">
-	
-	<!-- inject:css -->
-	<link rel="stylesheet" th:href="@{~/css/style.min.css}">
-	<!-- endinject -->
 
 	<!-- plugins:css -->
 	<link rel="preload" as="style" th:href="@{~/css/materialdesignicons.min.css}" onload="this.rel='stylesheet'">
@@ -31,6 +27,10 @@
 	<!-- plugin css for this page -->
 	<th:block th:replace="${links}" />
 	<!-- End plugin css for this page -->
+
+	<!-- inject:css -->
+	<link rel="stylesheet" th:href="@{~/css/style.min.css}">
+	<!-- endinject -->
 	
 	<link rel="shortcut icon" th:href="@{/images/favicon.png}" />
 </head>

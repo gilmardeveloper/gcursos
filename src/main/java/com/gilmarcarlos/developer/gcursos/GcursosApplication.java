@@ -42,8 +42,8 @@ public class GcursosApplication {
 			.addResourceLocations("/resources/")
 			.setCachePeriod(31556926);
 	}*/
-
 	
+		
 	@Bean
 	public LocaleResolver localeResolver() {
 		CookieLocaleResolver cookieLocaleResolver = new CookieLocaleResolver();
