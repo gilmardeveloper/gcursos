@@ -1,436 +1,609 @@
 
 <!DOCTYPE html>
-<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
 <head th:replace="fragments/head :: head(~{::title},~{::link})">
-	<title>ZEUS | Informações </title>
-	<link rel="stylesheet" th:href="@{~/css/dataTables.bootstrap4.css}" />
+<title>ZEUS | Informações</title>
+<link rel="stylesheet" th:href="@{~/css/dataTables.bootstrap4.css}" />
 </head>
 
 <body>
 	<!-- container-scroller -->
 	<div class="container-scroller">
-		
+
 		<!-- navbar -->
 		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
 		<!-- end navbar -->
-		
+
 		<!-- container-fluid -->
 		<div class="container-fluid page-body-wrapper">
 			<!-- row-offcanvas -->
 			<div class="row row-offcanvas row-offcanvas-right">
-				
+
 				<!-- theme-setting-wrapper -->
 				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
 				<!-- end  theme-setting-wrapper -->
-				
+
 				<!-- right-sidebar -->
 				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
 				<!-- end right-sidebar -->
-				
+
 				<!-- sidebar sidebar-offcanvas -->
 				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
 				<!-- end sidebar sidebar-offcanvas -->
-				
+
 				<!-- content-wrapper -->
 				<div class="content-wrapper">
 					<!-- row justify-content -->
 					<div class="row justify-content-center">
+
 						<!-- card table -->
 						<div th:unless="${#lists.isEmpty(atuais)}" class="card">
-							 <div class="card-header">
-				            	<button class="btn btn-outline-success">Adicionar novo</button>
-				            </div>
-				            <div class="card-body" th:with="usuarios=${atuais}">
-				              <h4 class="card-title">Usuários atuais</h4>
-				              <div class="row">
-				                <div class="col-12">
-				                  <div class="table-responsive">
-				                    <table id="order-listing-atuais" class="table">
-				                      <thead>
-				                        <tr>
-				                            <th>Nome</th>
-				                            <th>CPF</th>
-				                            <th>email</th>
-				                            <th> :: </th>
-				                            <th> :: </th>
-				                        </tr>
-				                      </thead>
-				                      <tbody>
-				                        <tr th:each="user : ${usuarios}">
-				                            <td th:text="${user.nome}"></td>
-				                            <td th:text="${user.dadosPessoais.cpf}"></td>
-				                            <td th:text="${user.email}"></td>
-				                             <td>
-				                              <button class="btn btn-outline-primary pt-1 pb-1"><i class="icon-pencil"></i></button>
-				                            </td>
-				                            <td>
-				                              <button class="btn btn-outline-danger pt-1 pb-1"><i class="icon-close"></i></button>
-				                            </td>
-				                        </tr>
-				                      </tbody>
-				                    </table>                    
-				                  </div>
-				                </div>
-				              </div>
-				            </div>
-				        </div>
+							<div class="card-header">
+								<button class="btn btn-outline-success">Adicionar novo</button>
+							</div>
+							<div class="card-body" th:with="usuarios=${atuais}">
+								<h4 class="card-title">Usuários atuais</h4>
+								<div class="row">
+									<div class="col-12">
+										<div class="table-responsive">
+											<table id="order-listing-atuais" class="table">
+												<thead>
+													<tr>
+														<th>Nome</th>
+														<th>CPF</th>
+														<th>email</th>
+														<th>::</th>
+														<th>::</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="user : ${usuarios}">
+														<td th:text="${user.nome}"></td>
+														<td th:text="${user.dadosPessoais.cpf}"></td>
+														<td th:text="${user.email}"></td>
+														<td>
+															<button class="btn btn-outline-primary pt-1 pb-1">
+																<i class="icon-pencil"></i>
+															</button>
+														</td>
+														<td>
+															<button class="btn btn-outline-danger pt-1 pb-1">
+																<i class="icon-close"></i>
+															</button>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 						<!-- end card table -->
 
 						<!-- card table -->
 						<div th:unless="${#lists.isEmpty(antigos)}" class="card">
-							 <div class="card-header">
-				            	<button class="btn btn-outline-success">Adicionar novo</button>
-				            </div>
-				            <div class="card-body" th:with="usuarios=${antigos}">
-				              <h4 class="card-title">Usuários antigos</h4>
-				              <div class="row">
-				                <div class="col-12">
-				                  <div class="table-responsive">
-				                    <table id="order-listing-antigos" class="table">
-				                      <thead>
-				                        <tr>
-				                            <th>Nome</th>
-				                            <th>CPF</th>
-				                            <th>Telefone</th>
-				                            <th> :: </th>
-				                            <th> :: </th>
-				                        </tr>
-				                      </thead>
-				                      <tbody>
-				                        <tr th:each="user : ${usuarios}">
-				                            <td th:text="${user.nome}"></td>
-				                            <td th:text="${user.dadosPessoais.cpf}"></td>
-				                            <td th:text="${user.dadosPessoais.telefones[0].numero} != null ? ${user.dadosPessoais.telefones[0].numero} : 'NÃO INFORMADO'"></td>
-				                             <td>
-				                              <button class="btn btn-outline-primary pt-1 pb-1"><i class="icon-pencil"></i></button>
-				                            </td>
-				                            <td>
-				                              <button class="btn btn-outline-danger pt-1 pb-1"><i class="icon-close"></i></button>
-				                            </td>
-				                        </tr>
-				                      </tbody>
-				                    </table>                    
-				                  </div>
-				                </div>
-				              </div>
-				            </div>
-				        </div>
+							<div class="card-header">
+								<button class="btn btn-outline-success">Adicionar novo</button>
+							</div>
+							<div class="card-body" th:with="usuarios=${antigos}">
+								<h4 class="card-title">Usuários antigos</h4>
+								<div class="row">
+									<div class="col-12">
+										<div class="table-responsive">
+											<table id="order-listing-antigos" class="table">
+												<thead>
+													<tr>
+														<th>Nome</th>
+														<th>CPF</th>
+														<th>Telefone</th>
+														<th>::</th>
+														<th>::</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="user : ${usuarios}">
+														<td th:text="${user.nome}"></td>
+														<td th:text="${user.dadosPessoais.cpf}"></td>
+														<td
+															th:text="${user.dadosPessoais.telefones[0].numero} != null ? ${user.dadosPessoais.telefones[0].numero} : 'NÃO INFORMADO'"></td>
+														<td>
+															<button class="btn btn-outline-primary pt-1 pb-1">
+																<i class="icon-pencil"></i>
+															</button>
+														</td>
+														<td>
+															<button class="btn btn-outline-danger pt-1 pb-1">
+																<i class="icon-close"></i>
+															</button>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 						<!-- end card table -->
+
+						<!-- modal unidades -->
+						<div class="col-lg-12" th:unless="${#lists.isEmpty(unidades)}">
+							
+							<!-- Modal unidades-->
+							<div th:each="unidade : ${unidades}" class="modal fade col-lg-12"  th:id="'modal-' + ${unidade.id}" tabindex="-1"
+								role="dialog" th:attr="aria-labelledby='modalLabel-' + ${unidade.id}"
+								aria-hidden="true" >
+								<div class="modal-dialog modal-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" th:id="'modalLabel-' + ${unidade.id}" th:text="${unidade.nome}">Modal
+												title</h5>
+											<button type="button" class="close" data-dismiss="modal"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<form th:id="'formulario-unidade-' + ${unidade.id}" th:action="@{/dashboard/admin/unidades/salvar}" method="post">
+												<input type="hidden" name="id"
+													th:value="${unidade != null} ? ${unidade.id} : ''">
+												<input type="hidden" name="endereco"
+													th:value="${unidade != null} ? ${unidade.endereco.id} : ''">
+
+												<div class="form-row">
+													<div class="form-group col-lg-6">
+														<label for="nome">Nome</label> <input type="text"
+															class="form-control" id="nome"
+															placeholder="nome da unidade" name="nome"
+															th:value="${unidade != null} ? ${unidade.nome} : ''"
+															required="true" />
+													</div>
+
+													<div class="form-group col-lg-6">
+														<label for="gerente">Gerente</label> <input type="text"
+															class="form-control" id="gerente"
+															placeholder="nome do gerente" name="gerente"
+															th:value="${unidade != null} ? ${unidade.gerente} : ''"
+															required="true" />
+													</div>
+
+													<div class="form-group col-lg-4">
+														<label for="email">Email</label> <input type="email"
+															class="form-control" id="nome"
+															placeholder="email da unidade" name="email"
+															th:value="${unidade != null} ? ${unidade.email} : ''"
+															required="true" />
+													</div>
+
+													<div class="form-group col-lg-3">
+														<label for="qtdFuncionarios">Quantidade de
+															funcionários</label> <input type="number" class="form-control"
+															id="qtdFuncionarios" placeholder="apenas números"
+															name="qtdFuncionarios"
+															th:value="${unidade != null} ? ${unidade.qtdFuncionarios} : ''"
+															min="0" required="true" />
+													</div>
+
+													<div class="form-group col-lg-5" th:if="${unidade != null}">
+														<label for="departamento">Departamento</label> <select
+															type="text" class="form-control" name="departamento">
+															<option th:if="${deps != null}"
+																th:each="dep : ${deps}"
+																th:text="${dep.nome}"
+																th:value="${dep.id}"
+																th:selected="${dep.id == unidade.departamento.id}">
+															</option>
+														</select>
+													</div>
+
+													<div class="form-group col-lg-2">
+														<label for="endereco-cep">CEP</label> <input type="text"
+															class="form-control" id="endereco-cep"
+															placeholder="informe o cep" name="endereco.cep"
+															th:value="${unidade != null} ? ${unidade.endereco.cep} : ''" />
+													</div>
+
+													<div class="form-group col-lg-10">
+														<label for="endereco-endereco">Endereço</label> <input
+															type="text" class="form-control" id="endereco-endereco"
+															placeholder="informe o telefone" name="endereco.endereco"
+															th:value="${unidade != null} ? ${unidade.endereco.endereco} : ''" />
+													</div>
+
+													<div class="form-group col-lg-4">
+														<label for="endereco-numero">Número</label> <input
+															type="text" class="form-control" id="endereco-numero"
+															placeholder="informe o número" name="endereco.numero"
+															th:value="${unidade != null} ? ${unidade.endereco.numero} : ''" />
+													</div>
+
+													<div class="form-group col-lg-8">
+														<label for="endereco-bairro">Bairro</label> <input
+															type="text" class="form-control" id="endereco-bairro"
+															placeholder="informe o bairro" name="endereco.bairro"
+															th:value="${unidade != null} ? ${unidade.endereco.bairro} : ''" />
+													</div>
+
+													<div class="form-group col-lg-6">
+														<label for="endereco-cidade">Cidade</label> <input
+															type="text" class="form-control" id="endereco-cidade"
+															placeholder="informe o bairro" name="endereco.cidade"
+															th:value="${unidade != null} ? ${unidade.endereco.cidade} : ''" />
+													</div>
+
+													<div class="form-group col-lg-6">
+														<label for="endereco-uf">Estado</label> <input type="text"
+															class="form-control" id="endereco-uf"
+															placeholder="apeans a sigla do estado, Ex: SP"
+															name="endereco.uf"
+															th:value="${unidade != null} ? ${unidade.endereco.uf} : ''"
+															maxlength="2" />
+													</div>
+												</div>
+											</form>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-danger"
+												data-dismiss="modal">Cancelar</button>
+											<button type="submit" th:attr="form='formulario-unidade-' + ${unidade.id}" value="submit" class="btn btn-success">Salvar</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Modal telefones unidades-->
+							<div th:each="unidade : ${unidades}" class="modal fade col-lg-12"  th:id="'modalTelefone-' + ${unidade.id}" tabindex="-1"
+								role="dialog" th:attr="aria-labelledby='modalLabelTelefone-' + ${unidade.id}"
+								aria-hidden="true" >
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" th:id="'modalLabelTelefone-' + ${unidade.id}" th:text="${unidade.nome}">Modal
+												title</h5>
+											<button type="button" class="close" data-dismiss="modal"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<form method="post" th:action="@{/dashboard/admin/unidades/telefones/salvar}" th:each="telefone : ${unidade.telefones}">
+												<input type="hidden" name="id"
+													th:value="${unidade != null} ? ${telefone.id} : ''">
+												<input type="hidden" name="unidadeTrabalho"
+													th:value="${unidade != null} ? ${unidade.id} : ''">	
+
+												<div class="form-row">
+													<div class="form-group col-lg-4">
+														<label for="nome">Número</label> <input type="text"
+															class="form-control telefoneUnidade" id="telefoneUnidade"
+															placeholder="adicione novo número" name="numero"
+															th:value="${unidade != null} ? ${telefone.numero} : ''"
+															required="true" />
+													</div>
+
+													<div class="form-group col-lg-4">
+														<label for="gerente">Setor</label> <input type="text"
+															class="form-control" id="gerente"
+															placeholder="nome do setor" name="setor"
+															th:value="${unidade != null} ? ${telefone.setor} : ''"
+															required="true" />
+													</div>
+													<div class="row align-items-end">										<div class="form-group col-lg-4">
+															<button type="submit" class="btn btn-success">Salvar</button>
+														</div>
+													</div>
+												</div>
+											</form>
+											<form th:action="@{/dashboard/admin/unidades/telefones/salvar}" method="post">
+												<input type="hidden" name="unidadeTrabalho"
+													th:value="${unidade != null} ? ${unidade.id} : ''">	
+
+												<div class="form-row">
+													<div class="form-group col-lg-4">
+														<label for="nome">Número</label> <input type="text"
+															class="form-control telefoneUnidade" id="telefoneUnidadeNovo"
+															placeholder="adicione novo número" name="numero"
+															required="true" />
+													</div>
+
+													<div class="form-group col-lg-4">
+														<label for="gerente">Setor</label> <input type="text"
+															class="form-control" id="setor"
+															placeholder="nome do setor" name="setor"
+															required="true" />
+													</div>
+													<div class="row align-items-end">										<div class="form-group col-lg-4">
+															<button type="submit" class="btn btn-success">+ Novo</button>
+														</div>
+													</div>
+												</div>
+											</form>
+										</div>
+										<div class="modal-footer">
+													<form method="post" th:action="@{/dashboard/admin/unidades/telefones/excluir}">
+														<input type="hidden" name="unidadeTrabalho"
+															th:value="${unidade != null} ? ${unidade.id} : ''">	
+														<div class="row justify-content-start">
+															<div class="form-group col-lg-8">
+																<select name="id" class="form-control">
+																	<option th:each="telefone : ${unidade.telefones}" 
+																					th:text="${telefone.numero}" 
+																					th:value="${telefone.id}">
+																	</option>
+																</select>
+															</div>
+															<div class="form-group col-lg-4">
+																<button type="submit" class="btn btn-warning">Excluir</button>
+															</div>
+														</div>
+
+													</form>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+						<!-- end modal unidades -->
 
 						<!-- card table -->
 						<div th:unless="${#lists.isEmpty(unidades)}" class="card">
-				            <div class="card-header">
-				            	<a class="btn btn-outline-success" th:href="@{/dashboard/admin/unidades/novo}">Adicionar novo</a>
-				            	<div th:if="${alert != null}">
-										<div th:class="${alert}" role="alert">
-											<i class="mdi mdi-alert-circle"></i>
-											<span th:text="${message}"></span>
-											<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-											    <span aria-hidden="true">&times;</span>
-											</button>
-										</div>
+							<div class="card-header">
+								<a class="btn btn-outline-success"
+									th:href="@{/dashboard/admin/unidades/novo}">Adicionar novo</a>
+								<div th:if="${alert != null}">
+									<div th:class="${alert}" role="alert">
+										<i class="mdi mdi-alert-circle"></i> <span
+											th:text="${message}"></span>
+										<button type="button" class="close" data-dismiss="alert"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
 								</div>
-				            </div>
-				            <div class="card-body">
-				              <h4 class="card-title">Unidades</h4>
-				              <div class="row">
+							</div>
+							<div class="card-body">
+								<h4 class="card-title">Unidades</h4>
+								<div class="row">
 
-				              	<div class="col-lg-12" th:each="unidade : ${unidades}"> 	
-					               	<div class="collapse" th:id="'endereco-' + ${unidade.id}">
-										<div class="card card-body">
-											<ul class="list-group" th:if="${unidade.endereco != null}">
-												<li class="list-group-item active">
-												    <div class="row justify-content-between">
-													    <div class="col-lg-4 col-xs-12">
-												            <span th:text="${unidade.nome}"></span>
-													    </div>
-													    <div class="col-lg-3 col-xs-8">
-													        <span th:text="${unidade.departamento.nome}"></span>
-													    </div>
-													    <div class="col-lg-1 col-xs-2">
-													        <span th:text="${unidade.qtdFuncionarios}"></span>
-													    </div>
-													   	<div class="col-lg-4 col-xs-12"> 
-														   	<div class="row justify-content-center">
-															   	<div class="col-lg-6 col-xs-12">
-															      <a class="text-white" href="#">Alterar endereço</a>
-															    </div>
-															    <div class="col-lg-6 col-xs-12">
-															    	<a class="text-white" data-toggle="collapse" th:href="'#endereco-' + ${unidade.id}" role="button" aria-expanded="false" aria-controls="collapse-endereco">Fechar janela</a>
-																</div>
-															</div>
-														</div>
-													</div>
-												</li>
-												<li class="list-group-item">Rua: <span th:text="${unidade.endereco.endereco}"></span></li>
-												<li class="list-group-item">Número: <span th:text="${unidade.endereco.numero}"></span></li>
-												<li class="list-group-item">Bairro: <span th:text="${unidade.endereco.bairro}"></span></li>
-												<li class="list-group-item">Cidade: <span th:text="${unidade.endereco.cidade}"></span></li>
-												<li class="list-group-item">Estado: <span th:text="${unidade.endereco.uf}"></span></li>
-												<li class="list-group-item">CEP: <span th:text="${unidade.endereco.cep}"></span></li>
-											</ul>
-											<p th:if="${unidade.endereco == null}">NÃO INFORMADO</p>
+									<div class="col-12">
+										<div class="table-responsive">
+											<table id="order-listing-unidades" class="table">
+												<thead>
+													<tr>
+														<th>Nome</th>
+														<th>email</th>
+														<th>Telefones</th>
+														<th>::</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="unidade : ${unidades}">
+														<td>
+															
+															<button type="button" class="btn btn-outline-secondary pt-1 pb-1 border-0" data-toggle="modal" th:attr="data-target='#modal-' + ${unidade.id}" th:text="${unidade.nome}"></button>
+
+														</td>
+														<td th:text="${unidade.email}"></td>
+														<td>
+
+															<button type="button" class="btn btn-outline-secondary pt-1 pb-1 border-0" data-toggle="modal" th:attr="data-target='#modalTelefone-' + ${unidade.id}" th:text="${unidade.telefones[0].numero}"></button>
+
+														</td>
+														
+														<td><a class="btn btn-outline-danger pt-1 pb-1"
+															th:href="@{/dashboard/admin/unidades/deletar/{id}(id=${unidade.id})}"><i
+																class="icon-close"></i></a></td>
+													</tr>
+												</tbody>
+											</table>
 										</div>
 									</div>
-									<div class="collapse" th:id="'contato-' + ${unidade.id}">
-									    <div class="card card-body">
-									    	<ul class="list-group" th:unless="${#lists.isEmpty(unidade.telefones)}">    <li class="list-group-item active">
-												    <div class="row justify-content-between">
-													    <div class="col-lg-8 col-xs-12">
-													    	<span th:text="${unidade.nome}"></span>
-														</div>
-														<div class="col-lg-4 col-xs-12"> 
-														   	<div class="row justify-content-center">
-															   	<div class="col-lg-6 col-xs-12">
-															   		<a class="text-white" href="#">+ Novo</a>
-																</div>
-																<div class="col-lg-6 col-xs-12">
-																    <a class="text-white" data-toggle="collapse" th:href="'#contato-' + ${unidade.id}" role="button" aria-expanded="false" aria-controls="collapse-endereco">Fechar janela</a>
-																</div>
-															</div>
-														</div>
-													</div>
-												</li>
-												<li class="list-group-item" th:each="telefone : ${unidade.telefones}">
-												    <div class="row justify-content-between">
-													    <div class="col-lg-4 col-xs-12">Número:
-													    	<span th:text="${telefone.numero}"></span>
-														</div>
-														<div class="col-lg-4 col-xs-12">Setor:
-														    <span th:text="${telefone.setor}"></span>
-														</div>
-														<div class="col-lg-4 col-xs-12"> 
-														  	<div class="row justify-content-center">
-															   	<div class="col-6">
-															       <a class="btn btn-outline-primary pt-1 pb-1" th:href="@{/dashboard/admin/telefones/alterar/{id}(id=${telefone.id})}"><i class="icon-pencil"></i></a>
-															    </div>
-															    <div class="col-6">
-															    	<a class="btn btn-outline-danger pt-1 pb-1" th:href="@{/dashboard/admin/telefones/deletar/{id}(id=${telefone.id})}"><i class="icon-close"></i></a>
-																</div>
-															</div>
-														</div>
-													</div>
-												</li>
-											</ul>
-											<p th:if="${#lists.isEmpty(unidade.telefones)}">NÃO INFORMADO</p>
-										</div>
-									</div>
-							   	</div>	
-
-
-				                <div class="col-12">
-				                  <div class="table-responsive">
-				                    <table id="order-listing-unidades" class="table">
-				                      <thead>
-				                        <tr>
-				                            <th>Nome</th>
-				                            <th>Gerente</th>
-				                            <th>Email</th>
-				                            <th>Telefones</th>
-				                            <th>End/Dep/Func</th>
-				                            <th> :: </th>
-				                            <th> :: </th>
-				                        </tr>
-				                      </thead>
-				                      <tbody>
-				                        <tr th:each="unidade : ${unidades}">
-				                            <td th:text="${unidade.nome}"></td>
-				                            <td th:text="${unidade.gerente}"></td>
-				                            <td th:text="${unidade.email}"></td>
-				                            <td>
-				                            	
-				                            	<p>
-												  <a class="btn btn-primary" data-toggle="collapse" th:href="'#contato-' + ${unidade.id}" role="button" aria-expanded="false" aria-controls="collapse-contatos">
-												    <span th:text="${#lists.isEmpty(unidade.telefones)} ? 'NÃO INFORMADO' : ${unidade.telefones[0].numero}"></span>
-												  </a>
-												</p>
-												
-
-				                            </td>
-				                            <td>
-				                            	
-				                            	<p>
-												  <a class="btn btn-primary" data-toggle="collapse" th:href="'#endereco-' + ${unidade.id}" role="button" aria-expanded="false" aria-controls="collapse-endereco">
-												    ver
-												  </a>
-												</p>
-
-				                            </td>
-				                            <td>
-				                              <a class="btn btn-outline-primary pt-1 pb-1" th:href="@{/dashboard/admin/unidades/alterar/{id}(id=${unidade.id})}"><i class="icon-pencil"></i></button>
-				                            </td>
-				                            <td>
-				                              <a class="btn btn-outline-danger pt-1 pb-1" th:href="@{/dashboard/admin/unidades/deletar/{id}(id=${unidade.id})}"><i class="icon-close"></i></a>
-				                            </td>
-				                           
-				                        </tr>
-				                      </tbody>
-				                    </table>                    
-				                  </div>
-				                </div>
-				              </div>
-				            </div>
-				        </div>
+								</div>
+							</div>
+						</div>
 						<!-- end card table -->
 
 						<!-- card table -->
 						<div th:unless="${#lists.isEmpty(departamentos)}" class="card">
-							 <div class="card-header">
-				            	<a class="btn btn-outline-success" th:href="@{/dashboard/admin/departamentos/novo}">Adicionar novo</a>
-				            	<div th:if="${alert != null}">
-										<div th:class="${alert}" role="alert">
-											<i class="mdi mdi-alert-circle"></i>
-											<span th:text="${message}"></span>
-											<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-											    <span aria-hidden="true">&times;</span>
-											</button>
-										</div>
+							<div class="card-header">
+								<a class="btn btn-outline-success"
+									th:href="@{/dashboard/admin/departamentos/novo}">Adicionar
+									novo</a>
+								<div th:if="${alert != null}">
+									<div th:class="${alert}" role="alert">
+										<i class="mdi mdi-alert-circle"></i> <span
+											th:text="${message}"></span>
+										<button type="button" class="close" data-dismiss="alert"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
 								</div>
-				            </div>
-				            <div class="card-body">
-				              <h4 class="card-title">Departamentos</h4>
-				              <div class="row">
-				                <div class="col-12">
-				                  <div class="table-responsive">
-				                    <table id="order-listing-departamentos" class="table">
-				                      <thead>
-				                        <tr>
-				                            <th>Nome</th>
-				                            <th>Identidade</th>
-				                            <th> :: </th>
-				                            <th> :: </th>
-				                        </tr>
-				                      </thead>
-				                      <tbody>
-				                        <tr th:each="departamento : ${departamentos}">
-				                            <td th:text="${departamento.nome}"></td>
-				                            <td th:text="${departamento.identidade}"></td>
-				                            <td>
-				                              <a class="btn btn-outline-primary pt-1 pb-1" th:href="@{/dashboard/admin/departamentos/alterar/{id}(id=${departamento.id})}"><i class="icon-pencil"></i></a>
-				                            </td>
-				                            <td>
-				                              <a class="btn btn-outline-danger pt-1 pb-1" th:href="@{/dashboard/admin/departamentos/deletar/{id}(id=${departamento.id})}"><i class="icon-close"></i></a>
-				                            </td>
-				                        </tr>
-				                      </tbody>
-				                    </table>                    
-				                  </div>
-				                </div>
-				              </div>
-				            </div>
-				        </div>
+							</div>
+							<div class="card-body">
+								<h4 class="card-title">Departamentos</h4>
+								<div class="row">
+									<div class="col-12">
+										<div class="table-responsive">
+											<table id="order-listing-departamentos" class="table">
+												<thead>
+													<tr>
+														<th>Nome</th>
+														<th>Identidade</th>
+														<th>::</th>
+														<th>::</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="departamento : ${departamentos}">
+														<td th:text="${departamento.nome}"></td>
+														<td th:text="${departamento.identidade}"></td>
+														<td><a class="btn btn-outline-primary pt-1 pb-1"
+															th:href="@{/dashboard/admin/departamentos/alterar/{id}(id=${departamento.id})}"><i
+																class="icon-pencil"></i></a></td>
+														<td><a class="btn btn-outline-danger pt-1 pb-1"
+															th:href="@{/dashboard/admin/departamentos/deletar/{id}(id=${departamento.id})}"><i
+																class="icon-close"></i></a></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 						<!-- end card table -->
 
 
 						<div th:unless="${#lists.isEmpty(cargos)}" class="card">
-							 <div class="card-header">
-				            	<a class="btn btn-outline-success" th:href="@{/dashboard/admin/cargos/novo}">Adicionar novo</a>
-				            	<div th:if="${alert != null}">
-										<div th:class="${alert}" role="alert">
-											<i class="mdi mdi-alert-circle"></i>
-											<span th:text="${message}"></span>
-											<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-											    <span aria-hidden="true">&times;</span>
-											</button>
-										</div>
+							<div class="card-header">
+								<a class="btn btn-outline-success"
+									th:href="@{/dashboard/admin/cargos/novo}">Adicionar novo</a>
+								<div th:if="${alert != null}">
+									<div th:class="${alert}" role="alert">
+										<i class="mdi mdi-alert-circle"></i> <span
+											th:text="${message}"></span>
+										<button type="button" class="close" data-dismiss="alert"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
 								</div>
-				            </div>
-				            <div class="card-body">
-				              <h4 class="card-title">Cargos</h4>
-				              <div class="row">
-				                <div class="col-12">
-				                  <div class="table-responsive">
-				                    <table id="order-listing-cargos" class="table">
-				                      <thead>
-				                        <tr>
-				                            <th>Nome</th>
-				                            <th> :: </th>
-				                            <th> :: </th>
-				                        </tr>
-				                      </thead>
-				                      <tbody>
-				                        <tr th:each="cargo : ${cargos}">
-				                            <td th:text="${cargo.nome}"></td>
-				                             <td>
-				                              <a class="btn btn-outline-primary pt-1 pb-1" th:href="@{/dashboard/admin/cargos/alterar/{id}(id=${cargo.id})}"><i class="icon-pencil"></i></a>
-				                            </td>
-				                            <td>
-				                              <a class="btn btn-outline-danger pt-1 pb-1" th:href="@{/dashboard/admin/cargos/deletar/{id}(id=${cargo.id})}"><i class="icon-close"></i></a>
-				                            </td>
-				                        </tr>
-				                      </tbody>
-				                    </table>                    
-				                  </div>
-				                </div>
-				              </div>
-				            </div>
-				        </div>
+							</div>
+							<div class="card-body">
+								<h4 class="card-title">Cargos</h4>
+								<div class="row">
+									<div class="col-12">
+										<div class="table-responsive">
+											<table id="order-listing-cargos" class="table">
+												<thead>
+													<tr>
+														<th>Nome</th>
+														<th>::</th>
+														<th>::</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="cargo : ${cargos}">
+														<td th:text="${cargo.nome}"></td>
+														<td><a class="btn btn-outline-primary pt-1 pb-1"
+															th:href="@{/dashboard/admin/cargos/alterar/{id}(id=${cargo.id})}"><i
+																class="icon-pencil"></i></a></td>
+														<td><a class="btn btn-outline-danger pt-1 pb-1"
+															th:href="@{/dashboard/admin/cargos/deletar/{id}(id=${cargo.id})}"><i
+																class="icon-close"></i></a></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 						<!-- end card table -->
 
 					</div>
-					<!-- end row justify-content -->		
+					<!-- end row justify-content -->
 				</div>
 				<!-- end content-wrapper -->
 
-<!--footer -->
-<footer class="footer">
-	<div class="container-fluid clearfix">
-		<span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2017 <a href="#">UrbanUI</a>. All rights reserved.</span>
-		<span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
+				<!--footer -->
+				<footer class="footer">
+					<div class="container-fluid clearfix">
+						<span
+							class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+							© 2017 <a href="#">UrbanUI</a>. All rights reserved.
+						</span> <span
+							class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted
+							& made with <i class="mdi mdi-heart text-danger"></i>
+						</span>
+					</div>
+				</footer>
+				<!-- end footer -->
+			</div>
+			<!-- end row-offcanvas -->
+		</div>
+		<!-- end container-fluid  -->
+
 	</div>
-</footer>
-<!-- end footer -->
-</div>
-<!-- end row-offcanvas -->
-</div>
-<!-- end container-fluid  -->
+	<!-- end container-scroller -->
 
-</div>
-<!-- end container-scroller -->
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/jquery.dataTables.js}"></script>
+	<script async="async" th:src="@{~/js/dataTables.bootstrap4.js}"></script>
+	<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script> 
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<!--<script  th:src="@{~/js/datatable-init.js}"></script> -->
 
-<span th:replace="fragments/base-script :: base"></span>
-<script th:src="@{~/js/jquery.dataTables.js}"></script>
-<script async="async" th:src="@{~/js/dataTables.bootstrap4.js}"></script> 
-<span th:replace="fragments/base-script :: plugins"></span>
-<!--<script  th:src="@{~/js/datatable-init.js}"></script> -->
-
-<script th:unless="${#lists.isEmpty(atuais)}" th:inline="javascript">
+	<script th:unless="${#lists.isEmpty(atuais)}" th:inline="javascript">
 	/*<![CDATA[*/
 	$(()=>{
-		 $('#order-listing-atuais').DataTable();
+		$('#order-listing-atuais').DataTable();
 	});
 	/*]]>*/
 </script>
 
-<script th:unless="${#lists.isEmpty(antigos)}" th:inline="javascript">
+	<script th:unless="${#lists.isEmpty(antigos)}" th:inline="javascript">
 	/*<![CDATA[*/
 	$(()=>{
-		 $('#order-listing-antigos').DataTable();
+		$('#order-listing-antigos').DataTable();
 	});
 	/*]]>*/
 </script>
 
-<script th:unless="${#lists.isEmpty(unidades)}" th:inline="javascript">
+	<script th:unless="${#lists.isEmpty(unidades)}" th:inline="javascript">
 	/*<![CDATA[*/
 	$(()=>{
-		 $('#order-listing-unidades').DataTable();
+		$('#order-listing-unidades').DataTable();
+		$(".telefoneUnidade").inputmask("(99) 9999-9999"); 
+
+		$("#endereco-cep").blur(() => findCep($("#endereco-cep").val()));
+
+	});
+
+	function findCep(cep) {
+
+	    $.getJSON("//viacep.com.br/ws/" + cep + "/json/?callback=?", function(dados) {
+
+	        if (!("erro" in dados)) {
+	            loadAddress(dados);
+	        }
+
+	    },{passive: true});
+
+	};
+
+	function loadAddress(dados) {
+
+	    $("#endereco-endereco").val(dados.logradouro);
+	    $("#endereco-bairro").val(dados.bairro);
+	    $("#endereco-cidade").val(dados.localidade);
+	    $("#endereco-uf").val(dados.uf);
+	    var numero = $("#endereco-numero");
+	    numero.focus();
+
+	};
+	/*]]>*/
+</script>
+
+	<script th:unless="${#lists.isEmpty(departamentos)}"
+		th:inline="javascript">
+	/*<![CDATA[*/
+	$(()=>{
+		$('#order-listing-departamentos').DataTable();
 	});
 	/*]]>*/
 </script>
 
-<script th:unless="${#lists.isEmpty(departamentos)}" th:inline="javascript">
+	<script th:unless="${#lists.isEmpty(cargos)}" th:inline="javascript">
 	/*<![CDATA[*/
 	$(()=>{
-		 $('#order-listing-departamentos').DataTable();
-	});
-	/*]]>*/
-</script>
-
-<script th:unless="${#lists.isEmpty(cargos)}" th:inline="javascript">
-	/*<![CDATA[*/
-	$(()=>{
-		 $('#order-listing-cargos').DataTable();
+		$('#order-listing-cargos').DataTable();
 	});
 	/*]]>*/
 </script>

@@ -21,6 +21,10 @@ public class TelefoneUnidadeService {
 	public void deletar(Long id) {
 		repository.deleteById(id);
 	}
+	
+	public void deletarByUnidade(Long id) {
+		repository.deleteByUnidade(id);
+	}
 			
 	public List<TelefoneUnidade> listarTodos(){
 		return repository.listAll();

@@ -21,7 +21,11 @@ public class EnderecoUnidadeService {
 	public void deletar(Long id) {
 		repository.deleteById(id);
 	}
-
+	
+	public void deletarByUnidade(Long id) {
+		repository.deleteByUnidade(id);
+	}
+	
 	public List<EnderecoUnidade> listarTodos(){
 		return repository.listAll();
 	}

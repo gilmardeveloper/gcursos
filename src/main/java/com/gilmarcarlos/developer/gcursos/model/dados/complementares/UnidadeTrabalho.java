@@ -1,5 +1,6 @@
 package com.gilmarcarlos.developer.gcursos.model.dados.complementares;
 
+import java.beans.Transient;
 import java.io.Serializable;
 import java.util.List;
 
@@ -109,7 +110,12 @@ public class UnidadeTrabalho implements Serializable{
 	public void setEndereco(EnderecoUnidade endereco) {
 		this.endereco = endereco;
 	}
-
+	
+	@Transient
+	public Boolean podeExcluirTelefone() {
+		return telefones.size() > 1;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

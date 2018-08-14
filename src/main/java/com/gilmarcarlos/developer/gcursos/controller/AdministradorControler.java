@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -70,6 +71,7 @@ public class AdministradorControler {
 	public String unidades(Model model) {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("unidades", unidadeService.listarTodos());
+		model.addAttribute("deps", departamentoService.listarTodos());
 		return "dashboard/admin/base-info";
 	}
 	
@@ -80,8 +82,24 @@ public class AdministradorControler {
 		return "dashboard/admin/base-cadastro-unidades";
 	}
 	
-	@GetMapping("unidades/salvar")
-	public String unidadesSalvar(UnidadeTrabalho unidade, @RequestParam("numero") String numero, Model model) {
+	@PostMapping("unidades/salvar")
+	public String unidadesSalvar(UnidadeTrabalho unidade, RedirectAttributes model) {
+		
+	
+		EnderecoUnidade endereco = unidade.getEndereco();
+		enderecoUnidadeService.salvar(endereco);
+		unidadeService.salvar(unidade);
+		System.err.println("id_endereco:" + unidade.getEndereco().getId());	
+		System.err.println("endereco_endereco:" + unidade.getEndereco().getEndereco());	
+		
+		model.addFlashAttribute("alert", "alert alert-fill-success");
+		model.addFlashAttribute("message", "salvo com sucesso");
+		
+		return "redirect:/dashboard/admin/unidades";
+	}
+	
+	@PostMapping("unidades/salvar/novo")
+	public String unidadesSalvarNovo(UnidadeTrabalho unidade, @RequestParam("numero") String numero, Model model) {
 		
 		UnidadeTrabalho temp = new UnidadeTrabalho();
 		
@@ -119,10 +137,38 @@ public class AdministradorControler {
 	
 	@GetMapping("unidades/deletar/{id}")
 	public String unidadesDeletar(@PathVariable("id") Long id, RedirectAttributes model) {
+		
+		telefoneUnidadeService.deletarByUnidade(id);
+		enderecoUnidadeService.deletarByUnidade(id);
 		unidadeService.deletar(id);
+		
 		model.addFlashAttribute("alert", "alert alert-fill-success alert-dismissible fade show");
 		model.addFlashAttribute("message", "removido com sucesso");
 		return "redirect:/dashboard/admin/unidades";
+	}
+	
+	@PostMapping("unidades/telefones/salvar")
+	public String unidadesTelefonesSalvar(TelefoneUnidade telefone, RedirectAttributes model) {
+		telefoneUnidadeService.salvar(telefone);
+		model.addFlashAttribute("alert", "alert alert-fill-success");
+		model.addFlashAttribute("message", "salvo com sucesso");
+		
+		return "redirect:/dashboard/admin/unidades";
+	}
+	
+	@PostMapping("unidades/telefones/excluir")
+	public String unidadesTelefonesExcluir(TelefoneUnidade telefone, RedirectAttributes model) {
+		if(telefone.getUnidadeTrabalho().podeExcluirTelefone()) {
+			telefoneUnidadeService.deletar(telefone.getId());
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "excluido com sucesso");
+			return "redirect:/dashboard/admin/unidades";
+		}else {
+			model.addFlashAttribute("alert", "alert alert-fill-danger");
+			model.addFlashAttribute("message", "para excluir, a unidade precisa ter no mínimo dois telefones");
+			return "redirect:/dashboard/admin/unidades";
+		}
+		
 	}
 	
 	@GetMapping("departamentos")
@@ -138,7 +184,7 @@ public class AdministradorControler {
 		return "dashboard/admin/base-cadastro-departamentos";
 	}
 	
-	@GetMapping("departamentos/salvar")
+	@PostMapping("departamentos/salvar")
 	public String departamentosSalvar(Departamento departamento, Model model) {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("departamento", departamentoService.salvar(departamento));
@@ -174,7 +220,7 @@ public class AdministradorControler {
 		return "dashboard/admin/base-cadastro-cargos";
 	}
 	
-	@GetMapping("cargos/salvar")
+	@PostMapping("cargos/salvar")
 	public String cargosSalvar(Cargo cargo, Model model) {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("cargo", cargoService.salvar(cargo));
