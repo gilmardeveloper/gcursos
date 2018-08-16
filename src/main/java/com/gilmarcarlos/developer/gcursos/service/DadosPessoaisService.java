@@ -14,8 +14,8 @@ public class DadosPessoaisService {
 	@Autowired
 	private DadosPessoaisRepository repository;
 	
-	public DadosPessoais salvar(DadosPessoais cargo) {
-		return repository.save(cargo);
+	public DadosPessoais salvar(DadosPessoais dados) {
+		return repository.save(dados);
 	}
 	
 	public void deletar(Long id) {

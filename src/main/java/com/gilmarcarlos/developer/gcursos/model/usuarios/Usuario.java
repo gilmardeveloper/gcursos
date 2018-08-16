@@ -3,6 +3,7 @@ package com.gilmarcarlos.developer.gcursos.model.usuarios;
 import java.beans.Transient;
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,11 +12,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.CodigoFuncional;
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.DadosPessoais;
+import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
+import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 
 @Entity
 public class Usuario implements Serializable {
@@ -45,12 +49,26 @@ public class Usuario implements Serializable {
 	@OneToOne(mappedBy = "usuario")
 	private CodigoFuncional codigoFuncional;
 	
+	@OneToMany(mappedBy = "usuario")
+	private List<Notificacao> notificacoes;
+	
+	@OneToOne(mappedBy = "usuario")
+	private Imagens imagens;
+	
 	public Usuario() {
 		this.habilitado = false;
 	}
 	
 	public CodigoFuncional getCodigoFuncional() {
 		return codigoFuncional;
+	}
+
+	public List<Notificacao> getNotificacoes() {
+		return notificacoes;
+	}
+
+	public void setNotificacoes(List<Notificacao> notificacoes) {
+		this.notificacoes = notificacoes;
 	}
 
 	public void setCodigoFuncional(CodigoFuncional codigoFuncional) {
@@ -116,6 +134,14 @@ public class Usuario implements Serializable {
 		return autorizacoes;
 	}
 	
+	public Imagens getImagens() {
+		return imagens;
+	}
+
+	public void setImagens(Imagens imagens) {
+		this.imagens = imagens;
+	}
+
 	@Transient
 	public String getStatus() {
 		return autorizacoes.get(0).getNome().split("_")[1];
@@ -155,6 +181,10 @@ public class Usuario implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public List<Notificacao> getNotificaoesNaoLidas() {
+		return this.notificacoes.stream().filter( n -> !n.getFoiLido()).collect(Collectors.toList());
 	}
 
 }

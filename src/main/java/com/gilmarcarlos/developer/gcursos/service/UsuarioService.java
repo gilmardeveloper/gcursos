@@ -27,6 +27,13 @@ public class UsuarioService {
 		return repository.save(usuario);
 	}
 	
+	public Usuario atualizarDados(Usuario usuario) {
+		usuario.setHabilitado(true);
+		usuario.setAutorizacoes(buscarPor(usuario.getId()).getAutorizacoes());
+		usuario.setSenha(passwordCrypt.encode(buscarPor(usuario.getId()).getSenha()));
+		return repository.save(usuario);
+	}
+	
 	//@CacheEvict(value="postCache", allEntries=true)
 	public Usuario atualizarNome(Usuario usuario) {
 		

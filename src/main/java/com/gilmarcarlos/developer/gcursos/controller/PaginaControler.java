@@ -1,5 +1,9 @@
 package com.gilmarcarlos.developer.gcursos.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,10 +13,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.DadosPessoais;
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.TelefoneUsuario;
+import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
+import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
+import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.CargoService;
 import com.gilmarcarlos.developer.gcursos.service.CodigoFuncionalService;
@@ -21,6 +29,7 @@ import com.gilmarcarlos.developer.gcursos.service.DepartamentoService;
 import com.gilmarcarlos.developer.gcursos.service.EnderecoUnidadeService;
 import com.gilmarcarlos.developer.gcursos.service.EnderecoUsuarioService;
 import com.gilmarcarlos.developer.gcursos.service.EscolaridadeService;
+import com.gilmarcarlos.developer.gcursos.service.NotificacaoService;
 import com.gilmarcarlos.developer.gcursos.service.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.TelefoneUnidadeService;
 import com.gilmarcarlos.developer.gcursos.service.TelefoneUsuarioService;
@@ -68,7 +77,10 @@ public class PaginaControler {
 
 	@Autowired
 	private SexoService sexoService;
-
+	
+	@Autowired
+	private NotificacaoService notificacaoService;
+		
 	@GetMapping
 	public String home() {
 		return "login/login-template";
@@ -77,8 +89,13 @@ public class PaginaControler {
 	@GetMapping("dashboard/")
 	public String painel(Model model) {
 		Usuario usuarioLogado = getUsuario();
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
 		if(usuarioLogado.isPerfilCompleto()) {
 		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("sexos", sexoService.listarTodos());
+		model.addAttribute("escolaridades", escolaridadeService.listarTodos());
+		model.addAttribute("cargos", cargoService.listarTodos());
+		model.addAttribute("unidades", unidadeService.listarTodos());
 		return "dashboard/profile";
 		}else {
 			return "redirect:/dashboard/complete-cadastro";
@@ -171,7 +188,8 @@ public class PaginaControler {
 		dadosService.salvar(usuario.getDadosPessoais());
 		codigoService.salvar(usuario.getCodigoFuncional());
 		usuarioService.atualizarNome(usuario);
-
+		notificacaoService.salvar(new Notificacao(usuario, "Completou o cadastro", IconeType.INFORMACAO, StatusType.SUCESSO, "seu cadastro foi concluído com sucesso"));
+		
 		if (numero.length() >= 8) {
 			TelefoneUsuario telefone = telefoneUsuarioService.buscarPor(numero);
 			if (telefone != null) {
@@ -186,4 +204,6 @@ public class PaginaControler {
 			}
 		}
 	}
+	
+	
 }

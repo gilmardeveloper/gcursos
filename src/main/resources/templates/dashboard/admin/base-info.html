@@ -564,6 +564,18 @@
 
 		$("#endereco-cep").blur(() => findCep($("#endereco-cep").val()));
 
+		 if(typeof(EventSource) !== "undefined") {
+          var source = new EventSource("/notificacoes");
+          source.onmessage = function(event) {
+             console.log(event.data);
+             console.log(event);
+             //alert(event.data);
+          };
+
+      } else {
+          console.log("Sorry, your browser does not support server-sent events...");
+      }
+
 	});
 
 	function findCep(cep) {

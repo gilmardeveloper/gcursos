@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+<title>ZEUS | Notificações</title>
+<link rel="stylesheet" th:href="@{~/css/dataTables.bootstrap4.css}" />
+</head>
+
+<body>
+	<!-- container-scroller -->
+	<div class="container-scroller">
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+
+		<!-- container-fluid -->
+		<div class="container-fluid page-body-wrapper">
+			<!-- row-offcanvas -->
+			<div class="row row-offcanvas row-offcanvas-right">
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					<!-- row justify-content -->
+					<div class="row justify-content-center">
+
+						<!-- card table -->
+						<div th:unless="${#lists.isEmpty(notifications)}" class="card">
+							<div class="card-header">
+								<a class="btn btn-outline-success"
+									th:href="@{/dashboard/usuario/notificacoes/deletar}">Apagar todas</a>
+								<div th:if="${alert != null}">
+									<div th:class="${alert}" role="alert">
+										<i class="mdi mdi-alert-circle"></i> <span
+											th:text="${message}"></span>
+										<button type="button" class="close" data-dismiss="alert"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								</div>
+							</div>
+							<div class="card-body">
+								<h4 class="card-title">Notificações</h4>
+								<div class="row">
+									<div class="col-12">
+										<div class="table-responsive">
+											<table id="order-listing-notificacoes" class="table">
+												<thead>
+													<tr>
+														<th>Data</th>
+														<th>Título</th>
+														<th>Mensagem</th>
+														<th>::</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="notificacao : ${notifications}">
+														<td th:text="${#temporals.format(notificacao.dataNotificacao, 'dd/MM/yyyy')}"></td>
+														<td th:text="${notificacao.titulo}"></td>
+														<td th:text="${notificacao.mensagem}"></td>
+														<td><a class="btn btn-outline-danger pt-1 pb-1"
+															th:href="@{/dashboard/usuario/notificacoes/deletar/{id}(id=${notificacao.id})}"><i
+																class="icon-close"></i></a></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- end card table -->
+
+						<!-- card table -->
+						<div th:if="${#lists.isEmpty(notifications)}" class="card">
+							<div class="card-header">
+								<div th:if="${alert != null}">
+									<div th:class="${alert}" role="alert">
+										<i class="mdi mdi-alert-circle"></i> <span
+											th:text="${message}"></span>
+										<button type="button" class="close" data-dismiss="alert"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								</div>
+							</div>
+							<div class="card-body">
+								<h4 class="card-title">Notificações</h4>
+								<div class="row">
+									<div class="col-12">
+										<div class="table-responsive">
+											<table id="order-listing-notificacoes" class="table">
+												<thead>
+													<tr>
+														<th>Data</th>
+														<th>Título</th>
+														<th>Mensagem</th>
+														<th>::</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td>Não existem notificações</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- end card table -->
+
+					</div>
+					<!-- end row justify-content -->
+				</div>
+				<!-- end content-wrapper -->
+
+				<!--footer -->
+				<footer class="footer">
+					<div class="container-fluid clearfix">
+						<span
+							class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+							© 2017 <a href="#">UrbanUI</a>. All rights reserved.
+						</span> <span
+							class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted
+							& made with <i class="mdi mdi-heart text-danger"></i>
+						</span>
+					</div>
+				</footer>
+				<!-- end footer -->
+			</div>
+			<!-- end row-offcanvas -->
+		</div>
+		<!-- end container-fluid  -->
+
+	</div>
+	<!-- end container-scroller -->
+
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/jquery.dataTables.js}"></script>
+	<script async="async" th:src="@{~/js/dataTables.bootstrap4.js}"></script>
+	<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script> 
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<!--<script  th:src="@{~/js/datatable-init.js}"></script> -->
+
+	<script th:unless="${#lists.isEmpty(notifications)}"
+		th:inline="javascript">
+		/*<![CDATA[*/
+		$(()=>{
+			var table = $('#order-listing-notificacoes').DataTable();
+			table.order( [ 0, 'desc' ] ).draw();
+		});
+		/*]]>*/
+	</script>
+
+</body>
+
+</html>
