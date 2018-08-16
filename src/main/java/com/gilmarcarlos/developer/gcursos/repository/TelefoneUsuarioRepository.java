@@ -16,4 +16,7 @@ public interface TelefoneUsuarioRepository extends CrudRepository<TelefoneUsuari
 	@Query("select t from TelefoneUsuario t where t.numero = :pnumero")
 	TelefoneUsuario buscarPor(@Param("pnumero") String numero);
 
+	@Query("select t from TelefoneUsuario t where t.id = :pid")
+	TelefoneUsuario buscarPor(@Param("pid") Long id);
+
 }

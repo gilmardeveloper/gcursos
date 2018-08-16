@@ -29,6 +29,10 @@ public class TelefoneUsuarioService {
 	public TelefoneUsuario buscarPor(String numero) {
 		return repository.buscarPor(numero);
 	}
+
+	public TelefoneUsuario buscarPor(Long id) {
+		return repository.buscarPor(id);
+	}
 	
 	
 }

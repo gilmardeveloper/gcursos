@@ -1,174 +1,211 @@
 
 <!DOCTYPE html>
-<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
 <head th:replace="fragments/head :: head(~{::title},~{})">
-	<title>ZEUS | Cadastros </title>
+<title>ZEUS | Cadastros</title>
 </head>
 
 <body>
 	<!-- container-scroller -->
 	<div class="container-scroller">
-		
+
 		<!-- navbar -->
 		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
 		<!-- end navbar -->
-		
+
 		<!-- container-fluid -->
 		<div class="container-fluid page-body-wrapper">
 			<!-- row-offcanvas -->
 			<div class="row row-offcanvas row-offcanvas-right">
-				
+
 				<!-- theme-setting-wrapper -->
 				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
 				<!-- end  theme-setting-wrapper -->
-				
+
 				<!-- right-sidebar -->
 				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
 				<!-- end right-sidebar -->
-				
+
 				<!-- sidebar sidebar-offcanvas -->
 				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
 				<!-- end sidebar sidebar-offcanvas -->
-				
+
 				<!-- content-wrapper -->
 				<div class="content-wrapper">
 					<!-- row justify-content -->
 					<div class="row justify-content-center">
-						
+
 						<!-- card -->
 						<div class="card">
 							<div class="card-body">
 								<h4 class="card-title">Unidades</h4>
-								<form th:action="@{/dashboard/admin/unidades/salvar/novo}" method="post">
+								<form th:action="@{/dashboard/admin/unidades/salvar/novo}"
+									method="post">
 									<div th:if="${alert != null}">
 										<div th:class="${alert}" role="alert">
-											<i class="mdi mdi-alert-circle"></i>
-											<span th:text="${message}"></span>
+											<i class="mdi mdi-alert-circle"></i> <span
+												th:text="${message}"></span>
 										</div>
 									</div>
-									<input type="hidden" name="id" th:value="${unidade != null} ? ${unidade.id} : ''">
-									<input type="hidden" name="endereco.id" th:value="${unidade != null} ? ${unidade.endereco.id} : ''">
+									<input type="hidden" name="id"
+										th:value="${unidade != null} ? ${unidade.id} : ''"> <input
+										type="hidden" name="endereco.id"
+										th:value="${unidade != null} ? ${unidade.endereco.id} : ''">
 
-								  <div class="form-row">
-								    <div class="form-group col-lg-6">
-								      <label for="nome">Nome</label>
-								      <input type="text" class="form-control" id="nome" placeholder="nome da unidade" name="nome" th:value="${unidade != null} ? ${unidade.nome} : ''" required="true" />
-								    </div>
-								    
-								    <div class="form-group col-lg-6">
-								      <label for="gerente">Gerente</label>
-								      <input type="text" class="form-control" id="gerente" placeholder="nome do gerente" name="gerente" th:value="${unidade != null} ? ${unidade.gerente} : ''" required="true" />
-								    </div>
+									<div class="form-row">
+										<div class="form-group col-lg-6">
+											<label for="nome">Nome</label> <input type="text"
+												class="form-control" id="nome" placeholder="nome da unidade"
+												name="nome"
+												th:value="${unidade != null} ? ${unidade.nome} : ''"
+												required="true" />
+										</div>
 
-								    <div class="form-group col-lg-6" th:if="${unidade == null}">
-								      <label for="email">Email</label>
-								      <input type="email" class="form-control" id="nome" placeholder="email da unidade" name="email" th:value="${unidade != null} ? ${unidade.email} : ''" required="true" />
-								    </div>
+										<div class="form-group col-lg-6">
+											<label for="gerente">Gerente</label> <input type="text"
+												class="form-control" id="gerente"
+												placeholder="nome do gerente" name="gerente"
+												th:value="${unidade != null} ? ${unidade.gerente} : ''"
+												required="true" />
+										</div>
 
-								     <div class="form-group col-lg-6" th:if="${unidade == null}">
-								      <label for="telefone">Telefone</label>
-								      <input type="text" class="form-control" id="telefone" placeholder="informe o telefone" name="numero" required="true" />
-								    </div>
+										<div class="form-group col-lg-6" th:if="${unidade == null}">
+											<label for="email">Email</label> <input type="email"
+												class="form-control" id="nome"
+												placeholder="email da unidade" name="email"
+												th:value="${unidade != null} ? ${unidade.email} : ''"
+												required="true" />
+										</div>
 
-								    <div class="form-group col-lg-4">
-								      <label for="qtdFuncionarios">Quantidade de funcionários</label>
-								      <input type="number" class="form-control" id="qtdFuncionarios" placeholder="apenas números" name="qtdFuncionarios" th:value="${unidade != null} ? ${unidade.qtdFuncionarios} : ''" min="0" required="true" />
-								    </div>
+										<div class="form-group col-lg-6" th:if="${unidade == null}">
+											<label for="telefone">Telefone</label> <input type="text"
+												class="form-control" id="telefone"
+												placeholder="informe o telefone" name="numero"
+												required="true" />
+										</div>
 
-								    <div class="form-group col-lg-8" th:if="${unidade != null}">
-								      <label for="departamento">Departamento</label>
-								      <select type="text" class="form-control" name="departamento">
-									 	<option th:if="${departamentos != null}"
-									 	  		th:each="departamento : ${departamentos}" 
-									 	  		th:text="${departamento.nome}" 
-									 	  		th:value="${departamento.id}" 
-									 	  		th:selected="${departamento.id == unidade.departamento.id}">
-							 	  		</option>
-									</select>
-								    </div>
+										<div class="form-group col-lg-4">
+											<label for="qtdFuncionarios">Quantidade de
+												funcionários</label> <input type="number" class="form-control"
+												id="qtdFuncionarios" placeholder="apenas números"
+												name="qtdFuncionarios"
+												th:value="${unidade != null} ? ${unidade.qtdFuncionarios} : ''"
+												min="0" required="true" />
+										</div>
 
-								    <div class="form-group col-lg-8" th:if="${unidade == null}">
-								      <label for="departamento">Departamento</label>
-								      <select type="text" class="form-control" name="departamento">
-									 	<option th:if="${departamentos != null}"
-									 	  		th:each="departamento : ${departamentos}" 
-									 	  		th:text="${departamento.nome}" 
-									 	  		th:value="${departamento.id}">
-							 	  		</option>
-									</select>
-								    </div>
+										<div class="form-group col-lg-8" th:if="${unidade != null}">
+											<label for="departamento">Departamento</label> <select
+												type="text" class="form-control" name="departamento">
+												<option th:if="${departamentos != null}"
+													th:each="departamento : ${departamentos}"
+													th:text="${departamento.nome}"
+													th:value="${departamento.id}"
+													th:selected="${departamento.id == unidade.departamento.id}">
+												</option>
+											</select>
+										</div>
 
-								     <div class="form-group col-lg-2">
-								      <label for="endereco-cep">CEP</label>
-								      <input type="text" class="form-control" id="endereco-cep" placeholder="informe o cep" name="endereco.cep" th:value="${unidade != null} ? ${unidade.endereco.cep} : ''"/>
-								    </div>
+										<div class="form-group col-lg-8" th:if="${unidade == null}">
+											<label for="departamento">Departamento</label> <select
+												type="text" class="form-control" name="departamento">
+												<option th:if="${departamentos != null}"
+													th:each="departamento : ${departamentos}"
+													th:text="${departamento.nome}"
+													th:value="${departamento.id}"></option>
+											</select>
+										</div>
 
-								     <div class="form-group col-lg-10" >
-								      <label for="endereco-endereco">Endereço</label>
-								      <input type="text" class="form-control" id="endereco-endereco" placeholder="informe o telefone" name="endereco.endereco" th:value="${unidade != null} ? ${unidade.endereco.endereco} : ''"/>
-								    </div>
+										<div class="form-group col-lg-2">
+											<label for="endereco-cep">CEP</label> <input type="text"
+												class="form-control" id="endereco-cep"
+												placeholder="informe o cep" name="endereco.cep"
+												th:value="${unidade != null} ? ${unidade.endereco.cep} : ''" />
+										</div>
 
-								    <div class="form-group col-lg-4" >
-								      <label for="endereco-numero">Número</label>
-								      <input type="text" class="form-control" id="endereco-numero" placeholder="informe o número" name="endereco.numero" th:value="${unidade != null} ? ${unidade.endereco.numero} : ''" />
-								    </div>
+										<div class="form-group col-lg-10">
+											<label for="endereco-endereco">Endereço</label> <input
+												type="text" class="form-control" id="endereco-endereco"
+												placeholder="informe o telefone" name="endereco.endereco"
+												th:value="${unidade != null} ? ${unidade.endereco.endereco} : ''" />
+										</div>
 
-								    <div class="form-group col-lg-8" >
-								      <label for="endereco-bairro">Bairro</label>
-								      <input type="text" class="form-control" id="endereco-bairro" placeholder="informe o bairro" name="endereco.bairro" th:value="${unidade != null} ? ${unidade.endereco.bairro} : ''" />
-								    </div>
+										<div class="form-group col-lg-4">
+											<label for="endereco-numero">Número</label> <input
+												type="text" class="form-control" id="endereco-numero"
+												placeholder="informe o número" name="endereco.numero"
+												th:value="${unidade != null} ? ${unidade.endereco.numero} : ''" />
+										</div>
 
-								    <div class="form-group col-lg-6" >
-								      <label for="endereco-cidade">Cidade</label>
-								      <input type="text" class="form-control" id="endereco-cidade" placeholder="informe o bairro" name="endereco.cidade" th:value="${unidade != null} ? ${unidade.endereco.cidade} : ''" />
-								    </div>
+										<div class="form-group col-lg-8">
+											<label for="endereco-bairro">Bairro</label> <input
+												type="text" class="form-control" id="endereco-bairro"
+												placeholder="informe o bairro" name="endereco.bairro"
+												th:value="${unidade != null} ? ${unidade.endereco.bairro} : ''" />
+										</div>
 
-								     <div class="form-group col-lg-6" >
-								      <label for="endereco-uf">Estado</label>
-								      <input type="text" class="form-control" id="endereco-uf" placeholder="apeans a sigla do estado, Ex: SP" name="endereco.uf" th:value="${unidade != null} ? ${unidade.endereco.uf} : ''" maxlength="2" />
-								    </div>
+										<div class="form-group col-lg-6">
+											<label for="endereco-cidade">Cidade</label> <input
+												type="text" class="form-control" id="endereco-cidade"
+												placeholder="informe o bairro" name="endereco.cidade"
+												th:value="${unidade != null} ? ${unidade.endereco.cidade} : ''" />
+										</div>
 
-								    <div class="form-group col-lg-2">
-								  		<button type="submit" class="btn btn-success">Salvar</button>
-								    </div>
-								     <div class="form-group col-lg-10">
-								   		<a class="btn btn-danger" th:href="@{/dashboard/admin/unidades}">Cancelar</a>
-								    </div>
-								    
-								   
+										<div class="form-group col-lg-6">
+											<label for="endereco-uf">Estado</label> <input type="text"
+												class="form-control" id="endereco-uf"
+												placeholder="apeans a sigla do estado, Ex: SP"
+												name="endereco.uf"
+												th:value="${unidade != null} ? ${unidade.endereco.uf} : ''"
+												maxlength="2" />
+										</div>
+
+										<div class="form-group col-lg-2">
+											<button type="submit" class="btn btn-success">Salvar</button>
+										</div>
+										<div class="form-group col-lg-10">
+											<a class="btn btn-danger"
+												th:href="@{/dashboard/admin/unidades}">Cancelar</a>
+										</div>
 								</form>
 							</div>
 						</div>
 						<!-- end card -->
 
 					</div>
-					<!-- end row justify-content -->		
+					<!-- end row justify-content -->
 				</div>
 				<!-- end content-wrapper -->
 
-<!--footer -->
-<footer class="footer">
-	<div class="container-fluid clearfix">
-		<span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2017 <a href="#">UrbanUI</a>. All rights reserved.</span>
-		<span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
+				<!--footer -->
+				<footer class="footer">
+					<div class="container-fluid clearfix">
+						<span
+							class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+							© 2017 <a href="#">UrbanUI</a>. All rights reserved.
+						</span> <span
+							class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted
+							& made with <i class="mdi mdi-heart text-danger"></i>
+						</span>
+					</div>
+				</footer>
+				<!-- end footer -->
+			</div>
+			<!-- end row-offcanvas -->
+		</div>
+		<!-- end container-fluid  -->
+
 	</div>
-</footer>
-<!-- end footer -->
-</div>
-<!-- end row-offcanvas -->
-</div>
-<!-- end container-fluid  -->
+	<!-- end container-scroller -->
 
-</div>
-<!-- end container-scroller -->
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script>
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<!--<script  th:src="@{~/js/datatable-init.js}"></script> -->
 
-<span th:replace="fragments/base-script :: base"></span>
-<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script> 
-<span th:replace="fragments/base-script :: plugins"></span>
-<!--<script  th:src="@{~/js/datatable-init.js}"></script> -->
-
-<script th:if="${unidade} == null" th:inline="javascript">
+	<script th:if="${unidade} == null" th:inline="javascript">
 
 	/*<![CDATA[*/
 	$(()=>{

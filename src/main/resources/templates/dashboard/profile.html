@@ -1,381 +1,476 @@
 
 <!DOCTYPE html>
-<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
 <head th:replace="fragments/head :: head(~{::title},~{::link})">
-  <title>ZEUS | Profile</title>
-  <link rel="stylesheet" th:href="@{~/css/dropify.min.css}" />
-  <link rel="stylesheet" th:href="@{~/css/bootstrap-datepicker.min.css}" />
-  <link rel="stylesheet" th:href="@{~/css/select2.min.css}" />
-  <link rel="stylesheet" th:href="@{~/css/select2-bootstrap.min.css}" />
+<title>ZEUS | Profile</title>
+<link rel="stylesheet" th:href="@{~/css/dropify.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/bootstrap-datepicker.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2-bootstrap.min.css}" />
 </head>
 
 <body>
-  <div class="container-scroller">
-    <!-- partial:../../partials/_navbar.html -->
-   
-   <!-- navbar -->
-    <nav th:replace="fragments/navbar :: navbar-principal"></nav>
-    <!-- end navbar -->
-   
-    <!-- partial -->
-    <div class="container-fluid page-body-wrapper">
-      <div class="row row-offcanvas row-offcanvas-right">
-        <!-- partial:../../partials/_settings-panel.html -->
-        
-        <!-- theme-setting-wrapper -->
-        <div th:replace="fragments/sidebar :: configuracoes-tema"></div>
-        <!-- end  theme-setting-wrapper -->
-        
-        <!-- right-sidebar -->
-        <div th:replace="fragments/sidebar :: sidebar-escondido"></div>
-        <!-- end right-sidebar -->
-        
-        <!-- sidebar sidebar-offcanvas -->
-        <nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
-        <!-- end sidebar sidebar-offcanvas -->
-        
-        <!-- partial -->
-        <div class="content-wrapper">
-          <div class="row user-profile">
-            <div class="col-lg-4 side-left d-flex align-items-stretch">
-              
-              <div class="row">
-                
-                <div class="col-12 grid-margin stretch-card">
-                  <div class="card">
-                    <div class="card-body avatar">
-                      <h4 class="card-title">Informações</h4>
-                      <a th:href="@{/dashboard/}"><img th:if="${usuario.imagens == null}" src="http://via.placeholder.com/100x100/f4f4f4/000000" alt="image"/></a>
-                      <img th:if="${usuario.imagens != null}" th:src="@{/dashboard/usuario/avatar.png}" alt="image"/>
-                      <p class="name" th:text="${usuario.nome}"></p>
-                      <p class="designation" th:text="${usuario.codigoFuncional.cargo.nome}"></p>
-                      <a class="d-block text-center text-dark" href="#" th:text="${usuario.email}"></a>
-                      <a class="d-block text-center text-dark" href="#" th:each="telefone : ${usuario.dadosPessoais.telefones}" th:text="${telefone.numero}"></a>
-                      <div class="dropdown-divider"></div>
-                      <a class="d-block text-right text-dark" data-toggle="modal" data-target="#modalTelefone" href="#"><i class="icon-call-end"></i> +</a>
-                    </div>
+	<div class="container-scroller">
+		<!-- partial:../../partials/_navbar.html -->
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+
+		<!-- partial -->
+		<div class="container-fluid page-body-wrapper">
+			<div class="row row-offcanvas row-offcanvas-right">
+				<!-- partial:../../partials/_settings-panel.html -->
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- partial -->
+				<div class="content-wrapper">
+					<div class="row user-profile">
+						<div class="col-lg-4 side-left d-flex align-items-stretch">
+
+							<div class="row">
+
+								<div class="col-12 grid-margin stretch-card">
+									<div class="card">
+										<div class="card-body avatar">
+											<h4 class="card-title">Informações</h4>
+											<a th:href="@{/dashboard/}"><img
+												th:if="${usuario.imagens == null}"
+												src="http://via.placeholder.com/100x100/f4f4f4/000000"
+												alt="image" /></a> <img th:if="${usuario.imagens != null}"
+												th:src="@{/dashboard/usuario/avatar.png}" alt="image" />
+											<p class="name" th:text="${usuario.nome}"></p>
+											<p class="designation"
+												th:text="${usuario.codigoFuncional.cargo.nome}"></p>
+											<a class="d-block text-center text-dark" href="#"
+												th:text="${usuario.email}"></a> <a
+												class="d-block text-center text-dark" href="#"
+												th:each="telefone : ${usuario.dadosPessoais.telefones}"
+												th:text="${telefone.numero}"></a>
+											<div class="dropdown-divider"></div>
+											<a class="d-block text-right text-dark" data-toggle="modal"
+												data-target="#modalTelefone" href="#"><i
+												class="icon-call-end"></i> +</a>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-12 stretch-card">
+									<div class="card">
+										<div class="card-body overview">
+											<h4 class="card-title">Seus cursos</h4>
+											<ul class="achivements">
+												<li><p>0</p>
+													<p>Inscritos</p></li>
+												<li><p>0</p>
+													<p>Andamento</p></li>
+												<li><p>0</p>
+													<p>Completos</p></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="col-lg-8 side-right stretch-card">
+							<div class="card">
+								<div class="card-body">
+									<div
+										class="wrapper d-block d-sm-flex align-items-center justify-content-between">
+										<h4 class="card-title mb-0">Detalhes</h4>
+										<ul class="nav nav-tabs tab-solid tab-solid-primary mb-0"
+											id="myTab" role="tablist">
+											<li class="nav-item"><a class="nav-link active"
+												id="info-tab" data-toggle="tab" href="#info" role="tab"
+												aria-controls="info" aria-expanded="true">Pessoal</a></li>
+											<li class="nav-item"><a class="nav-link"
+												id="dados-profissionais-tab" data-toggle="tab"
+												href="#dados-profissionais" role="tab"
+												aria-controls="dados-profissionais" aria-expanded="true">Profissional</a>
+											</li>
+											<li class="nav-item"><a class="nav-link" id="avatar-tab"
+												data-toggle="tab" href="#avatar" role="tab"
+												aria-controls="avatar">Avatar</a></li>
+											<li class="nav-item"><a class="nav-link"
+												id="security-tab" data-toggle="tab" href="#security"
+												role="tab" aria-controls="security">Segurança</a></li>
+										</ul>
+									</div>
+									<div class="wrapper">
+										<hr>
+										<div class="tab-content" id="myTabContent">
+
+											<div class="tab-pane fade show active" id="info"
+												role="tabpanel" aria-labelledby="info">
+												<form
+													th:action="@{/dashboard/usuario/dados-pessoais/salvar}"
+													method="post">
+
+													<input type="hidden" name="id" th:value="${usuario.id}" />
+													<input type="hidden" name="dadosPessoais"
+														th:value="${usuario.dadosPessoais.id}" />
+													<div class="row">
+
+														<div class="col-lg-6">
+															<div class="form-group">
+																<label for="name">Nome</label> <input type="text"
+																	class="form-control" id="name"
+																	th:value="${usuario.nome}"
+																	placeholder="altere seu nome" name="nome" />
+															</div>
+														</div>
+
+														<div class="col-lg-6">
+															<div class="form-group">
+																<label for="email">Email</label> <input type="email"
+																	class="form-control" id="email"
+																	th:value="${usuario.email}"
+																	placeholder="altere seu email" name="email" />
+															</div>
+														</div>
+
+														<div class="col-lg-6">
+															<div class="form-group">
+																<label for="cpf">CPF</label> <input type="text"
+																	class="form-control" id="cpf"
+																	th:value="${usuario.dadosPessoais.cpf}"
+																	placeholder="altere seu cpf" name="dadosPessoais.cpf"
+																	pattern="[0-9]+" />
+															</div>
+														</div>
+
+														<input id="nascimento" type="hidden"
+															th:value="${#temporals.format(usuario.dadosPessoais.nascimento, 'dd/MM/yyyy')}" />
+
+														<div class="col-lg-6">
+															<div class="form-group">
+																<label for="datepicker">Nascimento</label>
+																<div id="datepicker-popup"
+																	class="input-group date datepicker">
+																	<input id="datepicker" type="text" class="form-control"
+																		name="dadosPessoais.nascimento" />
+																	<div class="input-group-addon input-group-text">
+																		<span class="mdi mdi-calendar"></span>
+																	</div>
+																</div>
+															</div>
+														</div>
+
+														<div class="col-lg-6">
+															<div class="form-group">
+																<label for="mobile">Sexo</label> <select
+																	class="form-control js-select-single"
+																	aria-describedby="sexoHelp" name="dadosPessoais.sexo"
+																	required="true">
+																	<option th:if="${sexos != null}"
+																		th:each="sexo : ${sexos}" th:text="${sexo.display}"
+																		th:value="${sexo.nome}"
+																		th:selected="${sexo.nome == usuario.dadosPessoais.sexo}"></option>
+																</select>
+															</div>
+														</div>
+
+														<div class="col-lg-6">
+															<div class="form-group">
+																<label for="mobile">Escolaridade</label> <select
+																	name="dadosPessoais.escolaridade"
+																	class="form-control js-select-single"
+																	aria-describedby="escolaridadeHelp">
+																	<option th:if="${escolaridades != null}"
+																		th:each="escolaridade : ${escolaridades}"
+																		th:text="${escolaridade.display}"
+																		th:value="${escolaridade.nome}"
+																		th:selected="${escolaridade.nome == usuario.dadosPessoais.escolaridade}"></option>
+
+																</select>
+															</div>
+														</div>
+
+													</div>
+													<div class="form-group mt-5">
+														<button type="submit" class="btn btn-success mr-2">Alterar</button>
+														<a th:href="@{/dashboard/}" class="btn btn-outline-danger">Cancelar</a>
+													</div>
+												</form>
+											</div>
+
+											<div class="tab-pane fade" id="dados-profissionais"
+												role="tabpanel" aria-labelledby="dados-profissionais">
+												<form
+													th:action="@{/dashboard/usuario/dados-profissionais/salvar}"
+													method="post">
+
+													<input type="hidden" name="id"
+														th:value="${usuario.codigoFuncional.id}" /> <input
+														type="hidden" name="usuario" th:value="${usuario.id}" />
+
+													<input type="hidden" name="codigo" value="nf"
+														th:if="${usuario.codigoFuncional.codigo == 'nf'}" />
+													<div class="form-group"
+														th:if="${usuario.codigoFuncional.codigo != 'nf'}">
+														<label for="name">Código Funcional</label> <input
+															type="text" class="form-control" id="codigoFuncional"
+															th:value="${usuario.codigoFuncional.codigo}"
+															name="codigo" placeholder="altere seu codigo" />
+													</div>
+
+													<input type="hidden" name="cargo" value="102"
+														th:if="${usuario.codigoFuncional.cargo.id == 102}" />
+													<div class="form-group"
+														th:if="${usuario.codigoFuncional.cargo.id != 102}">
+														<label for="email">Cargo</label> <select
+															class="form-control js-select-single"
+															aria-describedby="cargoHelp" name="cargo" style="width: 100%;">
+															<option th:if="${cargos != null}"
+																th:each="cargo : ${cargos}" th:text="${cargo.nome}"
+																th:value="${cargo.id}"
+																th:selected="${cargo.id == usuario.codigoFuncional.cargo.id}"></option>
+														</select>
+													</div>
+
+													<div class="form-group">
+														<label for="mobile">Unidade de trabalho</label> <select
+															class="form-control js-select-single"
+															aria-describedby="unidadeHelp" name="unidadeTrabalho" style="width: 100%;">
+															<option th:if="${unidades != null}"
+																th:each="unidade : ${unidades}"
+																th:text="${unidade.nome}" th:value="${unidade.id}"
+																th:selected="${unidade.id == usuario.codigoFuncional.unidadeTrabalho.id}"></option>
+														</select>
+													</div>
+
+													<div class="form-group mt-5">
+														<button type="submit" class="btn btn-success mr-2">Alterar</button>
+														<a th:href="@{/dashboard/}" class="btn btn-outline-danger">Cancelar</a>
+													</div>
+												</form>
+											</div>
+
+											<div class="tab-pane fade" id="avatar" role="tabpanel"
+												aria-labelledby="avatar-tab">
+												<div class="wrapper mb-5 mt-4">
+													<span class="badge badge-warning text-white">Nota :
+													</span>
+													<p class="d-inline ml-3 text-muted">Favor a imagem
+														precisa ter 100x100 e no máximo 2MB de tamanho</p>
+												</div>
+												<form th:action="@{/dashboard/usuario/salvar/imagens}"
+													method="post" enctype="multipart/form-data">
+													<input type="file" class="dropify" name="imagem"
+														data-max-file-size="2mb" data-default-file="" />
+													<div class="form-group mt-5">
+														<button type="submit" class="btn btn-success mr-2">Alterar</button>
+														<a th:href="@{/dashboard/}" class="btn btn-outline-danger">Cancelar</a>
+													</div>
+												</form>
+											</div>
+
+											<div class="tab-pane fade" id="security" role="tabpanel"
+												aria-labelledby="security-tab">
+												<form th:action="@{/dashboard/usuario/redefinir-senha}"
+													method="post">
+													<input type="hidden" name="id" th:value="${usuario.id}" />
+													<div class="form-group">
+														<label for="change-password">Alterar a senha</label> <input
+															id="senha" type="password" class="form-control"
+															placeholder="digite a nova senha" name="senha"
+															required="true" />
+													</div>
+													<div class="form-group">
+														<input id="confirme" type="password" class="form-control"
+															placeholder="digite novamente a nova senha"
+															required="true" />
+													</div>
+													<div class="form-group mt-5">
+														<button id="btn-action" type="submit"
+															class="btn btn-success mr-2">Alterar</button>
+														<a th:href="@{/dashboard/}" class="btn btn-outline-danger">Cancelar</a>
+													</div>
+												</form>
+											</div>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Modal telefones unidades-->
+					<div class="modal fade col-lg-12" id="modalTelefone" tabindex="-1"
+						role="dialog" aria-labelledby="modalLabelTelefone"
+						aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modalLabelTelefone"
+										th:text="${usuario.nome}">Modal title</h5>
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<form
+										th:unless="${#lists.isEmpty(usuario.dadosPessoais.telefones)}"
+										method="post"
+										th:action="@{/dashboard/usuario/telefones/salvar}"
+										th:each="telefone : ${usuario.dadosPessoais.telefones}">
+
+										<input type="hidden" name="id" th:value="${telefone.id}">
+										<input type="hidden" name="dadosPessoais"
+											th:value="${usuario.dadosPessoais.id}" />
+
+										<div class="form-row">
+											<div class="form-group col-lg-6">
+												<label for="nome">Número</label> <input type="text"
+													class="form-control telefoneUsuario" id="telefoneUsuario"
+													placeholder="adicione novo número" name="numero"
+													th:value="${telefone.numero}" required="true" />
+											</div>
+
+											<div class="row align-items-end">
+												<div class="form-group col-lg-6">
+													<button type="submit" class="btn btn-success">Salvar</button>
+												</div>
+											</div>
+										</div>
+									</form>
+									<form th:action="@{/dashboard/usuario/telefones/salvar}"
+										method="post">
+										<input type="hidden" name="dadosPessoais"
+											th:value="${usuario.dadosPessoais.id}">
+
+										<div class="form-row">
+											<div class="form-group col-lg-6">
+												<label for="nome">Número</label> <input type="text"
+													class="form-control telefoneUsuario"
+													id="telefoneUsuarioNovo" placeholder="adicione novo número"
+													name="numero" required="true" />
+											</div>
+
+											<div class="row align-items-end">
+												<div class="form-group col-lg-4">
+													<button type="submit" class="btn btn-success">+
+														Novo</button>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+								<div class="modal-footer"
+									th:unless="${#lists.isEmpty(usuario.dadosPessoais.telefones)}">
+									<form method="post"
+										th:action="@{/dashboard/usuario/telefones/excluir}">
+										<div class="row justify-content-start">
+											<div class="form-group col-lg-8">
+												<select name="id" class="form-control">
+													<option
+														th:each="telefone : ${usuario.dadosPessoais.telefones}"
+														th:text="${telefone.numero}" th:value="${telefone.id}">
+													</option>
+												</select>
+											</div>
+											<div class="form-group col-lg-4">
+												<button type="submit" class="btn btn-warning">Excluir</button>
+											</div>
+										</div>
+
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- content-wrapper ends -->
+				<!-- partial:../../partials/_footer.html -->
+				<footer class="footer">
+					<div class="container-fluid clearfix">
+						<span
+							class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+							© 2017 <a href="#">UrbanUI</a>. All rights reserved.
+						</span> <span
+							class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted
+							& made with <i class="mdi mdi-heart text-danger"></i>
+						</span>
+					</div>
+				</footer>
+				<!-- partial -->
+			</div>
+			<!-- row-offcanvas ends -->
+		</div>
+		<!-- page-body-wrapper ends -->
+	</div>
+	<!-- container-scroller -->
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/dropify.min.js}"></script>
+	<script th:src="@{~/js/bootstrap-datepicker.min.js}"></script>
+	<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script>
+	<script th:src="@{~/js/select2.min.js}"></script>
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<script th:src="@{~/js/dropify.js}"></script>
+
+	<script th:unless="${usuario != null}" th:inline="javascript">
+	/*<![CDATA[*/
+	$(()=>{
+		 if(typeof(EventSource) !== "undefined") {
+          var source = new EventSource("/notificacoes/[[${usuario.id}]]");
+          source.onmessage = function(event) {
+             console.log(event.data);
+             console.log(event);
+             //alert(event.data);
+             $('#messageDropdown').addClass("count-indicator");
+             $('#mensagem').text(event.data);
+             $('#message-dropdown').addClass('show');
+
+          };
+
+	      } else {
+	          console.log("Sorry, your browser does not support server-sent events...");
+	      }
+	});
+
+	function templateMensagem(){
+		return ´<a class="dropdown-item preview-item">
+                  <div class="preview-thumbnail">
+                    <img src="http://via.placeholder.com/100x100/f4f4f4/000000" alt="image" class="profile-pic">
                   </div>
-                </div>
-
-                <div class="col-12 stretch-card">
-                  <div class="card">
-                    <div class="card-body overview">
-                      <h4 class="card-title">Seus cursos</h4>
-                      <ul class="achivements">
-                        <li><p>0</p><p>Inscritos</p></li>
-                        <li><p>0</p><p>Andamento</p></li>
-                        <li><p>0</p><p>Completos</p></li>
-                      </ul>
-                    </div>
+                  <div class="preview-item-content flex-grow">
+                    <h6 class="preview-subject ellipsis font-weight-medium">David Grey
+                      <span class="float-right font-weight-light small-text">1 Minutes ago</span>
+                    </h6>
+                    <p class="font-weight-light small-text">
+                      The meeting is cancelled
+                    </p>
                   </div>
-                </div>
+                </a>´;
+	}
+	/*]]>*/
+	</script>
 
-              </div>
-            </div>
-            
-            <div class="col-lg-8 side-right stretch-card">
-              <div class="card">
-                <div class="card-body">
-                  <div class="wrapper d-block d-sm-flex align-items-center justify-content-between">
-                    <h4 class="card-title mb-0">Detalhes</h4>
-                    <ul class="nav nav-tabs tab-solid tab-solid-primary mb-0" id="myTab" role="tablist">
-                      <li class="nav-item">
-                        <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-expanded="true">Pessoal</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" id="dados-profissionais-tab" data-toggle="tab" href="#dados-profissionais" role="tab" aria-controls="dados-profissionais" aria-expanded="true">Profissional</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" id="avatar-tab" data-toggle="tab" href="#avatar" role="tab" aria-controls="avatar">Avatar</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" id="security-tab" data-toggle="tab" href="#security" role="tab" aria-controls="security">Segurança</a>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="wrapper">
-                    <hr>
-                    <div class="tab-content" id="myTabContent">
-                      
-                      <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info">
-                        <form th:action="@{/dashboard/usuario/dados-pessoais/salvar}" method="post">
-
-                          <input type="hidden" name="id" th:value="${usuario.id}" />
-                          <input type="hidden" name="dadosPessoais" th:value="${usuario.dadosPessoais.id}" />
-                          <div class="row">  
-
-                            <div class="col-lg-6">
-                              <div class="form-group">
-                                <label for="name">Nome</label>
-                                <input type="text" class="form-control" id="name" th:value="${usuario.nome}" placeholder="altere seu nome" name="nome" />
-                              </div>
-                            </div>  
-                            
-                            <div class="col-lg-6">  
-                              <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" th:value="${usuario.email}" placeholder="altere seu email" name="email" />
-                              </div>
-                             </div> 
-                            
-                            <div class="col-lg-6">  
-                              <div class="form-group">
-                                <label for="mobile">CPF</label>
-                                <input type="text" class="form-control" id="cpf" th:value="${usuario.dadosPessoais.cpf}" placeholder="altere seu cpf" name="dadosPessoais.cpf" pattern="[0-9]+" />
-                              </div>
-                             </div> 
-
-                             <input id="nascimento" type="hidden"  
-                              th:value="${#temporals.format(usuario.dadosPessoais.nascimento, 'dd/MM/yyyy')}"/>
-
-                             <div class="col-lg-6"> 
-                              <div class="form-group">
-                                <label for="mobile">Nascimento</label>
-                                <div id="datepicker-popup" class="input-group date datepicker">
-                                    <input id="datepicker" type="text" class="form-control" name="dadosPessoais.nascimento"/>
-                                    <div class="input-group-addon input-group-text">
-                                      <span class="mdi mdi-calendar"></span>
-                                    </div>
-                                  </div>
-                              </div>
-                             </div> 
-
-                            <div class="col-lg-6">  
-                              <div class="form-group">
-                                <label for="mobile">Sexo</label>
-                                <select class="form-control js-select-single" aria-describedby="sexoHelp" name="dadosPessoais.sexo" required="true">
-                                    <option th:if="${sexos != null}" th:each="sexo : ${sexos}"  
-                                    th:text="${sexo.display}" 
-                                    th:value="${sexo.nome}"
-                                    th:selected="${sexo.nome == usuario.dadosPessoais.sexo}"></option>
-                                  </select>
-                              </div>
-                            </div>
-
-                            <div class="col-lg-6">  
-                              <div class="form-group">
-                                <label for="mobile">Escolaridade</label>
-                               <select name="dadosPessoais.escolaridade" class="form-control js-select-single" aria-describedby="escolaridadeHelp">
-                                    <option th:if="${escolaridades != null}" th:each="escolaridade : ${escolaridades}"  
-                                    th:text="${escolaridade.display}" 
-                                    th:value="${escolaridade.nome}"
-                                    th:selected="${escolaridade.nome == usuario.dadosPessoais.escolaridade}"></option>
-                                    
-                                  </select>
-                              </div>
-                            </div>
-
-                          </div>
-                          <div class="form-group mt-5">
-                            <button type="submit" class="btn btn-success mr-2">Alterar</button>
-                           <a th:href="@{/dashboard/}" class="btn btn-outline-danger">Cancelar</a>
-                          </div>
-                        </form>
-                      </div>
-
-                      <div class="tab-pane fade" id="dados-profissionais" role="tabpanel" aria-labelledby="dados-profissionais">
-                        <form th:action="@{/dashboard/usuario/dados-profissionais/salvar}" method="post">
-
-                          <input type="hidden" name="id" th:value="${usuario.codigoFuncional.id}" />
-                          <input type="hidden" name="usuario" th:value="${usuario.id}" />
-
-                           <input type="hidden" name="codigo" value="nf" th:if="${usuario.codigoFuncional.codigo == 'nf'}" />
-                          <div class="form-group" th:if="${usuario.codigoFuncional.codigo != 'nf'}">
-                            <label for="name">Código Funcional</label>
-                            <input type="text" class="form-control" id="codigoFuncional" th:value="${usuario.codigoFuncional.codigo}" name="codigo" placeholder="altere seu codigo" 
-                           />
-                          </div>
-                          
-                           <input type="hidden" name="cargo" value="102"  th:if="${usuario.codigoFuncional.cargo.id == 102}"/>
-                          <div class="form-group" th:if="${usuario.codigoFuncional.cargo.id != 102}">
-                            <label for="email">Cargo</label>
-                            <select class="form-control js-select-single" aria-describedby="cargoHelp" name="cargo">
-                                    <option th:if="${cargos != null}" th:each="cargo : ${cargos}"  
-                                    th:text="${cargo.nome}" 
-                                    th:value="${cargo.id}"
-                                    th:selected="${cargo.id == usuario.codigoFuncional.cargo.id}"></option>
-                                  </select>
-                          </div>
-                          
-                          <div class="form-group">
-                            <label for="mobile">Unidade de trabalho</label>
-                            <select class="form-control js-select-single" aria-describedby="unidadeHelp" name="unidadeTrabalho">
-                                    <option th:if="${unidades != null}" th:each="unidade : ${unidades}"  th:text="${unidade.nome}" 
-                                    th:value="${unidade.id}"
-                                    th:selected="${unidade.id == usuario.codigoFuncional.unidadeTrabalho.id}"></option>
-                                  </select>
-                          </div>
-
-                          <div class="form-group mt-5">
-                            <button type="submit" class="btn btn-success mr-2">Alterar</button>
-                           <a th:href="@{/dashboard/}" class="btn btn-outline-danger">Cancelar</a>
-                          </div>
-                        </form>
-                      </div>
-                      
-                      <div class="tab-pane fade" id="avatar" role="tabpanel" aria-labelledby="avatar-tab">
-                        <div class="wrapper mb-5 mt-4">
-                          <span class="badge badge-warning text-white">Nota : </span>
-                          <p class="d-inline ml-3 text-muted">Favor a imagem precisa ter 100x100 e no máximo 2MB de tamanho</p>
-                        </div>
-                        <form th:action="@{/dashboard/usuario/salvar/imagens}" method="post" enctype="multipart/form-data">
-                          <input type="file" class="dropify" name="imagem" data-max-file-size="2mb" data-default-file=""/>
-                          <div class="form-group mt-5">
-                            <button type="submit" class="btn btn-success mr-2">Alterar</button>
-                            <a th:href="@{/dashboard/}" class="btn btn-outline-danger">Cancelar</a>
-                          </div>
-                        </form>
-                      </div>
-                      
-                      <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
-                        <form th:action="@{/dashboard/usuario/redefinir-senha}" method="post">
-                          <input type="hidden" name="id" th:value="${usuario.id}"/>
-                          <div class="form-group">
-                            <label for="change-password">Alterar a senha</label>
-                            <input id="senha" type="password" class="form-control" placeholder="digite a nova senha" name="senha" required="true" />
-                          </div>
-                          <div class="form-group">
-                            <input id="confirme" type="password" class="form-control" placeholder="digite novamente a nova senha" required="true" />
-                          </div>
-                          <div class="form-group mt-5">
-                            <button id="btn-action" type="submit" class="btn btn-success mr-2">Alterar</button>
-                            <a th:href="@{/dashboard/}" class="btn btn-outline-danger">Cancelar</a>
-                          </div>
-                        </form>
-                      </div>
-
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Modal telefones unidades-->
-              <div th:each="unidade : ${unidades}" class="modal fade col-lg-12"  id="modalTelefone" tabindex="-1"
-                role="dialog" aria-labelledby="modalLabelTelefone"
-                aria-hidden="true" >
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="modalLabelTelefone" th:text="${usuario.nome}">Modal
-                        title</h5>
-                      <button type="button" class="close" data-dismiss="modal"
-                        aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <form th:unless="${#lists.isEmpty(usuario.dadosPessoais.telefones)}" method="post" th:action="@{/dashboard/usuario/telefones/salvar}" th:each="telefone : ${usuario.dadosPessoais.telefones}">
-                        
-                        <input type="hidden" name="id"
-                          th:value="${telefone.id}">
-                        <input type="hidden" name="dadosPessoais"
-                          th:value="${usuario.dadosPessoais.id}" /> 
-
-                        <div class="form-row">
-                          <div class="form-group col-lg-6">
-                            <label for="nome">Número</label> <input type="text"
-                              class="form-control telefoneUsuario" id="telefoneUsuario"
-                              placeholder="adicione novo número" name="numero"
-                              th:value="${telefone.numero}"
-                              required="true" />
-                          </div>
-                          
-                          <div class="row align-items-end">
-                            <div class="form-group col-lg-6">
-                              <button type="submit" class="btn btn-success">Salvar</button>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                      <form th:action="@{/dashboard/usuario/telefones/salvar}" method="post">
-                        <input type="hidden" name="dadosPessoais"
-                          th:value="${usuario.dadosPessoais.id}"> 
-
-                        <div class="form-row">
-                          <div class="form-group col-lg-6">
-                            <label for="nome">Número</label> <input type="text"
-                              class="form-control telefoneUsuario" id="telefoneUsuarioNovo"
-                              placeholder="adicione novo número" name="numero"
-                              required="true" />
-                          </div>
-                         
-                          <div class="row align-items-end">
-                            <div class="form-group col-lg-4">
-                              <button type="submit" class="btn btn-success">+ Novo</button>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                    <div class="modal-footer" th:unless="${#lists.isEmpty(usuario.dadosPessoais.telefones)}">
-                          <form method="post" th:action="@{/dashboard/usuario/telefones/excluir}">
-                            <input type="hidden" name="usuario"
-                              th:value="${usuario.id}"> 
-                            <div class="row justify-content-start">
-                              <div class="form-group col-lg-8">
-                                <select name="id" class="form-control">
-                                  <option th:each="telefone : ${usuario.dadosPessoais.telefones}" 
-                                          th:text="${telefone.numero}" 
-                                          th:value="${telefone.id}">
-                                  </option>
-                                </select>
-                              </div>
-                              <div class="form-group col-lg-4">
-                                <button type="submit" class="btn btn-warning">Excluir</button>
-                              </div>
-                            </div>
-
-                          </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-        </div>
-        <!-- content-wrapper ends -->
-        <!-- partial:../../partials/_footer.html -->
-        <footer class="footer">
-          <div class="container-fluid clearfix">
-            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2017 <a href="#">UrbanUI</a>. All rights reserved.</span>
-            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
-          </div>
-        </footer>
-        <!-- partial -->
-      </div>
-      <!-- row-offcanvas ends -->
-    </div>
-    <!-- page-body-wrapper ends -->
-  </div>
-  <!-- container-scroller -->
-  <span th:replace="fragments/base-script :: base"></span>
-  <script th:src="@{~/js/dropify.min.js}"></script>
-  <script th:src="@{~/js/bootstrap-datepicker.min.js}"></script>
-  <script th:src="@{~/js/jquery.inputmask.bundle.js}"></script> 
-  <span th:replace="fragments/base-script :: plugins"></span>
-  <script th:src="@{~/js/dropify.js}"></script>
-
-  <script>
+	<script>
 
     $(document).ready(function(){
 
       $('#senha').on('keyup', statusCompare);
       $('#confirme').on('keyup', statusCompare);
       $(".telefoneUsuario").inputmask("(99) 99999-9999"); 
-
-      if(typeof(EventSource) !== "undefined") {
-          var source = new EventSource("/notificacoes");
-          source.onmessage = function(event) {
-             console.log(event.data);
-             console.log(event);
-             //alert(event.data);
-             $('#notificationDropdown').addClass("count-indicator");
-          };
-
-      } else {
-          console.log("Sorry, your browser does not support server-sent events...");
-      }
 
       $('#datepicker-popup').datepicker({
       format: 'dd/mm/yyyy',
@@ -417,6 +512,19 @@
 
 
   </script>
+
+  <script th:inline="javascript">
+
+	/*<![CDATA[*/
+	(function($) {
+		  'use strict';
+
+		  if($(".js-select-single").length){
+		    $(".js-select-single").select2();
+		  }
+	})(jQuery);
+	/*]]>*/
+	</script>
 
 </body>
 

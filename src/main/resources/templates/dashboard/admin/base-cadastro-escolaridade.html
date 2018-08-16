@@ -41,8 +41,10 @@
 						<!-- card -->
 						<div class="card">
 							<div class="card-body">
-								<h4 class="card-title">Departamentos</h4>
-								<form th:action="@{/dashboard/admin/departamentos/salvar}">
+								<h4 class="card-title">Opções sexuais</h4>
+								<form
+									th:action="@{/dashboard/admin/usuarios/escolaridades/salvar}"
+									method="post">
 									<div th:if="${alert != null}">
 										<div th:class="${alert}" role="alert">
 											<i class="mdi mdi-alert-circle"></i> <span
@@ -50,20 +52,13 @@
 										</div>
 									</div>
 									<input type="hidden" name="id"
-										th:value="${departamento != null} ? ${departamento.id} : ''">
+										th:value="${escolaridade != null} ? ${escolaridade.id} : ''">
 									<div class="form-row">
 										<div class="form-group col-lg-12">
 											<label for="nome">Nome</label> <input type="text"
-												class="form-control" id="nome"
-												placeholder="nome do departamento" name="nome"
-												th:value="${departamento != null} ? ${departamento.nome} : ''"
-												required="true" />
-										</div>
-										<div class="form-group col-lg-12">
-											<label for="identidade">Identidade</label> <input type="text"
-												class="form-control" id="identidade"
-												placeholder="identidade do departamento" name="identidade"
-												th:value="${departamento != null} ? ${departamento.identidade} : ''"
+												class="form-control" id="nome" placeholder="nome da opção"
+												name="nome"
+												th:value="${escolaridade != null} ? ${escolaridade.display} : ''"
 												required="true" />
 										</div>
 										<div class="form-group col-lg-4">
@@ -71,9 +66,8 @@
 										</div>
 										<div class="form-group col-lg-8">
 											<a class="btn btn-danger"
-												th:href="@{/dashboard/admin/departamentos}">Cancelar</a>
+												th:href="@{/dashboard/admin/usuarios/escolaridades}">Cancelar</a>
 										</div>
-									</div>	
 								</form>
 							</div>
 						</div>

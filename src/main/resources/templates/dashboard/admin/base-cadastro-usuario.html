@@ -1,0 +1,386 @@
+
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+<title>ZEUS | Cadastros</title>
+<link rel="stylesheet" th:href="@{~/css/bootstrap-datepicker.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2-bootstrap.min.css}" />
+</head>
+
+<body>
+	<!-- container-scroller -->
+	<div class="container-scroller">
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+
+		<!-- container-fluid -->
+		<div class="container-fluid page-body-wrapper">
+			<!-- row-offcanvas -->
+			<div class="row row-offcanvas row-offcanvas-right">
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					<!-- row justify-content -->
+					<div class="row justify-content-center">
+
+						<!-- card -->
+						<div class="card" th:if="${user != null}">
+							<div class="card-body">
+								<h4 class="card-title">Usuários</h4>
+								<form th:action="@{/dashboard/admin/usuarios/alterar}" method="post">
+
+									<div th:if="${alert != null}">
+										<div th:class="${alert}" role="alert">
+											<i class="mdi mdi-alert-circle"></i> <span
+												th:text="${message}"></span>
+										</div>
+									</div>
+
+									<input type="hidden" name="id"
+													th:value="${user != null} ? ${user.id} : ''">
+									<input type="hidden" name="dadosPessoais"
+													th:value="${user != null} ? ${user.dadosPessoais.id} : ''">
+									<input type="hidden" name="codigoFuncional"
+													th:value="${user != null} ? ${user.codigoFuncional.id} : ''">	
+
+									<div class="form-row">
+
+										<div class="form-group col-lg-6">
+											<label for="nome">Nome</label> <input type="text"
+												class="form-control" id="nome" placeholder="nome do usuario"
+												name="nome" th:value="${user != null} ? ${user.nome} : ''"
+												required="true" />
+										</div>
+
+										<div class="form-group col-lg-6">
+											<label for="email">Eamil</label> <input type="email"
+												class="form-control" id="email" placeholder="email"
+												name="email" th:value="${user != null} ? ${user.email} : ''"
+												required="true" />
+										</div>
+
+										<div class="form-group col-lg-4">
+											<label for="cpf">CPF</label> <input type="text"
+												class="form-control" id="cpf"
+												th:value="${user.dadosPessoais.cpf}"
+												placeholder="altere seu cpf" name="dadosPessoais.cpf"
+												pattern="[0-9]+" />
+										</div>
+
+										<input id="nascimento" type="hidden"
+											th:value="${#temporals.format(user.dadosPessoais.nascimento, 'dd/MM/yyyy')}" />
+
+										<div class="form-group col-lg-4">
+											<label for="datepicker">Nascimento</label>
+											<div id="datepicker-popup"
+												class="input-group date datepicker">
+												<input id="datepicker" type="text"
+													class="form-control" name="dadosPessoais.nascimento" />
+												<div class="input-group-addon input-group-text">
+													<span class="mdi mdi-calendar"></span>
+												</div>
+											</div>
+										</div>
+
+										<div class="form-group col-lg-4">
+											<label for="sexo">Sexo</label> <select id="sexo"
+												class="form-control js-select-single"
+												aria-describedby="sexoHelp" name="dadosPessoais.sexo"
+												required="true">
+												<option th:if="${sexos != null}" th:each="sexo : ${sexos}"
+													th:text="${sexo.display}" th:value="${sexo.nome}"
+													th:selected="${sexo.nome == user.dadosPessoais.sexo}"></option>
+											</select>
+										</div>
+
+										<div class="form-group col-lg-4">
+											<label for="mobile">Escolaridade</label> <select
+												name="dadosPessoais.escolaridade"
+												class="form-control js-select-single"
+												aria-describedby="escolaridadeHelp">
+												<option th:if="${formacoes != null}"
+													th:each="escolaridade : ${formacoes}"
+													th:text="${escolaridade.display}"
+													th:value="${escolaridade.nome}"
+													th:selected="${escolaridade.nome == user.dadosPessoais.escolaridade}"></option>
+
+											</select>
+										</div>
+
+										<input type="hidden" name="codigo" value="nf"
+											th:if="${user.codigoFuncional.codigo == 'nf'}" />
+
+										<div class="form-group col-lg-4"
+											th:if="${user.codigoFuncional.codigo != 'nf'}">
+											<label for="name">Código Funcional</label> <input type="text"
+												class="form-control" id="codigoFuncional"
+												th:value="${user.codigoFuncional.codigo}"
+												name="codigoFuncional.codigo"
+												placeholder="altere seu codigo" />
+										</div>
+
+										<input type="hidden" name="codigoFuncional.cargo" value="102"
+											th:if="${user.codigoFuncional.cargo.id == 102}" />
+
+										<div class="form-group col-lg-4"
+											th:if="${user.codigoFuncional.cargo.id != 102}">
+											<label for="email">Cargo</label> <select
+												class="form-control js-select-single"
+												aria-describedby="cargoHelp" name="codigoFuncional.cargo">
+												<option th:if="${cargos != null}"
+													th:each="cargo : ${cargos}" th:text="${cargo.nome}"
+													th:value="${cargo.id}"
+													th:selected="${cargo.id == user.codigoFuncional.cargo.id}"></option>
+											</select>
+										</div>
+
+										<div class="form-group col-lg-4">
+											<label for="mobile">Unidade de trabalho</label> <select
+												class="form-control js-select-single"
+												aria-describedby="unidadeHelp"
+												name="codigoFuncional.unidadeTrabalho">
+												<option th:if="${unidades != null}"
+													th:each="unidade : ${unidades}" th:text="${unidade.nome}"
+													th:value="${unidade.id}"
+													th:selected="${unidade.id == user.codigoFuncional.unidadeTrabalho.id}"></option>
+											</select>
+										</div>
+										<div class="col-lg-12">	
+											<div class="row">	
+												<div class="form-group col-lg-2">
+													<button type="submit" class="btn btn-success">Salvar</button>
+												</div>
+												<div class="form-group col-lg-10">
+													<a class="btn btn-danger"
+														th:href="@{/dashboard/admin/usuarios/atuais}">Cancelar</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+						<!-- end card -->
+
+						<!-- card -->
+						<div class="card" th:if="${user == null}">
+							<div class="card-body">
+								<h4 class="card-title">Usuários</h4>
+								<form th:action="@{/dashboard/admin/usuarios/adicionar}" method="post">
+
+									<div th:if="${alert != null}">
+										<div th:class="${alert}" role="alert">
+											<i class="mdi mdi-alert-circle"></i> <span
+												th:text="${message}"></span>
+										</div>
+									</div>
+
+									<div class="form-row">
+
+										<div class="form-group col-lg-6">
+											<label for="nome">Nome</label> <input type="text"
+												class="form-control" id="nome" placeholder="nome do usuario"
+												name="nome" required="true" />
+										</div>
+
+										<div class="form-group col-lg-6">
+											<label for="email">Eamil</label> <input type="email"
+												class="form-control" id="email" placeholder="email"
+												name="email" required="true" />
+										</div>
+
+										<div class="form-group col-lg-4">
+											<label for="cpf">CPF</label> <input type="text"
+												class="form-control" id="cpf" 
+												placeholder="altere seu cpf" 
+												name="dadosPessoais.cpf"
+												pattern="[0-9]+" />
+										</div>
+
+										<input id="nascimento" type="hidden" />
+
+										<div class="form-group col-lg-4">
+											<label for="datepicker">Nascimento</label>
+											<div id="datepicker-popup"
+												class="input-group date datepicker">
+												<input id="datepicker" type="text"
+													class="form-control" name="dadosPessoais.nascimento" />
+												<div class="input-group-addon input-group-text">
+													<span class="mdi mdi-calendar"></span>
+												</div>
+											</div>
+										</div>
+
+										<div class="form-group col-lg-4">
+											<label for="sexo">Sexo</label> <select id="sexo"
+												class="form-control js-select-single"
+												aria-describedby="sexoHelp" name="dadosPessoais.sexo"
+												required="true">
+												<option th:if="${sexos != null}" th:each="sexo : ${sexos}"
+													th:text="${sexo.display}" th:value="${sexo.nome}">
+												</option>
+											</select>
+										</div>
+
+										<div class="form-group col-lg-4">
+											<label for="mobile">Escolaridade</label> <select
+												name="dadosPessoais.escolaridade"
+												class="form-control js-select-single"
+												aria-describedby="escolaridadeHelp">
+												<option th:if="${formacoes != null}"
+													th:each="escolaridade : ${formacoes}"
+													th:text="${escolaridade.display}"
+													th:value="${escolaridade.nome}">
+												</option>
+
+											</select>
+										</div>
+
+										<input type="hidden" name="codigoFuncional.codigo" value="nf"
+											th:if="${#lists.isEmpty(cargos)}" />
+
+										<div class="form-group col-lg-4"
+											th:unless="${#lists.isEmpty(cargos)}">
+											<label for="name">Código Funcional</label> <input type="text"
+												class="form-control" id="codigoFuncional"
+												name="codigoFuncional.codigo"
+												placeholder="altere seu codigo" />
+										</div>
+
+										<input type="hidden" name="codigoFuncional.cargo" value="102"
+											th:if="${#lists.isEmpty(cargos)}" />
+
+										<div class="form-group col-lg-4"
+											th:unless="${#lists.isEmpty(cargos)}">
+											<label for="email">Cargo</label> <select
+												class="form-control js-select-single"
+												aria-describedby="cargoHelp" name="codigoFuncional.cargo">
+												<option th:if="${cargos != null}"
+													th:each="cargo : ${cargos}" th:text="${cargo.nome}"
+													th:value="${cargo.id}">
+												</option>
+											</select>
+										</div>
+
+										<div class="form-group col-lg-4">
+											<label for="mobile">Unidade de trabalho</label> <select
+												class="form-control js-select-single"
+												aria-describedby="unidadeHelp"
+												name="codigoFuncional.unidadeTrabalho">
+												<option th:if="${unidades != null}"
+													th:each="unidade : ${unidades}" th:text="${unidade.nome}"
+													th:value="${unidade.id}">
+												</option>
+											</select>
+										</div>
+										<div class="col-lg-12">	
+											<div class="row">	
+												<div class="form-group col-lg-2">
+													<button type="submit" class="btn btn-success">Salvar</button>
+												</div>
+												<div class="form-group col-lg-10">
+													<a class="btn btn-danger"
+														th:href="@{/dashboard/admin/usuarios/atuais}">Cancelar</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+						<!-- end card -->
+
+					</div>
+					<!-- end row justify-content -->
+				</div>
+				<!-- end content-wrapper -->
+
+				<!--footer -->
+				<footer class="footer">
+					<div class="container-fluid clearfix">
+						<span
+							class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+							© 2017 <a href="#">UrbanUI</a>. All rights reserved.
+						</span> <span
+							class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted
+							& made with <i class="mdi mdi-heart text-danger"></i>
+						</span>
+					</div>
+				</footer>
+				<!-- end footer -->
+			</div>
+			<!-- end row-offcanvas -->
+		</div>
+		<!-- end container-fluid  -->
+
+	</div>
+	<!-- end container-scroller -->
+
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/bootstrap-datepicker.min.js}"></script>
+	<script th:src="@{~/js/select2.min.js}"></script>
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<!--<script  th:src="@{~/js/datatable-init.js}"></script> -->
+
+	<script th:inline="javascript">
+	
+	/*<![CDATA[*/
+	$(()=>{
+		 $('#datepicker-popup').datepicker({
+		      format: 'dd/mm/yyyy',
+		        language: 'pt-BR',
+		        defaultViewDate: { year: 1960, month: 0, day: 1 }
+		      });
+
+		  $('#datepicker-popup').on('changeDate', function() {
+	        //console.log($('#datepicker').val());
+	        $('#nascimento').val($('#datepicker').val());
+	      });
+
+      updateData();
+
+		});
+
+		function updateData(){
+	      if($('#nascimento').val() != ''){
+	        //console.log('nascimento foi executado');
+	        $('#datepicker-popup').datepicker('update', $('#nascimento').val());
+	      }
+	    }
+	/*]]>*/
+	</script>
+
+	<script th:inline="javascript">
+
+	/*<![CDATA[*/
+	(function($) {
+		  'use strict';
+
+		  if($(".js-select-single").length){
+		    $(".js-select-single").select2();
+		  }
+	})(jQuery);
+	/*]]>*/
+	</script>
+
+</body>
+
+</html>

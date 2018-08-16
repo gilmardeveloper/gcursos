@@ -30,7 +30,7 @@ public class Sexo implements Serializable{
 	}
 	
 	public String getNome() {
-		return nome;
+		return nome.toLowerCase();
 	}
 
 	public void setNome(String nome) {

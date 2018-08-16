@@ -1,0 +1,667 @@
+
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+<title>ZEUS | Informações</title>
+<link rel="stylesheet" th:href="@{~/css/dataTables.bootstrap4.css}" />
+<link rel="stylesheet" th:href="@{~/css/bootstrap-datepicker.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2-bootstrap.min.css}" />
+</head>
+
+<body>
+	<!-- container-scroller -->
+	<div class="container-scroller">
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+
+		<!-- container-fluid -->
+		<div class="container-fluid page-body-wrapper">
+			<!-- row-offcanvas -->
+			<div class="row row-offcanvas row-offcanvas-right">
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					<!-- row justify-content -->
+					<div class="row justify-content-center">
+
+						<!-- modal usuarios -->
+						<div class="col-lg-12" th:unless="${#lists.isEmpty(atuais)}">
+
+							<!-- Modal usuarios-->
+							<div th:each="user : ${atuais}" class="modal fade col-lg-12"
+								th:id="'modal-' + ${user.id}" tabindex="-1" role="dialog"
+								th:attr="aria-labelledby='modalLabel-' + ${user.id}"
+								aria-hidden="true">
+								<div class="modal-dialog modal-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" th:id="'modalLabel-' + ${user.id}"
+												th:text="${user.nome}">Modal title</h5>
+											<button type="button" class="close" data-dismiss="modal"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<form th:id="'formulario-usuario-' + ${user.id}"
+												th:action="@{/dashboard/admin/usuarios/salvar}"
+												method="post">
+												
+												<input type="hidden" name="id"
+													th:value="${user != null} ? ${user.id} : ''">
+												<input type="hidden" name="dadosPessoais"
+													th:value="${user != null} ? ${user.dadosPessoais.id} : ''">
+												<input type="hidden" name="codigoFuncional"
+													th:value="${user != null} ? ${user.codigoFuncional.id} : ''">	
+
+												<div class="form-row">
+													<div class="form-group col-lg-5">
+														<label for="nome">Nome</label> <input type="text"
+															class="form-control" id="nome"
+															placeholder="nome do usuario" name="nome"
+															th:value="${user != null} ? ${user.nome} : ''"
+															required="true" />
+													</div>
+
+													<div class="form-group col-lg-4">
+														<label for="email">Eamil</label> <input type="email"
+															class="form-control" id="email" placeholder="email"
+															name="email"
+															th:value="${user != null} ? ${user.email} : ''"
+															required="true" />
+													</div>
+
+													<div class="form-group col-lg-3">
+														<label for="cpf">CPF</label> <input type="text"
+															class="form-control" id="cpf"
+															th:value="${user.dadosPessoais.cpf}"
+															placeholder="altere seu cpf" name="dadosPessoais.cpf"
+															pattern="[0-9]+" />
+													</div>
+
+													<input th:id="'nascimento-' + ${user.id}" type="hidden"
+														th:value="${#temporals.format(user.dadosPessoais.nascimento, 'dd/MM/yyyy')}" />
+
+													<div class="form-group col-lg-4">
+														<label th:for="'datepicker-' + ${user.id}">Nascimento</label>
+														<div th:id="'datepicker-popup-' + ${user.id}"
+															class="input-group date datepicker">
+															<input th:id="'datepicker-' + ${user.id}" type="text" class="form-control"
+																name="dadosPessoais.nascimento" />
+															<div class="input-group-addon input-group-text">
+																<span class="mdi mdi-calendar"></span>
+															</div>
+														</div>
+													</div>
+
+													<div class="form-group col-lg-4">
+														<label for="sexo">Sexo</label> <select id="sexo"
+															class="form-control js-select-single"
+															aria-describedby="sexoHelp" name="dadosPessoais.sexo"
+															required="true" style="width: 100%;">
+															<option th:if="${sexos != null}"
+																th:each="sexo : ${sexos}" th:text="${sexo.display}"
+																th:value="${sexo.nome}"
+																th:selected="${sexo.nome == user.dadosPessoais.sexo}"></option>
+														</select>
+													</div>
+
+													<div class="form-group col-lg-4">
+														<label for="mobile">Escolaridade</label> <select
+															name="dadosPessoais.escolaridade"
+															class="form-control js-select-single"
+															aria-describedby="escolaridadeHelp" style="width: 100%;">
+															<option th:if="${formacoes != null}"
+																th:each="escolaridade : ${formacoes}"
+																th:text="${escolaridade.display}"
+																th:value="${escolaridade.nome}"
+																th:selected="${escolaridade.nome == user.dadosPessoais.escolaridade}"></option>
+
+														</select>
+													</div>
+
+													<input type="hidden" name="codigo" value="nf"
+														th:if="${user.codigoFuncional.codigo == 'nf'}" />
+
+													<div class="form-group col-lg-4"
+														th:if="${user.codigoFuncional.codigo != 'nf'}">
+														<label for="name">Código Funcional</label> <input
+															type="text" class="form-control" id="codigoFuncional"
+															th:value="${user.codigoFuncional.codigo}"
+															name="codigoFuncional.codigo" placeholder="altere seu codigo" />
+													</div>
+
+													<input type="hidden" name="codigoFuncional.cargo" value="102"
+														th:if="${user.codigoFuncional.cargo.id == 102}" />
+
+													<div class="form-group col-lg-4"
+														th:if="${user.codigoFuncional.cargo.id != 102}">
+														<label for="email">Cargo</label> <select
+															class="form-control js-select-single"
+															aria-describedby="cargoHelp" name="codigoFuncional.cargo" style="width: 100%;">
+															<option th:if="${cargos != null}"
+																th:each="cargo : ${cargos}" th:text="${cargo.nome}"
+																th:value="${cargo.id}"
+																th:selected="${cargo.id == user.codigoFuncional.cargo.id}"></option>
+														</select>
+													</div>
+
+													<div class="form-group col-lg-4">
+														<label for="mobile">Unidade de trabalho</label> <select
+															class="form-control js-select-single"
+															aria-describedby="unidadeHelp" name="codigoFuncional.unidadeTrabalho" style="width: 100%;">
+															<option th:if="${unidades != null}"
+																th:each="unidade : ${unidades}"
+																th:text="${unidade.nome}" th:value="${unidade.id}"
+																th:selected="${unidade.id == user.codigoFuncional.unidadeTrabalho.id}"></option>
+														</select>
+													</div>
+												</div>
+											</form>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-danger"
+												data-dismiss="modal">Cancelar</button>
+											<button type="submit"
+												th:attr="form='formulario-usuario-' + ${user.id}"
+												value="submit" class="btn btn-success">Salvar</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Modal telefones usuarios-->
+							<div th:each="user : ${atuais}" class="modal fade col-lg-12"
+								th:id="'modalTelefone-' + ${user.id}" tabindex="-1" role="dialog"
+								th:attr="aria-labelledby='modalLabelTelefone-' + ${user.id}" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" th:id="'modalLabelTelefone-' + ${user.id}"
+												th:text="${user.nome}">Modal title</h5>
+											<button type="button" class="close" data-dismiss="modal"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<form
+												th:unless="${#lists.isEmpty(usuario.dadosPessoais.telefones)}"
+												method="post"
+												th:action="@{/dashboard/admin/usuarios/telefones/salvar}"
+												th:each="telefone : ${user.dadosPessoais.telefones}">
+
+												<input type="hidden" name="id" th:value="${telefone.id}">
+												<input type="hidden" name="dadosPessoais"
+													th:value="${user.dadosPessoais.id}" />
+
+												<div class="form-row">
+													<div class="form-group col-lg-6">
+														<label for="nome">Número</label> <input type="text"
+															class="form-control telefoneUsuario" id="telefoneUsuario"
+															placeholder="adicione novo número" name="numero"
+															th:value="${telefone.numero}" required="true" />
+													</div>
+
+													<div class="row align-items-end">
+														<div class="form-group col-lg-6">
+															<button type="submit" class="btn btn-success">Salvar</button>
+														</div>
+													</div>
+												</div>
+											</form>
+											<form th:action="@{/dashboard/admin/usuarios/telefones/salvar}"
+												method="post">
+												<input type="hidden" name="dadosPessoais"
+													th:value="${user.dadosPessoais.id}">
+
+												<div class="form-row">
+													<div class="form-group col-lg-6">
+														<label for="nome">Número</label> <input type="text"
+															class="form-control telefoneUsuario"
+															id="telefoneUsuarioNovo"
+															placeholder="adicione novo número" name="numero"
+															required="true" />
+													</div>
+
+													<div class="row align-items-end">
+														<div class="form-group col-lg-4">
+															<button type="submit" class="btn btn-success">+
+																Novo</button>
+														</div>
+													</div>
+												</div>
+											</form>
+										</div>
+										<div class="modal-footer"
+											th:unless="${#lists.isEmpty(user.dadosPessoais.telefones)}">
+											<form method="post"
+												th:action="@{/dashboard/admin/usuarios/telefones/excluir}">
+												<div class="row justify-content-start">
+													<div class="form-group col-lg-8">
+														<select name="id" class="form-control">
+															<option
+																th:each="telefone : ${user.dadosPessoais.telefones}"
+																th:text="${telefone.numero}" th:value="${telefone.id}">
+															</option>
+														</select>
+													</div>
+													<div class="form-group col-lg-4">
+														<button type="submit" class="btn btn-warning">Excluir</button>
+													</div>
+												</div>
+
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Modal autorizacoes usuarios-->
+							<div th:each="user : ${atuais}" class="modal fade col-lg-12"
+								th:id="'modalAutorizacao-' + ${user.id}" tabindex="-1" role="dialog"
+								th:attr="aria-labelledby='modalLabelAutorizacao-' + ${user.id}" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" th:id="'modalLabelAutorizacao-' + ${user.id}"
+												th:text="${user.nome}">Modal title</h5>
+											<button type="button" class="close" data-dismiss="modal"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<form
+												th:id="'formulario-autorizacao-' + ${user.id}"
+												method="post"
+												th:action="@{/dashboard/admin/usuarios/autorizacoes/salvar}">
+
+												<input type="hidden" name="id" th:value="${user.id}">
+												
+												<div class="form-row">
+													<div class="col-lg-12">
+														<p class="text-center">Dar ou remover permissões no sistema</p>
+													</div>
+													<div class="form-group col-lg-12">
+														<label for="autorizacao">Autorização</label> <select
+															class="form-control js-select-single"
+															aria-describedby="unidadeHelp" name="nomeAutorizacao">
+															<option th:if="${autorizacoes != null}"
+																th:each="autorizacao : ${autorizacoes}"
+																th:text="${autorizacao.display}" th:value="${autorizacao.nome}"
+																th:selected="${autorizacao.id == user.autorizacoes[0].id}"></option>
+														</select>
+													</div>
+												</div>
+											</form>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-danger"
+												data-dismiss="modal">Cancelar</button>
+											<button type="submit"
+												th:attr="form='formulario-autorizacao-' + ${user.id}"
+												value="submit" class="btn btn-success">Salvar</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+						<!-- end modal usuarios -->
+
+						<!-- card table -->
+						<div th:unless="${#lists.isEmpty(atuais)}" class="card">
+							<div class="card-header">
+								<a class="btn btn-outline-success"
+									th:href="@{/dashboard/admin/usuarios/novo/funcionario}">+ Funcionário</a>
+								<a class="btn btn-outline-success"
+									th:href="@{/dashboard/admin/usuarios/novo/outro}">+ Outro</a>	
+								<div th:if="${alert != null}">
+									<div th:class="${alert}" role="alert">
+										<i class="mdi mdi-alert-circle"></i> <span
+											th:text="${message}"></span>
+										<button type="button" class="close" data-dismiss="alert"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								</div>
+							</div>
+							<div class="card-body" th:with="usuarios=${atuais}">
+								<h4 class="card-title">Usuários atuais</h4>
+								<div class="row">
+									<div class="col-12">
+										<div class="table-responsive">
+											<table id="order-listing-atuais" class="table">
+												<thead>
+													<tr>
+														<th>Nome</th>
+														<th>CPF</th>
+														<th>email</th>
+														<th>::</th>
+														<th>::</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="user : ${usuarios}">
+														<td>
+															<button type="button"
+																class="btn btn-outline-secondary pt-1 pb-1 border-0"
+																data-toggle="modal"
+																th:attr="data-target='#modal-' + ${user.id}"
+																th:text="${user.nome}"></button>
+														</td>
+														<td th:text="${user.dadosPessoais.cpf}"></td>
+														<td th:text="${user.email}"></td>
+														<td>
+
+															<div class="dropdown">
+															  <button class="btn btn-outline-primary pt-1 pb-1 dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+															   <i class="icon-pencil"></i>
+															  </button>
+															  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+															    <a class="dropdown-item" th:href="@{/dashboard/admin/usuarios/alterar/{id}(id=${user.id})}">Editar</a>
+															    <a class="dropdown-item"
+															    href="#"
+																data-toggle="modal"
+																th:attr="data-target='#modalTelefone-' + ${user.id}">Telefones</a>
+															    <a class="dropdown-item"
+															    href="#"
+																data-toggle="modal"
+																th:attr="data-target='#modalAutorizacao-' + ${user.id}">Autorizações</a>
+															  </div>
+															</div>
+
+														</td>
+														<td><a class="btn btn-outline-danger pt-1 pb-1"
+															th:href="@{/dashboard/admin/usuarios/deletar/{id}(id=${user.id})}"><i
+																class="icon-close"></i></a></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- end card table -->
+
+						<!-- card table -->
+						<div th:unless="${#lists.isEmpty(antigos)}" class="card">
+							<div class="card-header">
+								<button class="btn btn-outline-success">Adicionar novo</button>
+							</div>
+							<div class="card-body" th:with="usuarios=${antigos}">
+								<h4 class="card-title">Usuários antigos</h4>
+								<div class="row">
+									<div class="col-12">
+										<div class="table-responsive">
+											<table id="order-listing-antigos" class="table">
+												<thead>
+													<tr>
+														<th>Nome</th>
+														<th>CPF</th>
+														<th>Telefone</th>
+														<th>::</th>
+														<th>::</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="user : ${usuarios}">
+														<td th:text="${user.nome}"></td>
+														<td th:text="${user.dadosPessoais.cpf}"></td>
+														<td
+															th:text="${user.dadosPessoais.telefones[0].numero} != null ? ${user.dadosPessoais.telefones[0].numero} : 'NÃO INFORMADO'"></td>
+														<td>
+															<button class="btn btn-outline-primary pt-1 pb-1">
+																<i class="icon-pencil"></i>
+															</button>
+														</td>
+														<td>
+															<button class="btn btn-outline-danger pt-1 pb-1">
+																<i class="icon-close"></i>
+															</button>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- end card table -->
+
+						<!-- card table -->
+						<div th:unless="${#lists.isEmpty(escolaridades)}" class="card">
+							<div class="card-header">
+								<a class="btn btn-outline-success"
+									th:href="@{/dashboard/admin/usuarios/escolaridades/novo}">Adicionar
+									novo</a>
+								<div th:if="${alert != null}">
+									<div th:class="${alert}" role="alert">
+										<i class="mdi mdi-alert-circle"></i> <span
+											th:text="${message}"></span>
+										<button type="button" class="close" data-dismiss="alert"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								</div>
+							</div>
+							<div class="card-body">
+								<h4 class="card-title">Escolaridade</h4>
+								<div class="row">
+									<div class="col-12">
+										<div class="table-responsive">
+											<table id="order-listing-escolaridades" class="table">
+												<thead>
+													<tr>
+														<th>Id</th>
+														<th>Nome</th>
+														<th>::</th>
+														<th>::</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="escolaridade : ${escolaridades}">
+														<td th:text="${escolaridade.id}"></td>
+														<td th:text="${escolaridade.display}"></td>
+														<td><a class="btn btn-outline-primary pt-1 pb-1"
+															th:href="@{/dashboard/admin/usuarios/escolaridades/alterar/{id}(id=${escolaridade.id})}"><i
+																class="icon-pencil"></i></a></td>
+														<td><a class="btn btn-outline-danger pt-1 pb-1"
+															th:href="@{/dashboard/admin/usuarios/escolaridades/deletar/{id}(id=${escolaridade.id})}"><i
+																class="icon-close"></i></a></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- end card table -->
+
+						<!-- card table -->
+						<div th:unless="${#lists.isEmpty(opcoes)}" class="card">
+							<div class="card-header">
+								<a class="btn btn-outline-success"
+									th:href="@{/dashboard/admin/usuarios/opcoes/novo}">Adicionar
+									novo</a>
+								<div th:if="${alert != null}">
+									<div th:class="${alert}" role="alert">
+										<i class="mdi mdi-alert-circle"></i> <span
+											th:text="${message}"></span>
+										<button type="button" class="close" data-dismiss="alert"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								</div>
+							</div>
+							<div class="card-body">
+								<h4 class="card-title">Opções</h4>
+								<div class="row">
+									<div class="col-12">
+										<div class="table-responsive">
+											<table id="order-listing-opcoes" class="table">
+												<thead>
+													<tr>
+														<th class="pr-5 pl-5">Id</th>
+														<th class="pr-5 pl-5">Nome</th>
+														<th>::</th>
+														<th>::</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="sexo : ${opcoes}">
+														<td class="pr-5 pl-5" th:text="${sexo.id}"></td>
+														<td class="pr-5 pl-5" th:text="${sexo.display}"></td>
+														<td><a class="btn btn-outline-primary pt-1 pb-1"
+															th:href="@{/dashboard/admin/usuarios/opcoes/alterar/{id}(id=${sexo.id})}"><i
+																class="icon-pencil"></i></a></td>
+														<td><a class="btn btn-outline-danger pt-1 pb-1"
+															th:href="@{/dashboard/admin/usuarios/opcoes/deletar/{id}(id=${sexo.id})}"><i
+																class="icon-close"></i></a></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- end card table -->
+
+					</div>
+					<!-- end row justify-content -->
+				</div>
+				<!-- end content-wrapper -->
+
+				<!--footer -->
+				<footer class="footer">
+					<div class="container-fluid clearfix">
+						<span
+							class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+							© 2017 <a href="#">UrbanUI</a>. All rights reserved.
+						</span> <span
+							class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted
+							& made with <i class="mdi mdi-heart text-danger"></i>
+						</span>
+					</div>
+				</footer>
+				<!-- end footer -->
+			</div>
+			<!-- end row-offcanvas -->
+		</div>
+		<!-- end container-fluid  -->
+
+	</div>
+	<!-- end container-scroller -->
+
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/jquery.dataTables.js}"></script>
+	<script async="async" th:src="@{~/js/dataTables.bootstrap4.js}"></script>
+	<script th:src="@{~/js/bootstrap-datepicker.min.js}"></script>
+	<script th:src="@{~/js/select2.min.js}"></script>
+	<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script>
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<!--<script  th:src="@{~/js/datatable-init.js}"></script> -->
+
+	<script th:unless="${#lists.isEmpty(atuais)}" th:inline="javascript">
+	/*<![CDATA[*/
+	$(()=>{
+		$('#order-listing-atuais').DataTable();
+		$(".telefoneUsuario").inputmask("(99) 99999-9999");
+	});
+	/*]]>*/
+	</script>
+
+	<script th:unless="${#lists.isEmpty(atuais)}" th:inline="javascript" th:each="user : ${atuais}">
+	/*<![CDATA[*/
+	$(()=>{
+		 $('#datepicker-popup-[[${user.id}]]').datepicker({
+		      format: 'dd/mm/yyyy',
+		        language: 'pt-BR',
+		        defaultViewDate: { year: 1960, month: 0, day: 1 }
+		      });
+
+		  $('#datepicker-popup-[[${user.id}]]').on('changeDate', function() {
+	        //console.log($('#datepicker').val());
+	        $('#nascimento-[[${user.id}]]').val($('#datepicker-[[${user.id}]]').val());
+	      });
+
+      updateData[[${user.id}]]();
+
+		});
+
+		function updateData[[${user.id}]](){
+	      if($('#nascimento-[[${user.id}]]').val() != ''){
+	        //console.log('nascimento foi executado');
+	        $('#datepicker-popup-[[${user.id}]]').datepicker('update', $('#nascimento-[[${user.id}]]').val());
+	      }
+	    }
+	/*]]>*/
+	</script>
+
+	<script th:unless="${#lists.isEmpty(antigos)}" th:inline="javascript">
+	/*<![CDATA[*/
+	$(()=>{
+		$('#order-listing-antigos').DataTable();
+	});
+	/*]]>*/
+	</script>
+
+	<script th:unless="${#lists.isEmpty(opcoes)}" th:inline="javascript">
+	/*<![CDATA[*/
+	$(()=>{
+		$('#order-listing-opcoes').DataTable();
+	});
+	/*]]>*/
+	</script>
+
+	<script th:unless="${#lists.isEmpty(escolaridades)}"
+		th:inline="javascript">
+	/*<![CDATA[*/
+	$(()=>{
+		$('#order-listing-escolaridades').DataTable();
+	});
+	/*]]>*/
+	</script>
+
+	<script th:inline="javascript">
+
+	/*<![CDATA[*/
+	(function($) {
+		  'use strict';
+
+		  if($(".js-select-single").length){
+		    $(".js-select-single").select2();
+		  }
+	})(jQuery);
+	/*]]>*/
+	</script>
+
+</body>
+
+</html>

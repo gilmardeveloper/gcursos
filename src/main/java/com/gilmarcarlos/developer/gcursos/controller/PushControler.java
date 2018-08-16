@@ -1,12 +1,13 @@
 package com.gilmarcarlos.developer.gcursos.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -14,31 +15,29 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RestController
 public class PushControler {
 	
-	public static final List<SseEmitter> emitters = Collections.synchronizedList( new ArrayList<>());
+	public static final Map<Long, SseEmitter> emitters = Collections.synchronizedMap( new HashMap<>());
 	
-	@GetMapping(value = "/notificacoes", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	@GetMapping(value = "/notificacoes/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	@ResponseBody
-	public SseEmitter quotes() {
+	public SseEmitter quotes(@PathVariable("id") Long id) {
 		SseEmitter emitter = new SseEmitter(180_000L);
-	   	emitters.add(emitter);
+	   	emitters.put(id, emitter);
         emitter.onCompletion(() -> emitters.remove(emitter));
-				
 	    return emitter;
 	}
 	
-public static void notificacoes(String msg) {
+public static void notificacoes(Long id, String msg) {
 		
-		List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
-        emitters.forEach((SseEmitter emitter) -> {
+		Map<Long, SseEmitter> sseEmitterListToRemove = new HashMap<>();
             try {
-                emitter.send(msg);
+            	emitters.get(id).send(msg);
             } catch (IOException e) {
-                emitter.complete();
-                sseEmitterListToRemove.add(emitter);
+            	emitters.get(id).complete();
+                sseEmitterListToRemove.put(id, emitters.get(id));
                 e.printStackTrace();
             }
-        });
-        emitters.removeAll(sseEmitterListToRemove);
+            
+        emitters.remove(id);
 	}
 	
 }

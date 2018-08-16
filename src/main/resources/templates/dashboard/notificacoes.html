@@ -43,7 +43,8 @@
 						<div th:unless="${#lists.isEmpty(notifications)}" class="card">
 							<div class="card-header">
 								<a class="btn btn-outline-success"
-									th:href="@{/dashboard/usuario/notificacoes/deletar}">Apagar todas</a>
+									th:href="@{/dashboard/usuario/notificacoes/deletar}">Apagar
+									todas</a>
 								<div th:if="${alert != null}">
 									<div th:class="${alert}" role="alert">
 										<i class="mdi mdi-alert-circle"></i> <span
@@ -71,7 +72,8 @@
 												</thead>
 												<tbody>
 													<tr th:each="notificacao : ${notifications}">
-														<td th:text="${#temporals.format(notificacao.dataNotificacao, 'dd/MM/yyyy')}"></td>
+														<td
+															th:text="${#temporals.format(notificacao.dataNotificacao, 'dd/MM/yyyy')}"></td>
 														<td th:text="${notificacao.titulo}"></td>
 														<td th:text="${notificacao.mensagem}"></td>
 														<td><a class="btn btn-outline-danger pt-1 pb-1"
@@ -157,7 +159,7 @@
 	<span th:replace="fragments/base-script :: base"></span>
 	<script th:src="@{~/js/jquery.dataTables.js}"></script>
 	<script async="async" th:src="@{~/js/dataTables.bootstrap4.js}"></script>
-	<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script> 
+	<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script>
 	<span th:replace="fragments/base-script :: plugins"></span>
 	<!--<script  th:src="@{~/js/datatable-init.js}"></script> -->
 

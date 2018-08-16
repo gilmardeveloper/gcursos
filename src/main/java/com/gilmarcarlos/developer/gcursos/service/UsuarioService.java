@@ -1,10 +1,14 @@
 package com.gilmarcarlos.developer.gcursos.service;
 
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.AutorizacaoRepository;
 import com.gilmarcarlos.developer.gcursos.repository.UsuarioRepository;
@@ -27,10 +31,24 @@ public class UsuarioService {
 		return repository.save(usuario);
 	}
 	
+	public Usuario criarNovo(Usuario usuario) {
+		usuario.setHabilitado(true);
+		usuario.setAutorizacoes(Arrays.asList(autorizacaoRespository.findByNome("ROLE_Usuario")));
+		usuario.setSenha(passwordCrypt.encode("zeus_1234@5"));
+		return repository.save(usuario);
+	}
+	
 	public Usuario atualizarDados(Usuario usuario) {
 		usuario.setHabilitado(true);
 		usuario.setAutorizacoes(buscarPor(usuario.getId()).getAutorizacoes());
 		usuario.setSenha(passwordCrypt.encode(buscarPor(usuario.getId()).getSenha()));
+		return repository.save(usuario);
+	}
+	
+	public Usuario atualizarDadosNoEncryptSenha(Usuario usuario) {
+		usuario.setHabilitado(true);
+		usuario.setAutorizacoes(buscarPor(usuario.getId()).getAutorizacoes());
+		usuario.setSenha(buscarPor(usuario.getId()).getSenha());
 		return repository.save(usuario);
 	}
 	
@@ -80,6 +98,24 @@ public class UsuarioService {
 	//@Cacheable("postCache")
 	public List<Usuario> listarCadastrosCompleots(){
 		return repository.listCadastrosCompleto();
+	}
+
+	public void atualizarDados(Usuario usuario, String autorizacaoNome) {
+		
+		Usuario temp = repository.findOne(usuario.getId());
+		usuario.setSenha(temp.getSenha());
+		usuario.setAutorizacoes(Arrays.asList(autorizacaoRespository.findByNome(autorizacaoNome)));
+		usuario.setHabilitado(temp.isHabilitado());
+		
+		repository.save(usuario);
+		
+	}
+
+	public Usuario atualizarAutorizacoes(Usuario usuario, String nomeAutorizacao) {
+		List<Autorizacao> autorizacoes = new ArrayList<>();
+		autorizacoes.add(autorizacaoRespository.findByNome(nomeAutorizacao));
+		usuario.setAutorizacoes(autorizacoes);
+		return repository.save(usuario);
 	}
 	
 	
