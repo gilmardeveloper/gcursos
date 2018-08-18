@@ -47,9 +47,9 @@
               </a> -->
             </div>
           </li>
-      </ul>
+  </ul>
 
-      <ul th:fragment="navbar-admin-menu-unidades" class="navbar-nav" >
+  <ul th:fragment="navbar-admin-menu-unidades" class="navbar-nav" >
           
           <li class="nav-item dropdown d-none d-lg-flex" th:if="${usuario.isPerfilCompleto()}" >
             <a class="nav-link dropdown-toggle nav-btn" id="actionDropdown" href="#" data-toggle="dropdown">
@@ -72,7 +72,28 @@
               </a>
             </div>
           </li>
-      </ul>
+  </ul>
+
+   <ul th:fragment="navbar-admin-menu-cursos" class="navbar-nav" >
+          
+          <li class="nav-item dropdown d-none d-lg-flex" th:if="${usuario.isPerfilCompleto()}" >
+            <a class="nav-link dropdown-toggle nav-btn" id="actionDropdown" href="#" data-toggle="dropdown">
+              <span class="btn">+ Eventos</span>
+            </a>
+            <div class="dropdown-menu navbar-dropdown dropdown-left" aria-labelledby="actionDropdown">
+              <a class="dropdown-item" th:href="@{/dashboard/admin/eventos/presencial}">
+                <i class="icon-badge text-primary"></i>
+                Eventos presenciais
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" th:href="@{/dashboard/admin/eventos/online}">
+                <i class="icon-badge text-primary"></i>
+                Eventos online
+              </a>
+            </div>
+          </li>
+  </ul>
+     
 
    <!-- navbar principal -->     
    <nav th:fragment="navbar-principal" class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
@@ -87,6 +108,8 @@
         <ul sec:authorize="hasRole('ROLE_Administrador')"  th:replace="fragments/navbar :: navbar-admin-menu-usuarios"></ul>
 
         <ul sec:authorize="hasRole('ROLE_Administrador')"  th:replace="fragments/navbar :: navbar-admin-menu-unidades"></ul>
+
+        <ul sec:authorize="hasRole('ROLE_Administrador')"  th:replace="fragments/navbar :: navbar-admin-menu-cursos"></ul>
 
         <ul class="navbar-nav navbar-nav-right">
           <!--
