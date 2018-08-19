@@ -53,11 +53,13 @@
 											<h4 class="card-title">Evento presencial</h4>
 											<form class="forms-sample">
 												<div class="row">
+													
+													<input type="hidden" name="id" th:value="${evento} != null ? ${evento.id} : ''" />
 
 													<div class="col-lg-8">	
 														<div class="form-group">
 															<label for="localEvento">Local do evento</label>
-															 <input type="text" class="form-control" id="localEvento" placeholder="nome do local onde vai acontecer o evento"  required="true" />
+															 <input type="text" class="form-control" id="localEvento" placeholder="nome do local onde vai acontecer o evento" th:value="${evento} != null ? ${evento.localEvento} : ''" name="localEvento" required="true" />
 														</div>
 													</div>
 
@@ -65,16 +67,21 @@
 														<div class="form-group">
 															<label for="categoria">Categoria do evento</label> <select
 															class="form-control js-select-single"
-															aria-describedby="categoriaEvento" name="categoriaEventi" style="width: 100%;">
-															<option></option>
+															aria-describedby="categoriaEvento" name="categoriaEvento" style="width: 100%;">
+															<option 
+																th:unless="${#lists.isEmpty(categorias)}" 
+																th:each="categoria : ${categorias}" 
+																th:value="${categoria.id}"
+																th:text="${categoria.display}"
+																th:selected="${categoria.id == evento.categoria.id}"></option>
 														</select>
 														</div>
 													</div>	
 
 													<div class="col-lg-8">	
 														<div class="form-group">
-															<label for="enderecoEvento">Endereço do local do evento</label>
-															 <input type="text" class="form-control" id="enderecoEvento" placeholder="informe o endereço completo"  required="true" />
+															<label for="enderecoLocalEvento">Endereço do local do evento</label>
+															 <input type="text" class="form-control" id="enderecoEvento" placeholder="informe o endereço completo" th:value="${evento} != null ? ${evento.enderecoLocalEvento} : ''" name="enderecoLocalEvento" required="true" />
 														</div>
 													</div>
 
@@ -83,8 +90,12 @@
 															<label for="tipoEvento">Tipo do evento</label> <select
 															class="form-control js-select-single"
 															aria-describedby="categoriaEvento" name="tipoEvento" style="width: 100%;">
-															<option value="interno">INTERNO</option>
-															<option value="externo">EXTERNO</option>
+															<option 
+																value="interno"
+																th:selected="${evento != null and evento.tipoEvento == 'interno'}">INTERNO</option>
+															<option 
+																value="externo" 
+																th:selected="${evento != null and evento.tipoEvento == 'externo'}">EXTERNO</option>
 														</select>
 														</div>
 													</div>			

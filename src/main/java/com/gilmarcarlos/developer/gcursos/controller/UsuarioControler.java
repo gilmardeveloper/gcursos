@@ -139,7 +139,7 @@ public class UsuarioControler {
 		try {
 			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
-			bufferedImage = imagensService.verifica(bufferedImage);
+			bufferedImage = imagensService.verifica(bufferedImage, 100, 100);
 			ImageIO.write(bufferedImage, "png", byteOutStream);
 			return byteOutStream.toByteArray();
 		} catch (Exception e) {

@@ -28,22 +28,22 @@ public class ImagensService {
 		return repository.buscarPor(id);
 	}
 	
-	public BufferedImage verifica(BufferedImage imagem) {
+	public BufferedImage verifica(BufferedImage imagem, Integer altura, Integer largura) {
 		
-		if(imagem.getHeight() > 100 || imagem.getWidth() > 100) {
-			imagem = redimensionar(imagem);
+		if(imagem.getHeight() > altura || imagem.getWidth() > largura) {
+			imagem = redimensionar(imagem, largura, altura);
 		}
 		
-		if(imagem.getHeight() < 100 || imagem.getWidth() < 100) {
-			imagem = redimensionar(imagem);
+		if(imagem.getHeight() < altura || imagem.getWidth() < largura) {
+			imagem = redimensionar(imagem, largura, altura);
 		}
 		
 		return imagem;
 	}
 
-	private BufferedImage redimensionar(BufferedImage imagem) {
-		Image tmp = imagem.getScaledInstance(100, 100, Image.SCALE_DEFAULT); // .SCALE_SMOOTH);
-		imagem = new BufferedImage(100, 100, BufferedImage.SCALE_DEFAULT); // .TYPE_INT_ARGB);
+	private BufferedImage redimensionar(BufferedImage imagem, Integer largura, Integer altura) {
+		Image tmp = imagem.getScaledInstance(largura, altura, Image.SCALE_DEFAULT); // .SCALE_SMOOTH);
+		imagem = new BufferedImage(largura, altura, BufferedImage.SCALE_DEFAULT); // .TYPE_INT_ARGB);
 		Graphics2D g2d = imagem.createGraphics();
 		g2d.drawImage(tmp, 0, 0, null);
 		g2d.dispose();

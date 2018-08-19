@@ -18,6 +18,7 @@ import javax.persistence.OneToOne;
 import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.CodigoFuncional;
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.DadosPessoais;
+import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 
@@ -42,23 +43,26 @@ public class Usuario implements Serializable {
 	@ManyToMany
 	@JoinTable(name = "usuarios_autorizacoes", joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "autorizacao_id", referencedColumnName = "id"))
 	private List<Autorizacao> autorizacoes;
-	
+
 	@OneToOne(mappedBy = "usuario")
 	private DadosPessoais dadosPessoais;
-	
+
 	@OneToOne(mappedBy = "usuario")
 	private CodigoFuncional codigoFuncional;
-	
+
 	@OneToMany(mappedBy = "usuario")
 	private List<Notificacao> notificacoes;
-	
+
 	@OneToOne(mappedBy = "usuario")
 	private Imagens imagens;
-	
+
+	@OneToOne(mappedBy = "responsavel")
+	private EventoPresencial eventoPresencial;
+
 	public Usuario() {
 		this.habilitado = false;
 	}
-	
+
 	public CodigoFuncional getCodigoFuncional() {
 		return codigoFuncional;
 	}
@@ -74,7 +78,7 @@ public class Usuario implements Serializable {
 	public void setCodigoFuncional(CodigoFuncional codigoFuncional) {
 		this.codigoFuncional = codigoFuncional;
 	}
-	
+
 	public DadosPessoais getDadosPessoais() {
 		return dadosPessoais;
 	}
@@ -90,7 +94,7 @@ public class Usuario implements Serializable {
 	public Long getId() {
 		return id;
 	}
-		
+
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
@@ -98,12 +102,12 @@ public class Usuario implements Serializable {
 	public String getNome() {
 		return nome.toUpperCase();
 	}
-	
+
 	public void setSenha(String senha) {
 		this.senha = senha;
 
 	}
-	
+
 	public String getSenha() {
 		return senha;
 	}
@@ -112,7 +116,7 @@ public class Usuario implements Serializable {
 		this.email = email;
 
 	}
-	
+
 	public String getEmail() {
 		return email;
 	}
@@ -124,16 +128,15 @@ public class Usuario implements Serializable {
 	public void setHabilitado(boolean habilitado) {
 		this.habilitado = habilitado;
 	}
-	
+
 	public boolean isHabilitado() {
 		return habilitado;
 	}
 
-	
 	public List<Autorizacao> getAutorizacoes() {
 		return autorizacoes;
 	}
-	
+
 	public Imagens getImagens() {
 		return imagens;
 	}
@@ -142,16 +145,24 @@ public class Usuario implements Serializable {
 		this.imagens = imagens;
 	}
 
+	public EventoPresencial getEventoPresencial() {
+		return eventoPresencial;
+	}
+
+	public void setEventoPresencial(EventoPresencial eventoPresencial) {
+		this.eventoPresencial = eventoPresencial;
+	}
+
 	@Transient
 	public String getStatus() {
 		return autorizacoes.get(0).getNome().split("_")[1];
 	}
-	
+
 	@Transient
 	public Boolean isPerfilCompleto() {
-		return  (this.codigoFuncional != null && this.dadosPessoais != null) ;
+		return (this.codigoFuncional != null && this.dadosPessoais != null);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -184,7 +195,7 @@ public class Usuario implements Serializable {
 	}
 
 	public List<Notificacao> getNotificaoesNaoLidas() {
-		return this.notificacoes.stream().filter( n -> !n.getFoiLido()).collect(Collectors.toList());
+		return this.notificacoes.stream().filter(n -> !n.getFoiLido()).collect(Collectors.toList());
 	}
 
 }
