@@ -1,8 +1,8 @@
 package com.gilmarcarlos.developer.gcursos.model.eventos;
 
+import java.beans.Transient;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,13 +26,15 @@ public class EventoPresencial implements Serializable{
 	private Long id;
 	private String titulo;
 	private String descricao;
-	private String sobre;
 	private String localEvento;
 	private String enderecoLocalEvento;
 	private Boolean certificado;
 	private String cargaHoraria;
-	private String vagas;
+	private Long vagas;
 	private String tipoEvento;
+	
+	@OneToOne(mappedBy = "eventoPresencial")
+	private Sobre sobre;
 	
 	@OneToOne(mappedBy = "eventoPresencial")
 	private ImagensEventoPresencial imagemDestaque;
@@ -40,14 +42,17 @@ public class EventoPresencial implements Serializable{
 	@OneToOne(mappedBy = "eventoPresencial")
 	private ImagensEventoPresencial imagemTopDetalhes;
 	
+	@OneToOne(mappedBy = "eventoPresencial")
+	private ProgramacaoPresencial programacao;
+	
 	@OneToOne
 	private Usuario responsavel;
 	
 	private LocalDate dataInicio;
 	private LocalDate dataTermino;
 	
-	private LocalDateTime horaArbertura;
-	private LocalDateTime horaTermino;
+	private String horaAbertura;
+	private String horaTermino;
 	
 	private LocalDate dataCriacao;
 	private LocalDate dataAtualizacao;
@@ -79,11 +84,11 @@ public class EventoPresencial implements Serializable{
 		this.descricao = descricao;
 	}
 
-	public String getSobre() {
+	public Sobre getSobre() {
 		return sobre;
 	}
 
-	public void setSobre(String sobre) {
+	public void setSobre(Sobre sobre) {
 		this.sobre = sobre;
 	}
 
@@ -119,11 +124,11 @@ public class EventoPresencial implements Serializable{
 		this.cargaHoraria = cargaHoraria;
 	}
 
-	public String getVagas() {
+	public Long getVagas() {
 		return vagas;
 	}
 
-	public void setVagas(String vagas) {
+	public void setVagas(Long vagas) {
 		this.vagas = vagas;
 	}
 
@@ -133,6 +138,14 @@ public class EventoPresencial implements Serializable{
 
 	public void setTipoEvento(String tipoEvento) {
 		this.tipoEvento = tipoEvento;
+	}
+	
+	public Usuario getResponsavel() {
+		return responsavel;
+	}
+
+	public void setResponsavel(Usuario responsavel) {
+		this.responsavel = responsavel;
 	}
 
 	public ImagensEventoPresencial getImagemDestaque() {
@@ -167,19 +180,20 @@ public class EventoPresencial implements Serializable{
 		this.dataTermino = dataTermino;
 	}
 
-	public LocalDateTime getHoraArbertura() {
-		return horaArbertura;
+	
+	public String getHoraAbertura() {
+		return horaAbertura;
 	}
 
-	public void setHoraArbertura(LocalDateTime horaArbertura) {
-		this.horaArbertura = horaArbertura;
+	public void setHoraAbertura(String horaAbertura) {
+		this.horaAbertura = horaAbertura;
 	}
 
-	public LocalDateTime getHoraTermino() {
+	public String getHoraTermino() {
 		return horaTermino;
 	}
 
-	public void setHoraTermino(LocalDateTime horaTermino) {
+	public void setHoraTermino(String horaTermino) {
 		this.horaTermino = horaTermino;
 	}
 
@@ -206,7 +220,20 @@ public class EventoPresencial implements Serializable{
 	public void setCategoria(CategoriaEvento categoria) {
 		this.categoria = categoria;
 	}
+	
+	public ProgramacaoPresencial getProgramacao() {
+		return programacao;
+	}
 
+	public void setProgramacao(ProgramacaoPresencial programacao) {
+		this.programacao = programacao;
+	}
+
+	@Transient
+	public String getDisplayCertificado() {
+		return (getCertificado() ? "SIM" : "NÃO");
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

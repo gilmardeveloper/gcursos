@@ -5,7 +5,7 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
 <head th:replace="fragments/head :: head(~{::title},~{::link})">
-<title>ZEUS | Cursos</title>
+<title>ZEUS | Eventos</title>
 <link rel="stylesheet" th:href="@{~/css/dropify.min.css}" />
 <link rel="stylesheet" th:href="@{~/css/bootstrap-datepicker.min.css}" />
 <link rel="stylesheet" th:href="@{~/css/bootstrap-clockpicker.min.css}" />
@@ -51,7 +51,7 @@
 									<div class="card">
 										<div class="card-body">
 											<h4 class="card-title">Evento presencial</h4>
-											<form class="forms-sample">
+											<form th:action="@{/dashboard/admin/eventos/presencial/salvar}" class="forms-sample" method="post">
 												<div class="row">
 													
 													<input type="hidden" name="id" th:value="${evento} != null ? ${evento.id} : ''" />
@@ -63,20 +63,35 @@
 														</div>
 													</div>
 
-													<div class="col-lg-4">	
+													<div class="col-lg-4" th:if="${evento != null}">	
 														<div class="form-group">
 															<label for="categoria">Categoria do evento</label> <select
 															class="form-control js-select-single"
-															aria-describedby="categoriaEvento" name="categoriaEvento" style="width: 100%;">
+															aria-describedby="categoriaEvento" name="categoria" style="width: 100%;">
 															<option 
 																th:unless="${#lists.isEmpty(categorias)}" 
 																th:each="categoria : ${categorias}" 
 																th:value="${categoria.id}"
 																th:text="${categoria.display}"
-																th:selected="${categoria.id == evento.categoria.id}"></option>
+																th:selected="${categoria.id == evento.categoria.id and evento.categoria.id != null}"></option>
 														</select>
 														</div>
-													</div>	
+													</div>
+
+													<div class="col-lg-4" th:if="${evento == null}">	
+														<div class="form-group">
+															<label for="categoria">Categoria do evento</label> <select
+															class="form-control js-select-single"
+															aria-describedby="categoriaEvento" name="categoria" style="width: 100%;">
+															<option 
+																th:unless="${#lists.isEmpty(categorias)}" 
+																th:each="categoria : ${categorias}" 
+																th:value="${categoria.id}"
+																th:text="${categoria.display}">
+															</option>
+														</select>
+														</div>
+													</div>		
 
 													<div class="col-lg-8">	
 														<div class="form-group">
@@ -100,6 +115,9 @@
 														</div>
 													</div>			
 													
+													<input id="data-inicio" type="hidden"
+															th:value="${#temporals.format(evento.dataInicio, 'dd/MM/yyyy')}" th:if="${evento != null}"/>
+
 													<div class="col-lg-3">
 														<div class="form-group">
 															<label for="dataInicio">Data de início</label>
@@ -113,6 +131,9 @@
 															</div>
 														</div>
 													</div>
+
+													<input id="data-termino" type="hidden"
+															th:value="${#temporals.format(evento.dataTermino, 'dd/MM/yyyy')}" th:if="${evento != null}"/>
 
 													<div class="col-lg-3">
 														<div class="form-group">
@@ -132,7 +153,7 @@
 														<div class="form-group">
 															<label for="horaAbertura">Hora da abertura</label>
 															<div class="input-group clockpicker">
-																<input class="form-control" type="text" name="horaAbertura"  value="09:00" />
+																<input class="form-control" type="text" name="horaAbertura"  th:value="${evento} != null ? ${evento.horaAbertura} : '09:00'" />
 																<span class="glyphicon glyphicon-time"></span>
 																
 															</div>
@@ -144,7 +165,7 @@
 														<div class="form-group">
 															<label for="horaTermino">Hora do fechamento</label>
 															 <div class="input-group clockpicker">
-																<input class="form-control" type="text" name="horaTermino" value="17:00" />
+																<input class="form-control" type="text" th:value="${evento} != null ? ${evento.horaTermino} : '09:00'" name="horaTermino"/>
 																<span class="glyphicon glyphicon-time"></span>
 																
 															</div>
@@ -154,14 +175,14 @@
 													<div class="col-lg-4">
 														<div class="form-group">
 															<label for="cargaHoraria">Carga horária</label>
-															 <input type="number" class="form-control" id="cargaHoraria" name="cargaHoraria" placeholder="apenas números" min="0" required="true" />
+															 <input type="number" class="form-control" id="cargaHoraria" name="cargaHoraria" placeholder="apenas números" min="0" required="true" th:value="${evento} != null ? ${evento.cargaHoraria} : ''"/>
 														</div>
 													</div>
 
 													<div class="col-lg-4">
 														<div class="form-group">
-															<label for="qtdVagas">Quantidade de vagas</label>
-															 <input type="number" class="form-control" id="qtdVagas" name="qtdVagas" placeholder="apenas números" min="0" required="true" />
+															<label for="vagas">Quantidade de vagas</label>
+															 <input type="number" class="form-control" id="qtdVagas" name="vagas" th:value="${evento} != null ? ${evento.vagas} : ''" placeholder="apenas números" min="0" required="true" />
 														</div>
 													</div>
 
@@ -169,8 +190,12 @@
 														<div class="form-group">
 															<label for="certificado">Certificado</label>
 															 <select id="certificado" class="form-control" name="certificado">
-															 	<option value="sim">SIM</option>
-															 	<option value="não">NÃO</option>
+															 	<option 
+															 		value="true" 
+															 		th:selected="${evento != null and evento.certificado == 'true'}">SIM</option>
+															 	<option 
+															 		value="false"
+															 		th:selected="${evento != null and evento.certificado == 'false'}">NÃO</option>
 															 </select>
 														</div>
 													</div>
@@ -178,7 +203,7 @@
 													<div class="col-lg-4">
 														<div class="form-group">
 															<label for="titulo">Titulo</label>
-															 <textarea rows="2" class="form-control" id="titulo" placeholder="máximo de 60 caracteres" maxlength="60" required="true"></textarea>
+															 <textarea rows="2" class="form-control" id="titulo" placeholder="máximo de 60 caracteres" maxlength="60" required="true" th:text="${evento} != null ? ${evento.titulo} : ''" name="titulo"></textarea>
 															 <small>máximo de caracteres: 60 digitados: <span id="qtd-titulo">0</span></small> 
 														</div>
 													</div>
@@ -186,7 +211,7 @@
 													<div class="col-lg-8">	
 														<div class="form-group">
 															<label for="descricao">Descrição</label>
-															<textarea rows="2" class="form-control" id="descricao" placeholder="máximo de 155 caracteres" maxlength="155" required="true" ></textarea>
+															<textarea rows="2" class="form-control" id="descricao" placeholder="máximo de 155 caracteres" maxlength="155" required="true" th:text="${evento} != null ? ${evento.descricao} : ''" name="descricao"></textarea>
 															<small>máximo de caracteres: 155 digitados: <span id="qtd-descricao">0</span></small> 
 														</div>
 													</div>
@@ -244,7 +269,35 @@
 	    	
 	     $('.clockpicker').clockpicker({donetext: 'definir'});	
 	    });
+
+	    
   	</script>
+
+  	<script th:if="${evento != null}" th:inline="javascript">
+
+	/*<![CDATA[*/
+		$(() =>{
+
+			updateDataInicio();
+			updateDataTermino();
+
+		});
+
+		 function updateDataInicio(){
+	      if($('#data-inicio').val() != ''){
+	        console.log('dataInicio foi executado');
+	        $('#datepicker-popup-inicio').datepicker('update', $('#data-inicio').val());
+	      }
+    	}
+
+    	 function updateDataTermino(){
+	      if($('#data-termino').val() != ''){
+	        console.log('dataTermino foi executado');
+	        $('#datepicker-popup-termino').datepicker('update', $('#data-termino').val());
+	      }
+    	}
+	/*]]>*/
+	</script>
 
 	<script th:inline="javascript">
 

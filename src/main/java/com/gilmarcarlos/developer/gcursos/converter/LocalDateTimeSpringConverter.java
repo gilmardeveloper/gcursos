@@ -18,7 +18,7 @@ public class LocalDateTimeSpringConverter implements Converter<String, LocalDate
 
 	@Override
 	public LocalDateTime convert(String value) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 		return LocalDateTime.parse(value, formatter);
 	}
 

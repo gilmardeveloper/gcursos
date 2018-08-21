@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
+import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencial;
+import com.gilmarcarlos.developer.gcursos.repository.ImagensEventoPresencialRepository;
 import com.gilmarcarlos.developer.gcursos.repository.ImagensRepository;
 
 @Service
@@ -15,6 +17,9 @@ public class ImagensService {
 
 	@Autowired
 	private ImagensRepository repository;
+	
+	@Autowired
+	private ImagensEventoPresencialRepository repositoryImagensEvePres;
 	
 	public Imagens salvar(Imagens imagens) {
 		return repository.save(imagens);
@@ -49,5 +54,12 @@ public class ImagensService {
 		g2d.dispose();
 		return imagem;
 	}
+
+	public void deletarImagemEvePreTop(Long id) {
+		repositoryImagensEvePres.deleteById(id);
+	}
 	
+	public ImagensEventoPresencial salvarImagemEvePresTop(ImagensEventoPresencial imagens) {
+		return repositoryImagensEvePres.save(imagens);
+	}
 }
