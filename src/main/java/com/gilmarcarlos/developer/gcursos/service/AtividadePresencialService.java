@@ -30,5 +30,9 @@ public class AtividadePresencialService {
 		return repository.buscarPor(id);
 	}
 	
+	public List<AtividadePresencial> buscarPorEvento(Long id) {
+		return repository.buscarPorEvento(id);
+	}
+	
 	
 }

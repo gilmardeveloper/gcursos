@@ -13,6 +13,9 @@ public interface AtividadePresencialRepository extends CrudRepository<AtividadeP
 	@Query("select a from AtividadePresencial a")
 	List<AtividadePresencial> listAll();
 	
+	@Query("select a from AtividadePresencial a where a.diaEvento.programacaoPresencial.eventoPresencial.id = :pid")
+	List<AtividadePresencial> buscarPorEvento(@Param("pid") Long id);
+	
 	@Query("select a from AtividadePresencial a where a.id = :pid")
 	AtividadePresencial buscarPor(@Param("pid") Long id);
 

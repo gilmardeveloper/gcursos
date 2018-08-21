@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+<title>ZEUS | Cadastros</title>
+<link rel="stylesheet" th:href="@{~/css/dataTables.bootstrap4.css}" />
+<link rel="stylesheet" th:href="@{~/css/bootstrap-clockpicker.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2-bootstrap.min.css}" />
+</head>
+
+<body>
+	<!-- container-scroller -->
+	<div class="container-scroller">
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+
+		<!-- container-fluid -->
+		<div class="container-fluid page-body-wrapper">
+			<!-- row-offcanvas -->
+			<div class="row row-offcanvas row-offcanvas-right">
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					<!-- row justify-content -->
+					<div class="row justify-content-center">
+
+						<div class="card">
+							<div class="card-header">
+								<div th:if="${alert != null}">
+									<div th:class="${alert}" role="alert">
+										<i class="mdi mdi-alert-circle"></i> <span
+											th:text="${message}"></span>
+										<button type="button" class="close" data-dismiss="alert"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								</div>
+							</div>
+							<div class="card-body" th:unless="${#lists.isEmpty(atividades)}">
+								<h4 class="card-title" th:text="${evento.titulo}"></h4>
+								<div class="row">
+									<div class="col-12">
+										<div class="table-responsive">
+											<table id="order-listing-atividades" class="table">
+												<thead>
+													<tr>
+														<th class="">data</th>
+														<th class="">titulo</th>
+														<th class="">sala</th>
+														<th class="">vagas</th>
+														<th class="">hora inicio</th>
+														<th class="">hora fim</th>
+														<th class="">responsável</th>
+														<th>::</th>
+														<th>::</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="atividade : ${atividades}">
+														<td class=""
+															th:text="${#temporals.format(atividade.diaEvento.data, 'dd/MM/yyyy')}"></td>
+														<td class="" th:text="${atividade.titulo}"></td>
+														<td class="" th:text="${atividade.sala}"></td>
+														<td class="" th:text="${atividade.vagas}"></td>
+														<td class="" th:text="${atividade.horaInicio}"></td>
+														<td class="" th:text="${atividade.horaFim}"></td>
+														<td class="" th:text="${atividade.nomeResponsavel}"></td>
+														<td><a class="btn btn-outline-primary pt-1 pb-1"
+															th:href="@{/dashboard/admin/eventos/presencial/atividades/alterar/{id}(id=${atividade.id})}"><i
+																class="icon-pencil"></i></a></td>
+														<td><a class="btn btn-outline-danger pt-1 pb-1"
+															th:href="@{/dashboard/admin/eventos/presencial/atividades/deletar/{id}(id=${atividade.id})}"><i
+																class="icon-close"></i></a></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- card -->
+						<div class="card">
+							<div class="card-body">
+								<h4 class="card-title">+ Nova atividade</h4>
+								<h5 class="card-title" th:text="${evento.titulo}"></h5>
+								<form class="forms-sample"
+									th:action="@{/dashboard/admin/eventos/presencial/atividades/salvar}"
+									method="post">
+																		
+									<input type="hidden" name="id"
+										th:value="${atividade != null} ? ${atividade.id} : ''">
+								<div class="form-row">		
+									<div class="col-lg-6" th:if="${atividade != null}">
+										<div class="form-group">
+											<label for="diaEvento">Dia do evento</label> <select
+												class="form-control js-select-single"
+												aria-describedby="diaEvento" name="diaEvento"
+												style="width: 100%;">
+												<option th:unless="${#lists.isEmpty(dias)}"
+													th:each="dia : ${dias}" th:value="${dia.id}"
+													th:text="${#temporals.format(dia.data, 'dd/MM/yyyy')}"
+													th:selected="${dia.id == atividade.diaEvento.id}"></option>
+											</select>
+										</div>
+									</div>
+
+									<div class="col-lg-6" th:if="${atividade == null}">
+										<div class="form-group">
+											<label for="diaEvento">Dia do evento</label> <select
+												class="form-control js-select-single"
+												aria-describedby="diaEvento" name="diaEvento"
+												style="width: 100%;">
+												<option th:unless="${#lists.isEmpty(dias)}"
+													th:each="dia : ${dias}" th:value="${dia.id}"
+													th:text="${#temporals.format(dia.data, 'dd/MM/yyyy')}"></option>
+											</select>
+										</div>
+									</div>
+
+									<div class="form-group col-lg-6">
+											<label for="nomeResponsavel">Responsável pela atividade</label> <input
+												type="text" class="form-control" id="nomeResponsavel"
+												placeholder="palestrante/professor/instrutor responsável pela atividade"
+												name="nomeResponsavel"
+												th:value="${atividade != null} ? ${atividade.nomeResponsavel} : ''"
+												required="true" />
+									</div>
+
+									
+										
+										<div class="form-group col-lg-12">
+											<label for="titulo">Titulo</label> <input type="text"
+												class="form-control" id="titulo"
+												placeholder="descrição da atividade" name="titulo"
+												th:value="${atividade != null} ? ${atividade.titulo} : ''"
+												required="true" />
+										</div>
+
+										<div class="form-group col-lg-3">
+											<label for="sala">Sala</label> <input type="text"
+												class="form-control" id="sala"
+												placeholder="identificação da sala" name="sala"
+												th:value="${atividade != null} ? ${atividade.sala} : ''"
+												required="true" />
+										</div>
+
+										<div class="form-group col-lg-3">
+											<label for="vagas">Vagas</label> <input type="number"
+												class="form-control" id="vagas"
+												placeholder="limite de vagas" name="vagas"
+												th:value="${atividade != null} ? ${atividade.vagas} : ''"
+												required="true" min="0" />
+										</div>
+
+										<div class="col-lg-3">
+											<div class="form-group">
+												<label for="horaInicio">Início da atividade</label>
+												<div class="input-group clockpicker">
+													<input class="form-control" type="text" name="horaInicio"
+														th:value="${atividade} != null ? ${atividade.horaInicio} : '09:00'" />
+													<span class="glyphicon glyphicon-time"></span>
+
+												</div>
+
+											</div>
+										</div>
+
+										<div class="col-lg-3">
+											<div class="form-group">
+												<label for="horaFim">Término da atividade</label>
+												<div class="input-group clockpicker">
+													<input class="form-control" type="text" name="horaFim"
+														th:value="${atividade} != null ? ${atividade.horaFim} : '09:00'" />
+													<span class="glyphicon glyphicon-time"></span>
+
+												</div>
+
+											</div>
+										</div>
+
+										
+								</div>			
+										<button type="submit" class="btn btn-success mr-2">Salvar</button>
+										<a class="btn btn-danger"
+											th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}(id=${evento.id})}">Cancelar</a>
+								</form>
+							</div>
+						</div>
+						<!-- end card -->
+
+					</div>
+					<!-- end row justify-content -->
+				</div>
+				<!-- end content-wrapper -->
+
+				<!-- footer -->
+				<footer th:replace="fragments/footer :: footer"></footer>
+				<!-- end footer -->
+			</div>
+			<!-- end row-offcanvas -->
+		</div>
+		<!-- end container-fluid  -->
+
+	</div>
+	<!-- end container-scroller -->
+
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/jquery.dataTables.js}"></script>
+	<script async="async" th:src="@{~/js/dataTables.bootstrap4.js}"></script>
+	<script th:src="@{~/js/bootstrap-clockpicker.min.js}"></script>
+	<script th:src="@{~/js/select2.min.js}"></script>
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<!--<script  th:src="@{~/js/datatable-init.js}"></script> -->
+
+	<script>
+		$(document).ready(function() {
+			$('.clockpicker').clockpicker({
+				donetext : 'definir'
+			});
+			$('#order-listing-atividades').DataTable();
+		});
+	</script>
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		(function($) {
+			'use strict';
+
+			if ($(".js-select-single").length) {
+				$(".js-select-single").select2();
+			}
+		})(jQuery);
+		/*]]>*/
+	</script>
+
+</body>
+
+</html>

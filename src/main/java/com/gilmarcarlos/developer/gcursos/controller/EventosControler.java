@@ -3,6 +3,8 @@ package com.gilmarcarlos.developer.gcursos.controller;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -13,14 +15,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gilmarcarlos.developer.gcursos.model.eventos.AtividadePresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.CategoriaEvento;
+import com.gilmarcarlos.developer.gcursos.model.eventos.DiaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.ProgramacaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.Sobre;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
+import com.gilmarcarlos.developer.gcursos.service.AtividadePresencialService;
 import com.gilmarcarlos.developer.gcursos.service.CategoriaEventoService;
+import com.gilmarcarlos.developer.gcursos.service.DiaEventoPaginacaoService;
+import com.gilmarcarlos.developer.gcursos.service.DiaEventoService;
 import com.gilmarcarlos.developer.gcursos.service.EventoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.ImagensService;
+import com.gilmarcarlos.developer.gcursos.service.ProgramacaoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.SobreService;
 import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
 
@@ -43,8 +52,26 @@ public class EventosControler {
 	@Autowired
 	private SobreService sobreService;
 	
+	@Autowired
+	private ProgramacaoPresencialService programacaoPresencialService;
+	
+	@Autowired
+	private AtividadePresencialService atividadePresencialService;
+	
+	@Autowired
+	private DiaEventoService diaEventoService;
+	
+	@Autowired
+	private DiaEventoPaginacaoService diaEventoPaginacaoService;
+	
 	private Authentication autenticado;
-
+	
+	private final static Integer MAXIMO_PAGES = 3;
+	
+	private Page<DiaEvento> getDiaPaginacao(Long id, Integer page) {
+		return diaEventoPaginacaoService.listarDiasPorProgramacao(id, PageRequest.of(page, MAXIMO_PAGES));
+	}
+	
 	@GetMapping
 	public String eventosPresencial(Model model) {
 		
@@ -82,9 +109,26 @@ public class EventosControler {
 	public String eventoDetalhes(@PathVariable("id") Long id, Model model) {
 		
 		Usuario usuarioLogado = getUsuario();
+		EventoPresencial evento = eventoPresencialService.buscarPor(id);
+		
 		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
 		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("evento", eventoPresencialService.buscarPor(id));
+		model.addAttribute("evento", evento);
+		model.addAttribute("dias", getDiaPaginacao(evento.getProgramacao().getId(), 0));
+		
+		return "/dashboard/admin/eventos/base-detalhes-evento-presencial";
+	}
+	
+	@GetMapping("/detalhes/{id}/pagina/{page}")
+	public String eventoDetalhes(@PathVariable("id") Long id, @PathVariable("page") Integer page, Model model) {
+		
+		Usuario usuarioLogado = getUsuario();
+		EventoPresencial evento = eventoPresencialService.buscarPor(id);
+		
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("evento", evento);
+		model.addAttribute("dias", getDiaPaginacao(evento.getProgramacao().getId(), page));
 		
 		return "/dashboard/admin/eventos/base-detalhes-evento-presencial";
 	}
@@ -95,10 +139,19 @@ public class EventosControler {
 		evento.setDataCriacao(LocalDate.now());
 		evento.setDataAtualizacao(LocalDate.now());
 		evento.setResponsavel(getUsuario());
-		model.addFlashAttribute("evento", eventoPresencialService.salvar(evento));
+		EventoPresencial novoEvento = eventoPresencialService.salvar(evento);
+		
+		ProgramacaoPresencial programacao = new ProgramacaoPresencial();
+		programacao.setEventoPresencial(novoEvento);
+		ProgramacaoPresencial novaProgramacao = programacaoPresencialService.salvar(programacao);
+		
+		diaEventoService.gerarDiasDeEvento(novoEvento, novaProgramacao);
+		
 		model.addFlashAttribute("categorias", categoriaEventoService.listarTodos());
+		
 		model.addFlashAttribute("alert", "alert alert-fill-success");
 		model.addFlashAttribute("message", "salvo com sucesso");
+		
 		return "redirect:/dashboard/admin/eventos/presencial";
 		
 	}
@@ -125,6 +178,27 @@ public class EventosControler {
 		sobreService.salvar(sobre);
 		return "redirect:/dashboard/admin/eventos/presencial/detalhes/" + sobre.getEventoPresencial().getId();
 
+	}
+	
+	@GetMapping("/programacao/{id}")
+	public String programacao(@PathVariable("id")Long id, Model model) {
+		
+		ProgramacaoPresencial programacao = programacaoPresencialService.buscarPor(id);
+		model.addAttribute("usuario", getUsuario());
+		model.addAttribute("evento", programacao.getEventoPresencial());
+		model.addAttribute("dias", programacao.getDias());
+		model.addAttribute("atividades", atividadePresencialService.buscarPorEvento(id));
+		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
+		
+		return "dashboard/admin/eventos/base-cadastro-programacao-evento-presencial";
+	}
+	
+	@PostMapping("/atividades/salvar")
+	public String atividadesSalvar(AtividadePresencial atividade, RedirectAttributes model) {
+		atividadePresencialService.salvar(atividade);
+		model.addFlashAttribute("alert", "alert alert-fill-success alert-dismissible fade show");
+		model.addFlashAttribute("message", "salvo com sucesso");
+		return "redirect:/dashboard/admin/eventos/presencial/detalhes/" + atividade.getDiaEvento().getProgramacaoPresencial().getId();
 	}
 	
 	@GetMapping("/categorias")

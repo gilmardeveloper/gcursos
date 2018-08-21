@@ -25,7 +25,7 @@ public class AtividadePresencial implements Serializable {
 	private Integer vagas;
 	private String horaInicio;
 	private String horaFim;
-	private String nomeResposavel;
+	private String nomeResponsavel;
 	
 	@OneToOne
 	private DiaEvento diaEvento;
@@ -78,12 +78,13 @@ public class AtividadePresencial implements Serializable {
 		this.horaFim = horaFim;
 	}
 
-	public String getNomeResposavel() {
-		return nomeResposavel;
+
+	public String getNomeResponsavel() {
+		return nomeResponsavel;
 	}
 
-	public void setNomeResposavel(String nomeResposavel) {
-		this.nomeResposavel = nomeResposavel;
+	public void setNomeResponsavel(String nomeResponsavel) {
+		this.nomeResponsavel = nomeResponsavel;
 	}
 
 	public DiaEvento getDiaEvento() {

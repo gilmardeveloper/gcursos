@@ -53,8 +53,9 @@
 									<li class="nav-item"><a class="nav-link" href="#"
 										data-toggle="modal" data-target="#modal-editor-sobre">+
 											Sobre</a></li>
-									<li class="nav-item"><a class="nav-link" href="#">+
-											Outros</a></li>
+									<li class="nav-item"><a class="nav-link"
+										th:href="@{/dashboard/admin/eventos/presencial/programacao/{id}(id=${evento.programacao.id})}">+
+											Programação</a></li>
 									<li class="nav-item"><a class="nav-link" href="#">Visualizar</a>
 									</li>
 								</ul>
@@ -87,19 +88,101 @@
 												id="myTab" role="tablist">
 
 												<li class="nav-item col-xs-12"><a
-													class="nav-link active" id="info-tab" data-toggle="tab"
-													href="#info" role="tab" aria-controls="info"
-													aria-expanded="true">Sobre</a></li>
+													class="nav-link active" id="avatar-tab" data-toggle="tab"
+													href="#avatar" role="tab" aria-controls="avatar">Programação</a></li>
+
 												<li class="nav-item col-xs-12"><a class="nav-link"
-													id="avatar-tab" data-toggle="tab" href="#avatar" role="tab"
-													aria-controls="avatar">Programação</a></li>
+													id="info-tab" data-toggle="tab" href="#info" role="tab"
+													aria-controls="info" aria-expanded="true">Sobre</a></li>
+
 											</ul>
 										</div>
 										<div class="wrapper">
 											<hr>
 											<div class="tab-content" id="myTabContent">
-												<div class="tab-pane fade show active" id="info"
-													role="tabpanel" aria-labelledby="info">
+
+												<div class="tab-pane fade show active" id="avatar"
+													role="tabpanel" aria-labelledby="avatar-tab">
+													<div class="row">
+
+														<div class="col-lg-12 mb-5"
+															th:unless="${#lists.isEmpty(dias)}"
+															th:each="dia : ${dias}">
+															<h5 class="font-weight-bold"
+																th:text="${#temporals.format(dia.data, 'dd/MM/yyyy')}"></h5>
+															
+															<div th:unless="${#lists.isEmpty(dia.atividades)}"  th:each="atividade : ${dia.atividades}">
+																<p>
+																  <a class="btn btn-outline-dark pt-1 pb-1 border-0" data-toggle="collapse" th:href="'#collapse-' + ${atividade.id}" role="button" aria-expanded="false" th:attr="aria-controls='collapse-' + ${atividade.id}" th:text="${atividade.titulo}">
+																    
+																  </a>
+																</p>
+																
+																<div class="collapse" th:id="'collapse-' + ${atividade.id}">
+																  <div class="card card-body">
+																    	<div class="row">
+																    			<div class="col-lg-6">
+																    				<p class="">Horário: <span class="text-muted" th:text="${atividade.horaInicio}"></span>
+																					às <span class="text-muted" th:text="${atividade.horaFim}"></span></p>
+																    			</div>
+																    			<div class="col-lg-3">
+																    				<p class="">Vagas: <span class="text-muted" th:text="${atividade.vagas}"></span></p>
+																    			</div>
+																    			<div class="col-lg-3">
+																    				<p class="">Sala: <span class="text-muted" th:text="${atividade.sala}"></span></p>
+																    			</div>
+																    			<div class="col-lg-6">
+																    				<p class="">Responsável: <span class="text-muted" th:text="${atividade.nomeResponsavel}"></span></p>
+																    			</div>
+																    	</div>
+																  </div>
+																</div>
+															</div>
+
+															
+														</div>
+
+														<!-- paginação inicio -->
+														<div class="col-lg-12">
+
+															<div class="pagination-area text-center"
+																th:unless="${#lists.isEmpty(dias)}">
+																<ul class="pagination rounded"
+																	th:if="${dias.totalPages} &gt; 1">
+
+																	<li class="page-item"><a
+																		th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}/pagina/{page}/(id=${evento.id},page=0)}"
+																		th:class="${dias.first} == true ? 'btn disabled' : 'page-link' "><i
+																			class="mdi mdi-chevron-left"></i></a></li>
+
+																	<li class="page-item"
+																		th:if="(${dias.number} - 1) &gt; -1"><a
+																		class="page-link"
+																		th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}/pagina/{page}/(id=${evento.id},page=${dias.number} - 1)}"
+																		th:text="${dias.number} - 1">&laquo;</a></li>
+
+																	<li
+																		th:if="${dias.number} &lt; (${dias.totalPages} - 1)"
+																		th:each="index : ${#numbers.sequence(dias.number, dias.number + 1)}"
+																		th:class="${index} == ${dias.number} ? 'page-item active' : 'page-item'"><a
+																		class="page-link"
+																		th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}/pagina/{page}/(id=${evento.id},page=${index})}"
+																		th:text="${index}">&laquo;</a></li>
+
+																	<li class="page-item"><a
+																		th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}/pagina/{page}/(id=${evento.id},page=${dias.totalPages} - 1)}"
+																		th:class="${dias.last} == true ? 'btn disabled' : 'page-link' "><i
+																			class="mdi mdi-chevron-right"></i></a></li>
+																</ul>
+															</div>
+
+														</div>
+														<!-- paginação final -->
+													</div>
+												</div>
+
+												<div class="tab-pane fade" id="info" role="tabpanel"
+													aria-labelledby="info">
 													<div class="border-bottom border-top pt-3 mb-5">
 														<div class="row">
 															<div class="col-lg-4 col-xs-12">
@@ -121,49 +204,12 @@
 														</div>
 													</div>
 
-													<div th:if="${evento.sobre != null}" th:utext="${evento.sobre.conteudo}"></div>
+													<div th:if="${evento.sobre != null}"
+														th:utext="${evento.sobre.conteudo}"></div>
 
 												</div>
-												<!-- tab content ends -->
-												<div class="tab-pane fade" id="avatar" role="tabpanel"
-													aria-labelledby="avatar-tab">
-													<div class="row">
-														
-														<div class="col-lg-12 mb-5" th:if="${evento.programacao != null}" th:each="dia : ${evento.programacao.dias}"> 
-															<h5 th:text="${#temporals.format(dia.data, 'dd/MM/yyyy')}"></h5>
-															<div class="table-responsive">
-																<table class="table">
-																	<thead>
-																		<tr>
-																			<th scope="col">Descrição</th>
-																			<th scope="col">horário</th>
-																			<th scope="col">sala</th>
-																			<th scope="col">vagas</th>
-																			<th scope="col">responsável</th>
-																		</tr>
-																	</thead>
-																	<tbody>
-																		<tr th:each="atividade : ${dia.atividades}">
-																			<th scope="row" th:text="${atividade.titulo}"></th>
-																			<td>
-																				<span th:text="${atividade.horaInicio}"></span> às <span th:text="${atividade.horaFim}"></span>
-																			</td>
-																			<td th:text="${atividade.sala}"></td>
-																			<td th:text="${atividade.vagas}"></td>
-																			<td th:text="${atividade.responsavel}"></td>
-																			<td>
-																				<form action="" method="post">
-																					<input type="hidden" name="id" />
-																					<button class="btn btn-primary">Inscreva-se</button>
-																				</form>
-																			</td>
-																		</tr>
-																	</tbody>
-																</table>
-															</div>
-														</div>
-													</div>
-												</div>
+
+
 											</div>
 										</div>
 									</div>
@@ -288,9 +334,9 @@
 					</div>
 
 					<!-- modal editor sobre -->
-					<div class="modal fade" id="modal-editor-sobre"
-						tabindex="-1" role="dialog"
-						aria-labelledby="modal-label-editor-sobre" aria-hidden="true">
+					<div class="modal fade" id="modal-editor-sobre" tabindex="-1"
+						role="dialog" aria-labelledby="modal-label-editor-sobre"
+						aria-hidden="true">
 						<div class="modal-dialog modal-lg">
 							<div class="modal-content">
 								<div class="modal-header">
@@ -302,10 +348,13 @@
 									</button>
 								</div>
 								<div class="modal-body">
-									<form th:action="@{/dashboard/admin/eventos/presencial/sobre/salvar}" id="formulario-editor-sobre" method="post">
-									  <input type="hidden" name="eventoPresencial"
+									<form
+										th:action="@{/dashboard/admin/eventos/presencial/sobre/salvar}"
+										id="formulario-editor-sobre" method="post">
+										<input type="hidden" name="eventoPresencial"
 											th:value="${evento.id}" />
-									  <textarea id="summernote" name="conteudo" th:utext="${evento.sobre != null} ?  ${evento.sobre.conteudo} : ''"></textarea>
+										<textarea id="summernote" name="conteudo"
+											th:utext="${evento.sobre != null} ?  ${evento.sobre.conteudo} : ''"></textarea>
 									</form>
 								</div>
 								<div class="modal-footer">
