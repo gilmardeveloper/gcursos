@@ -122,17 +122,20 @@
 																  <div class="card card-body">
 																    	<div class="row">
 																    			<div class="col-lg-6">
-																    				<p class="">Horário: <span class="text-muted" th:text="${atividade.horaInicio}"></span>
+																    				<p class="">horário: <span class="text-muted" th:text="${atividade.horaInicio}"></span>
 																					às <span class="text-muted" th:text="${atividade.horaFim}"></span></p>
 																    			</div>
 																    			<div class="col-lg-3">
-																    				<p class="">Vagas: <span class="text-muted" th:text="${atividade.vagas}"></span></p>
+																    				<p class="">vagas: <span class="text-muted" th:text="${atividade.vagas}"></span></p>
 																    			</div>
 																    			<div class="col-lg-3">
-																    				<p class="">Sala: <span class="text-muted" th:text="${atividade.sala}"></span></p>
+																    				<p class="">sala: <span class="text-muted" th:text="${atividade.sala}"></span></p>
 																    			</div>
 																    			<div class="col-lg-6">
-																    				<p class="">Responsável: <span class="text-muted" th:text="${atividade.nomeResponsavel}"></span></p>
+																    				<p class="">responsável: <span class="text-muted" th:text="${atividade.nomeResponsavel}"></span></p>
+																    			</div>
+																    			<div class="col-lg-6">
+																    				<a class="btn btn-info" th:href="@{/dashboard/admin/eventos/presencial/inscricao/{id}(id=${atividade.id})}" >Inscreva-se</a>
 																    			</div>
 																    	</div>
 																  </div>
