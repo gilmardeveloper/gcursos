@@ -83,6 +83,7 @@ public class EventosControler {
 			return "redirect:/dashboard/complete-cadastro";
 		}
 	}
+	
 
 	@GetMapping("/novo")
 	public String novo(Model model) {
