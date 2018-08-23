@@ -1,16 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
-<head th:replace="fragments/head :: head(~{::title},~{::link})">
-<title>ZEUS | Eventos</title>
-<link rel="stylesheet" th:href="@{~/css/dropify.min.css}" />
-<link rel="stylesheet" th:href="@{~/css/bootstrap-datepicker.min.css}" />
-<link rel="stylesheet" th:href="@{~/css/bootstrap-clockpicker.min.css}" />
-<link rel="stylesheet" th:href="@{~/css/select2.min.css}" />
-<link rel="stylesheet" th:href="@{~/css/select2-bootstrap.min.css}" />
+<head th:replace="fragments/head :: head(~{::title},~{})">
+	<title>ZEUS | Informações</title>
 </head>
 
 <body>
@@ -49,24 +43,30 @@
 							<div class="row flex-grow">
 
 								<div class="col-12 grid-margin">
-									<a class="btn btn-outline-success" th:href="@{/dashboard/admin/eventos/presencial/novo}">+ Novo</a>
+									<a class="btn btn-outline-success"
+										th:href="@{/dashboard/admin/eventos/presencial/novo}">+
+										Novo</a>
 								</div>
 
 								<div class="col-12 grid-margin" th:if="${alert != null}">
-										<div th:class="${alert}" role="alert">
-											<i class="mdi mdi-alert-circle"></i> <span
-												th:text="${message}"></span>
-										</div>
+									<div th:class="${alert}" role="alert">
+										<i class="mdi mdi-alert-circle"></i> <span
+											th:text="${message}"></span>
+									</div>
 								</div>
-								
-								<div class="col-12 grid-margin" th:unless="${#lists.isEmpty(eventos)}" th:each="evento : ${eventos}" >
+
+								<div class="col-12 grid-margin"
+									th:unless="${#lists.isEmpty(eventos)}"
+									th:each="evento : ${eventos}">
 									<div class="card">
 										<div class="card-body">
 											<div class="row">
 												<div class="col-lg-10">
-													<a th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}(id=${evento.id})}" th:text="${evento.titulo}"></a> 
+													<a
+														th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}(id=${evento.id})}"
+														th:text="${evento.titulo}"></a>
 												</div>
-											<!--	<div class="col-lg-2">
+												<!--	<div class="col-lg-2">
 													<a class="btn btn-primary" href="#">Adicionar sobre</a> 
 												</div>  -->
 											</div>
@@ -92,14 +92,8 @@
 	</div>
 	<!-- container-scroller -->
 	<span th:replace="fragments/base-script :: base"></span>
-	<script th:src="@{~/js/dropify.min.js}"></script>
-	<script th:src="@{~/js/bootstrap-datepicker.min.js}"></script>
-	<script th:src="@{~/js/bootstrap-clockpicker.min.js}"></script>
-	<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script>
-	<script th:src="@{~/js/select2.min.js}"></script>
 	<span th:replace="fragments/base-script :: plugins"></span>
-	<script th:src="@{~/js/dropify.js}"></script>
-	
+
 </body>
 
 </html>

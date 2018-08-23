@@ -78,7 +78,7 @@ public class EventosControler {
 		if (usuarioLogado.isPerfilCompleto()) {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("eventos", eventoPresencialService.listarTodos());
-			return "/dashboard/eventos/base-info-evento-presencial";
+			return "dashboard/admin/eventos/base-info-evento-presencial";
 		} else {
 			return "redirect:/dashboard/complete-cadastro";
 		}
@@ -93,7 +93,7 @@ public class EventosControler {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("categorias", categoriaEventoService.listarTodos());
 
-			return "/dashboard/eventos/base-cadastro-evento-presencial";
+			return "dashboard/admin/eventos/base-cadastro-evento-presencial";
 		} else {
 			return "redirect:/dashboard/complete-cadastro";
 		}
@@ -107,7 +107,7 @@ public class EventosControler {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("categorias", categoriaEventoService.listarTodos());
 			model.addAttribute("evento", eventoPresencialService.buscarPor(id));
-			return "/dashboard/eventos/base-cadastro-evento-presencial";
+			return "dashboard/admin/eventos/base-cadastro-evento-presencial";
 		} else {
 			return "redirect:/dashboard/admin/complete-cadastro";
 		}
@@ -149,7 +149,7 @@ public class EventosControler {
 		model.addAttribute("evento", evento);
 		model.addAttribute("dias", getDiaPaginacao(evento.getProgramacao().getId(), 0));
 
-		return "/dashboard/eventos/base-detalhes-evento-presencial";
+		return "dashboard/admin/eventos/base-detalhes-evento-presencial";
 	}
 
 	@GetMapping("/detalhes/{id}/pagina/{page}")
@@ -163,7 +163,7 @@ public class EventosControler {
 		model.addAttribute("evento", evento);
 		model.addAttribute("dias", getDiaPaginacao(evento.getProgramacao().getId(), page));
 
-		return "/dashboard/eventos/base-detalhes-evento-presencial";
+		return "dashboard/admin/eventos/base-detalhes-evento-presencial";
 	}
 
 	@PostMapping("/detalhes/imagens/top/salvar")
@@ -200,7 +200,7 @@ public class EventosControler {
 		model.addAttribute("atividades", atividadePresencialService.buscarPorEvento(id));
 		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
 
-		return "dashboard/eventos/base-cadastro-programacao-evento-presencial";
+		return "dashboard/admin/eventos/base-cadastro-programacao-evento-presencial";
 	}
 
 	@PostMapping("/detalhes/atividades/salvar")
@@ -236,14 +236,14 @@ public class EventosControler {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("categorias", categoriaEventoService.listarTodos());
 		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/eventos/base-info-categorias-evento-presencial";
+		return "dashboard/admin/eventos/base-info-categorias-evento-presencial";
 	}
 
 	@GetMapping("categorias/novo")
 	public String categoriasNovo(Model model) {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/eventos/base-cadastro-categorias-evento-presencial";
+		return "dashboard/admin/eventos/base-cadastro-categorias-evento-presencial";
 	}
 
 	@PostMapping("categorias/salvar")
@@ -252,7 +252,7 @@ public class EventosControler {
 		model.addAttribute("categoria", categoriaEventoService.salvar(categorias));
 		model.addAttribute("alert", "alert alert-fill-success");
 		model.addAttribute("message", "salvo com sucesso");
-		return "dashboard/eventos/base-cadastro-categorias-evento-presencial";
+		return "dashboard/admin/eventos/base-cadastro-categorias-evento-presencial";
 	}
 
 	@GetMapping("categorias/alterar/{id}")
