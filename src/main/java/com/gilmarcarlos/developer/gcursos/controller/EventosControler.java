@@ -70,7 +70,7 @@ public class EventosControler {
 		return diaEventoPaginacaoService.listarDiasPorProgramacao(id, PageRequest.of(page, MAXIMO_PAGES));
 	}
 
-	@GetMapping
+	@GetMapping({"/", ""})
 	public String eventosPresencial(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
