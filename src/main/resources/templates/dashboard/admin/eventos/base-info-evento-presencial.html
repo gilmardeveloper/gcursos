@@ -68,7 +68,7 @@
 												</div>
 											<!--	<div class="col-lg-2">
 													<a class="btn btn-primary" href="#">Adicionar sobre</a> 
-												</div> -->
+												</div>  -->
 											</div>
 										</div>
 									</div>
@@ -99,69 +99,7 @@
 	<script th:src="@{~/js/select2.min.js}"></script>
 	<span th:replace="fragments/base-script :: plugins"></span>
 	<script th:src="@{~/js/dropify.js}"></script>
-
-	<script>
-
-	    $(document).ready(function(){
-
-	     $('#titulo').on('input', () => {$('#qtd-titulo').text($('#titulo').val().length)});
-		 $('#descricao').on('input', () => {$('#qtd-descricao').text($('#descricao').val().length)});
-
-		 $('#datepicker-popup-inicio').datepicker({
-	      format: 'dd/mm/yyyy',
-	        language: 'pt-BR',
-	      });
-
-		 $('#datepicker-popup-termino').datepicker({
-	      format: 'dd/mm/yyyy',
-	        language: 'pt-BR',
-	      });
-	    	
-	     $('.clockpicker').clockpicker({donetext: 'definir'});	
-	    });
-
-	    
-  	</script>
-
-  	<script th:if="${evento != null}" th:inline="javascript">
-
-	/*<![CDATA[*/
-		$(() =>{
-
-			updateDataInicio();
-			updateDataTermino();
-
-		});
-
-		 function updateDataInicio(){
-	      if($('#data-inicio').val() != ''){
-	        console.log('dataInicio foi executado');
-	        $('#datepicker-popup-inicio').datepicker('update', $('#data-inicio').val());
-	      }
-    	}
-
-    	 function updateDataTermino(){
-	      if($('#data-termino').val() != ''){
-	        console.log('dataTermino foi executado');
-	        $('#datepicker-popup-termino').datepicker('update', $('#data-termino').val());
-	      }
-    	}
-	/*]]>*/
-	</script>
-
-	<script th:inline="javascript">
-
-	/*<![CDATA[*/
-		(function($) {
-			  'use strict';
-
-			  if($(".js-select-single").length){
-			    $(".js-select-single").select2();
-			  }
-		})(jQuery);
-	/*]]>*/
-	</script>
-
+	
 </body>
 
 </html>
