@@ -15,5 +15,5 @@ public interface DiaEventoRepository extends CrudRepository<DiaEvento, Long> {
 	
 	@Query("select d from DiaEvento d join fetch d.atividades where d.id = :pid")
 	DiaEvento buscarPor(@Param("pid") Long id);
-
+	
 }

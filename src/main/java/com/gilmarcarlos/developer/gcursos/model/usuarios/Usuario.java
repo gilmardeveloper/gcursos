@@ -56,8 +56,8 @@ public class Usuario implements Serializable {
 	@OneToOne(mappedBy = "usuario")
 	private Imagens imagens;
 
-	@OneToOne(mappedBy = "responsavel")
-	private EventoPresencial eventoPresencial;
+	@OneToMany(mappedBy = "responsavel")
+	private List<EventoPresencial> eventoPresencial;
 
 	public Usuario() {
 		this.habilitado = false;
@@ -145,11 +145,11 @@ public class Usuario implements Serializable {
 		this.imagens = imagens;
 	}
 
-	public EventoPresencial getEventoPresencial() {
+	public List<EventoPresencial> getEventoPresencial() {
 		return eventoPresencial;
 	}
 
-	public void setEventoPresencial(EventoPresencial eventoPresencial) {
+	public void setEventoPresencial(List<EventoPresencial> eventoPresencial) {
 		this.eventoPresencial = eventoPresencial;
 	}
 

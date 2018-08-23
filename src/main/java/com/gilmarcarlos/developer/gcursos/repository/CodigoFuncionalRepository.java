@@ -7,7 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.CodigoFuncional;
-import com.gilmarcarlos.developer.gcursos.model.dados.complementares.DadosPessoais;
 
 public interface CodigoFuncionalRepository extends CrudRepository<CodigoFuncional, Long> {
 	

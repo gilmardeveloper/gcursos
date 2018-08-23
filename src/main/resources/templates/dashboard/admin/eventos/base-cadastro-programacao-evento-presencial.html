@@ -85,10 +85,10 @@
 														<td class="" th:text="${atividade.horaFim}"></td>
 														<td class="" th:text="${atividade.nomeResponsavel}"></td>
 														<td><a class="btn btn-outline-primary pt-1 pb-1"
-															th:href="@{/dashboard/admin/eventos/presencial/atividades/alterar/{id}(id=${atividade.id})}"><i
+															th:href="@{/dashboard/admin/eventos/presencial/detalhes/atividades/alterar/{id}(id=${atividade.id})}"><i
 																class="icon-pencil"></i></a></td>
 														<td><a class="btn btn-outline-danger pt-1 pb-1"
-															th:href="@{/dashboard/admin/eventos/presencial/atividades/deletar/{id}(id=${atividade.id})}"><i
+															th:href="@{/dashboard/admin/eventos/presencial/detalhes/atividades/deletar/{id}(id=${atividade.id})}"><i
 																class="icon-close"></i></a></td>
 													</tr>
 												</tbody>
@@ -105,11 +105,12 @@
 								<h4 class="card-title">+ Nova atividade</h4>
 								<h5 class="card-title" th:text="${evento.titulo}"></h5>
 								<form class="forms-sample"
-									th:action="@{/dashboard/admin/eventos/presencial/atividades/salvar}"
+									th:action="@{/dashboard/admin/eventos/presencial/detalhes/atividades/salvar}"
 									method="post">
 																		
 									<input type="hidden" name="id"
 										th:value="${atividade != null} ? ${atividade.id} : ''">
+										
 								<div class="form-row">		
 									<div class="col-lg-6" th:if="${atividade != null}">
 										<div class="form-group">

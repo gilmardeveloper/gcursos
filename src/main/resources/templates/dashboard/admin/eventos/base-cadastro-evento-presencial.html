@@ -56,6 +56,14 @@
 													
 													<input type="hidden" name="id" th:value="${evento} != null ? ${evento.id} : ''" />
 
+													<input type="hidden" name="programacao" th:value="${evento} != null ? ${evento.programacao.id} : ''" />
+
+													<input type="hidden" name="responsavel" th:value="${evento} != null ? ${evento.responsavel.id} : ${usuario.id}" />
+
+													<input type="hidden" name="dataCriacao" th:value="${evento} != null ? ${#temporals.format(evento.dataCriacao, 'dd/MM/yyyy')} : ${#temporals.format(#temporals.createToday(), 'dd/MM/yyyy')}" />
+
+													<input type="hidden" name="dataAtualizacao" th:value="${#temporals.format(#temporals.createToday(), 'dd/MM/yyyy')}" />
+
 													<div class="col-lg-8">	
 														<div class="form-group">
 															<label for="localEvento">Local do evento</label>
