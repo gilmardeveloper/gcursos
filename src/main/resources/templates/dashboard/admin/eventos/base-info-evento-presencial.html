@@ -49,10 +49,16 @@
 								</div>
 
 								<div class="col-12 grid-margin" th:if="${alert != null}">
+									<div th:if="${alert != null}">
 									<div th:class="${alert}" role="alert">
 										<i class="mdi mdi-alert-circle"></i> <span
 											th:text="${message}"></span>
+										<button type="button" class="close" data-dismiss="alert"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
 									</div>
+								</div>
 								</div>
 
 								<div class="col-12 grid-margin"
@@ -66,9 +72,49 @@
 														th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}(id=${evento.id})}"
 														th:text="${evento.titulo}"></a>
 												</div>
-												<!--	<div class="col-lg-2">
-													<a class="btn btn-primary" href="#">Adicionar sobre</a> 
-												</div>  -->
+												<div class="col-lg-2">
+												  <a class="btn btn-outline-dark pt-1 pb-1" data-toggle="collapse" th:href="'#collapse-' + ${evento.id}" role="button" aria-expanded="false" th:attr="aria-controls='collapse-' + ${evento.id}"><i class="icon-options-vertical"></i></a>
+												</div>
+											</div>
+
+											<div class="collapse" th:id="'collapse-' + ${evento.id}">
+												<div class="card card-body">
+												   	<div class="row">
+														<div class="col-lg-3">
+															<p class="">status: <span class="text-muted" th:text="${evento.status}"></span></p>
+														</div>
+														<div class="col-lg-3">
+															<p class="">publicado: <span class="text-muted" th:text="${evento.displayPublicado}"></span></p>
+														</div>
+														<div class="col-lg-3">
+															<p class="">criado em: <span class="text-muted" th:text="${#temporals.format(evento.dataCriacao, 'dd/MM/yyyy')}"></span></p>
+														</div>
+														<div class="col-lg-3">
+															<p class="">atualizado em: <span class="text-muted" th:text="${#temporals.format(evento.dataAtualizacao, 'dd/MM/yyyy')}"></span></p>
+														</div>
+														<div class="col-lg-3">
+															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/presencial/logs/{id}(id=${evento.id})}">Logs</a>
+														</div>
+														<div class="col-lg-3" th:unless="${evento.isPublicado()}">
+															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/presencial/publicacao/ativar/{id}(id=${evento.id})}">Publicar</a>
+														</div>
+
+														<div class="col-lg-3" th:if="${evento.isPublicado()}">
+															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/presencial/publicacao/desativar/{id}(id=${evento.id})}">Cancelar publicação</a>
+														</div>
+
+														<div class="col-lg-3" th:if="${evento.isAtivo()}">
+															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/presencial/cancelar/{id}(id=${evento.id})}">Cancelar evento</a>
+														</div>
+
+														<div class="col-lg-3" th:unless="${evento.isAtivo()}">
+															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/presencial/ativar/{id}(id=${evento.id})}">Ativar evento</a>
+														</div>
+														<div class="col-lg-3">
+															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/presencial/permissoes/{id}(id=${evento.id})}">Permissões</a>
+														</div>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>

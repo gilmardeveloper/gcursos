@@ -1,5 +1,8 @@
 package com.gilmarcarlos.developer.gcursos.controller;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,24 +14,32 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.AtividadePresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.CategoriaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.DiaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencialLog;
 import com.gilmarcarlos.developer.gcursos.model.eventos.ProgramacaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.Sobre;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.AtividadePresencialService;
+import com.gilmarcarlos.developer.gcursos.service.CargoService;
 import com.gilmarcarlos.developer.gcursos.service.CategoriaEventoService;
 import com.gilmarcarlos.developer.gcursos.service.DiaEventoPaginacaoService;
 import com.gilmarcarlos.developer.gcursos.service.DiaEventoService;
+import com.gilmarcarlos.developer.gcursos.service.EscolaridadeService;
+import com.gilmarcarlos.developer.gcursos.service.EventoPresencialLogService;
 import com.gilmarcarlos.developer.gcursos.service.EventoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.ImagensService;
+import com.gilmarcarlos.developer.gcursos.service.LogEvePresencialPaginacaoService;
 import com.gilmarcarlos.developer.gcursos.service.ProgramacaoPresencialService;
+import com.gilmarcarlos.developer.gcursos.service.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.SobreService;
+import com.gilmarcarlos.developer.gcursos.service.UnidadeTrabalhoService;
 import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
 
 @Controller
@@ -60,17 +71,40 @@ public class EventosControler {
 	private DiaEventoService diaEventoService;
 
 	@Autowired
+	private EventoPresencialLogService eventoPresencialLogService;
+
+	@Autowired
 	private DiaEventoPaginacaoService diaEventoPaginacaoService;
+
+	@Autowired
+	private LogEvePresencialPaginacaoService logEventoPresencialPaginacaoService;
+	
+	@Autowired
+	private UnidadeTrabalhoService unidadeService;
+	
+	@Autowired
+	private CargoService cargoService;
+	
+	@Autowired
+	private SexoService sexoService;
+	
+	@Autowired
+	private EscolaridadeService escolaridadeService;
 
 	private Authentication autenticado;
 
 	private final static Integer MAXIMO_PAGES = 3;
+	private final static Integer MAXIMO_PAGES_LOGS = 20;
 
 	private Page<DiaEvento> getDiaPaginacao(Long id, Integer page) {
 		return diaEventoPaginacaoService.listarDiasPorProgramacao(id, PageRequest.of(page, MAXIMO_PAGES));
 	}
 
-	@GetMapping({"/", ""})
+	private Page<EventoPresencialLog> getLogEvePaginacao(Long id, Integer page) {
+		return logEventoPresencialPaginacaoService.listarLogsPorEvento(id, PageRequest.of(page, MAXIMO_PAGES_LOGS));
+	}
+
+	@GetMapping({ "/", "" })
 	public String eventosPresencial(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
@@ -83,7 +117,6 @@ public class EventosControler {
 			return "redirect:/dashboard/complete-cadastro";
 		}
 	}
-	
 
 	@GetMapping("/novo")
 	public String novo(Model model) {
@@ -98,7 +131,35 @@ public class EventosControler {
 			return "redirect:/dashboard/complete-cadastro";
 		}
 	}
+	
+	@PostMapping("/salvar")
+	public String eventoPresencialSalvar(EventoPresencial evento, RedirectAttributes model) {
+		try {
+			EventoPresencial novoEvento = eventoPresencialService.salvar(evento);
+			if (evento.getProgramacao() == null) {
 
+				eventoPresencialLogService.salvar(log("Evento presencial criado", novoEvento));
+				ProgramacaoPresencial programacao = new ProgramacaoPresencial();
+				programacao.setEventoPresencial(novoEvento);
+				ProgramacaoPresencial novaProgramacao = programacaoPresencialService.salvar(programacao);
+				diaEventoService.gerarDiasDeEvento(novoEvento, novaProgramacao);
+
+			} else {
+				eventoPresencialLogService.salvar(log("Evento presencial foi alterado", novoEvento));
+				diaEventoService.alterarDiasDeEvento(novoEvento, novoEvento.getProgramacao());
+			}
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "salvo com sucesso");
+
+		} catch (Exception e) {
+			model.addFlashAttribute("alert", "alert alert-fill-danger");
+			model.addFlashAttribute("message", e.getMessage());
+		}
+
+		return "redirect:/dashboard/admin/eventos/presencial";
+
+	}
+	
 	@GetMapping("/alterar/{id}")
 	public String alterar(@PathVariable("id") Long id, Model model) {
 		Usuario usuarioLogado = getUsuario();
@@ -113,30 +174,74 @@ public class EventosControler {
 		}
 	}
 
-	@PostMapping("/salvar")
-	public String eventoPresencialSalvar(EventoPresencial evento, RedirectAttributes model) {
-
-		EventoPresencial novoEvento = eventoPresencialService.salvar(evento);
-
-		if (evento.getProgramacao() == null) {
-			
-			ProgramacaoPresencial programacao = new ProgramacaoPresencial();
-			programacao.setEventoPresencial(novoEvento);
-			ProgramacaoPresencial novaProgramacao = programacaoPresencialService.salvar(programacao);
-			diaEventoService.gerarDiasDeEvento(novoEvento, novaProgramacao);
-			
-		}else {
-			diaEventoService.alterarDiasDeEvento(novoEvento, novoEvento.getProgramacao());
+	@GetMapping("/cancelar/{id}")
+	public String cancelar(@PathVariable("id") Long id, RedirectAttributes model) {
+		Usuario usuarioLogado = getUsuario();
+		if (usuarioLogado.isPerfilCompleto()) {
+			eventoPresencialService.cancelar(id);
+			eventoPresencialLogService
+					.salvar(log("Evento presencial foi cancelado", eventoPresencialService.buscarPor(id)));
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "Evento presencial foi cancelado com sucesso");
+			return "redirect:/dashboard/admin/eventos/presencial";
+		} else {
+			return "redirect:/dashboard/admin/complete-cadastro";
 		}
-		
-		model.addFlashAttribute("categorias", categoriaEventoService.listarTodos());
-
-		model.addFlashAttribute("alert", "alert alert-fill-success");
-		model.addFlashAttribute("message", "salvo com sucesso");
-
-		return "redirect:/dashboard/admin/eventos/presencial";
-
 	}
+
+	@GetMapping("/ativar/{id}")
+	public String ativar(@PathVariable("id") Long id, RedirectAttributes model) {
+		Usuario usuarioLogado = getUsuario();
+		if (usuarioLogado.isPerfilCompleto()) {
+			eventoPresencialService.ativar(id);
+			eventoPresencialLogService
+					.salvar(log("Evento presencial foi ativado", eventoPresencialService.buscarPor(id)));
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "evento ativado com sucesso");
+			return "redirect:/dashboard/admin/eventos/presencial";
+		} else {
+			return "redirect:/dashboard/admin/complete-cadastro";
+		}
+	}
+
+	@GetMapping("/publicacao/ativar/{id}")
+	public String ativarPublicacao(@PathVariable("id") Long id, RedirectAttributes model) {
+		Usuario usuarioLogado = getUsuario();
+		if (usuarioLogado.isPerfilCompleto()) {
+			try {
+				eventoPresencialService.publicar(id);
+				eventoPresencialLogService
+						.salvar(log("Evento presencial foi publicado", eventoPresencialService.buscarPor(id)));
+				model.addFlashAttribute("alert", "alert alert-fill-success");
+				model.addFlashAttribute("message", "evento publicado com sucesso");
+				return "redirect:/dashboard/admin/eventos/presencial";
+			} catch (Exception e) {
+
+				model.addFlashAttribute("alert", "alert alert-fill-danger");
+				model.addFlashAttribute("message", e.getMessage());
+				return "redirect:/dashboard/admin/eventos/presencial";
+			}
+		} else {
+			return "redirect:/dashboard/admin/complete-cadastro";
+		}
+	}
+
+	@GetMapping("/publicacao/desativar/{id}")
+	public String desativarPublicacao(@PathVariable("id") Long id, RedirectAttributes model) {
+		Usuario usuarioLogado = getUsuario();
+		if (usuarioLogado.isPerfilCompleto()) {
+			eventoPresencialService.cancelarPublicacao(id);
+			eventoPresencialLogService.salvar(
+					log("A publicação do evento presencial foi removida", eventoPresencialService.buscarPor(id)));
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "evento teve sua publicação desativada com sucesso");
+			return "redirect:/dashboard/admin/eventos/presencial";
+		} else {
+			return "redirect:/dashboard/admin/complete-cadastro";
+		}
+	}
+
+	
 
 	@GetMapping("/detalhes/{id}")
 	public String eventoDetalhes(@PathVariable("id") Long id, Model model) {
@@ -174,6 +279,8 @@ public class EventosControler {
 		}
 
 		imagensService.salvarImagemEvePresTop(imagens);
+		eventoPresencialLogService.salvar(log("Imagem do topo foi alterada", imagens.getEventoPresencial()));
+
 		return "redirect:/dashboard/admin/eventos/presencial/detalhes/" + imagens.getEventoPresencial().getId();
 
 	}
@@ -185,6 +292,7 @@ public class EventosControler {
 			sobreService.deletar(sobre.getEventoPresencial().getSobre().getId());
 		}
 
+		eventoPresencialLogService.salvar(log("Informações sobre o evento foi alterado", sobre.getEventoPresencial()));
 		sobreService.salvar(sobre);
 		return "redirect:/dashboard/admin/eventos/presencial/detalhes/" + sobre.getEventoPresencial().getId();
 
@@ -205,32 +313,85 @@ public class EventosControler {
 
 	@PostMapping("/detalhes/atividades/salvar")
 	public String atividadesSalvar(AtividadePresencial atividade, RedirectAttributes model) {
-		atividadePresencialService.salvar(atividade);
-		model.addFlashAttribute("alert", "alert alert-fill-success alert-dismissible fade show");
-		model.addFlashAttribute("message", "salvo com sucesso");
-		return "redirect:/dashboard/admin/eventos/presencial/detalhes/"
-				+ atividade.getDiaEvento().getProgramacaoPresencial().getId();
+		try {
+			atividadePresencialService.salvar(atividade);
+			eventoPresencialLogService.salvar(log("Atividade: " + atividade.getTitulo() + " foi alterada",
+					atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "salvo com sucesso");
+			return "redirect:/dashboard/admin/eventos/presencial/detalhes/"
+					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
+
+		} catch (Exception e) {
+
+			model.addFlashAttribute("alert", "alert alert-fill-danger");
+			model.addFlashAttribute("message", e.getMessage());
+			return "redirect:/dashboard/admin/eventos/presencial/detalhes/programacao/"
+					+ atividade.getDiaEvento().getProgramacaoPresencial().getId();
+		}
 	}
-	
+
 	@GetMapping("/detalhes/atividades/alterar/{id}")
 	public String atividadesAlterar(@PathVariable("id") Long id, RedirectAttributes model) {
 		AtividadePresencial atividade = atividadePresencialService.buscarPor(id);
 		model.addFlashAttribute("atividade", atividade);
 		return "redirect:/dashboard/admin/eventos/presencial/detalhes/programacao/"
-		+ atividade.getDiaEvento().getProgramacaoPresencial().getId();
+				+ atividade.getDiaEvento().getProgramacaoPresencial().getId();
 	}
-	
+
 	@GetMapping("/detalhes/atividades/deletar/{id}")
 	public String atividadesDeletar(@PathVariable("id") Long id, RedirectAttributes model) {
 		AtividadePresencial atividade = atividadePresencialService.buscarPor(id);
+		eventoPresencialLogService.salvar(log("Atividade: " + atividade.getTitulo() + " foi deletada",
+				atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
 		ProgramacaoPresencial programacao = atividade.getDiaEvento().getProgramacaoPresencial();
 		atividadePresencialService.deletar(id);
 		
+		model.addFlashAttribute("alert", "alert alert-fill-success");
+		model.addFlashAttribute("message", "removido com sucesso");
 		model.addFlashAttribute("atividade", atividade);
-		return "redirect:/dashboard/admin/eventos/presencial/detalhes/programacao/"
-		+ programacao.getId();
+		return "redirect:/dashboard/admin/eventos/presencial/detalhes/programacao/" + programacao.getId();
 	}
-	
+
+	@GetMapping("/logs/{id}")
+	public String eventoPresencialLogs(@PathVariable("id") Long id, Model model) {
+
+		model.addAttribute("usuario", getUsuario());
+		model.addAttribute("logs", getLogEvePaginacao(id, 0));
+		model.addAttribute("evento", eventoPresencialService.buscarPor(id));
+		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
+
+		return "dashboard/admin/eventos/base-info-logs-evento-presencial";
+	}
+
+	@GetMapping("/logs/{id}/deletar")
+	public String eventoPresencialLogsDeletarTodos(@PathVariable("id") Long id, RedirectAttributes model) {
+		eventoPresencialService.buscarPor(id).getLogs().forEach(l -> eventoPresencialLogService.deletar(l.getId()));
+		model.addFlashAttribute("alert", "alert alert-fill-success");
+		model.addFlashAttribute("message", "todos os logs foram deletados");
+		return "redirect:/dashboard/admin/eventos/presencial/logs/" + id;
+	}
+
+	@GetMapping("/logs/{id}/deletar/{log}")
+	public String eventoPresencialLogsDeletar(@PathVariable("id") Long id, @PathVariable("log") Long log,
+			RedirectAttributes model) {
+		eventoPresencialLogService.deletar(log);
+		model.addFlashAttribute("alert", "alert alert-fill-success");
+		model.addFlashAttribute("message", "log foi deletado com sucesso");
+		return "redirect:/dashboard/admin/eventos/presencial/logs/" + id;
+	}
+
+	@GetMapping("/logs/{id}/pagina/{page}")
+	public String eventoPresencialLogs(@PathVariable("id") Long id, @PathVariable("page") Integer page, Model model) {
+
+		model.addAttribute("usuario", getUsuario());
+		model.addAttribute("logs", getLogEvePaginacao(id, page));
+		model.addAttribute("evento", eventoPresencialService.buscarPor(id));
+		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
+
+		return "dashboard/admin/eventos/base-info-logs-evento-presencial";
+	}
+
 	@GetMapping("/categorias")
 	public String categorias(Model model) {
 		model.addAttribute("usuario", getUsuario());
@@ -239,14 +400,14 @@ public class EventosControler {
 		return "dashboard/admin/eventos/base-info-categorias-evento-presencial";
 	}
 
-	@GetMapping("categorias/novo")
+	@GetMapping("/categorias/novo")
 	public String categoriasNovo(Model model) {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
 		return "dashboard/admin/eventos/base-cadastro-categorias-evento-presencial";
 	}
 
-	@PostMapping("categorias/salvar")
+	@PostMapping("/categorias/salvar")
 	public String categoriasSalvar(CategoriaEvento categorias, Model model) {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("categoria", categoriaEventoService.salvar(categorias));
@@ -255,18 +416,41 @@ public class EventosControler {
 		return "dashboard/admin/eventos/base-cadastro-categorias-evento-presencial";
 	}
 
-	@GetMapping("categorias/alterar/{id}")
+	@GetMapping("/categorias/alterar/{id}")
 	public String categoriasAlterar(@PathVariable("id") Long id, RedirectAttributes model) {
 		model.addFlashAttribute("categoria", categoriaEventoService.buscarPor(id));
 		return "redirect:/dashboard/admin/eventos/presencial/categorias/novo";
 	}
 
-	@GetMapping("categorias/deletar/{id}")
+	@GetMapping("/categorias/deletar/{id}")
 	public String cargosDeletar(@PathVariable("id") Long id, RedirectAttributes model) {
 		categoriaEventoService.deletar(id);
 		model.addFlashAttribute("alert", "alert alert-fill-success alert-dismissible fade show");
 		model.addFlashAttribute("message", "removido com sucesso");
 		return "redirect:/dashboard/admin/eventos/presencial/categorias";
+	}
+	
+	@GetMapping("/permissoes/{id}")
+	private String permissoesEventoPresencial(@PathVariable("id") Long id, Model model) {
+		Usuario usuarioLogado = getUsuario();
+		if(usuarioLogado.isPerfilCompleto()) {
+			model.addAttribute("usuario", usuarioLogado);
+			model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+			model.addAttribute("evento", eventoPresencialService.buscarPor(id));
+			model.addAttribute("unidades", unidadeService.listarTodos());
+			model.addAttribute("escolaridades", escolaridadeService.listarTodos());
+			model.addAttribute("sexos", sexoService.listarTodos());
+			model.addAttribute("cargos", cargoService.listarTodos());
+		return "/dashboard/admin/eventos/base-cadastro-permissoes-evento-presencial";
+		}else {
+			return "redirect:/dashboard/admin/complete-cadastro";
+		}
+	}
+	
+	@PostMapping("/permissoes/salvar")
+	private String permissoesEventoPresencialSalvar(@RequestParam("unidades") List<String> unidades, Model model) {
+		unidades.forEach(u -> System.err.println(u));
+		return "asfga";
 	}
 
 	private Usuario getUsuario() {
@@ -275,4 +459,12 @@ public class EventosControler {
 		return usuario;
 	}
 
+	private EventoPresencialLog log(String mensagem, EventoPresencial evento) {
+		EventoPresencialLog eventoPresencialLog = new EventoPresencialLog();
+		eventoPresencialLog.setData(LocalDate.now());
+		eventoPresencialLog
+				.setMsg(mensagem + " :: usuário: " + getUsuario().getNome() + " :: email: " + getUsuario().getEmail());
+		eventoPresencialLog.setEventoPresencial(evento);
+		return eventoPresencialLog;
+	}
 }

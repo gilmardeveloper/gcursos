@@ -1,33 +1,31 @@
 package com.gilmarcarlos.developer.gcursos.model.eventos;
 
 import java.io.Serializable;
-import java.util.List;
+import java.time.LocalDate;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
-public class ProgramacaoPresencial implements Serializable{
+public class EventoPresencialLog implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@OneToMany(mappedBy = "programacaoPresencial")
-	private List<DiaEvento> dias;
+	private LocalDate data;
+	private String msg;
 	
 	@OneToOne
 	private EventoPresencial eventoPresencial;
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -36,13 +34,20 @@ public class ProgramacaoPresencial implements Serializable{
 		this.id = id;
 	}
 
-	public List<DiaEvento> getDias() {
-		dias.sort((d1, d2) -> d1.getData().compareTo(d2.getData()));
-		return dias;
+	public LocalDate getData() {
+		return data;
 	}
 
-	public void setDias(List<DiaEvento> dias) {
-		this.dias = dias;
+	public void setData(LocalDate data) {
+		this.data = data;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
 	}
 
 	public EventoPresencial getEventoPresencial() {
@@ -69,7 +74,7 @@ public class ProgramacaoPresencial implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ProgramacaoPresencial other = (ProgramacaoPresencial) obj;
+		EventoPresencialLog other = (EventoPresencialLog) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -78,4 +83,5 @@ public class ProgramacaoPresencial implements Serializable{
 		return true;
 	}
 	
+
 }

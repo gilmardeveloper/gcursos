@@ -11,9 +11,6 @@ import com.gilmarcarlos.developer.gcursos.repository.DiaEventoPaginacaoRepositor
 @Service
 public class DiaEventoPaginacaoService {
 	
-	private final static Integer MINIMO_PAGES = 0;
-	private final static Integer MAXIMO_PAGES = 5;
-
 	@Autowired
 	private DiaEventoPaginacaoRepository repository;
 	

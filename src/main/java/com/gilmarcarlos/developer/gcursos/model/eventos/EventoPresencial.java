@@ -3,24 +3,28 @@ package com.gilmarcarlos.developer.gcursos.model.eventos;
 import java.beans.Transient;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventoCanceladoException;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.type.EventoStatus;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
 @Entity
-public class EventoPresencial implements Serializable{
+public class EventoPresencial implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -32,33 +36,40 @@ public class EventoPresencial implements Serializable{
 	private String cargaHoraria;
 	private Long vagas;
 	private String tipoEvento;
-	
+
 	@OneToOne(mappedBy = "eventoPresencial")
 	private Sobre sobre;
-	
+
 	@OneToOne(mappedBy = "eventoPresencial")
 	private ImagensEventoPresencial imagemDestaque;
-	
+
 	@OneToOne(mappedBy = "eventoPresencial")
 	private ImagensEventoPresencial imagemTopDetalhes;
-	
+
 	@OneToOne(mappedBy = "eventoPresencial")
 	private ProgramacaoPresencial programacao;
-	
+
 	@OneToOne
 	private Usuario responsavel;
-	
+
+	@OneToMany(mappedBy = "eventoPresencial")
+	private List<EventoPresencialLog> logs;
+
 	private LocalDate dataInicio;
 	private LocalDate dataTermino;
-	
+
 	private String horaAbertura;
 	private String horaTermino;
-	
+
 	private LocalDate dataCriacao;
 	private LocalDate dataAtualizacao;
-	
+
 	@OneToOne
 	private CategoriaEvento categoria;
+
+	private Boolean publicado;
+
+	private Boolean ativo;
 
 	public Long getId() {
 		return id;
@@ -108,7 +119,7 @@ public class EventoPresencial implements Serializable{
 		this.enderecoLocalEvento = enderecoLocalEvento;
 	}
 
-	public Boolean getCertificado() {
+	public Boolean isCertificado() {
 		return certificado;
 	}
 
@@ -139,7 +150,7 @@ public class EventoPresencial implements Serializable{
 	public void setTipoEvento(String tipoEvento) {
 		this.tipoEvento = tipoEvento;
 	}
-	
+
 	public Usuario getResponsavel() {
 		return responsavel;
 	}
@@ -180,7 +191,6 @@ public class EventoPresencial implements Serializable{
 		this.dataTermino = dataTermino;
 	}
 
-	
 	public String getHoraAbertura() {
 		return horaAbertura;
 	}
@@ -220,7 +230,7 @@ public class EventoPresencial implements Serializable{
 	public void setCategoria(CategoriaEvento categoria) {
 		this.categoria = categoria;
 	}
-	
+
 	public ProgramacaoPresencial getProgramacao() {
 		return programacao;
 	}
@@ -229,11 +239,71 @@ public class EventoPresencial implements Serializable{
 		this.programacao = programacao;
 	}
 
+	public List<EventoPresencialLog> getLogs() {
+		return logs;
+	}
+
+	public void setLogs(List<EventoPresencialLog> logs) {
+		this.logs = logs;
+	}
+
+	public Boolean isPublicado() {
+		return publicado;
+	}
+
+	@Transient
+	public EventoStatus getStatus() {
+		if (isAtivo()) {
+			return (isFechado() ? EventoStatus.FECHADO : EventoStatus.ABERTO);
+		} else {
+			return EventoStatus.CANCELADO;
+		}
+	}
+
+	@Transient
+	public void ativarEvento() {
+		this.ativo = true;
+	}
+
+	@Transient
+	public void cancelarEvento() {
+		this.publicado = false;
+		this.ativo = false;
+	}
+
+	@Transient
+	public void ativarPublicacao() throws EventoCanceladoException {
+		if(!isAtivo()) {
+			throw new EventoCanceladoException();
+		}
+		this.publicado = true;
+	}
+
+	@Transient
+	public void desativarPublicacao() {
+		this.publicado = false;
+	}
+
 	@Transient
 	public String getDisplayCertificado() {
-		return (getCertificado() ? "SIM" : "NÃO");
+		return (isCertificado() ? "SIM" : "NÃO");
 	}
-	
+
+	@Transient
+	public String getDisplayPublicado() {
+		return (isPublicado() ? "SIM" : "NÃO");
+	}
+
+	@Transient
+	private Boolean isFechado() {
+		return getDataTermino().isBefore(LocalDate.now());
+	}
+
+	@Transient
+	public Boolean isAtivo() {
+		return ativo;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -258,7 +328,5 @@ public class EventoPresencial implements Serializable{
 			return false;
 		return true;
 	}
-	
-	
 
 }

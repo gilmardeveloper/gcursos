@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -49,6 +48,7 @@ public class DiaEvento implements Serializable{
 	}
 
 	public List<AtividadePresencial> getAtividades() {
+		atividades.sort((a1, a2) -> a1.getHoraInicio().compareTo(a2.getHoraInicio()));
 		return atividades;
 	}
 
