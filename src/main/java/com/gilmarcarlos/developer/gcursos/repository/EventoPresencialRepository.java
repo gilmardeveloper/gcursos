@@ -16,4 +16,6 @@ public interface EventoPresencialRepository extends CrudRepository<EventoPresenc
 	@Query("select e from EventoPresencial e where e.id = :pid")
 	EventoPresencial buscarPor(@Param("pid")Long id);
 
+	List<EventoPresencial> findByPublicadoTrue();
+
 }

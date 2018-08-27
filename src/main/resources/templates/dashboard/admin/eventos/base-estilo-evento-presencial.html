@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+<title>ZEUS | Estilo</title>
+<link rel="stylesheet" th:href="@{~/css/dropify.min.css}" />
+</head>
+
+<body>
+	<div class="container-scroller">
+		<!-- partial:../../partials/_navbar.html -->
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+
+		<!-- partial -->
+		<div class="container-fluid page-body-wrapper">
+			<div class="row row-offcanvas row-offcanvas-right">
+				<!-- partial:../../partials/_settings-panel.html -->
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					<!-- row -->
+					<div class="row">
+
+						<!-- evento -->
+						<div class="col-md-6 col-lg-4 grid-margin">
+							<div class="row">
+								<div class="col-lg-12">
+									<div id="box"
+										th:class="${evento.estilo} != null ? ${evento.estilo.corFundoBox} : 'card bg-primary text-white'">
+										<img th:if="${evento.imagemDestaque} != null" class="card-img"
+											th:src="@{/imagens/evento/presencial/{id}/imagem-destaque.png(id=${evento.id})}"
+											style="opacity: 0.3;" alt="Card image">
+										<div
+											th:class="${evento.imagemDestaque} != null ? 'card-img-overlay' : 'card-body'">
+
+											<h6 id="titulo"
+												th:class="${evento.estilo} != null ? ${evento.estilo.corFundoTitulo} : 'card-title text-white font-weight-bold'"
+												th:text="${evento.titulo}"></h6>
+
+											<p id="descricao"
+												th:class="${evento.estilo} != null ? ${evento.estilo.corFundoDescricao} : 'card-text small'"
+												th:text="${evento.descricao}"></p>
+
+											<a href="#" class="btn btn-primary btn-rounded btn-fw"><i
+												class="icon-info"></i>Saber mais</a>
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-12 mt-4">
+									<div class="card">
+										<div class="card-body">
+											<form
+												th:action="@{/dashboard/admin/eventos/presencial/imagens/destaque/deletar}"
+												method="post">
+												<input type="hidden" name="id" th:value="${evento.id}">
+												<div class="form-group">
+													<button type="submit"
+														class="btn btn-success mr-2 pb-3 pt-3">Remover
+														imagem</button>
+												</div>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- end evento -->
+
+						<div class="col-lg-4 grid-margin">
+							<div class="card">
+								<div class="card-body">
+									<form
+										th:action="@{/dashboard/admin/eventos/presencial/estilo/destaque/salvar}"
+										method="post" enctype="multipart/form-data">
+
+										<input type="hidden" name="eventoPresencial"
+											th:value="${evento.id}" /> <input type="hidden" name="id"
+											th:value="${evento.estilo} != null ? ${evento.estilo.id} : ''" />
+
+										<div class="row">
+
+											<div class="col-lg-12">
+												<div class="form-group">
+													<label>Cor de fundo</label> <select id="cor-fundo-box"
+														class="form-control" name="corFundoBox">
+
+														<option value="card text-white bg-primary"
+															th:selected="${evento.estilo} != null and ${evento.estilo.corFundoBox} == 'card text-white bg-primary'"><span
+																class="text-primary">AZUL</span></option>
+
+														<option value="card text-dark bg-secondary"
+															th:selected="${evento.estilo} != null and ${evento.estilo.corFundoBox} == 'card text-dark bg-secondary'"><span
+																class="text-secondary">CINZA</span></option>
+
+														<option value="card text-white bg-success"
+															th:selected="${evento.estilo} != null and ${evento.estilo.corFundoBox} == 'card text-white bg-success'"><span
+																class="text-success">VERDE</span></option>
+
+														<option value="card text-white bg-danger"
+															th:selected="${evento.estilo} != null and ${evento.estilo.corFundoBox} == 'card text-white bg-danger'"><span
+																class="text-danger">VERMELHO</span></option>
+
+														<option value="card text-white bg-warning"
+															th:selected="${evento.estilo} != null and ${evento.estilo.corFundoBox} == 'card text-white bg-warning'"><span
+																class="text-warning">LARANJA</span></option>
+
+														<option value="card text-white bg-info"
+															th:selected="${evento.estilo} != null and ${evento.estilo.corFundoBox} == 'card text-white bg-info'"><span
+																class="text-info">LILÁS</span></option>
+
+														<option value="card text-dark bg-light"
+															th:selected="${evento.estilo} != null and ${evento.estilo.corFundoBox} == 'card text-dark bg-light'"><span
+																class="text-muted">BRANCO</span></option>
+
+														<option value="card text-white bg-dark"
+															th:selected="${evento.estilo} != null and ${evento.estilo.corFundoBox} == 'card text-white bg-dark'"><span
+																class="text-dark">PRETO</span></option>
+
+													</select>
+												</div>
+											</div>
+
+											<div class="col-lg-12">
+												<div class="form-group">
+													<label>Cor do titulo</label> <select id="cor-fundo-titulo"
+														class="form-control" name="corFundoTitulo">
+
+														<option value="card-title text-secondary font-weight-bold"
+															th:selected="${evento.estilo} != null and ${evento.estilo.corFundoTitulo} == 'card-title text-secondary font-weight-bold'"><span
+																class="text-secondary">BRANCO</span></option>
+
+														<option value="card-title text-muted font-weight-bold"
+															th:selected="${evento.estilo} != null and ${evento.estilo.corFundoTitulo} == 'card-title text-muted font-weight-bold'"><span
+																class="text-muted">CINZA</span></option>
+
+														<option value="card-title text-dark font-weight-bold"
+															th:selected="${evento.estilo} != null and ${evento.estilo.corFundoTitulo} == 'card-title text-dark font-weight-bold'"><span
+																class="text-dark">PRETO</span></option>
+
+													</select>
+												</div>
+											</div>
+
+											<div class="col-lg-12">
+												<div class="form-group">
+													<label>Cor da descrição</label> <select
+														id="cor-fundo-descricao" class="form-control"
+														name="corFundoDescricao">
+														<option value="card-text small text-secondary"
+															th:selected="${evento.estilo} != null and ${evento.estilo.corFundoDescricao} == 'card-text small text-secondary'"><span
+																class="text-secondary">BRANCO</span></option>
+
+														<option value="card-text small text-muted"><span
+																class="text-muted"
+																th:selected="${evento.estilo} != null and ${evento.estilo.corFundoDescricao} == 'card-text small text-muted'">CINZA</span></option>
+
+														<option value="card-text small text-dark"
+															th:selected="${evento.estilo} != null and ${evento.estilo.corFundoDescricao} == 'card-text small text-dark'"><span
+																class="text-dark">PRETO</span></option>
+													</select>
+												</div>
+											</div>
+
+
+										</div>
+
+										<div class="form-group mt-5">
+											<button type="submit" class="btn btn-success mr-2">Alterar</button>
+											<a th:href="@{/dashboard/}" class="btn btn-outline-danger">Cancelar</a>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+
+
+
+						<div class="col-lg-4 grid-margin">
+							<div class="card">
+								<div class="card-body">
+									<div class="wrapper mb-1 mt-1">
+										<span class="badge badge-warning text-white">Nota : </span>
+										<p class="d-inline ml-3 text-muted">máximo 367x293 e 2MB</p>
+									</div>
+									<form
+										th:action="@{/dashboard/admin/eventos/presencial/imagens/destaque/salvar}"
+										method="post" enctype="multipart/form-data">
+										<input type="hidden" name="eventoPresencial"
+											th:value="${evento.id}"> <input type="file"
+											class="dropify" name="imagem" data-max-file-size="2mb"
+											data-default-file="" />
+										<div class="form-group mt-5">
+											<button type="submit" class="btn btn-success mr-2">Alterar</button>
+											<a th:href="@{/dashboard/}" class="btn btn-outline-danger">Cancelar</a>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+
+
+
+					</div>
+					<!-- end row -->
+				</div>
+				<!-- end content-wrapper -->
+				<!-- footer -->
+				<footer th:replace="fragments/footer :: footer"></footer>
+				<!-- end footer -->
+			</div>
+			<!-- row-offcanvas ends -->
+		</div>
+		<!-- page-body-wrapper ends -->
+	</div>
+	<!-- container-scroller -->
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/dropify.min.js}"></script>
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<script th:src="@{~/js/dropify.js}"></script>
+
+	<script>
+		$(() => {
+			var old = 
+			$('#cor-fundo-box').on('change',alterarCorBox);
+			$('#cor-fundo-titulo').on('change',alterarCorTitulo);
+			$('#cor-fundo-descricao').on('change',alterarCorDesricao);
+		});
+
+		function alterarCorBox(){
+			var classText = $('#cor-fundo').val();
+			$("#box").removeAttr('class');
+			$("#box").attr('class', $('#cor-fundo-box').val());
+		}
+
+		function alterarCorTitulo(){
+			var classText = $('#cor-fundo').val();
+			$("#titulo").removeAttr('class');
+			$("#titulo").attr('class', $('#cor-fundo-titulo').val());
+		}
+
+		function alterarCorDesricao(){
+			var classText = $('#cor-fundo').val();
+			$("#descricao").removeAttr('class');
+			$("#descricao").attr('class', $('#cor-fundo-descricao').val());
+		}
+	</script>
+</body>
+
+</html>

@@ -20,20 +20,16 @@ import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.CargoService;
 import com.gilmarcarlos.developer.gcursos.service.CodigoFuncionalService;
 import com.gilmarcarlos.developer.gcursos.service.DadosPessoaisService;
-import com.gilmarcarlos.developer.gcursos.service.DepartamentoService;
-import com.gilmarcarlos.developer.gcursos.service.EnderecoUnidadeService;
-import com.gilmarcarlos.developer.gcursos.service.EnderecoUsuarioService;
 import com.gilmarcarlos.developer.gcursos.service.EscolaridadeService;
 import com.gilmarcarlos.developer.gcursos.service.NotificacaoService;
 import com.gilmarcarlos.developer.gcursos.service.SexoService;
-import com.gilmarcarlos.developer.gcursos.service.TelefoneUnidadeService;
 import com.gilmarcarlos.developer.gcursos.service.TelefoneUsuarioService;
 import com.gilmarcarlos.developer.gcursos.service.UnidadeTrabalhoService;
 import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
 
 @Controller
 @RequestMapping("/")
-public class PaginaControler {
+public class UsuarioCompleteCadastroControler {
 
 	private Authentication autenticado;
 
@@ -47,20 +43,8 @@ public class PaginaControler {
 	private UnidadeTrabalhoService unidadeService;
 
 	@Autowired
-	private DepartamentoService departamentoService;
-
-	@Autowired
-	private TelefoneUnidadeService telefoneUnidadeService;
-
-	@Autowired
-	private EnderecoUnidadeService enderecoUnidadeService;
-
-	@Autowired
 	private TelefoneUsuarioService telefoneUsuarioService;
-
-	@Autowired
-	private EnderecoUsuarioService enderecoUsuarioService;
-
+	
 	@Autowired
 	private DadosPessoaisService dadosService;
 
@@ -91,7 +75,7 @@ public class PaginaControler {
 		model.addAttribute("escolaridades", escolaridadeService.listarTodos());
 		model.addAttribute("cargos", cargoService.listarTodos());
 		model.addAttribute("unidades", unidadeService.listarTodos());
-		return "dashboard/profile";
+		return "dashboard/usuario/profile";
 		}else {
 			return "redirect:/dashboard/complete-cadastro";
 		}

@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
-import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencial;
-import com.gilmarcarlos.developer.gcursos.repository.ImagensEventoPresencialRepository;
+import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialDestaque;
+import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialTop;
+import com.gilmarcarlos.developer.gcursos.repository.ImagensEventoPresencialDestaqueRepository;
+import com.gilmarcarlos.developer.gcursos.repository.ImagensEventoPresencialTopRepository;
 import com.gilmarcarlos.developer.gcursos.repository.ImagensRepository;
 
 @Service
@@ -19,7 +21,10 @@ public class ImagensService {
 	private ImagensRepository repository;
 	
 	@Autowired
-	private ImagensEventoPresencialRepository repositoryImagensEvePres;
+	private ImagensEventoPresencialTopRepository repositoryImagensEvePresTop;
+	
+	@Autowired
+	private ImagensEventoPresencialDestaqueRepository repositoryImagensEvePresDestaque;
 	
 	public Imagens salvar(Imagens imagens) {
 		return repository.save(imagens);
@@ -56,10 +61,18 @@ public class ImagensService {
 	}
 
 	public void deletarImagemEvePreTop(Long id) {
-		repositoryImagensEvePres.deleteById(id);
+		repositoryImagensEvePresTop.deleteById(id);
 	}
 	
-	public ImagensEventoPresencial salvarImagemEvePresTop(ImagensEventoPresencial imagens) {
-		return repositoryImagensEvePres.save(imagens);
+	public ImagensEventoPresencialTop salvarImagemEvePresTop(ImagensEventoPresencialTop imagens){
+			return repositoryImagensEvePresTop.save(imagens);
+	}
+
+	public void deletarImagemEvePreDestaque(Long id) {
+		repositoryImagensEvePresDestaque.deleteById(id);
+	}
+
+	public ImagensEventoPresencialDestaque salvarImagemEvePresDestaque(ImagensEventoPresencialDestaque imagens) {
+		return repositoryImagensEvePresDestaque.save(imagens);
 	}
 }

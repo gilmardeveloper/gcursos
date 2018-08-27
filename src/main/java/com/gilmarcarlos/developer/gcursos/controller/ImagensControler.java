@@ -61,4 +61,19 @@ public class ImagensControler {
 		}
 	}
 	
+	@GetMapping("/evento/presencial/{id}/imagem-destaque.png")
+	public @ResponseBody byte[] imagemDestaque(@PathVariable("id") Long id) {
+		Blob imagem = eventoPresencialService.buscarPor(id).getImagemDestaque().getImagem();
+		try {
+			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
+			bufferedImage = imagensService.verifica(bufferedImage, 293, 367);
+			ImageIO.write(bufferedImage, "png", byteOutStream);
+			return byteOutStream.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 }

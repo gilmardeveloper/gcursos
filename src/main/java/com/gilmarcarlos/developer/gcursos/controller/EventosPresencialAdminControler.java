@@ -1,7 +1,8 @@
 package com.gilmarcarlos.developer.gcursos.controller;
 
 import java.time.LocalDate;
-import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,11 +22,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.gilmarcarlos.developer.gcursos.model.eventos.AtividadePresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.CategoriaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.DiaEvento;
+import com.gilmarcarlos.developer.gcursos.model.eventos.EstiloPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencialLog;
+import com.gilmarcarlos.developer.gcursos.model.eventos.PermissoesEventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.ProgramacaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.Sobre;
-import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialDestaque;
+import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialTop;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.AtividadePresencialService;
 import com.gilmarcarlos.developer.gcursos.service.CargoService;
@@ -32,10 +37,12 @@ import com.gilmarcarlos.developer.gcursos.service.CategoriaEventoService;
 import com.gilmarcarlos.developer.gcursos.service.DiaEventoPaginacaoService;
 import com.gilmarcarlos.developer.gcursos.service.DiaEventoService;
 import com.gilmarcarlos.developer.gcursos.service.EscolaridadeService;
+import com.gilmarcarlos.developer.gcursos.service.EstiloPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.EventoPresencialLogService;
 import com.gilmarcarlos.developer.gcursos.service.EventoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.ImagensService;
 import com.gilmarcarlos.developer.gcursos.service.LogEvePresencialPaginacaoService;
+import com.gilmarcarlos.developer.gcursos.service.PermissoesEventoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.ProgramacaoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.SobreService;
@@ -44,7 +51,7 @@ import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
 
 @Controller
 @RequestMapping("/dashboard/admin/eventos/presencial")
-public class EventosControler {
+public class EventosPresencialAdminControler {
 
 	@Autowired
 	private UsuarioService usuarioService;
@@ -75,21 +82,27 @@ public class EventosControler {
 
 	@Autowired
 	private DiaEventoPaginacaoService diaEventoPaginacaoService;
+	
+	@Autowired
+	private EstiloPresencialService estiloPresencialService;
 
 	@Autowired
 	private LogEvePresencialPaginacaoService logEventoPresencialPaginacaoService;
-	
+
 	@Autowired
 	private UnidadeTrabalhoService unidadeService;
-	
+
 	@Autowired
 	private CargoService cargoService;
-	
+
 	@Autowired
 	private SexoService sexoService;
-	
+
 	@Autowired
 	private EscolaridadeService escolaridadeService;
+
+	@Autowired
+	private PermissoesEventoPresencialService permissoesEvePresencialService;
 
 	private Authentication autenticado;
 
@@ -131,7 +144,7 @@ public class EventosControler {
 			return "redirect:/dashboard/complete-cadastro";
 		}
 	}
-	
+
 	@PostMapping("/salvar")
 	public String eventoPresencialSalvar(EventoPresencial evento, RedirectAttributes model) {
 		try {
@@ -159,7 +172,7 @@ public class EventosControler {
 		return "redirect:/dashboard/admin/eventos/presencial";
 
 	}
-	
+
 	@GetMapping("/alterar/{id}")
 	public String alterar(@PathVariable("id") Long id, Model model) {
 		Usuario usuarioLogado = getUsuario();
@@ -241,7 +254,64 @@ public class EventosControler {
 		}
 	}
 
+	@GetMapping("/estilo/{id}")
+	public String estilo(@PathVariable("id") Long id, Model model) {
+		Usuario usuarioLogado = getUsuario();
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		if (usuarioLogado.isPerfilCompleto()) {
+			model.addAttribute("usuario", usuarioLogado);
+			model.addAttribute("categorias", categoriaEventoService.listarTodos());
+			model.addAttribute("evento", eventoPresencialService.buscarPor(id));
+			return "dashboard/admin/eventos/base-estilo-evento-presencial";
+		} else {
+			return "redirect:/dashboard/admin/complete-cadastro";
+		}
+	}
+
+	@PostMapping("/imagens/destaque/salvar")
+	public String salvarImagensDestaque(@Valid ImagensEventoPresencialDestaque imagens, BindingResult result,
+			RedirectAttributes model) {
+
+		if (!result.hasErrors()) {
+			if (imagens.getEventoPresencial().getImagemDestaque() != null) {
+				imagensService.deletarImagemEvePreDestaque(imagens.getEventoPresencial().getImagemDestaque().getId());
+			}
+
+			if (imagens != null) {
+				imagensService.salvarImagemEvePresDestaque(imagens);
+				eventoPresencialLogService
+						.salvar(log("Imagem de destaque foi alterada", imagens.getEventoPresencial()));
+			}
+			return "redirect:/dashboard/admin/eventos/presencial/estilo/" + imagens.getEventoPresencial().getId();
+		} else {
+			model.addFlashAttribute("alert", "alert alert-fill-danger");
+			model.addFlashAttribute("message", "imagem vazia ou arquivo não é uma imagem");
+			return "redirect:/dashboard/admin/eventos/presencial/estilo/" + imagens.getEventoPresencial().getId();
+		}
+	}
+
+	@PostMapping("/imagens/destaque/deletar")
+	public String deleatarImagensDestaque(@RequestParam("id") Long id, RedirectAttributes model) {
+
+		EventoPresencial evento = eventoPresencialService.buscarPor(id);
+		if (evento.getImagemDestaque() != null) {
+			imagensService.deletarImagemEvePreDestaque(evento.getImagemDestaque().getId());
+			eventoPresencialLogService
+			.salvar(log("Imagem de destaque foi removida", evento));
+
+		}
+
+		return "redirect:/dashboard/admin/eventos/presencial/estilo/" + id;
+	}
 	
+	@PostMapping("/estilo/destaque/salvar")
+	public String salvarEstiloDestaque(EstiloPresencial estilo, RedirectAttributes model) {
+
+		EstiloPresencial novoEstilo = estiloPresencialService.salvar(estilo);
+		eventoPresencialLogService
+						.salvar(log("Estilo da página de destaque foi alterado", novoEstilo.getEventoPresencial()));
+		return "redirect:/dashboard/admin/eventos/presencial/estilo/" + novoEstilo.getEventoPresencial().getId();
+	}
 
 	@GetMapping("/detalhes/{id}")
 	public String eventoDetalhes(@PathVariable("id") Long id, Model model) {
@@ -271,18 +341,37 @@ public class EventosControler {
 		return "dashboard/admin/eventos/base-detalhes-evento-presencial";
 	}
 
-	@PostMapping("/detalhes/imagens/top/salvar")
-	public String salvarImagensTop(ImagensEventoPresencial imagens, RedirectAttributes model) {
+	@GetMapping("/detalhes/imagens/top/deletar/{id}")
+	public String deletarImagensTop(@PathVariable("id") Long id, RedirectAttributes model) {
 
-		if (imagens.getEventoPresencial().getImagemTopDetalhes() != null) {
-			imagensService.deletarImagemEvePreTop(imagens.getEventoPresencial().getImagemTopDetalhes().getId());
+		EventoPresencial evento = eventoPresencialService.buscarPor(id);
+
+		if (evento.getImagemTopDetalhes() != null) {
+			imagensService.deletarImagemEvePreTop(evento.getImagemTopDetalhes().getId());
+			eventoPresencialLogService.salvar(log("Imagem do topo foi removida", evento));
 		}
 
-		imagensService.salvarImagemEvePresTop(imagens);
-		eventoPresencialLogService.salvar(log("Imagem do topo foi alterada", imagens.getEventoPresencial()));
+		return "redirect:/dashboard/admin/eventos/presencial/detalhes/" + id;
 
-		return "redirect:/dashboard/admin/eventos/presencial/detalhes/" + imagens.getEventoPresencial().getId();
+	}
 
+	@PostMapping("/detalhes/imagens/top/salvar")
+	public String salvarImagensTop(@Valid ImagensEventoPresencialTop imagens, BindingResult result,
+			RedirectAttributes model) {
+
+		if (!result.hasErrors()) {
+			if (imagens.getEventoPresencial().getImagemTopDetalhes() != null) {
+				imagensService.deletarImagemEvePreTop(imagens.getEventoPresencial().getImagemTopDetalhes().getId());
+			}
+			imagensService.salvarImagemEvePresTop(imagens);
+			eventoPresencialLogService.salvar(log("Imagem do topo foi alterada", imagens.getEventoPresencial()));
+			return "redirect:/dashboard/admin/eventos/presencial/detalhes/" + imagens.getEventoPresencial().getId();
+		} else {
+			model.addFlashAttribute("alert", "alert alert-fill-danger");
+			model.addFlashAttribute("message", "imagem vazia ou arquivo não é uma imagem");
+			return "redirect:/dashboard/admin/eventos/presencial/detalhes/" + imagens.getEventoPresencial().getId();
+
+		}
 	}
 
 	@PostMapping("/detalhes/sobre/salvar")
@@ -346,7 +435,7 @@ public class EventosControler {
 				atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
 		ProgramacaoPresencial programacao = atividade.getDiaEvento().getProgramacaoPresencial();
 		atividadePresencialService.deletar(id);
-		
+
 		model.addFlashAttribute("alert", "alert alert-fill-success");
 		model.addFlashAttribute("message", "removido com sucesso");
 		model.addFlashAttribute("atividade", atividade);
@@ -429,11 +518,11 @@ public class EventosControler {
 		model.addFlashAttribute("message", "removido com sucesso");
 		return "redirect:/dashboard/admin/eventos/presencial/categorias";
 	}
-	
+
 	@GetMapping("/permissoes/{id}")
 	private String permissoesEventoPresencial(@PathVariable("id") Long id, Model model) {
 		Usuario usuarioLogado = getUsuario();
-		if(usuarioLogado.isPerfilCompleto()) {
+		if (usuarioLogado.isPerfilCompleto()) {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
 			model.addAttribute("evento", eventoPresencialService.buscarPor(id));
@@ -441,16 +530,20 @@ public class EventosControler {
 			model.addAttribute("escolaridades", escolaridadeService.listarTodos());
 			model.addAttribute("sexos", sexoService.listarTodos());
 			model.addAttribute("cargos", cargoService.listarTodos());
-		return "/dashboard/admin/eventos/base-cadastro-permissoes-evento-presencial";
-		}else {
+			return "/dashboard/admin/eventos/base-cadastro-permissoes-evento-presencial";
+		} else {
 			return "redirect:/dashboard/admin/complete-cadastro";
 		}
 	}
-	
+
 	@PostMapping("/permissoes/salvar")
-	private String permissoesEventoPresencialSalvar(@RequestParam("unidades") List<String> unidades, Model model) {
-		unidades.forEach(u -> System.err.println(u));
-		return "asfga";
+	private String permissoesEventoPresencialSalvar(PermissoesEventoPresencial permissoes, RedirectAttributes model) {
+
+		permissoesEvePresencialService.salvar(permissoes);
+		model.addFlashAttribute("alert", "alert alert-fill-success alert-dismissible fade show");
+		model.addFlashAttribute("message", "salvo com sucesso");
+
+		return "redirect:/dashboard/admin/eventos/presencial";
 	}
 
 	private Usuario getUsuario() {

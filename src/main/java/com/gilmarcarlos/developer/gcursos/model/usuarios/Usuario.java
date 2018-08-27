@@ -19,6 +19,7 @@ import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.CodigoFuncional;
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.DadosPessoais;
 import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.InscricaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 
@@ -58,6 +59,9 @@ public class Usuario implements Serializable {
 
 	@OneToMany(mappedBy = "responsavel")
 	private List<EventoPresencial> eventoPresencial;
+	
+	@OneToMany(mappedBy = "usuario")
+	private List<InscricaoPresencial> inscricoes;
 
 	public Usuario() {
 		this.habilitado = false;
@@ -151,6 +155,14 @@ public class Usuario implements Serializable {
 
 	public void setEventoPresencial(List<EventoPresencial> eventoPresencial) {
 		this.eventoPresencial = eventoPresencial;
+	}
+	
+	public List<InscricaoPresencial> getInscricoes() {
+		return inscricoes;
+	}
+
+	public void setInscricoes(List<InscricaoPresencial> inscricoes) {
+		this.inscricoes = inscricoes;
 	}
 
 	@Transient

@@ -5,12 +5,14 @@ import java.io.ByteArrayOutputStream;
 import java.sql.Blob;
 
 import javax.imageio.ImageIO;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,7 +76,7 @@ public class UsuarioControler {
 	public String dadosPessoaisSalvar(Usuario usuario, RedirectAttributes model) {
 		
 		DadosPessoais dados = usuario.getDadosPessoais();
-		usuarioService.atualizarDados(usuario);
+		usuarioService.atualizarDadosNoEncryptSenha(usuario);
 		dadosService.salvar(dados);
 		notificacaoService.salvar(new Notificacao(getUsuario(), "Dados pessoais alterados", IconeType.INFORMACAO,
 				StatusType.SUCESSO, "dados foram alterados com sucesso"));
@@ -114,7 +116,7 @@ public class UsuarioControler {
 		getUsuario().getNotificaoesNaoLidas().forEach(n -> notificacaoService.foiLida(n));
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("notifications", getUsuario().getNotificacoes());
-		return "dashboard/notificacoes";
+		return "dashboard/usuario/notificacoes";
 	}
 
 	@GetMapping("notificacoes/deletar")
@@ -149,8 +151,8 @@ public class UsuarioControler {
 	}
 
 	@PostMapping("/salvar/imagens")
-	public String salvar(Imagens imagens, RedirectAttributes model) {
-
+	public String salvar(@Valid Imagens imagens, BindingResult result, RedirectAttributes model) {
+	  if(!result.hasErrors()) {	
 		if (getUsuario().getImagens() != null) {
 			imagensService.deletar(getUsuario().getImagens().getId());
 		}
@@ -158,7 +160,11 @@ public class UsuarioControler {
 		imagensService.salvar(imagens);
 		notificacaoService.salvar(new Notificacao(getUsuario(), "Alterou o seu avatar", IconeType.INFORMACAO,
 				StatusType.SUCESSO, "uma nova imagem de avatar foi adicionada"));
-		return "redirect:/dashboard/";
+	  }else {
+		  notificacaoService.salvar(new Notificacao(getUsuario(), "Falha ao alterar o seu avatar", IconeType.INFORMACAO,
+					StatusType.ERRO, "tentou adicionar imagem vazia ou outro arquivo como avatar"));
+	  }
+	  return "redirect:/dashboard/";
 
 	}
 

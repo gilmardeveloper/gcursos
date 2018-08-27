@@ -52,64 +52,39 @@
 											<form th:action="@{/dashboard/admin/eventos/presencial/permissoes/salvar}" class="forms-sample" method="post">
 												<div class="row">
 													
-													<input type="hidden" name="id" th:value="${evento} != null ? ${evento.id} : ''" />
+													<input type="hidden" name="eventoPresencial" th:value="${evento} != null ? ${evento.id} : ''" />
 
-													<input type="hidden" name="programacao" th:value="${evento} != null ? ${evento.programacao.id} : ''" />
+													<input type="hidden" name="id" th:value="${evento.permissoes} != null ? ${evento.permissoes.id} : ''" />
 
-													<input type="hidden" name="responsavel" th:value="${evento} != null ? ${evento.responsavel.id} : ${usuario.id}" />
+													<input type="hidden" name="token" th:value="${evento.permissoes} != null ? ${evento.permissoes.codigo} : ''" />
 
-													<input type="hidden" name="dataCriacao" th:value="${evento} != null ? ${#temporals.format(evento.dataCriacao, 'dd/MM/yyyy')} : ${#temporals.format(#temporals.createToday(), 'dd/MM/yyyy')}" />
-
-													<input type="hidden" name="dataAtualizacao" th:value="${#temporals.format(#temporals.createToday(), 'dd/MM/yyyy')}" />
-
-													<div class="col-lg-12 mt-3">
-														<div class="form-group">
-															<label for="slider">Faixa etária</label>	
-															<div id="slider" class="ul-slider slider-primary mt-2"></div>
-										                    <div class="d-flex justify-content-between">
-										                      <p class="mt-3">Inicial: <span id="inicial"></span></p>
-										                      <p class="mt-3">Final: <span id="final"></span></p>
-										                    </div>
-														</div>
-									                </div> 
-
-													<div class="col-lg-6">	
+													<div class="col-lg-4">	
 														<div class="form-group">
 															<label for="sexo">Opção sexual</label>
 															<select class="form-control js-select-single" aria-describedby="sexoHelp" name="sexos" multiple="multiple" style="width:100%">
-																<option value="todas" selected="selected">TODAS</option>
-																<option th:if="${sexos != null}" th:each="sexo : ${sexos}" th:text="${#strings.toUpperCase(sexo.nome)}" th:value="${sexo.nome}"></option>
+																<option value="todos" th:selected="${evento.permissoes} != null and ${#lists.contains(evento.permissoes.sexos, 'todos')}">TODAS</option>
+																<option th:if="${sexos != null}" th:each="sexo : ${sexos}" th:text="${#strings.toUpperCase(sexo.nome)}" th:value="${sexo.nome}" th:selected="${evento.permissoes} != null and ${#lists.contains(evento.permissoes.sexos, sexo.nome)}"></option>
 															</select>
 														</div>
 									                </div> 
 
-									                <div class="col-lg-6">	
+									                <div class="col-lg-4">	
 														<div class="form-group">
-															<label for="escolaridade">Escolaridade</label>
-															<select class="form-control js-select-single" aria-describedby="escolaridadeHelp" name="escolaridades" multiple="multiple" style="width:100%">
-																<option value="todas" selected="selected">TODAS</option>
-																<option th:if="${escolaridades != null}" th:each="escolaridade : ${escolaridades}" th:text="${escolaridade.nome}" th:value="${escolaridade.nome}"></option>
+															<label for="codigo">Código para inscrição exigido</label>
+															<select class="form-control js-select-single" aria-describedby="codigoHelp" name="codigo" style="width:100%">
+																<option value="false">NÃO</option>
+																<option value="true" th:selected="${evento.permissoes} != null and ${evento.permissoes.codigo} != null">SIM</option>
 															</select>
 														</div>
 									                </div>
 
-									                <div class="col-lg-6">	
+									                <div class="col-lg-4">	
 														<div class="form-group">
-															<label for="sexo">Código para inscrição exigido</label>
-															<select class="form-control js-select-single" aria-describedby="sexoHelp" name="sexos" style="width:100%">
-																<option value="não">NÃO</option>
-																<option value="sim">SIM</option>
-															</select>
-														</div>
-									                </div>
-
-									                <div class="col-lg-6">	
-														<div class="form-group">
-															<label for="sexo">Destinado</label>
-															<select class="form-control js-select-single" aria-describedby="sexoHelp" name="sexos" style="width:100%">
-																<option value="todas" selected="selected">TODOS</option>
-																<option value="todas">FUNCIONÁRIOS</option>
-																<option value="todas">OUTROS</option>
+															<label for="destinado">Evento destinado a</label>
+															<select class="form-control js-select-single" aria-describedby="sexoHelp" name="destinado" style="width:100%">
+																<option value="todos" th:selected="${evento.permissoes} != null and ${evento.permissoes.destinado} == 'todos'">TODOS</option>
+																<option value="funcionarios" th:selected="${evento.permissoes} != null and ${evento.permissoes.destinado} == 'funcionarios'">FUNCIONÁRIOS</option>
+																<option value="outros" th:selected="${evento.permissoes} != null and ${evento.permissoes.destinado} == 'outros'">OUTROS</option>
 															</select>
 														</div>
 									                </div>   
@@ -118,8 +93,8 @@
 														<div class="form-group">
 															<label for="unidade">Unidade de trabalho</label>
 															<select class="form-control js-select-single" aria-describedby="unidadeHelp" name="unidades" multiple="multiple" style="width:100%">
-																<option value="todas" selected="selected">TODAS</option>
-																<option th:if="${unidades != null}" th:each="unidade : ${unidades}" th:text="${unidade.nome}" th:value="${unidade.nome}"></option>
+																<option value="todos" th:selected="${evento.permissoes} != null and ${#lists.contains(evento.permissoes.unidades, 'todos')}">TODAS</option>
+																<option th:if="${unidades != null}" th:each="unidade : ${unidades}" th:text="${unidade.nome}" th:value="${unidade.nome}" th:selected="${evento.permissoes} != null and ${#lists.contains(evento.permissoes.unidades, unidade.nome)}"></option>
 															</select>
 														</div>
 									                </div>
@@ -128,9 +103,10 @@
 														<div class="form-group">
 															<label for="cargo">Cargo</label>
 															<select class="form-control js-select-single" aria-describedby="cargoHelp" name="cargos" multiple="multiple" style="width:100%">
-																<option value="todas" selected="selected">TODOS</option>
-																<option th:if="${cargos != null}" th:each="cargo : ${cargos}" th:text="${cargo.nome}" th:value="${cargo.nome}"></option>
+																<option value="todos" th:selected="${evento.permissoes} != null and ${#lists.contains(evento.permissoes.cargos, 'todos')}">TODOS</option>
+																<option th:if="${cargos != null}" th:each="cargo : ${cargos}" th:text="${cargo.nome}" th:value="${cargo.nome}" th:selected="${evento.permissoes} != null and ${#lists.contains(evento.permissoes.cargos, cargo.nome)}"></option>
 															</select>
+															<small>Obs.: Se o evento for destinado a todos ou a pessoas que não são funcionários (OUTROS), favor selecionar apenas 'TODOS'</small>
 														</div>
 									                </div>
 
@@ -176,30 +152,6 @@
 			    $(".js-select-single").select2();
 			  }
 
-			  var slider = document.getElementById('slider');
-
-				noUiSlider.create(slider, {
-					start: [18, 80],
-					step: 1,
-					connect: true,
-					range: {
-						'min': 18,
-						'max': 100
-					},
-					format: wNumb({
-						decimals: 0,
-					})
-				});
-
-					
-				var snapValues = [
-					document.getElementById('inicial'),
-					document.getElementById('final')
-				];
-
-				slider.noUiSlider.on('update', function( values, handle ) {
-					snapValues[handle].innerHTML = values[handle];
-				});	
 		})(jQuery);
 	/*]]>*/
 	</script>

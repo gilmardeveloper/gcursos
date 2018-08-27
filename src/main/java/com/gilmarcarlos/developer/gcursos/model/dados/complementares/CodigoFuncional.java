@@ -1,5 +1,6 @@
 package com.gilmarcarlos.developer.gcursos.model.dados.complementares;
 
+import java.beans.Transient;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
@@ -75,6 +76,11 @@ public class CodigoFuncional implements Serializable {
 		this.unidadeTrabalho = unidadeTrabalho;
 	}
 
+	@Transient
+	public String getTipo() {
+		return (codigo.equals("nf") ? "outros" : "funcionarios");
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

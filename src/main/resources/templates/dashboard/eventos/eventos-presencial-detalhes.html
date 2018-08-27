@@ -3,14 +3,8 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
-<head th:replace="fragments/head :: head(~{::title},~{::link})">
-<title>ZEUS | Eventos</title>
-<link rel="stylesheet" th:href="@{~/css/dropify.min.css}" />
-<link rel="stylesheet" th:href="@{~/css/bootstrap-datepicker.min.css}" />
-<link rel="stylesheet" th:href="@{~/css/bootstrap-clockpicker.min.css}" />
-<link rel="stylesheet" th:href="@{~/css/select2.min.css}" />
-<link rel="stylesheet" th:href="@{~/css/select2-bootstrap.min.css}" />
-<link rel="stylesheet" th:href="@{~/css/summernote-bs4.css}" />
+<head th:replace="fragments/head :: head(~{::title},~{})">
+<title>ZEUS | detalhes do evento</title>
 </head>
 
 <body>
@@ -53,30 +47,6 @@
 											<span aria-hidden="true">&times;</span>
 										</button>
 									</div>
-							</div>
-
-							<div class="col-lg-12">
-								<ul class="nav">
-									<li class="nav-item"><a class="nav-link" href="#"
-										data-toggle="modal" data-target="#modal-imagem-top">+
-											Imagem top</a></li>
-									<li class="nav-item"><a class="nav-link" th:href="@{/dashboard/admin/eventos/presencial/detalhes/imagens/top/deletar/{id}(id=${evento.id})}">-
-											Imagem top</a></li>		
-									<li class="nav-item"><a class="nav-link" href="#"
-										data-toggle="modal" data-target="#modal-editor-sobre">+
-											Sobre</a></li>
-									<li class="nav-item"><a class="nav-link"
-										th:href="@{/dashboard/admin/eventos/presencial/detalhes/programacao/{id}(id=${evento.programacao.id})}">+
-											Programação</a></li>
-									<li class="nav-item"><a class="nav-link"
-										th:href="@{/dashboard/admin/eventos/presencial/alterar/{id}(id=${evento.id})}">+
-											Evento</a></li>
-									<li class="nav-item"><a class="nav-link"
-										th:href="@{/dashboard/admin/eventos/presencial/estilo/{id}(id=${evento.id})}">+
-											Estilo da página de destaque</a></li>					
-									<li class="nav-item"><a class="nav-link" href="#">Visualizar</a>
-									</li>
-								</ul>
 							</div>
 
 							<div class="col-lg-12">
@@ -155,7 +125,7 @@
 																    				<p class="">responsável: <span class="text-muted" th:text="${atividade.nomeResponsavel}"></span></p>
 																    			</div>
 																    			<div class="col-lg-6">
-																    				<a class="btn btn-info" href="#" >Inscreva-se</a>
+																    				<a class="btn btn-info" th:href="@{/dashboard/eventos/presencial/atividade/{id}/inscricao(id=${atividade.id})}" >Inscreva-se</a>
 																    			</div>
 																    	</div>
 																  </div>
@@ -174,14 +144,14 @@
 																	th:if="${dias.totalPages} &gt; 1">
 
 																	<li class="page-item"><a
-																		th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}/pagina/{page}/(id=${evento.id},page=0)}"
+																		th:href="@{/dashboard/eventos/presencial/detalhes/{id}/pagina/{page}/(id=${evento.id},page=0)}"
 																		th:class="${dias.first} == true ? 'btn disabled' : 'page-link' "><i
 																			class="mdi mdi-chevron-left"></i></a></li>
 
 																	<li class="page-item"
 																		th:if="(${dias.number} - 1) &gt; -1"><a
 																		class="page-link"
-																		th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}/pagina/{page}/(id=${evento.id},page=${dias.number} - 1)}"
+																		th:href="@{/dashboard/eventos/presencial/detalhes/{id}/pagina/{page}/(id=${evento.id},page=${dias.number} - 1)}"
 																		th:text="${dias.number} - 1">&laquo;</a></li>
 
 																	<li
@@ -189,11 +159,11 @@
 																		th:each="index : ${#numbers.sequence(dias.number, dias.number + 1)}"
 																		th:class="${index} == ${dias.number} ? 'page-item active' : 'page-item'"><a
 																		class="page-link"
-																		th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}/pagina/{page}/(id=${evento.id},page=${index})}"
+																		th:href="@{/dashboard/eventos/presencial/detalhes/{id}/pagina/{page}/(id=${evento.id},page=${index})}"
 																		th:text="${index}">&laquo;</a></li>
 
 																	<li class="page-item"><a
-																		th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}/pagina/{page}/(id=${evento.id},page=${dias.totalPages} - 1)}"
+																		th:href="@{/dashboard/eventos/presencial/detalhes/{id}/pagina/{page}/(id=${evento.id},page=${dias.totalPages} - 1)}"
 																		th:class="${dias.last} == true ? 'btn disabled' : 'page-link' "><i
 																			class="mdi mdi-chevron-right"></i></a></li>
 																</ul>
@@ -309,88 +279,9 @@
 								</div>
 
 							</div>
-
-
-
-
 						</div>
 
 					</div>
-
-					<!-- Modal imagem top -->
-					<div class="modal fade" id="modal-imagem-top" tabindex="-1"
-						role="dialog" aria-labelledby="imagem-top-label"
-						aria-hidden="true">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="imagem-top-label">Imagem do
-										topo da página</h5>
-									<button type="button" class="close" data-dismiss="modal"
-										aria-label="Close">
-										<span aria-hidden="true">&times;</span>
-									</button>
-								</div>
-								<div class="modal-body">
-									<div class="wrapper mb-5 mt-4">
-										<span class="badge badge-warning text-white">Nota : </span>
-										<p class="d-inline ml-3 text-muted">Favor a imagem precisa
-											ter 1000x250 e no máximo 2MB de tamanho</p>
-									</div>
-									<form id="formulario-imagem-top"
-										th:action="@{/dashboard/admin/eventos/presencial/detalhes/imagens/top/salvar}"
-										method="post" enctype="multipart/form-data">
-										<input type="hidden" name="eventoPresencial"
-											th:value="${evento.id}"> <input type="file"
-											class="dropify" name="imagem" data-max-file-size="2mb"
-											data-default-file="" />
-									</form>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary"
-										data-dismiss="modal">Cancelar</button>
-									<button type="submit" form="formulario-imagem-top"
-										class="btn btn-primary">Salvar</button>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<!-- modal editor sobre -->
-					<div class="modal fade" id="modal-editor-sobre" tabindex="-1"
-						role="dialog" aria-labelledby="modal-label-editor-sobre"
-						aria-hidden="true">
-						<div class="modal-dialog modal-lg">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="imagem-top-label">Mais
-										detalhes sobre o evento</h5>
-									<button type="button" class="close" data-dismiss="modal"
-										aria-label="Close">
-										<span aria-hidden="true">&times;</span>
-									</button>
-								</div>
-								<div class="modal-body">
-									<form
-										th:action="@{/dashboard/admin/eventos/presencial/detalhes/sobre/salvar}"
-										id="formulario-editor-sobre" method="post">
-										<input type="hidden" name="eventoPresencial"
-											th:value="${evento.id}" />
-										<textarea id="summernote" name="conteudo"
-											th:utext="${evento.sobre != null} ?  ${evento.sobre.conteudo} : ''"></textarea>
-									</form>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary"
-										data-dismiss="modal">Cancelar</button>
-									<button type="submit" form="formulario-editor-sobre"
-										class="btn btn-primary">Salvar</button>
-								</div>
-							</div>
-						</div>
-
-					</div>
-
 				</div>
 				<!-- end content-wrapper -->
 
@@ -404,97 +295,7 @@
 	</div>
 	<!-- container-scroller -->
 	<span th:replace="fragments/base-script :: base"></span>
-	<script th:src="@{~/js/dropify.min.js}"></script>
-	<script th:src="@{~/js/bootstrap-datepicker.min.js}"></script>
-	<script th:src="@{~/js/bootstrap-clockpicker.min.js}"></script>
-	<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script>
-	<script th:src="@{~/js/select2.min.js}"></script>
-	<script th:src="@{~/js/summernote-bs4.min.js}"></script>
 	<span th:replace="fragments/base-script :: plugins"></span>
-	<script th:src="@{~/js/dropify.js}"></script>
-
-	<script>
-
-	    $(document).ready(function(){
-
-	     $('#titulo').on('input', () => {$('#qtd-titulo').text($('#titulo').val().length)});
-		 $('#descricao').on('input', () => {$('#qtd-descricao').text($('#descricao').val().length)});
-
-		 $('#datepicker-popup-inicio').datepicker({
-	      format: 'dd/mm/yyyy',
-	        language: 'pt-BR',
-	      });
-
-		 $('#datepicker-popup-termino').datepicker({
-	      format: 'dd/mm/yyyy',
-	        language: 'pt-BR',
-	      });
-	    	
-	     $('.clockpicker').clockpicker({donetext: 'definir'});
-
-	     $('#summernote').summernote({
-	     	 toolbar: [
-	     	 	['style', ['bold', 'italic', 'underline', 'clear']],
-			    ['font', ['strikethrough', 'superscript', 'subscript']],
-			    ['fontsize', ['fontsize']],
-			    ['fontname', ['fontname']],
-			    ['color', ['color']],
-			    ['para', ['ul', 'ol', 'paragraph']],
-			    ['picture', ['picture']],
-			    ['link', ['link']],
-			    ['video', ['video']],
-			    ['table', ['table']],
-			    ['codeview', ['codeview']],
-	     	],
-	     	dialogsInBody: true,
-			dialogsFade: false,
-	     	height: 300,
-	     	tabsize: 2
-	     });
-
-	    });
-
-	    
-  	</script>
-
-	<script th:if="${evento != null}" th:inline="javascript">
-
-	/*<![CDATA[*/
-		$(() =>{
-
-			updateDataInicio();
-			updateDataTermino();
-
-		});
-
-		 function updateDataInicio(){
-	      if($('#data-inicio').val() != ''){
-	        console.log('dataInicio foi executado');
-	        $('#datepicker-popup-inicio').datepicker('update', $('#data-inicio').val());
-	      }
-    	}
-
-    	 function updateDataTermino(){
-	      if($('#data-termino').val() != ''){
-	        console.log('dataTermino foi executado');
-	        $('#datepicker-popup-termino').datepicker('update', $('#data-termino').val());
-	      }
-    	}
-	/*]]>*/
-	</script>
-
-	<script th:inline="javascript">
-
-	/*<![CDATA[*/
-		(function($) {
-			  'use strict';
-
-			  if($(".js-select-single").length){
-			    $(".js-select-single").select2();
-			  }
-		})(jQuery);
-	/*]]>*/
-	</script>
 
 </body>
 

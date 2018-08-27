@@ -10,10 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
-import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
+import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
 
 @Entity
-public class Imagens implements Serializable{
+public class ImagensEventoPresencialTop implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -25,7 +25,7 @@ public class Imagens implements Serializable{
 	private Blob imagem;
 		
 	@OneToOne
-	private Usuario usuario;
+	private EventoPresencial eventoPresencial;
 	
 	public Long getId() {
 		return id;
@@ -43,12 +43,12 @@ public class Imagens implements Serializable{
 		this.imagem = imagem;
 	}
 
-	public Usuario getUsuario() {
-		return usuario;
+	public EventoPresencial getEventoPresencial() {
+		return eventoPresencial;
 	}
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
+	public void setEventoPresencial(EventoPresencial eventoPresencial) {
+		this.eventoPresencial = eventoPresencial;
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class Imagens implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Imagens other = (Imagens) obj;
+		ImagensEventoPresencialTop other = (ImagensEventoPresencialTop) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

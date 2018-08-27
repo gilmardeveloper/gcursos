@@ -45,7 +45,7 @@ import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
 
 @Controller
 @RequestMapping("/dashboard/admin/")
-public class AdministradorControler {
+public class UsuariosLocaisAdminControler {
 	
 	@Autowired
 	private UsuarioService usuarioService;
@@ -101,7 +101,7 @@ public class AdministradorControler {
 		model.addAttribute("sexos", sexoService.listarTodos());
 		model.addAttribute("autorizacoes", autorizacaoService.listarTodos());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-info-usuarios";
+		return "dashboard/admin/usuarios/base-info-usuarios";
 	}
 	
 	@PostMapping("usuarios/autorizacoes/salvar")
@@ -126,7 +126,7 @@ public class AdministradorControler {
 		model.addAttribute("formacoes", escolaridadeService.listarTodos());
 		model.addAttribute("sexos", sexoService.listarTodos());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-cadastro-usuario";
+		return "dashboard/admin/usuarios/base-cadastro-usuario";
 	}
 	
 	@GetMapping("usuarios/novo/funcionario")
@@ -137,7 +137,7 @@ public class AdministradorControler {
 		model.addAttribute("formacoes", escolaridadeService.listarTodos());
 		model.addAttribute("sexos", sexoService.listarTodos());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-cadastro-usuario";
+		return "dashboard/admin/usuarios/base-cadastro-usuario";
 	}
 	
 	@GetMapping("usuarios/novo/outro")
@@ -147,7 +147,7 @@ public class AdministradorControler {
 		model.addAttribute("formacoes", escolaridadeService.listarTodos());
 		model.addAttribute("sexos", sexoService.listarTodos());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-cadastro-usuario";
+		return "dashboard/admin/usuarios/base-cadastro-usuario";
 	}
 	
 	@GetMapping("usuarios/alterar/{id}")
@@ -255,7 +255,7 @@ public class AdministradorControler {
 	public String usuario(Model model) {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("antigos", colaboradorService.listarTodos());
-		return "dashboard/admin/base-info-usuarios";
+		return "dashboard/admin/usuarios/base-info-usuarios";
 	}
 	
 	@GetMapping("usuarios/opcoes")
@@ -263,14 +263,14 @@ public class AdministradorControler {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("opcoes", sexoService.listarTodos());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-info-usuarios";
+		return "dashboard/admin/usuarios/base-info-usuarios";
 	}
 	
 	@GetMapping("usuarios/opcoes/novo")
 	public String usuarioOpcoesNovo(Model model) {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-cadastro-sexo";
+		return "dashboard/admin/usuarios/base-cadastro-sexo";
 	}
 	
 	@PostMapping("usuarios/opcoes/salvar")
@@ -279,7 +279,7 @@ public class AdministradorControler {
 		model.addAttribute("sexo", sexoService.salvar(sexo));
 		model.addAttribute("alert", "alert alert-fill-success");
 		model.addAttribute("message", "salvo com sucesso");
-		return "dashboard/admin/base-cadastro-sexo";
+		return "dashboard/admin/usuarios/base-cadastro-sexo";
 	}
 	
 	@GetMapping("usuarios/opcoes/alterar/{id}")
@@ -301,14 +301,14 @@ public class AdministradorControler {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("escolaridades", escolaridadeService.listarTodos());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-info-usuarios";
+		return "dashboard/admin/usuarios/base-info-usuarios";
 	}
 	
 	@GetMapping("usuarios/escolaridades/novo")
 	public String usuarioEscolaridadesNovo(Model model) {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-cadastro-escolaridade";
+		return "dashboard/admin/usuarios/base-cadastro-escolaridade";
 	}
 	
 	@PostMapping("usuarios/escolaridades/salvar")
@@ -317,7 +317,7 @@ public class AdministradorControler {
 		model.addAttribute("escolaridade", escolaridadeService.salvar(escolaridade));
 		model.addAttribute("alert", "alert alert-fill-success");
 		model.addAttribute("message", "salvo com sucesso");
-		return "dashboard/admin/base-cadastro-escolaridade";
+		return "dashboard/admin/usuarios/base-cadastro-escolaridade";
 	}
 	
 	@GetMapping("usuarios/escolaridades/alterar/{id}")
@@ -340,7 +340,7 @@ public class AdministradorControler {
 		model.addAttribute("unidades", unidadeService.listarTodos());
 		model.addAttribute("deps", departamentoService.listarTodos());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-info-locais";
+		return "dashboard/admin/locais/base-info-locais";
 	}
 	
 	@GetMapping("unidades/novo")
@@ -348,7 +348,7 @@ public class AdministradorControler {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("departamentos", departamentoService.listarTodos());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-cadastro-unidades";
+		return "dashboard/admin/locais/base-cadastro-unidades";
 	}
 	
 	@PostMapping("unidades/salvar")
@@ -393,7 +393,7 @@ public class AdministradorControler {
 		model.addAttribute("unidade", unidade);
 		model.addAttribute("alert", "alert alert-fill-success");
 		model.addAttribute("message", "salvo com sucesso");
-		return "dashboard/admin/base-cadastro-unidades";
+		return "dashboard/admin/locais/base-cadastro-unidades";
 	}
 	
 	@GetMapping("unidades/alterar/{id}")
@@ -443,14 +443,14 @@ public class AdministradorControler {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("departamentos", departamentoService.listarTodos());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-info-locais";
+		return "dashboard/admin/locais/base-info-locais";
 	}
 	
 	@GetMapping("departamentos/novo")
 	public String departamentosNovo(Model model) {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-cadastro-departamentos";
+		return "dashboard/admin/locais/base-cadastro-departamentos";
 	}
 	
 	@PostMapping("departamentos/salvar")
@@ -459,7 +459,7 @@ public class AdministradorControler {
 		model.addAttribute("departamento", departamentoService.salvar(departamento));
 		model.addAttribute("alert", "alert alert-fill-success");
 		model.addAttribute("message", "salvo com sucesso");
-		return "dashboard/admin/base-cadastro-departamentos";
+		return "dashboard/admin/locais/base-cadastro-departamentos";
 	}
 	
 	@GetMapping("departamentos/alterar/{id}")
@@ -481,14 +481,14 @@ public class AdministradorControler {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("cargos", cargoService.listarTodos());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-info-locais";
+		return "dashboard/admin/locais/base-info-locais";
 	}
 	
 	@GetMapping("cargos/novo")
 	public String cargosNovo(Model model) {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("notificacoes",getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/base-cadastro-cargos";
+		return "dashboard/admin/locais/base-cadastro-cargos";
 	}
 	
 	@PostMapping("cargos/salvar")
@@ -497,7 +497,7 @@ public class AdministradorControler {
 		model.addAttribute("cargo", cargoService.salvar(cargo));
 		model.addAttribute("alert", "alert alert-fill-success");
 		model.addAttribute("message", "salvo com sucesso");
-		return "dashboard/admin/base-cadastro-cargos";
+		return "dashboard/admin/locais/base-cadastro-cargos";
 	}
 	
 	@GetMapping("cargos/alterar/{id}")

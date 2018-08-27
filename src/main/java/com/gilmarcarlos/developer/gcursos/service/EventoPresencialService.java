@@ -40,6 +40,10 @@ public class EventoPresencialService {
 	public List<EventoPresencial> listarTodos() {
 		return repository.listAll();
 	}
+	
+	public List<EventoPresencial> listarTodosPublicados() {
+		return repository.findByPublicadoTrue();
+	}
 
 	public EventoPresencial buscarPor(Long id) {
 		return repository.buscarPor(id);
@@ -65,6 +69,11 @@ public class EventoPresencialService {
 
 	public void publicar(Long id) throws EventoCanceladoException {
 		EventoPresencial evento = buscarPor(id);
+		
+		if(evento.getPermissoes() == null) {
+			throw new NullPointerException("O evento não tem permissões configuradas");
+		}
+		
 		evento.ativarPublicacao();
 		repository.save(evento);
 	}
@@ -90,4 +99,6 @@ public class EventoPresencialService {
 			eventoPresencial.desativarPublicacao();
 		}
 	}
+
+	
 }

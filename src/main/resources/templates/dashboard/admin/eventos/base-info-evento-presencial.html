@@ -92,9 +92,15 @@
 														<div class="col-lg-3">
 															<p class="">atualizado em: <span class="text-muted" th:text="${#temporals.format(evento.dataAtualizacao, 'dd/MM/yyyy')}"></span></p>
 														</div>
+
+														<div class="col-lg-12" th:if="${evento.permissoes} != null">
+															<p class="">código para inscrição: <span class="text-muted" th:text="${evento.permissoes.codigo}"></span></p>
+														</div>
+
 														<div class="col-lg-3">
 															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/presencial/logs/{id}(id=${evento.id})}">Logs</a>
 														</div>
+
 														<div class="col-lg-3" th:unless="${evento.isPublicado()}">
 															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/presencial/publicacao/ativar/{id}(id=${evento.id})}">Publicar</a>
 														</div>
@@ -110,9 +116,11 @@
 														<div class="col-lg-3" th:unless="${evento.isAtivo()}">
 															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/presencial/ativar/{id}(id=${evento.id})}">Ativar evento</a>
 														</div>
+														
 														<div class="col-lg-3">
 															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/presencial/permissoes/{id}(id=${evento.id})}">Permissões</a>
 														</div>
+														
 													</div>
 												</div>
 											</div>

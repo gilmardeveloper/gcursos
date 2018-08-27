@@ -3,6 +3,8 @@ package com.gilmarcarlos.developer.gcursos.model.eventos;
 import java.beans.Transient;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -13,7 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventoCanceladoException;
-import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialDestaque;
+import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialTop;
 import com.gilmarcarlos.developer.gcursos.model.type.EventoStatus;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
@@ -39,12 +42,18 @@ public class EventoPresencial implements Serializable {
 
 	@OneToOne(mappedBy = "eventoPresencial")
 	private Sobre sobre;
+	
+	@OneToOne(mappedBy = "eventoPresencial")
+	private EstiloPresencial estilo;
+	
+	@OneToOne(mappedBy = "eventoPresencial")
+	private PermissoesEventoPresencial permissoes;
 
 	@OneToOne(mappedBy = "eventoPresencial")
-	private ImagensEventoPresencial imagemDestaque;
+	private ImagensEventoPresencialDestaque imagemDestaque;
 
 	@OneToOne(mappedBy = "eventoPresencial")
-	private ImagensEventoPresencial imagemTopDetalhes;
+	private ImagensEventoPresencialTop imagemTopDetalhes;
 
 	@OneToOne(mappedBy = "eventoPresencial")
 	private ProgramacaoPresencial programacao;
@@ -70,6 +79,9 @@ public class EventoPresencial implements Serializable {
 	private Boolean publicado;
 
 	private Boolean ativo;
+	
+	@OneToMany(mappedBy = "eventoPresencial")
+	private List<InscricaoPresencial> inscritos;
 
 	public Long getId() {
 		return id;
@@ -159,19 +171,19 @@ public class EventoPresencial implements Serializable {
 		this.responsavel = responsavel;
 	}
 
-	public ImagensEventoPresencial getImagemDestaque() {
+	public ImagensEventoPresencialDestaque getImagemDestaque() {
 		return imagemDestaque;
 	}
 
-	public void setImagemDestaque(ImagensEventoPresencial imagemDestaque) {
+	public void setImagemDestaque(ImagensEventoPresencialDestaque imagemDestaque) {
 		this.imagemDestaque = imagemDestaque;
 	}
 
-	public ImagensEventoPresencial getImagemTopDetalhes() {
+	public ImagensEventoPresencialTop getImagemTopDetalhes() {
 		return imagemTopDetalhes;
 	}
 
-	public void setImagemTopDetalhes(ImagensEventoPresencial imagemTopDetalhes) {
+	public void setImagemTopDetalhes(ImagensEventoPresencialTop imagemTopDetalhes) {
 		this.imagemTopDetalhes = imagemTopDetalhes;
 	}
 
@@ -249,6 +261,32 @@ public class EventoPresencial implements Serializable {
 
 	public Boolean isPublicado() {
 		return publicado;
+	}
+
+	public PermissoesEventoPresencial getPermissoes() {
+		return permissoes;
+	}
+
+	public void setPermissoes(PermissoesEventoPresencial permissoes) {
+		this.permissoes = permissoes;
+	}
+	
+	public EstiloPresencial getEstilo() {
+		return estilo;
+	}
+
+	public void setEstilo(EstiloPresencial estilo) {
+		this.estilo = estilo;
+	}
+	
+	@Transient
+	public LocalTime getTimeAbertura() {
+		return LocalTime.parse(this.horaAbertura, DateTimeFormatter.ofPattern("HH:mm"));
+	}
+	
+	@Transient
+	public LocalTime getTimeTermino() {
+		return LocalTime.parse(this.horaTermino, DateTimeFormatter.ofPattern("HH:mm"));
 	}
 
 	@Transient

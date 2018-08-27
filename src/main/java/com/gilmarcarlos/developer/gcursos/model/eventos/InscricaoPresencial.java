@@ -1,7 +1,6 @@
-package com.gilmarcarlos.developer.gcursos.model.images;
+package com.gilmarcarlos.developer.gcursos.model.eventos;
 
 import java.io.Serializable;
-import java.sql.Blob;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,35 +8,46 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
-import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
 @Entity
-public class ImagensEventoPresencial implements Serializable{
-	
+public class InscricaoPresencial implements Serializable{
+
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Blob imagem;
-		
+	
 	@OneToOne
 	private EventoPresencial eventoPresencial;
+
+	@OneToOne
+	private AtividadePresencial atividadePresencial;
 	
+	
+	@OneToOne
+	private Usuario usuario;
+	
+	public InscricaoPresencial() {
+		
+	}
+
+	public InscricaoPresencial(Usuario usuarioLogado, AtividadePresencial atividade) {
+		this.usuario = usuarioLogado;
+		this.atividadePresencial = atividade;
+		this.eventoPresencial = atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial();
+	}
+
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-	
-	public Blob getImagem() {
-		return imagem;
-	}
-
-	public void setImagem(Blob imagem) {
-		this.imagem = imagem;
 	}
 
 	public EventoPresencial getEventoPresencial() {
@@ -46,6 +56,22 @@ public class ImagensEventoPresencial implements Serializable{
 
 	public void setEventoPresencial(EventoPresencial eventoPresencial) {
 		this.eventoPresencial = eventoPresencial;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public AtividadePresencial getAtividadePresencial() {
+		return atividadePresencial;
+	}
+
+	public void setAtividadePresencial(AtividadePresencial atividadePresencial) {
+		this.atividadePresencial = atividadePresencial;
 	}
 
 	@Override
@@ -64,7 +90,7 @@ public class ImagensEventoPresencial implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ImagensEventoPresencial other = (ImagensEventoPresencial) obj;
+		InscricaoPresencial other = (InscricaoPresencial) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -72,6 +98,5 @@ public class ImagensEventoPresencial implements Serializable{
 			return false;
 		return true;
 	}
-	
 	
 }

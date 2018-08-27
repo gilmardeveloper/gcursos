@@ -1,7 +1,6 @@
 package com.gilmarcarlos.developer.gcursos.service;
 
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +18,10 @@ public class AtividadePresencialService {
 	
 	public AtividadePresencial salvar(AtividadePresencial atividade) throws HoraFinalMenorException {
 		
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-	
-		LocalTime horaInicio = LocalTime.parse(atividade.getHoraInicio()  , formatter);
-		LocalTime horaFim = LocalTime.parse(atividade.getHoraFim() , formatter);
-		LocalTime horaIncioEvento = LocalTime.parse(atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getHoraAbertura() , formatter);
-		LocalTime horaFimEvento = LocalTime.parse(atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getHoraTermino() , formatter);
+		LocalTime horaInicio = atividade.getTimeInicio();
+		LocalTime horaFim = atividade.getTimeFim(); 
+		LocalTime horaIncioEvento = atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getTimeAbertura();
+		LocalTime horaFimEvento = atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getTimeTermino(); 		
 		
 		if(horaFim.isBefore(horaInicio)) {
 			throw new HoraFinalMenorException();

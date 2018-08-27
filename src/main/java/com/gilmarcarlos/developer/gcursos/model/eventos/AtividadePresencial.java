@@ -1,12 +1,17 @@
 package com.gilmarcarlos.developer.gcursos.model.eventos;
 
+import java.beans.Transient;
 import java.io.Serializable;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
 @Entity
 public class AtividadePresencial implements Serializable {
@@ -15,18 +20,18 @@ public class AtividadePresencial implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	private String titulo;
 	private String sala;
 	private Integer vagas;
 	private String horaInicio;
 	private String horaFim;
 	private String nomeResponsavel;
-	
+
 	@OneToOne
 	private DiaEvento diaEvento;
 
@@ -78,7 +83,6 @@ public class AtividadePresencial implements Serializable {
 		this.horaFim = horaFim;
 	}
 
-
 	public String getNomeResponsavel() {
 		return nomeResponsavel;
 	}
@@ -93,6 +97,82 @@ public class AtividadePresencial implements Serializable {
 
 	public void setDiaEvento(DiaEvento diaEvento) {
 		this.diaEvento = diaEvento;
+	}
+
+	@Transient
+	public LocalTime getTimeInicio() {
+		return LocalTime.parse(this.horaInicio, DateTimeFormatter.ofPattern("HH:mm"));
+	}
+
+	@Transient
+	public LocalTime getTimeFim() {
+		return LocalTime.parse(this.horaFim, DateTimeFormatter.ofPattern("HH:mm"));
+	}
+
+	@Transient
+	public boolean podeSeInscrever(Usuario usuario) {
+		
+		if (temPermissoes(usuario) && usuarioNaoEhResponsavelDoEvento(usuario)) {
+			return verificaSeAtividadeNaoTemMesmoHorario(usuario);
+		} else {
+			return false;
+		}
+	}
+
+	private boolean usuarioNaoEhResponsavelDoEvento(Usuario usuario) {
+		return !getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getResponsavel().equals(usuario);
+	}
+
+	@Transient
+	private boolean verificaSeAtividadeNaoTemMesmoHorario(Usuario usuario) {
+		
+		for (InscricaoPresencial i : usuario.getInscricoes()) {
+
+			AtividadePresencial temp = i.getAtividadePresencial();
+
+			if (atividadesSaoDiferentes(temp) && mesmoDia(temp)) {
+
+				if (horaInicialCoincide(temp)) {
+					return false;
+				}
+
+				if (horaFinalCoincide(temp)) {
+					return false;
+				}
+
+			} else {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private boolean mesmoDia(AtividadePresencial temp) {
+		return temp.getDiaEvento().getData().equals(this.getDiaEvento().getData()) && 
+				temp.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().equals(
+						this.getDiaEvento().getProgramacaoPresencial().getEventoPresencial());
+	}
+
+	private boolean atividadesSaoDiferentes(AtividadePresencial temp) {
+		return temp.getId() != this.getId();
+	}
+
+	@Transient
+	private boolean horaFinalCoincide(AtividadePresencial temp) {
+		return this.getTimeFim().isAfter(temp.getTimeInicio().minusMinutes(1))
+				&& this.getTimeFim().isBefore(temp.getTimeFim().plusMinutes(1));
+	}
+
+	@Transient
+	private boolean horaInicialCoincide(AtividadePresencial temp) {
+		return this.getTimeInicio().isAfter(temp.getTimeInicio().minusMinutes(1))
+				&& this.getTimeInicio().isBefore(temp.getTimeFim().plusMinutes(1));
+	}
+
+	@Transient
+	private Boolean temPermissoes(Usuario usuario) {
+		return getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getPermissoes().valida(usuario);
 	}
 
 	@Override
@@ -119,5 +199,5 @@ public class AtividadePresencial implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 }
