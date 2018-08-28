@@ -333,8 +333,8 @@ public class EventoPresencial implements Serializable {
 	}
 
 	@Transient
-	private Boolean isFechado() {
-		return getDataTermino().isBefore(LocalDate.now());
+	public Boolean isFechado() {
+		return getDataTermino().isBefore(LocalDate.now()); 
 	}
 
 	@Transient

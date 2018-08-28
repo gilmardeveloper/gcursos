@@ -33,11 +33,26 @@ public class EventoPresencialService {
 		return repository.save(eventoPresencial);
 	}
 	
+	
+	public void removerPublicacaoSeEstiverFechado(EventoPresencial evento) {
+		EventoPresencial temp = repository.buscarPor(evento.getId());
+		temp.desativarPublicacao();
+		repository.save(temp);
+	}
+	
 	public void deletar(Long id) {
 		repository.deleteById(id);
 	}
 
 	public List<EventoPresencial> listarTodos() {
+		
+		for(EventoPresencial evento : repository.listAll()) {
+			if(evento.isFechado() && evento.isPublicado()) {
+				evento.desativarPublicacao();
+				repository.save(evento);
+			}
+		}
+		
 		return repository.listAll();
 	}
 	

@@ -124,8 +124,12 @@
 																    			<div class="col-lg-6">
 																    				<p class="">responsável: <span class="text-muted" th:text="${atividade.nomeResponsavel}"></span></p>
 																    			</div>
-																    			<div class="col-lg-6">
+																    			<div th:unless="${atividade.inscrito(usuario)}" class="col-lg-6">
 																    				<a class="btn btn-info" th:href="@{/dashboard/eventos/presencial/atividade/{id}/inscricao(id=${atividade.id})}" >Inscreva-se</a>
+																    			</div>
+
+																    			<div th:if="${atividade.inscrito(usuario)}" class="col-lg-6">
+																    				<a class="btn btn-warning" th:href="@{/dashboard/eventos/presencial/atividade/{id}/cancelar/inscricao(id=${atividade.id})}" >Cancelar inscrição</a>
 																    			</div>
 																    	</div>
 																  </div>

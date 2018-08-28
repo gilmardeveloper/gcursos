@@ -153,7 +153,15 @@ public class EventosPresencialControler {
 
 		Usuario usuarioLogado = getUsuario();
 		AtividadePresencial atividade = atividadePresencialService.buscarPor(id);
-
+		
+		if(!atividade.usuarioNaoEhResponsavelDoEvento(usuarioLogado)) {
+			model.addFlashAttribute("alert", "alert alert-fill-danger");
+			model.addFlashAttribute("message", "você é o responsável pelo o evento");
+			return "redirect:/dashboard/eventos/presencial/detalhes/"
+					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
+		}
+		
+		
 		if (atividade.podeSeInscrever(usuarioLogado)) {
 			
 			inscricaoPresencialService.salvar(new InscricaoPresencial(usuarioLogado, atividade));
@@ -163,7 +171,28 @@ public class EventosPresencialControler {
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		} else {
 			model.addFlashAttribute("alert", "alert alert-fill-danger");
-			model.addFlashAttribute("message", "você não pode se inscrever em atividades de mesmo horário ou se for o responsável pelo o evento");
+			model.addFlashAttribute("message", "você não pode se inscrever em atividades de mesmo horário");
+			return "redirect:/dashboard/eventos/presencial/detalhes/"
+					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
+		}
+	}
+	
+	@GetMapping("/atividade/{id}/cancelar/inscricao")
+	public String eventoDetalhesCancelarInscricao(@PathVariable("id") Long id, RedirectAttributes model) {
+
+		Usuario usuarioLogado = getUsuario();
+		AtividadePresencial atividade = atividadePresencialService.buscarPor(id);
+
+		if (atividade.inscrito(usuarioLogado)) {
+			
+			inscricaoPresencialService.deletar(atividade.getInscricao(usuarioLogado));
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "inscrição foi cancelada com sucesso");
+			return "redirect:/dashboard/eventos/presencial/detalhes/"
+					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
+		} else {
+			model.addFlashAttribute("alert", "alert alert-fill-danger");
+			model.addFlashAttribute("message", "um erro ocorreu");
 			return "redirect:/dashboard/eventos/presencial/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		}

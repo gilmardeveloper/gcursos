@@ -4,11 +4,13 @@ import java.beans.Transient;
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
@@ -34,6 +36,9 @@ public class AtividadePresencial implements Serializable {
 
 	@OneToOne
 	private DiaEvento diaEvento;
+	
+	@OneToMany(mappedBy = "atividadePresencial")
+	private List<InscricaoPresencial> inscricoes;
 
 	public Long getId() {
 		return id;
@@ -98,7 +103,25 @@ public class AtividadePresencial implements Serializable {
 	public void setDiaEvento(DiaEvento diaEvento) {
 		this.diaEvento = diaEvento;
 	}
+	
+	public List<InscricaoPresencial> getInscricoes() {
+		return inscricoes;
+	}
 
+	public void setInscricoes(List<InscricaoPresencial> inscricoes) {
+		this.inscricoes = inscricoes;
+	}
+	
+	@Transient
+	public Boolean inscrito(Usuario usuario) {
+		return inscricoes.stream().anyMatch( i -> i.getUsuario().equals(usuario));
+	}
+	
+	@Transient
+	public Long getInscricao(Usuario usuario) {
+		return inscricoes.stream().filter( i -> i.getUsuario().equals(usuario)).findFirst().get().getId();
+	} 
+	
 	@Transient
 	public LocalTime getTimeInicio() {
 		return LocalTime.parse(this.horaInicio, DateTimeFormatter.ofPattern("HH:mm"));
@@ -112,7 +135,7 @@ public class AtividadePresencial implements Serializable {
 	@Transient
 	public boolean podeSeInscrever(Usuario usuario) {
 		
-		if (temPermissoes(usuario)) {// && usuarioNaoEhResponsavelDoEvento(usuario)) {
+		if (temPermissoes(usuario) && usuarioNaoEhResponsavelDoEvento(usuario)) {
 			return verificaSeAtividadeNaoTemMesmoHorario(usuario);
 		} else {
 			return false;
@@ -120,7 +143,7 @@ public class AtividadePresencial implements Serializable {
 	}
 	
 	@Transient
-	private boolean usuarioNaoEhResponsavelDoEvento(Usuario usuario) {
+	public boolean usuarioNaoEhResponsavelDoEvento(Usuario usuario) {
 		return !getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getResponsavel().equals(usuario);
 	}
 
@@ -131,14 +154,13 @@ public class AtividadePresencial implements Serializable {
 
 			AtividadePresencial temp = i.getAtividadePresencial();
 
-			if (atividadesSaoDiferentes(temp)) { //&& mesmoDia(temp)) {
-				if (horaInicialCoincide(temp)) {
-					System.err.println("entrou 1");
+			if (atividadesSaoDiferentes(temp)) { 
+				
+				if (horaInicialCoincide(temp) && mesmoDia(temp)) {
 					return false;
 				}
 
-				if (horaFinalCoincide(temp)) {
-					System.err.println("entrou 2");
+				if (horaFinalCoincide(temp) && mesmoDia(temp)) {
 					return false;
 				}
 
