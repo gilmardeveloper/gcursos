@@ -112,13 +112,14 @@ public class AtividadePresencial implements Serializable {
 	@Transient
 	public boolean podeSeInscrever(Usuario usuario) {
 		
-		if (temPermissoes(usuario) && usuarioNaoEhResponsavelDoEvento(usuario)) {
+		if (temPermissoes(usuario)) {// && usuarioNaoEhResponsavelDoEvento(usuario)) {
 			return verificaSeAtividadeNaoTemMesmoHorario(usuario);
 		} else {
 			return false;
 		}
 	}
-
+	
+	@Transient
 	private boolean usuarioNaoEhResponsavelDoEvento(Usuario usuario) {
 		return !getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getResponsavel().equals(usuario);
 	}
@@ -130,13 +131,14 @@ public class AtividadePresencial implements Serializable {
 
 			AtividadePresencial temp = i.getAtividadePresencial();
 
-			if (atividadesSaoDiferentes(temp) && mesmoDia(temp)) {
-
+			if (atividadesSaoDiferentes(temp)) { //&& mesmoDia(temp)) {
 				if (horaInicialCoincide(temp)) {
+					System.err.println("entrou 1");
 					return false;
 				}
 
 				if (horaFinalCoincide(temp)) {
+					System.err.println("entrou 2");
 					return false;
 				}
 
@@ -147,15 +149,15 @@ public class AtividadePresencial implements Serializable {
 
 		return true;
 	}
-
+	
+	@Transient
 	private boolean mesmoDia(AtividadePresencial temp) {
-		return temp.getDiaEvento().getData().equals(this.getDiaEvento().getData()) && 
-				temp.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().equals(
-						this.getDiaEvento().getProgramacaoPresencial().getEventoPresencial());
+		return temp.getDiaEvento().equals(this.getDiaEvento());
 	}
-
+	
+	@Transient
 	private boolean atividadesSaoDiferentes(AtividadePresencial temp) {
-		return temp.getId() != this.getId();
+		return !temp.equals(this);
 	}
 
 	@Transient
