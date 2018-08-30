@@ -93,11 +93,11 @@
 															<p class="">atualizado em: <span class="text-muted" th:text="${#temporals.format(evento.dataAtualizacao, 'dd/MM/yyyy')}"></span></p>
 														</div>
 
-														<div class="col-lg-8" th:if="${evento.permissoes} != null">
+														<div class="col-lg-9" th:if="${evento.permissoes} != null">
 															<p class="">código para inscrição: <span class="text-muted" th:text="${evento.permissoes.codigo}"></span></p>
 														</div>
 
-														<div class="col-lg-4">
+														<div class="col-lg-3">
 															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/presencial/inscricoes/{id}(id=${evento.id})}">Inscrições</a>
 														</div>
 

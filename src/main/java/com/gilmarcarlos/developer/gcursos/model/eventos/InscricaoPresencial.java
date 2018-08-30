@@ -1,5 +1,6 @@
 package com.gilmarcarlos.developer.gcursos.model.eventos;
 
+import java.beans.Transient;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
@@ -28,6 +29,7 @@ public class InscricaoPresencial implements Serializable{
 	@OneToOne
 	private AtividadePresencial atividadePresencial;
 	
+	private Boolean presenca;	
 	
 	@OneToOne
 	private Usuario usuario;
@@ -72,6 +74,19 @@ public class InscricaoPresencial implements Serializable{
 
 	public void setAtividadePresencial(AtividadePresencial atividadePresencial) {
 		this.atividadePresencial = atividadePresencial;
+	}
+	
+	public Boolean getPresenca() {
+		return presenca;
+	}
+
+	public void setPresenca(Boolean presenca) {
+		this.presenca = presenca;
+	}
+	
+	@Transient
+	public Boolean isPresente() {
+		return (this.presenca != null ? this.presenca : false);
 	}
 
 	@Override

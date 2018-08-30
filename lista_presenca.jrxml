@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lista_presenca" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ebbfe861-7dff-4fd7-8679-5925a73458c5">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="cpf" class="java.lang.String"/>
+	<field name="codigoFuncional" class="java.lang.String"/>
+	<field name="nome" class="java.lang.String"/>
+	<field name="unidadeTrabalho" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="44" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="31" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="3" width="56" height="20" uuid="151a9c79-80ef-4512-a854-6cf3e7c7f28a"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[CPF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="58" y="3" width="72" height="20" uuid="c70fd4e2-1494-4676-91a6-e8e531ea2858"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[CÓDIGO FUN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="312" y="3" width="148" height="20" uuid="a54857f4-7aca-4a12-86d3-ad7bd9a67cc6"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[UNIDADE DE TRABALHO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="3" width="182" height="20" uuid="5ffbf114-d06d-448f-bd3c-ff54e72fe161"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[NOME COMPLETO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="3" width="97" height="20" uuid="4eaedbfd-26bd-4471-ab83-4ff873016b0e"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[ASSINATURA]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="2" y="0" width="56" height="20" uuid="f74cefc7-3bd8-4dbd-9aee-8a4f2b56f8f3"/>
+				<textFieldExpression><![CDATA[$F{cpf}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="58" y="0" width="72" height="20" uuid="0d8f0df5-0bbf-4be7-b655-f21029886636"/>
+				<box leftPadding="10"/>
+				<textFieldExpression><![CDATA[$F{codigoFuncional}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="0" width="182" height="20" uuid="1bb79cd1-82d1-4e03-a660-f68ee580690c"/>
+				<box leftPadding="10"/>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="312" y="0" width="148" height="20" uuid="1ca76948-e51b-4b15-a32f-cfeff43d409d"/>
+				<box leftPadding="10"/>
+				<textFieldExpression><![CDATA[$F{unidadeTrabalho}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

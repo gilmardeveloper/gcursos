@@ -1,12 +1,18 @@
 package com.gilmarcarlos.developer.gcursos.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 
 import javax.validation.Valid;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -17,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.AtividadePresencial;
@@ -25,11 +32,16 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.DiaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.EstiloPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencialLog;
+import com.gilmarcarlos.developer.gcursos.model.eventos.InscricaoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.ListaPresenca;
 import com.gilmarcarlos.developer.gcursos.model.eventos.PermissoesEventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.ProgramacaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.Sobre;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialDestaque;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialTop;
+import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
+import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
+import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.AtividadePresencialService;
 import com.gilmarcarlos.developer.gcursos.service.CargoService;
@@ -41,7 +53,9 @@ import com.gilmarcarlos.developer.gcursos.service.EstiloPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.EventoPresencialLogService;
 import com.gilmarcarlos.developer.gcursos.service.EventoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.ImagensService;
+import com.gilmarcarlos.developer.gcursos.service.InscricaoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.LogEvePresencialPaginacaoService;
+import com.gilmarcarlos.developer.gcursos.service.NotificacaoService;
 import com.gilmarcarlos.developer.gcursos.service.PermissoesEventoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.ProgramacaoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.SexoService;
@@ -82,7 +96,7 @@ public class EventosPresencialAdminControler {
 
 	@Autowired
 	private DiaEventoPaginacaoService diaEventoPaginacaoService;
-	
+
 	@Autowired
 	private EstiloPresencialService estiloPresencialService;
 
@@ -91,6 +105,9 @@ public class EventosPresencialAdminControler {
 
 	@Autowired
 	private UnidadeTrabalhoService unidadeService;
+
+	@Autowired
+	private InscricaoPresencialService inscricaoPresencialService;
 
 	@Autowired
 	private CargoService cargoService;
@@ -103,6 +120,12 @@ public class EventosPresencialAdminControler {
 
 	@Autowired
 	private PermissoesEventoPresencialService permissoesEvePresencialService;
+
+	@Autowired
+	private NotificacaoService notificacaoService;
+	
+	@Autowired
+	private ListaPresenca listaPresenca;
 
 	private Authentication autenticado;
 
@@ -296,20 +319,19 @@ public class EventosPresencialAdminControler {
 		EventoPresencial evento = eventoPresencialService.buscarPor(id);
 		if (evento.getImagemDestaque() != null) {
 			imagensService.deletarImagemEvePreDestaque(evento.getImagemDestaque().getId());
-			eventoPresencialLogService
-			.salvar(log("Imagem de destaque foi removida", evento));
+			eventoPresencialLogService.salvar(log("Imagem de destaque foi removida", evento));
 
 		}
 
 		return "redirect:/dashboard/admin/eventos/presencial/estilo/" + id;
 	}
-	
+
 	@PostMapping("/estilo/destaque/salvar")
 	public String salvarEstiloDestaque(EstiloPresencial estilo, RedirectAttributes model) {
 
 		EstiloPresencial novoEstilo = estiloPresencialService.salvar(estilo);
 		eventoPresencialLogService
-						.salvar(log("Estilo da página de destaque foi alterado", novoEstilo.getEventoPresencial()));
+				.salvar(log("Estilo da página de destaque foi alterado", novoEstilo.getEventoPresencial()));
 		return "redirect:/dashboard/admin/eventos/presencial/estilo/" + novoEstilo.getEventoPresencial().getId();
 	}
 
@@ -544,6 +566,141 @@ public class EventosPresencialAdminControler {
 		model.addFlashAttribute("message", "salvo com sucesso");
 
 		return "redirect:/dashboard/admin/eventos/presencial";
+	}
+
+	@GetMapping("/inscricoes/{id}")
+	private String incricoesEventoPresencial(@PathVariable("id") Long id, Model model) {
+		Usuario usuarioLogado = getUsuario();
+		if (usuarioLogado.isPerfilCompleto()) {
+			model.addAttribute("usuario", usuarioLogado);
+			model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+			model.addAttribute("evento", eventoPresencialService.buscarPor(id));
+			model.addAttribute("atividades", atividadePresencialService.buscarPorEvento(id));
+			return "/dashboard/admin/eventos/base-info-inscricoes-evento-presencial";
+		} else {
+			return "redirect:/dashboard/admin/complete-cadastro";
+		}
+	}
+
+	@GetMapping("/inscricoes/{id}/cancelar/inscricao")
+	public String incricoesEventoCancelarInscricao(@PathVariable("id") Long id, RedirectAttributes model) {
+
+		InscricaoPresencial inscricao = inscricaoPresencialService.buscarPor(id);
+		Usuario usuarioInscrito = inscricao.getUsuario();
+		AtividadePresencial atividade = inscricao.getAtividadePresencial();
+
+		eventoPresencialLogService.salvar(
+				log(usuarioInscrito.getNome() + " teve sua inscrição cancelada da atividade: " + atividade.getTitulo(),
+						atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
+
+		notificacaoService.salvar(new Notificacao(usuarioInscrito, "Inscrição cancelada", IconeType.INFORMACAO,
+				StatusType.SUCESSO, "Sua inscrição foi cancelada para a atividade " + atividade.getTitulo() + " por "
+						+ getUsuario().getNome()));
+		notificacaoService.salvar(new Notificacao(getUsuario(), "Cancelou a inscrição do usuário", IconeType.INFORMACAO,
+				StatusType.SUCESSO, "Cancelou a inscrição do usuário com email: " + usuarioInscrito.getEmail()
+						+ ",  da atividade " + atividade.getTitulo()));
+
+		inscricaoPresencialService.deletar(id);
+		model.addFlashAttribute("alert", "alert alert-fill-success");
+		model.addFlashAttribute("message", "inscrição foi cancelada com sucesso");
+		return "redirect:/dashboard/admin/eventos/presencial/inscricoes/"
+				+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
+
+	}
+	
+	@PostMapping("/inscricoes/lancar/presenca/todos")
+	public String inscricoesEventoPresencaTodos(@RequestParam("id") Long id, @RequestParam("presenca") String presenca, RedirectAttributes model) {
+
+		AtividadePresencial atividade = atividadePresencialService.buscarPor(id);
+		
+		if(presenca.equalsIgnoreCase("presentes")) {
+			atividade.getInscricoes().forEach(i -> {
+				inscricaoPresencialService.confirmarPresenca(i.getId(), true);
+				
+				eventoPresencialLogService.salvar(
+						log(i.getUsuario().getNome() + " teve sua presença confirmada na atividade: " + atividade.getTitulo(),
+								atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
+
+				notificacaoService.salvar(new Notificacao(i.getUsuario(), "Presença confirmada", IconeType.INFORMACAO,
+						StatusType.SUCESSO, "Sua presença foi confirmada na atividade " + atividade.getTitulo()));
+
+			});
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "presença confirmada para todos");
+		}else {
+			atividade.getInscricoes().forEach(i -> {
+				inscricaoPresencialService.confirmarPresenca(i.getId(), false);
+				
+				eventoPresencialLogService.salvar(
+						log(i.getUsuario().getNome() + " teve sua ausência confirmada na atividade: " + atividade.getTitulo(),
+								atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
+
+				notificacaoService.salvar(new Notificacao(i.getUsuario(), "Ausência confirmada", IconeType.INFORMACAO,
+						StatusType.SUCESSO, "Sua presença não foi confirmada na atividade " + atividade.getTitulo()));
+
+			});
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "ausência foi confirmada para todos");
+		}
+		
+		return "redirect:/dashboard/admin/eventos/presencial/inscricoes/"
+				+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
+
+	}
+	
+	@GetMapping("/inscricoes/{id}/presenca/ausente")
+	public String inscricoesEventoPresencaAusente(@PathVariable("id") Long id, RedirectAttributes model) {
+
+		InscricaoPresencial inscricao = inscricaoPresencialService.buscarPor(id);
+		Usuario usuarioInscrito = inscricao.getUsuario();
+		AtividadePresencial atividade = inscricao.getAtividadePresencial();
+
+		eventoPresencialLogService.salvar(
+				log(usuarioInscrito.getNome() + " teve sua ausência confirmada na atividade: " + atividade.getTitulo(),
+						atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
+
+		notificacaoService.salvar(new Notificacao(usuarioInscrito, "Ausência confirmada", IconeType.INFORMACAO,
+				StatusType.SUCESSO, "Sua presença não foi confirmada na atividade " + atividade.getTitulo()));
+
+		inscricaoPresencialService.confirmarPresenca(id, false);
+		
+		return "redirect:/dashboard/admin/eventos/presencial/inscricoes/"
+				+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
+
+	}
+	
+	@GetMapping("/inscricoes/{id}/presenca/presente")
+	@ResponseBody
+	public ResponseEntity inscricoesEventoPresencaPresente(@PathVariable("id") Long id, RedirectAttributes model) {
+
+		InscricaoPresencial inscricao = inscricaoPresencialService.buscarPor(id);
+		Usuario usuarioInscrito = inscricao.getUsuario();
+		AtividadePresencial atividade = inscricao.getAtividadePresencial();
+
+		eventoPresencialLogService.salvar(
+				log(usuarioInscrito.getNome() + " teve sua presença confirmada na atividade: " + atividade.getTitulo(),
+						atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
+
+		notificacaoService.salvar(new Notificacao(usuarioInscrito, "Presença confirmada", IconeType.INFORMACAO,
+				StatusType.SUCESSO, "Sua presença foi confirmada na atividade " + atividade.getTitulo()));
+
+		inscricaoPresencialService.confirmarPresenca(id, true);
+		
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	
+	@GetMapping(value = "/inscricoes/{id}/gerar/lista", produces = MediaType.APPLICATION_PDF_VALUE)
+	private @ResponseBody byte[] gerarContrato(@PathVariable("id") Long id, Model model) {
+		InputStream pdfContrato = listaPresenca.gerar(atividadePresencialService.buscarPor(id));
+
+		try {
+			return IOUtils.toByteArray(pdfContrato);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
 	}
 
 	private Usuario getUsuario() {

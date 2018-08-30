@@ -39,9 +39,19 @@
 
 				<!-- content-wrapper -->
 				<div class="content-wrapper">
+					
+					<div class="col-12 grid-margin">
+						<nav aria-label="breadcrumb" role="navigation">
+				            <ol class="breadcrumb breadcrumb-custom bg-inverse-primary">
+				            <li class="breadcrumb-item"><a th:href="@{/dashboard/admin/eventos/presencial}">Eventos Presenciais</a></li>
+				            <li th:if="${evento} != null" class="breadcrumb-item"><a th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}(id=${evento.id})}">Detalhes</a></li>
+				            <li class="breadcrumb-item active" aria-current="page"><span>Cadastro</span></li>
+				            </ol>
+				        </nav>
+			        </div>
+
 					<!-- row -->
 					<div class="row">
-
 						<!-- div 1 -->
 						<div class="col-lg-12 d-flex align-items-stretch grid-margin">
 							<!-- row -->

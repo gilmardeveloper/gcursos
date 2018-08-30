@@ -38,6 +38,17 @@
 
 				<!-- content-wrapper -->
 				<div class="content-wrapper">
+
+					<div class="col-12 grid-margin">
+						<nav aria-label="breadcrumb" role="navigation">
+				            <ol class="breadcrumb breadcrumb-custom bg-inverse-primary">
+				            <li class="breadcrumb-item"><a th:href="@{/dashboard/admin/eventos/presencial}">Eventos Presenciais</a></li>
+				            <li class="breadcrumb-item"><a th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}(id=${evento.id})}">Detalhes</a></li>
+				            <li class="breadcrumb-item active" aria-current="page"><span>Programação</span></li>
+				            </ol>
+				        </nav>
+			        </div>
+
 					<!-- row justify-content -->
 					<div class="row justify-content-center">
 

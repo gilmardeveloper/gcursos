@@ -3,8 +3,9 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
-<head th:replace="fragments/head :: head(~{::title},~{})">
-	<title>ZEUS | Informações</title>
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+<title>ZEUS | Informações</title>
+<link rel="stylesheet" th:href="@{~/css/all.css}" />
 </head>
 
 <body>
@@ -41,37 +42,116 @@
 						<div class="col-lg-12 d-flex align-items-stretch grid-margin">
 							<!-- row -->
 							<div class="row flex-grow">
-
 								<div class="col-12 grid-margin">
-									<a class="btn btn-outline-success"
-										th:href="@{/dashboard/admin/eventos/presencial/novo}">+
-										Novo</a>
-								</div>
+									<nav aria-label="breadcrumb" role="navigation">
+				                      <ol class="breadcrumb breadcrumb-custom bg-inverse-primary">
+				                        <li class="breadcrumb-item"><a th:href="@{/dashboard/admin/eventos/presencial}">Eventos Presenciais</a></li>
+				                        <li class="breadcrumb-item active" aria-current="page"><span th:text="${evento.titulo}"></span></li>
+				                      </ol>
+				                    </nav>
+			                	</div>
 
 								<div class="col-12 grid-margin" th:if="${alert != null}">
 									<div th:if="${alert != null}">
-									<div th:class="${alert}" role="alert">
-										<i class="mdi mdi-alert-circle"></i> <span
-											th:text="${message}"></span>
-										<button type="button" class="close" data-dismiss="alert"
-											aria-label="Close">
-											<span aria-hidden="true">&times;</span>
-										</button>
+										<div th:class="${alert}" role="alert">
+											<i class="mdi mdi-alert-circle"></i> <span
+												th:text="${message}"></span>
+											<button type="button" class="close" data-dismiss="alert"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
 									</div>
-								</div>
 								</div>
 
 								<div class="col-12 grid-margin"
-									th:unless="${#lists.isEmpty(eventos)}"
-									th:each="evento : ${eventos}">
+									th:unless="${#lists.isEmpty(atividades)}"
+									th:each="atividade : ${atividades}">
 									<div class="card">
 										<div class="card-body">
 											<div class="row">
-												<div class="col-lg-12">
-													
+												<div class="col-lg-7">
+													<a
+														th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}(id=${atividade.id})}"
+														th:text="${atividade.titulo}"></a>
+												</div>
+												<div class="col-lg-3">
+													<p th:text="${#temporals.format(atividade.diaEvento.data,'dd/MM/yyyy')}"></p>
+												</div>
+												<div class="col-lg-2">
+													<a class="btn btn-outline-dark pt-1 pb-1"
+														data-toggle="collapse"
+														th:href="'#collapse-' + ${atividade.id}" role="button"
+														aria-expanded="false"
+														th:attr="aria-controls='collapse-' + ${atividade.id}"><i
+														class="icon-options-vertical"></i></a>
 												</div>
 											</div>
-											
+
+											<div class="collapse" th:id="'collapse-' + ${atividade.id}">
+												<div class="card card-body">
+													<div class="row">
+														<div class="col-lg-6">
+															<div class="card">
+																<div class="card-body">
+																	<form th:action="@{/dashboard/admin/eventos/presencial/inscricoes/lancar/presenca/todos}" method="post" class="forms-sample">
+																		<input type="hidden" th:value="${atividade.id}" name="id" />
+																		<div class="row">
+																			<div class="col-lg-6">
+																				<div class="form-group">
+																					<select class="form-control" name="presenca">
+																						<option value="presentes">presentes</option>
+																						<option value="ausentes">ausentes</option>
+																					</select>
+																				</div>
+																			</div>
+																			<div class="col-lg-6">
+																				<div class="form-group">
+																					<button type="submit" class="btn btn-outline-success">Lançar para todos</button>
+																				</div>
+																			</div>		
+																		</div>
+																	</form>
+																</div>
+															</div>
+														</div>
+
+														<div class="col-lg-6">
+															<div class="card">
+																<div class="card-body">
+																	<a class="btn btn-outline-success" th:href="@{/dashboard/admin/eventos/presencial/inscricoes/{id}/gerar/lista(id=${atividade.id})}">Gerar lista de inscritos</a>
+																</div>
+															</div>
+														</div>
+														<div class="col-12">
+															<div class="table-responsive">
+																<table id="order-listing-inscricoes" class="table">
+																	<thead>
+																		<tr>
+																			<th>Nome</th>
+																			<th>CPF</th>
+																			<th class="text-center">Presença</th>
+																			<th class="text-center">Cancelar a inscrição</th>
+																		</tr>
+																	</thead>
+																	<tbody>
+																		<tr th:each="inscricao : ${atividade.inscricoes}">
+																			<td th:text="${inscricao.usuario.nome}"></td>
+																			<td th:text="${inscricao.usuario.dadosPessoais.cpf}"></td>
+
+																			<td class="text-center"><div class="icheck"><input class="presenca" type="checkbox" th:value="${inscricao.id}" th:checked="${inscricao.isPresente()}" /></div></td>
+
+																			<td class="text-center"><a class="btn btn-outline-danger pt-1 pb-1"
+																				th:href="@{/dashboard/admin/eventos/presencial/inscricoes/{id}/cancelar/inscricao(id=${inscricao.id})}"><i
+																					class="icon-user-unfollow"></i></a></td>		
+																		</tr>
+																	</tbody>
+																</table>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -94,8 +174,60 @@
 	</div>
 	<!-- container-scroller -->
 	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/icheck.min.js}"></script>
 	<span th:replace="fragments/base-script :: plugins"></span>
 
+
+	<script th:inline="javascript">
+
+	/*<![CDATA[*/
+	$(()=>{
+		$('.icheck input').iCheck({
+	      checkboxClass: 'icheckbox_flat-green', 
+	      radioClass: 'iradio_minimal',
+	      increaseArea: '20%'
+	 	 });
+
+		$('.icheck input').on('ifChecked', function(event){
+		  presente($(this).val()); 
+		});
+
+		$('.icheck input').on('ifUnchecked', function(event){
+		  ausente($(this).val()); 
+		});
+	});
+
+	function presente(id){
+		
+       $.ajax({
+                  url: `/dashboard/admin/eventos/presencial/inscricoes/${id}/presenca/presente`,
+                  type: "GET", 
+
+              success: (result,status,xhr) => {
+                                                 if(status === 'success'){
+                                                 	console.log(status);
+                                                 }
+                                              }, 
+              error: () => console.log("error")
+      });
+	}
+
+	function ausente(id){
+		
+       $.ajax({
+                  url: `/dashboard/admin/eventos/presencial/inscricoes/${id}/presenca/ausente`,
+                  type: "GET", 
+
+              success: (result,status,xhr) => {
+                                                 if(status === 'success'){
+                                                 	console.log(status);
+                                                 }
+                                              }, 
+              error: () => console.log("error")
+      });
+	}
+	/*]]>*/
+	</script>
 </body>
 
 </html>

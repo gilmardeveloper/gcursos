@@ -63,6 +63,9 @@ public class EventoPresencial implements Serializable {
 
 	@OneToMany(mappedBy = "eventoPresencial")
 	private List<EventoPresencialLog> logs;
+	
+	@OneToMany(mappedBy = "eventoPresencial")
+	private List<InscricaoPresencial> inscricoes;
 
 	private LocalDate dataInicio;
 	private LocalDate dataTermino;
@@ -80,9 +83,6 @@ public class EventoPresencial implements Serializable {
 
 	private Boolean ativo;
 	
-	@OneToMany(mappedBy = "eventoPresencial")
-	private List<InscricaoPresencial> inscritos;
-
 	public Long getId() {
 		return id;
 	}
@@ -279,6 +279,14 @@ public class EventoPresencial implements Serializable {
 		this.estilo = estilo;
 	}
 	
+	public List<InscricaoPresencial> getInscricoes() {
+		return inscricoes;
+	}
+
+	public void setInscricoes(List<InscricaoPresencial> inscricoes) {
+		this.inscricoes = inscricoes;
+	}
+
 	@Transient
 	public LocalTime getTimeAbertura() {
 		return LocalTime.parse(this.horaAbertura, DateTimeFormatter.ofPattern("HH:mm"));

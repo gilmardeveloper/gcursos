@@ -29,6 +29,12 @@ public class InscricaoPresencialService {
 	public InscricaoPresencial buscarPor(Long id) {
 		return repository.buscarPor(id);
 	}
+
+	public void confirmarPresenca(Long id, boolean presenca) {
+		InscricaoPresencial inscrito = buscarPor(id);
+		inscrito.setPresenca(presenca);
+		salvar(inscrito);
+	}
 	
 	
 }
