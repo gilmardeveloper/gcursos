@@ -29,6 +29,8 @@ import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
 import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.CpfExisteException;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.UsuarioExisteException;
 import com.gilmarcarlos.developer.gcursos.service.CodigoFuncionalService;
 import com.gilmarcarlos.developer.gcursos.service.DadosPessoaisService;
 import com.gilmarcarlos.developer.gcursos.service.ImagensService;
@@ -42,13 +44,13 @@ public class UsuarioControler {
 
 	@Autowired
 	private UsuarioService usuarioService;
-	
+
 	@Autowired
 	private DadosPessoaisService dadosService;
-	
+
 	@Autowired
 	private TelefoneUsuarioService telefoneService;
-	
+
 	@Autowired
 	private CodigoFuncionalService codigoService;
 
@@ -66,44 +68,52 @@ public class UsuarioControler {
 		if (!senha.equals("") || senha != null) {
 			usuarioService.redefinirSenha(getUsuario(), senha);
 			notificacaoService.salvar(new Notificacao(getUsuario(), "Alteração de senha", IconeType.INFORMACAO,
-			StatusType.SUCESSO, "senha foi alterada com sucesso"));
+					StatusType.SUCESSO, "senha foi alterada com sucesso"));
 		}
-		
+
 		return "redirect:/dashboard/";
 	}
-	
+
 	@PostMapping("dados-pessoais/salvar")
 	public String dadosPessoaisSalvar(Usuario usuario, RedirectAttributes model) {
-		
-		DadosPessoais dados = usuario.getDadosPessoais();
-		usuarioService.atualizarDadosNoEncryptSenha(usuario);
-		dadosService.salvar(dados);
-		notificacaoService.salvar(new Notificacao(getUsuario(), "Dados pessoais alterados", IconeType.INFORMACAO,
-				StatusType.SUCESSO, "dados foram alterados com sucesso"));
-		return "redirect:/dashboard/";
+
+		try {
+
+			DadosPessoais dados = usuario.getDadosPessoais();
+			dadosService.salvar(dados);
+			usuarioService.atualizarDadosNoEncryptSenha(usuario);
+			notificacaoService.salvar(new Notificacao(getUsuario(), "Dados pessoais alterados", IconeType.INFORMACAO,
+					StatusType.SUCESSO, "dados foram alterados com sucesso"));
+			return "redirect:/dashboard/";
+
+		} catch (UsuarioExisteException | CpfExisteException e) {
+			notificacaoService.salvar(new Notificacao(getUsuario(), "Falha em alterar dados", IconeType.INFORMACAO,
+					StatusType.ERRO, e.getMessage()));
+			return "redirect:/dashboard/";
+		}
 	}
-	
+
 	@PostMapping("dados-profissionais/salvar")
 	public String dadosProfissionaisSalvar(CodigoFuncional codigo, RedirectAttributes model) {
-		
+
 		codigoService.salvar(codigo);
 		notificacaoService.salvar(new Notificacao(getUsuario(), "Dados profissionais alterados", IconeType.INFORMACAO,
 				StatusType.SUCESSO, "dados foram alterados com sucesso"));
 		return "redirect:/dashboard/";
 	}
-	
+
 	@PostMapping("telefones/salvar")
 	public String telefonesSalvar(TelefoneUsuario telefone, RedirectAttributes model) {
-		
+
 		telefoneService.salvar(telefone);
 		notificacaoService.salvar(new Notificacao(getUsuario(), "Telefone salvo", IconeType.INFORMACAO,
 				StatusType.SUCESSO, "telefone salvo com sucesso"));
 		return "redirect:/dashboard/";
 	}
-	
+
 	@PostMapping("telefones/excluir")
 	public String telefonesExcluir(@RequestParam("id") Long id, RedirectAttributes model) {
-		
+
 		telefoneService.deletar(id);
 		notificacaoService.salvar(new Notificacao(getUsuario(), "Telefone excluído", IconeType.INFORMACAO,
 				StatusType.SUCESSO, "telefone removido com sucesso"));
@@ -152,19 +162,20 @@ public class UsuarioControler {
 
 	@PostMapping("/salvar/imagens")
 	public String salvar(@Valid Imagens imagens, BindingResult result, RedirectAttributes model) {
-	  if(!result.hasErrors()) {	
-		if (getUsuario().getImagens() != null) {
-			imagensService.deletar(getUsuario().getImagens().getId());
+		if (!result.hasErrors()) {
+			if (getUsuario().getImagens() != null) {
+				imagensService.deletar(getUsuario().getImagens().getId());
+			}
+			imagens.setUsuario(getUsuario());
+			imagensService.salvar(imagens);
+			notificacaoService.salvar(new Notificacao(getUsuario(), "Alterou o seu avatar", IconeType.INFORMACAO,
+					StatusType.SUCESSO, "uma nova imagem de avatar foi adicionada"));
+		} else {
+			notificacaoService
+					.salvar(new Notificacao(getUsuario(), "Falha ao alterar o seu avatar", IconeType.INFORMACAO,
+							StatusType.ERRO, "tentou adicionar imagem vazia ou outro arquivo como avatar"));
 		}
-		imagens.setUsuario(getUsuario());
-		imagensService.salvar(imagens);
-		notificacaoService.salvar(new Notificacao(getUsuario(), "Alterou o seu avatar", IconeType.INFORMACAO,
-				StatusType.SUCESSO, "uma nova imagem de avatar foi adicionada"));
-	  }else {
-		  notificacaoService.salvar(new Notificacao(getUsuario(), "Falha ao alterar o seu avatar", IconeType.INFORMACAO,
-					StatusType.ERRO, "tentou adicionar imagem vazia ou outro arquivo como avatar"));
-	  }
-	  return "redirect:/dashboard/";
+		return "redirect:/dashboard/";
 
 	}
 

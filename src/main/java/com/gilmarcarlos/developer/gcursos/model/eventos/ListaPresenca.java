@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,10 +51,25 @@ public class ListaPresenca implements  Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private Integer index;
+	private String titulo;
+	private String atividade;
+	private String data;
+	private String horaInicio;
+	private String horaFim;
+	private String sala;
+	private String vagas;
+	private String responsavel;
 	private String nome;
 	private String cpf;
 	private String codigoFuncional;
 	private String unidadeTrabalho;
+	
+	private String cabecalhoTitulo;
+	private InputStream imagemEsquerda;
+	private InputStream imagemDireita;
+	
+	
 	private List<ListaPresenca> lista;
 	
 	/* metodo publico para realizar o parse e gerar o contrato */
@@ -124,13 +140,35 @@ public class ListaPresenca implements  Serializable{
 		atividade.getInscricoes().forEach( i -> {
 			
 			ListaPresenca presenca = new ListaPresenca();
+			EventoPresencial eventoPresencial = atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial();
+			
+			presenca.setTitulo(eventoPresencial.getTitulo());
+			presenca.setAtividade(atividade.getTitulo());
+			presenca.setData(DateTimeFormatter.ofPattern("dd/MM/yyyy").format(atividade.getDiaEvento().getData()));
+			presenca.setHoraInicio(atividade.getHoraInicio());
+			presenca.setHoraFim(atividade.getHoraFim());
+			presenca.setSala(atividade.getSala());
+			presenca.setVagas(String.valueOf(atividade.getVagas()));
+			presenca.setResponsavel(atividade.getNomeResponsavel());
+			
+			try {
+				presenca.setImagemEsquerda(eventoPresencial.getImagemLogo().getImagemEsquerda().getBinaryStream());
+				presenca.setImagemDireita(eventoPresencial.getImagemLogo().getImagemDireita().getBinaryStream());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			presenca.setCabecalhoTitulo(eventoPresencial.getImagemLogo().getTitulo());
+			
 			presenca.setNome(i.getUsuario().getNome());
 			presenca.setCpf(i.getUsuario().getDadosPessoais().getCpf());
 			presenca.setUnidadeTrabalho(i.getUsuario().getCodigoFuncional().getUnidadeTrabalho().getNome());
 			presenca.setCodigoFuncional(i.getUsuario().getCodigoFuncional().getCodigo());
+			presenca.setIndex(this.lista.size() + 1);
 			this.lista.add(presenca);
 			
 		});
+		
 	}
 	
 	/* 
@@ -138,8 +176,73 @@ public class ListaPresenca implements  Serializable{
 	 * geters and setters
 	 * 
 	 * */
+	
 	public String getNome() {
 		return nome;
+	}
+
+	public String getTitulo() {
+		return titulo;
+	}
+
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+	
+	public String getAtividade() {
+		return atividade;
+	}
+
+	public void setAtividade(String atividade) {
+		this.atividade = atividade;
+	}
+
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
+
+	public String getHoraInicio() {
+		return horaInicio;
+	}
+
+	public void setHoraInicio(String horaInicio) {
+		this.horaInicio = horaInicio;
+	}
+
+	public String getHoraFim() {
+		return horaFim;
+	}
+
+	public void setHoraFim(String horaFim) {
+		this.horaFim = horaFim;
+	}
+
+	public String getSala() {
+		return sala;
+	}
+
+	public void setSala(String sala) {
+		this.sala = sala;
+	}
+
+	public String getVagas() {
+		return vagas;
+	}
+
+	public void setVagas(String vagas) {
+		this.vagas = vagas;
+	}
+
+	public String getResponsavel() {
+		return responsavel;
+	}
+
+	public void setResponsavel(String responsavel) {
+		this.responsavel = responsavel;
 	}
 
 	public void setNome(String nome) {
@@ -168,6 +271,38 @@ public class ListaPresenca implements  Serializable{
 
 	public void setUnidadeTrabalho(String unidadeTrabalho) {
 		this.unidadeTrabalho = unidadeTrabalho;
+	}
+
+	public Integer getIndex() {
+		return index;
+	}
+
+	public void setIndex(Integer index) {
+		this.index = index;
+	}
+
+	public InputStream getImagemEsquerda() {
+		return imagemEsquerda;
+	}
+
+	public void setImagemEsquerda(InputStream imagemEsquerda) {
+		this.imagemEsquerda = imagemEsquerda;
+	}
+
+	public InputStream getImagemDireita() {
+		return imagemDireita;
+	}
+
+	public void setImagemDireita(InputStream imagemDireita) {
+		this.imagemDireita = imagemDireita;
+	}
+
+	public String getCabecalhoTitulo() {
+		return cabecalhoTitulo;
+	}
+
+	public void setCabecalhoTitulo(String cabecalhoTitulo) {
+		this.cabecalhoTitulo = cabecalhoTitulo;
 	}
 	
 }

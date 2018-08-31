@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.UsuarioExisteException;
 import com.gilmarcarlos.developer.gcursos.repository.AutorizacaoRepository;
 import com.gilmarcarlos.developer.gcursos.repository.UsuarioRepository;
 import com.gilmarcarlos.developer.gcursos.security.crypt.PasswordCrypt;
@@ -27,25 +28,43 @@ public class UsuarioService {
 	private AutorizacaoRepository autorizacaoRespository;
 	
 	//@CacheEvict(value="postCache", allEntries=true)
-	public Usuario salvar(Usuario usuario) {
+	public Usuario salvar(Usuario usuario) throws UsuarioExisteException {
+		if(emailExiste(usuario.getEmail(), usuario.getId())) {
+			throw new UsuarioExisteException("já existe um usuário cadastrado com esse email");
+		}
 		return repository.save(usuario);
 	}
 	
-	public Usuario criarNovo(Usuario usuario) {
+	public Usuario criarNovo(Usuario usuario) throws UsuarioExisteException {
+		
+		if(emailExiste(usuario.getEmail())) {
+			throw new UsuarioExisteException("já existe um usuário cadastrado com esse email");
+		}
+		
 		usuario.setHabilitado(true);
 		usuario.setAutorizacoes(Arrays.asList(autorizacaoRespository.findByNome("ROLE_Usuario")));
 		usuario.setSenha(passwordCrypt.encode("zeus_1234@5"));
 		return repository.save(usuario);
 	}
 	
-	public Usuario atualizarDados(Usuario usuario) {
+	public Usuario atualizarDados(Usuario usuario) throws UsuarioExisteException {
+		
+		if(emailExiste(usuario.getEmail(), usuario.getId())) {
+			throw new UsuarioExisteException("já existe um usuário cadastrado com esse email");
+		}
+		
 		usuario.setHabilitado(true);
 		usuario.setAutorizacoes(buscarPor(usuario.getId()).getAutorizacoes());
 		usuario.setSenha(passwordCrypt.encode(buscarPor(usuario.getId()).getSenha()));
 		return repository.save(usuario);
 	}
 	
-	public Usuario atualizarDadosNoEncryptSenha(Usuario usuario) {
+	public Usuario atualizarDadosNoEncryptSenha(Usuario usuario) throws UsuarioExisteException {
+		
+		if(emailExiste(usuario.getEmail(), usuario.getId())) {
+			throw new UsuarioExisteException("já existe um usuário cadastrado com esse email");
+		}
+		
 		usuario.setHabilitado(true);
 		usuario.setAutorizacoes(buscarPor(usuario.getId()).getAutorizacoes());
 		usuario.setSenha(buscarPor(usuario.getId()).getSenha());
@@ -54,7 +73,7 @@ public class UsuarioService {
 	
 	//@CacheEvict(value="postCache", allEntries=true)
 	public Usuario atualizarNome(Usuario usuario) {
-		
+				
 		Usuario temp = repository.findOne(usuario.getId());
 		temp.setNome(usuario.getNome());
 		return repository.save(temp);
@@ -118,5 +137,12 @@ public class UsuarioService {
 		return repository.save(usuario);
 	}
 	
+	public Boolean emailExiste(String email, Long id) {
+		return repository.existsByEmail(email, id);
+	}
+	
+	public Boolean emailExiste(String email) {
+		return repository.existsByEmail(email);
+	}
 	
 }

@@ -5,6 +5,7 @@
 
 <head th:replace="fragments/head :: head(~{::title},~{::link})">
 <title>ZEUS | Informações</title>
+<link rel="stylesheet" th:href="@{~/css/dropify.min.css}" />
 <link rel="stylesheet" th:href="@{~/css/all.css}" />
 </head>
 
@@ -63,6 +64,14 @@
 										</div>
 									</div>
 								</div>
+
+								<div class="col-lg-12">
+								<ul class="nav justify-content-end">
+									<li class="nav-item"><a class="nav-link" href="#"
+											data-toggle="modal" data-target="#modal-imagem-top">+
+												Logo e titulo da lista de presença</a></li>
+								</ul>
+							</div>
 
 								<div class="col-12 grid-margin"
 									th:unless="${#lists.isEmpty(atividades)}"
@@ -162,6 +171,61 @@
 
 					</div>
 					<!-- end row -->
+
+					<div class="modal fade" id="modal-imagem-top" tabindex="-1"
+						role="dialog" aria-labelledby="imagem-top-label"
+						aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="imagem-top-label">Logos e titulo do cabeçalho</h5>
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div class="wrapper mb-2 mt-1">
+										<span class="badge badge-warning text-white">Nota : </span>
+										<p class="d-inline ml-3 text-muted">100x50 e no máximo 2MB</p>
+									</div>
+									<form id="formulario-imagem-top"
+										th:action="@{/dashboard/admin/eventos/presencial/lista/presenca/logo/salvar}"
+										method="post" enctype="multipart/form-data">
+										<input type="hidden" name="eventoPresencial"
+											th:value="${evento.id}"> 
+
+										<div class="form-group">
+											<label for="titulo">Titulo</label>
+											<input class="form-control" type="text" name="titulo" />
+										</div>	
+										
+										<div class="form-group">
+										<label for="esquerda">Logo esquerda</label>	
+										<input type="file"
+											class="dropify" name="imagemEsquerda" data-max-file-size="2mb"
+											data-default-file="" />
+										</div>	
+
+										<div class="form-group">
+										<label for="direita">Logo direita</label>		
+										<input type="file"
+											class="dropify" name="imagemDireita" data-max-file-size="2mb"
+											data-default-file="" />
+										</div>		
+									</form>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary"
+										data-dismiss="modal">Cancelar</button>
+									<button type="submit" form="formulario-imagem-top"
+										class="btn btn-primary">Salvar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
 				</div>
 				<!-- end content-wrapper -->
 				<!-- footer -->
@@ -174,8 +238,10 @@
 	</div>
 	<!-- container-scroller -->
 	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/dropify.min.js}"></script>
 	<script th:src="@{~/js/icheck.min.js}"></script>
 	<span th:replace="fragments/base-script :: plugins"></span>
+	<script th:src="@{~/js/dropify.js}"></script>
 
 
 	<script th:inline="javascript">

@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventoCanceladoException;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialDestaque;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialTop;
+import com.gilmarcarlos.developer.gcursos.model.images.ImagensLogoListaPresenca;
 import com.gilmarcarlos.developer.gcursos.model.type.EventoStatus;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
@@ -54,6 +55,9 @@ public class EventoPresencial implements Serializable {
 
 	@OneToOne(mappedBy = "eventoPresencial")
 	private ImagensEventoPresencialTop imagemTopDetalhes;
+	
+	@OneToOne(mappedBy = "eventoPresencial")
+	private ImagensLogoListaPresenca imagemLogo;
 
 	@OneToOne(mappedBy = "eventoPresencial")
 	private ProgramacaoPresencial programacao;
@@ -285,6 +289,14 @@ public class EventoPresencial implements Serializable {
 
 	public void setInscricoes(List<InscricaoPresencial> inscricoes) {
 		this.inscricoes = inscricoes;
+	}
+	
+	public ImagensLogoListaPresenca getImagemLogo() {
+		return imagemLogo;
+	}
+
+	public void setImagemLogo(ImagensLogoListaPresenca imagemLogo) {
+		this.imagemLogo = imagemLogo;
 	}
 
 	@Transient

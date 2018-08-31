@@ -164,7 +164,7 @@ public class UsuarioCompleteCadastroControler {
 	}
 
 	private void salvarUsuario(Usuario usuario, String numero) {
-		dadosService.salvar(usuario.getDadosPessoais());
+		dadosService.salvarD(usuario.getDadosPessoais());
 		codigoService.salvar(usuario.getCodigoFuncional());
 		usuarioService.atualizarNome(usuario);
 		notificacaoService.salvar(new Notificacao(usuario, "Completou o cadastro", IconeType.INFORMACAO, StatusType.SUCESSO, "seu cadastro foi concluído com sucesso"));

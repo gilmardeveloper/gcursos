@@ -28,6 +28,10 @@ public class UnidadeTrabalhoService {
 	public List<UnidadeTrabalho> listarTodos(){
 		return repository.listAll();
 	}
+	
+	public List<UnidadeTrabalho> listarTodosSemFones(){
+		return repository.listaTodos();
+	}
 
 	public UnidadeTrabalho buscarPor(Long id) {
 		return repository.buscarPor(id);

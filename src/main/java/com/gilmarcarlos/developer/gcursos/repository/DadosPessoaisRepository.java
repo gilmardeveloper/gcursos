@@ -15,5 +15,11 @@ public interface DadosPessoaisRepository extends CrudRepository<DadosPessoais, L
 	
 	@Query("select d from DadosPessoais d join fetch d.telefones where d.cpf = :pcpf")
 	DadosPessoais buscarPor(@Param("pcpf") String cpf);
+	
+	@Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM DadosPessoais d WHERE d.cpf = :pcpf")
+    boolean existsByCpf(@Param("pcpf") String cpf);
+
+	@Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM DadosPessoais d WHERE d.cpf = :pcpf and d.usuario.id != :pid")
+	boolean existsByCpf(@Param("pcpf") String cpf, @Param("pid") Long id);
 
 }

@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialDestaque;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialTop;
+import com.gilmarcarlos.developer.gcursos.model.images.ImagensLogoListaPresenca;
 import com.gilmarcarlos.developer.gcursos.repository.ImagensEventoPresencialDestaqueRepository;
 import com.gilmarcarlos.developer.gcursos.repository.ImagensEventoPresencialTopRepository;
+import com.gilmarcarlos.developer.gcursos.repository.ImagensLogoListaPresencaRepository;
 import com.gilmarcarlos.developer.gcursos.repository.ImagensRepository;
 
 @Service
@@ -25,6 +27,9 @@ public class ImagensService {
 	
 	@Autowired
 	private ImagensEventoPresencialDestaqueRepository repositoryImagensEvePresDestaque;
+	
+	@Autowired
+	private ImagensLogoListaPresencaRepository repositoryImagensLogoListaPresenca;
 	
 	public Imagens salvar(Imagens imagens) {
 		return repository.save(imagens);
@@ -74,5 +79,13 @@ public class ImagensService {
 
 	public ImagensEventoPresencialDestaque salvarImagemEvePresDestaque(ImagensEventoPresencialDestaque imagens) {
 		return repositoryImagensEvePresDestaque.save(imagens);
+	}
+	
+	public void deletarImagemLogListaPresenca(Long id) {
+		repositoryImagensLogoListaPresenca.deleteById(id);
+	}
+
+	public ImagensLogoListaPresenca salvarImagemLogListaPresenca(ImagensLogoListaPresenca imagens) {
+		return repositoryImagensLogoListaPresenca.save(imagens);
 	}
 }

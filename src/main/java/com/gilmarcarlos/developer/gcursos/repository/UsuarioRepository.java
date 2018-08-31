@@ -20,5 +20,11 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
 	
 	@Query("select u from Usuario u where u.id = :pid")
 	Usuario findOne(@Param("pid") Long id);
+	
+	@Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM Usuario u WHERE u.email = :pemail")
+    boolean existsByEmail(@Param("pemail") String email);
+
+	@Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM Usuario u WHERE u.email = :pemail and u.id != :pid")
+	boolean existsByEmail(@Param("pemail") String email, @Param("pid") Long id);
 
 }
