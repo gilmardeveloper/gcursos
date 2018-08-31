@@ -209,5 +209,9 @@ public class Usuario implements Serializable {
 	public List<Notificacao> getNotificaoesNaoLidas() {
 		return this.notificacoes.stream().filter(n -> !n.getFoiLido()).collect(Collectors.toList());
 	}
+	
+	public List<Notificacao> getNotificaoesLidas() {
+		return this.notificacoes.stream().filter(n -> n.getFoiLido()).collect(Collectors.toList());
+	}
 
 }

@@ -30,11 +30,15 @@ import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
 import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.UsuarioExisteException;
+import com.gilmarcarlos.developer.gcursos.service.CargoService;
 import com.gilmarcarlos.developer.gcursos.service.CodigoFuncionalService;
 import com.gilmarcarlos.developer.gcursos.service.DadosPessoaisService;
+import com.gilmarcarlos.developer.gcursos.service.EscolaridadeService;
 import com.gilmarcarlos.developer.gcursos.service.ImagensService;
 import com.gilmarcarlos.developer.gcursos.service.NotificacaoService;
+import com.gilmarcarlos.developer.gcursos.service.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.TelefoneUsuarioService;
+import com.gilmarcarlos.developer.gcursos.service.UnidadeTrabalhoService;
 import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
 
 @Controller
@@ -59,7 +63,43 @@ public class UsuarioControler {
 	@Autowired
 	private ImagensService imagensService;
 
+	@Autowired
+	private EscolaridadeService escolaridadeService;
+
+	@Autowired
+	private SexoService sexoService;
+
+	@Autowired
+	private CargoService cargoService;
+
+	@Autowired
+	private UnidadeTrabalhoService unidadeService;
+
 	private Authentication autenticado;
+
+	@GetMapping("perfil")
+	public String painel(Model model) {
+		Usuario usuarioLogado = getUsuario();
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+
+		int naoVisualizadas = usuarioLogado.getNotificaoesNaoLidas().size();
+		int visualizadas = usuarioLogado.getNotificaoesLidas().size();
+		if (usuarioLogado.isPerfilCompleto()) {
+			model.addAttribute("usuario", usuarioLogado);
+			model.addAttribute("sexos", sexoService.listarTodos());
+			model.addAttribute("escolaridades", escolaridadeService.listarTodos());
+			model.addAttribute("cargos", cargoService.listarTodos());
+			model.addAttribute("unidades", unidadeService.listarTodos());
+			model.addAttribute("lidas", visualizadas);
+			model.addAttribute("naoLidas", naoVisualizadas);
+			model.addAttribute("todos", visualizadas + naoVisualizadas);
+			return "dashboard/usuario/profile";
+
+		} else {
+			return "redirect:/dashboard/complete-cadastro";
+		}
+
+	}
 
 	@PostMapping("redefinir-senha")
 	public String redefinirSenha(@RequestParam("senha") String senha) {

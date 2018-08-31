@@ -44,7 +44,7 @@ public class UsuarioCompleteCadastroControler {
 
 	@Autowired
 	private TelefoneUsuarioService telefoneUsuarioService;
-	
+
 	@Autowired
 	private DadosPessoaisService dadosService;
 
@@ -56,10 +56,10 @@ public class UsuarioCompleteCadastroControler {
 
 	@Autowired
 	private SexoService sexoService;
-	
+
 	@Autowired
 	private NotificacaoService notificacaoService;
-		
+
 	@GetMapping
 	public String home() {
 		return "login/login-template";
@@ -69,14 +69,22 @@ public class UsuarioCompleteCadastroControler {
 	public String painel(Model model) {
 		Usuario usuarioLogado = getUsuario();
 		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
-		if(usuarioLogado.isPerfilCompleto()) {
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("sexos", sexoService.listarTodos());
-		model.addAttribute("escolaridades", escolaridadeService.listarTodos());
-		model.addAttribute("cargos", cargoService.listarTodos());
-		model.addAttribute("unidades", unidadeService.listarTodos());
-		return "dashboard/usuario/profile";
-		}else {
+
+		int naoVisualizadas = usuarioLogado.getNotificaoesNaoLidas().size();
+		int visualizadas = usuarioLogado.getNotificaoesLidas().size();
+		if (usuarioLogado.isPerfilCompleto()) {
+			/*
+			 * model.addAttribute("usuario", usuarioLogado); model.addAttribute("sexos",
+			 * sexoService.listarTodos()); model.addAttribute("escolaridades",
+			 * escolaridadeService.listarTodos()); model.addAttribute("cargos",
+			 * cargoService.listarTodos()); model.addAttribute("unidades",
+			 * unidadeService.listarTodos()); model.addAttribute("lidas", visualizadas);
+			 * model.addAttribute("naoLidas", naoVisualizadas); model.addAttribute("todos",
+			 * visualizadas + naoVisualizadas);
+			 */
+
+			return "redirect:/dashboard/usuario/perfil";
+		} else {
 			return "redirect:/dashboard/complete-cadastro";
 		}
 
@@ -85,10 +93,10 @@ public class UsuarioCompleteCadastroControler {
 	@GetMapping("dashboard/complete-cadastro")
 	public String completeCadastro(Model model) {
 		Usuario usuarioLogado = getUsuario();
-		if(usuarioLogado.isPerfilCompleto()) {
+		if (usuarioLogado.isPerfilCompleto()) {
 			return "redirect:/dashboard/";
 		}
-		
+
 		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("unidades", unidadeService.listarTodos());
 		model.addAttribute("cargos", cargoService.listarTodos());
@@ -167,8 +175,9 @@ public class UsuarioCompleteCadastroControler {
 		dadosService.salvarD(usuario.getDadosPessoais());
 		codigoService.salvar(usuario.getCodigoFuncional());
 		usuarioService.atualizarNome(usuario);
-		notificacaoService.salvar(new Notificacao(usuario, "Completou o cadastro", IconeType.INFORMACAO, StatusType.SUCESSO, "seu cadastro foi concluído com sucesso"));
-		
+		notificacaoService.salvar(new Notificacao(usuario, "Completou o cadastro", IconeType.INFORMACAO,
+				StatusType.SUCESSO, "seu cadastro foi concluído com sucesso"));
+
 		if (numero.length() >= 8) {
 			TelefoneUsuario telefone = telefoneUsuarioService.buscarPor(numero);
 			if (telefone != null) {
@@ -183,6 +192,5 @@ public class UsuarioCompleteCadastroControler {
 			}
 		}
 	}
-	
-	
+
 }

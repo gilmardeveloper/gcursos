@@ -198,6 +198,11 @@ public class AtividadePresencial implements Serializable {
 	private Boolean temPermissoes(Usuario usuario) {
 		return getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getPermissoes().valida(usuario);
 	}
+	
+	@Transient
+	public boolean naoTemVagas() {
+		return (getInscricoes().isEmpty() ? false : (getInscricoes().size() >= this.vagas));
+	}
 
 	@Override
 	public int hashCode() {
@@ -223,5 +228,7 @@ public class AtividadePresencial implements Serializable {
 			return false;
 		return true;
 	}
+
+	
 
 }

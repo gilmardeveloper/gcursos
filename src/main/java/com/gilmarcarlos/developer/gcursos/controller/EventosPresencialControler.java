@@ -27,9 +27,6 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencialLog;
 import com.gilmarcarlos.developer.gcursos.model.eventos.InscricaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.PermissoesEventoPresencial;
-import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
-import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
-import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.AtividadePresencialService;
 import com.gilmarcarlos.developer.gcursos.service.CargoService;
@@ -50,7 +47,7 @@ import com.gilmarcarlos.developer.gcursos.service.UnidadeTrabalhoService;
 import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
 
 @Controller
-@RequestMapping("/dashboard/eventos/presencial")
+@RequestMapping("/dashboard/eventos/presenciais")
 public class EventosPresencialControler {
 
 	@Autowired
@@ -157,12 +154,12 @@ public class EventosPresencialControler {
 			usuarios.add(usuarioLogado.getEmail());
 			permissoes.setUsuariosComCodigo(usuarios);
 			permissoesEvePresencialService.salvar(permissoes);
-			return "redirect:/dashboard/eventos/presencial/detalhes/" + id;
+			return "redirect:/dashboard/eventos/presenciais/detalhes/" + id;
 
 		}else {
 			model.addFlashAttribute("alert", "alert alert-fill-danger");
 			model.addFlashAttribute("message", "código inválido");
-			return "redirect:/dashboard/eventos/presencial";
+			return "redirect:/dashboard/eventos/presenciais";
 		}
 	}
 
@@ -175,7 +172,7 @@ public class EventosPresencialControler {
 		if(evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
 			red.addFlashAttribute("alert", "alert alert-fill-danger");
 			red.addFlashAttribute("message", "você não tem permissão para acessar esse evento");
-			return "redirect:/dashboard/eventos/presencial";
+			return "redirect:/dashboard/eventos/presenciais";
 		}
 		
 		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
@@ -195,7 +192,7 @@ public class EventosPresencialControler {
 		if(evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
 			red.addFlashAttribute("alert", "alert alert-fill-danger");
 			red.addFlashAttribute("message", "você não tem permissão para acessar esse evento");
-			return "redirect:/dashboard/eventos/presencial";
+			return "redirect:/dashboard/eventos/presenciais";
 		}
 		
 		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
@@ -212,10 +209,18 @@ public class EventosPresencialControler {
 		Usuario usuarioLogado = getUsuario();
 		AtividadePresencial atividade = atividadePresencialService.buscarPor(id);
 		
+		if( atividade.naoTemVagas()) {
+			model.addFlashAttribute("alert", "alert alert-fill-warning");
+			model.addFlashAttribute("message", "Atividade não tem mais vagas");
+			return "redirect:/dashboard/eventos/presenciais/detalhes/"
+					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
+		}
+		
+		
 		if(!atividade.usuarioNaoEhResponsavelDoEvento(usuarioLogado)) {
 			model.addFlashAttribute("alert", "alert alert-fill-danger");
 			model.addFlashAttribute("message", "você é o responsável pelo o evento");
-			return "redirect:/dashboard/eventos/presencial/detalhes/"
+			return "redirect:/dashboard/eventos/presenciais/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		}
 				
@@ -224,12 +229,12 @@ public class EventosPresencialControler {
 			inscricaoPresencialService.salvar(new InscricaoPresencial(usuarioLogado, atividade));
 			model.addFlashAttribute("alert", "alert alert-fill-success");
 			model.addFlashAttribute("message", "inscrição realizada com sucesso");
-			return "redirect:/dashboard/eventos/presencial/detalhes/"
+			return "redirect:/dashboard/eventos/presenciais/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		} else {
 			model.addFlashAttribute("alert", "alert alert-fill-danger");
 			model.addFlashAttribute("message", "você não pode se inscrever em atividades de mesmo horário");
-			return "redirect:/dashboard/eventos/presencial/detalhes/"
+			return "redirect:/dashboard/eventos/presenciais/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		}
 	}
@@ -245,16 +250,18 @@ public class EventosPresencialControler {
 			inscricaoPresencialService.deletar(atividade.getInscricao(usuarioLogado));
 			model.addFlashAttribute("alert", "alert alert-fill-success");
 			model.addFlashAttribute("message", "inscrição foi cancelada com sucesso");
-			return "redirect:/dashboard/eventos/presencial/detalhes/"
+			return "redirect:/dashboard/eventos/presenciais/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		} else {
 			model.addFlashAttribute("alert", "alert alert-fill-danger");
 			model.addFlashAttribute("message", "um erro ocorreu");
-			return "redirect:/dashboard/eventos/presencial/detalhes/"
+			return "redirect:/dashboard/eventos/presenciais/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		}
 	}
-
+	
+	
+	
 	private Usuario getUsuario() {
 		autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.buscarPor(autenticado.getName());
