@@ -99,12 +99,12 @@ public class ListaPresenca implements  Serializable{
 		
 		try {
 			
-			print = JasperFillManager.fillReport("lista_presenca.jasper", parametros, dataSource);  // em produção alterar para "/caminho_da_pasta/" + "novo_contrato.jasper"
+			print = JasperFillManager.fillReport("/home/narclk123/lista_presenca.jasper", parametros, dataSource);  // em produção alterar para "/caminho_da_pasta/" + "arquivo.jasper"
 			JRPdfExporter exporter = new JRPdfExporter();
 			 
 			exporter.setExporterInput(new SimpleExporterInput(print));
 			exporter.setExporterOutput(
-			  new SimpleOutputStreamExporterOutput(this.cpf + ".pdf"));  // em produção alterar para "/caminho_da_pasta/" + this.cpf + ".pdf"
+			  new SimpleOutputStreamExporterOutput("/home/narclk123/lista_presenca.pdf"));  // em produção alterar para "/caminho_da_pasta/arquivo.pdf"
 			 
 			SimplePdfReportConfiguration reportConfig
 			  = new SimplePdfReportConfiguration();
@@ -123,7 +123,7 @@ public class ListaPresenca implements  Serializable{
 			exporter.exportReport();
 			System.out.println("retornando o arquivo");
 			
-			return new FileInputStream(new File(this.cpf + ".pdf")); // em produção alterar para "/caminho_da_pasta/" + this.cpf + ".pdf"
+			return new FileInputStream(new File("/home/narclk123/lista_presenca.pdf")); // em produção alterar para "/caminho_da_pasta/" + "arquivo.pdf"
 			
 		} catch (Exception e) {
 			e.printStackTrace();
