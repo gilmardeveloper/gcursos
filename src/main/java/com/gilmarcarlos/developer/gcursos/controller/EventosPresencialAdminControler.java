@@ -338,7 +338,7 @@ public class EventosPresencialAdminControler {
 
 	@GetMapping("/detalhes/{id}")
 	public String eventoDetalhes(@PathVariable("id") Long id, Model model) {
-
+		
 		Usuario usuarioLogado = getUsuario();
 		EventoPresencial evento = eventoPresencialService.buscarPor(id);
 
@@ -699,34 +699,39 @@ public class EventosPresencialAdminControler {
 		AtividadePresencial atividade = atividadePresencialService.buscarPor(id);
 		EventoPresencial evento = atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial();
 
-		if (evento.getImagemLogo() != null) {
-			return "redirect:/dashboard/admin/eventos/presencial/inscricoes/" + id + "/gerar/lista-presenca";
-		}else {
+		if (evento.getImagemLogo() == null) {
 			model.addFlashAttribute("alert", "alert alert-fill-warning");
 			model.addFlashAttribute("message", "você prescisa adiciona o titulo do cabeçalho e as logos");
-			return "redirect:/dashboard/admin/eventos/presencial/inscricoes/"
-					+ evento.getId();
+			return "redirect:/dashboard/admin/eventos/presencial/inscricoes/" + evento.getId();
+		} else {
+			if (!atividade.getInscricoes().isEmpty()) {
+				return "redirect:/dashboard/admin/eventos/presencial/inscricoes/" + id + "/gerar/lista-presenca";
+			}else {
+				model.addFlashAttribute("alert", "alert alert-fill-warning");
+				model.addFlashAttribute("message", "não existem inscritos para essa atividade");
+				return "redirect:/dashboard/admin/eventos/presencial/inscricoes/" + evento.getId();
+			}
 		}
 
 	}
-	
+
 	@GetMapping(value = "/inscricoes/{id}/gerar/lista-presenca", produces = MediaType.APPLICATION_PDF_VALUE)
 	private @ResponseBody byte[] gerarListaPresenca(@PathVariable("id") Long id, Model model) {
 
 		AtividadePresencial atividade = atividadePresencialService.buscarPor(id);
 		EventoPresencial evento = atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial();
 
-			InputStream pdfLista = listaPresenca.gerar(atividade);
+		InputStream pdfLista = listaPresenca.gerar(atividade);
 
-			try {
-				return IOUtils.toByteArray(pdfLista);
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
+		try {
+			return IOUtils.toByteArray(pdfLista);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 
 	}
-	
+
 	@PostMapping("/lista/presenca/logo/salvar")
 	public String salvarImagensLogo(@Valid ImagensLogoListaPresenca imagens, BindingResult result,
 			RedirectAttributes model) {

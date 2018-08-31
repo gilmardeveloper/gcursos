@@ -17,11 +17,7 @@ public class DadosPessoaisService {
 
 	public DadosPessoais salvar(DadosPessoais dados) throws CpfExisteException {
 		
-		if(dados.getId() == null && cpfExiste(dados.getCpf())) {
-				throw new CpfExisteException("já existe um usuário com este CPF cadastrado");
-		}
-		
-		if(dados.getId() != null && cpfExiste(dados.getCpf(), dados.getUsuario().getId())) {
+		if(cpfExiste(dados)) {
 				throw new CpfExisteException("já existe um usuário com este CPF cadastrado");
 		}
 		
@@ -44,12 +40,12 @@ public class DadosPessoaisService {
 		return repository.buscarPor(cpf);
 	}
 
-	public Boolean cpfExiste(String cpf, Long id) {
-		return repository.existsByCpf(cpf, id);
-	}
-
-	public Boolean cpfExiste(String cpf) {
-		return repository.existsByCpf(cpf);
+	public Boolean cpfExiste(DadosPessoais dados) {
+		if(dados.getId() != null) {
+			return repository.existsByCpf(dados.getCpf(), dados.getUsuario().getId());
+		}else {
+			return repository.existsByCpf(dados.getCpf());
+		}
 	}
 
 }

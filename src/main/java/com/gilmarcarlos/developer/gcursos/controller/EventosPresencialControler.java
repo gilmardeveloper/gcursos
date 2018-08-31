@@ -1,17 +1,24 @@
 package com.gilmarcarlos.developer.gcursos.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.AtividadePresencial;
@@ -19,6 +26,10 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.DiaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencialLog;
 import com.gilmarcarlos.developer.gcursos.model.eventos.InscricaoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.PermissoesEventoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
+import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
+import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.AtividadePresencialService;
 import com.gilmarcarlos.developer.gcursos.service.CargoService;
@@ -119,13 +130,54 @@ public class EventosPresencialControler {
 			return "redirect:/dashboard/complete-cadastro";
 		}
 	}
-
-	@GetMapping("/detalhes/{id}")
-	public String eventoDetalhes(@PathVariable("id") Long id, Model model) {
+	
+	@GetMapping("/{id}/verifica/usuario/tem/codigo")
+	@ResponseBody
+	public ResponseEntity inscricoesEventoPresencaPresente(@PathVariable("id") Long id) {
+		
+		Usuario usuarioLogado = getUsuario();
+		EventoPresencial evento = eventoPresencialService.buscarPor(id);
+		if(evento.getPermissoes().temCodigo(usuarioLogado)) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@PostMapping("/detalhes")
+	public String eventoDetalhesComCodigo(@RequestParam("id") Long id, @RequestParam("codigo") String codigo, RedirectAttributes model) {
 
 		Usuario usuarioLogado = getUsuario();
 		EventoPresencial evento = eventoPresencialService.buscarPor(id);
+		
+		if(evento.getPermissoes().getCodigo().equalsIgnoreCase(codigo)) {
+			
+			PermissoesEventoPresencial permissoes = evento.getPermissoes();
+			List<String> usuarios = (permissoes.getUsuariosComCodigo().isEmpty() ? new ArrayList<>() : permissoes.getUsuariosComCodigo()); 
+			usuarios.add(usuarioLogado.getEmail());
+			permissoes.setUsuariosComCodigo(usuarios);
+			permissoesEvePresencialService.salvar(permissoes);
+			return "redirect:/dashboard/eventos/presencial/detalhes/" + id;
 
+		}else {
+			model.addFlashAttribute("alert", "alert alert-fill-danger");
+			model.addFlashAttribute("message", "código inválido");
+			return "redirect:/dashboard/eventos/presencial";
+		}
+	}
+
+	@GetMapping("/detalhes/{id}")
+	public String eventoDetalhes(@PathVariable("id") Long id, Model model, RedirectAttributes red) {
+		
+		Usuario usuarioLogado = getUsuario();
+		EventoPresencial evento = eventoPresencialService.buscarPor(id);
+		
+		if(evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
+			red.addFlashAttribute("alert", "alert alert-fill-danger");
+			red.addFlashAttribute("message", "você não tem permissão para acessar esse evento");
+			return "redirect:/dashboard/eventos/presencial";
+		}
+		
 		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
 		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("evento", evento);
@@ -135,11 +187,17 @@ public class EventosPresencialControler {
 	}
 
 	@GetMapping("/detalhes/{id}/pagina/{page}")
-	public String eventoDetalhes(@PathVariable("id") Long id, @PathVariable("page") Integer page, Model model) {
+	public String eventoDetalhes(@PathVariable("id") Long id, @PathVariable("page") Integer page, Model model, RedirectAttributes red) {
 
 		Usuario usuarioLogado = getUsuario();
 		EventoPresencial evento = eventoPresencialService.buscarPor(id);
-
+		
+		if(evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
+			red.addFlashAttribute("alert", "alert alert-fill-danger");
+			red.addFlashAttribute("message", "você não tem permissão para acessar esse evento");
+			return "redirect:/dashboard/eventos/presencial";
+		}
+		
 		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
 		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("evento", evento);
@@ -160,8 +218,7 @@ public class EventosPresencialControler {
 			return "redirect:/dashboard/eventos/presencial/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		}
-		
-		
+				
 		if (atividade.podeSeInscrever(usuarioLogado)) {
 			
 			inscricaoPresencialService.salvar(new InscricaoPresencial(usuarioLogado, atividade));

@@ -29,7 +29,6 @@ import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
 import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
-import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.CpfExisteException;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.UsuarioExisteException;
 import com.gilmarcarlos.developer.gcursos.service.CodigoFuncionalService;
 import com.gilmarcarlos.developer.gcursos.service.DadosPessoaisService;
@@ -80,13 +79,13 @@ public class UsuarioControler {
 		try {
 
 			DadosPessoais dados = usuario.getDadosPessoais();
-			dadosService.salvar(dados);
+			dadosService.salvarD(dados);
 			usuarioService.atualizarDadosNoEncryptSenha(usuario);
 			notificacaoService.salvar(new Notificacao(getUsuario(), "Dados pessoais alterados", IconeType.INFORMACAO,
 					StatusType.SUCESSO, "dados foram alterados com sucesso"));
 			return "redirect:/dashboard/";
 
-		} catch (UsuarioExisteException | CpfExisteException e) {
+		} catch (UsuarioExisteException e) {
 			notificacaoService.salvar(new Notificacao(getUsuario(), "Falha em alterar dados", IconeType.INFORMACAO,
 					StatusType.ERRO, e.getMessage()));
 			return "redirect:/dashboard/";

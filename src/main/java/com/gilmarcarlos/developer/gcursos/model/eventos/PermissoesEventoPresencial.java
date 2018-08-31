@@ -34,6 +34,9 @@ public class PermissoesEventoPresencial implements Serializable {
 
 	@ElementCollection
 	private List<String> cargos;
+	
+	@ElementCollection
+	private List<String> usuariosComCodigo;
 
 	private String codigo;
 
@@ -97,6 +100,19 @@ public class PermissoesEventoPresencial implements Serializable {
 	public void setEventoPresencial(EventoPresencial eventoPresencial) {
 		this.eventoPresencial = eventoPresencial;
 	}
+		
+	public List<String> getUsuariosComCodigo() {
+		return usuariosComCodigo;
+	}
+
+	public void setUsuariosComCodigo(List<String> usuariosComCodigo) {
+		this.usuariosComCodigo = usuariosComCodigo;
+	}
+
+	@Transient
+	public Boolean precisaDeCodigo() {
+		return (this.codigo != null ? (this.codigo.length() > 0) : false); 
+	}
 	
 	@Transient
 	public Boolean valida(Usuario usuario) {
@@ -121,6 +137,11 @@ public class PermissoesEventoPresencial implements Serializable {
 	@Transient
 	private Boolean temSexo(Usuario usuario) {
 		return this.sexos.contains(usuario.getDadosPessoais().getSexo()) || this.sexos.contains("todos");
+	}
+	
+	@Transient
+	public Boolean temCodigo(Usuario usuario) {
+		return this.usuariosComCodigo.contains(usuario.getEmail());
 	}
 	
 	@Transient
