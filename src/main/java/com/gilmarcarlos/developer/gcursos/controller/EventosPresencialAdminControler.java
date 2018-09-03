@@ -572,7 +572,7 @@ public class EventosPresencialAdminControler {
 			model.addAttribute("escolaridades", escolaridadeService.listarTodos());
 			model.addAttribute("sexos", sexoService.listarTodos());
 			model.addAttribute("cargos", cargoService.listarTodos());
-			return "/dashboard/admin/eventos/base-cadastro-permissoes-evento-presencial";
+			return "dashboard/admin/eventos/base-cadastro-permissoes-evento-presencial";
 		} else {
 			return "redirect:/dashboard/admin/complete-cadastro";
 		}
