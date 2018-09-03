@@ -596,7 +596,7 @@ public class EventosPresencialAdminControler {
 			model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
 			model.addAttribute("evento", eventoPresencialService.buscarPor(id));
 			model.addAttribute("atividades", atividadePresencialService.buscarPorEvento(id));
-			return "/dashboard/admin/eventos/base-info-inscricoes-evento-presencial";
+			return "dashboard/admin/eventos/base-info-inscricoes-evento-presencial";
 		} else {
 			return "redirect:/dashboard/admin/complete-cadastro";
 		}
