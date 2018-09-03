@@ -3,6 +3,8 @@ package com.gilmarcarlos.developer.gcursos.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.InscricaoPresencial;
@@ -24,6 +26,10 @@ public class InscricaoPresencialService {
 			
 	public List<InscricaoPresencial> listarTodos(){
 		return repository.listAll();
+	}
+	
+	public Page<InscricaoPresencial> listarTodos(Long id, Pageable pageable) {
+		return repository.listarTodos(id, pageable);
 	}
 
 	public InscricaoPresencial buscarPor(Long id) {

@@ -361,6 +361,26 @@ public class EventoPresencial implements Serializable {
 	public Boolean isAtivo() {
 		return ativo;
 	}
+	
+	@Transient
+	public Long assiduidade(Usuario usuario) {
+		
+		Double numerador = 0.0;
+		Double denominador = 0.0;
+		Double presenca = 0.0;
+		
+			for(InscricaoPresencial i : getInscricoes()) {
+				if(i.getUsuario().equals(usuario)) {
+					numerador += (i.isPresente() ? 100.0 : 0.0);
+					denominador++;
+				}
+			}
+			
+		presenca = numerador / denominador;
+		
+		
+		return Math.round(presenca);
+	}
 
 	@Override
 	public int hashCode() {

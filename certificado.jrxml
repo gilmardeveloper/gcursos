@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="certificado" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3d44c046-75b4-48cb-90b1-e8e10be61ebf">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="nome" class="java.lang.String"/>
+	<field name="tituloEvento" class="java.lang.String"/>
+	<field name="cargaHoraria" class="java.lang.String"/>
+	<field name="qtdAtividades" class="java.lang.String"/>
+	<field name="periodo" class="java.lang.String"/>
+	<field name="imagemFundo" class="java.io.InputStream"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="502" splitType="Stretch">
+			<image>
+				<reportElement x="15" y="0" width="650" height="502" uuid="8b9f9963-ea67-4142-8349-eccd04d2a400"/>
+				<imageExpression><![CDATA[$F{imagemFundo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="100" y="63" width="464" height="38" uuid="2c4ae6be-5c1c-4448-bcb6-5add939b6a99"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CERTIFICADO DE PARTICIPAÇÃO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="124" width="464" height="20" uuid="fb891bef-38b3-4ffd-9338-cd83467eb1d3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Certificamos que]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="72" y="154" width="536" height="43" uuid="d0e532b6-4bd4-4781-9b8d-f3ff350fa87c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="202" width="464" height="20" uuid="172c91d2-47c3-4104-bfa7-2bf0190862c5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{qtdAtividades}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="72" y="228" width="536" height="20" uuid="4cc1e857-cb3c-4242-920f-70977b63f363"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tituloEvento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="255" width="464" height="20" uuid="c7f77d89-7a6b-451c-a63d-01468af558c0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cargaHoraria}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="282" width="464" height="20" uuid="52f8c171-6df7-4cb3-a562-f9b27549f47b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{periodo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -85,6 +85,11 @@ public class InscricaoPresencial implements Serializable{
 	}
 	
 	@Transient
+	public Boolean inscrito(Usuario usuario) {
+		return getUsuario().equals(usuario);
+	}
+	
+	@Transient
 	public Boolean isPresente() {
 		return (this.presenca != null ? this.presenca : false);
 	}

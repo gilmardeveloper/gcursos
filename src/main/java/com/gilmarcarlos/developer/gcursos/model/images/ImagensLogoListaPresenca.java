@@ -27,6 +27,9 @@ public class ImagensLogoListaPresenca implements Serializable{
 	@NotNull(message = "image.notnull")
 	private Blob imagemEsquerda;
 	
+	@NotNull(message = "image.notnull")
+	private Blob imagemFundo;
+	
 	@NotNull
 	private String titulo;
 		
@@ -55,6 +58,14 @@ public class ImagensLogoListaPresenca implements Serializable{
 
 	public void setImagemEsquerda(Blob imagemEsquerda) {
 		this.imagemEsquerda = imagemEsquerda;
+	}
+	
+	public Blob getImagemFundo() {
+		return imagemFundo;
+	}
+
+	public void setImagemFundo(Blob imagemFundo) {
+		this.imagemFundo = imagemFundo;
 	}
 
 	public EventoPresencial getEventoPresencial() {

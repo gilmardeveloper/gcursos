@@ -2,12 +2,19 @@ package com.gilmarcarlos.developer.gcursos.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Blob;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.validation.Valid;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -24,6 +31,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.CodigoFuncional;
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.DadosPessoais;
 import com.gilmarcarlos.developer.gcursos.model.dados.complementares.TelefoneUsuario;
+import com.gilmarcarlos.developer.gcursos.model.eventos.Certificado;
+import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.InscricaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
@@ -34,7 +44,9 @@ import com.gilmarcarlos.developer.gcursos.service.CargoService;
 import com.gilmarcarlos.developer.gcursos.service.CodigoFuncionalService;
 import com.gilmarcarlos.developer.gcursos.service.DadosPessoaisService;
 import com.gilmarcarlos.developer.gcursos.service.EscolaridadeService;
+import com.gilmarcarlos.developer.gcursos.service.EventoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.ImagensService;
+import com.gilmarcarlos.developer.gcursos.service.InscricaoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.NotificacaoService;
 import com.gilmarcarlos.developer.gcursos.service.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.TelefoneUsuarioService;
@@ -71,12 +83,27 @@ public class UsuarioControler {
 
 	@Autowired
 	private CargoService cargoService;
+	
+	@Autowired
+	private InscricaoPresencialService inscricoesService;
+	
+	@Autowired
+	private EventoPresencialService eventoService;
 
 	@Autowired
 	private UnidadeTrabalhoService unidadeService;
+	
+	@Autowired
+	private Certificado certificado;
 
 	private Authentication autenticado;
+	
+	private final static Integer MAXIMO_PAGES = 20;
 
+	private Page<InscricaoPresencial> getInscricoesPaginacao(Integer page) {
+		return inscricoesService.listarTodos(getUsuario().getId(), PageRequest.of(page, MAXIMO_PAGES));
+	}
+	
 	@GetMapping("perfil")
 	public String painel(Model model) {
 		Usuario usuarioLogado = getUsuario();
@@ -217,7 +244,75 @@ public class UsuarioControler {
 		return "redirect:/dashboard/";
 
 	}
+	
+	@GetMapping("/minhas/inscricoes/presenciais")
+	public String minhaInscricoes(Model model) {
+		
+		Usuario usuarioLogado = getUsuario();
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("inscricoes", getInscricoesPaginacao(0));
+		
+		return "dashboard/usuario/minhas-inscricoes-presenciais";
+	}
+	
+	@GetMapping("/minhas/inscricoes/presenciais/pagina/{page}")
+	public String minhaInscricoes(@PathVariable("page") Integer page, Model model) {
+		
+		Usuario usuarioLogado = getUsuario();
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("inscricoes", getInscricoesPaginacao(page));
+		
+		return "dashboard/usuario/minhas-inscricoes-presenciais";
+	}
+	
+	@GetMapping("/eventos/presenciais/concluidos")
+	public String eventosConcluidos(Model model) {
+		
+		Usuario usuarioLogado = getUsuario();
+		List<EventoPresencial> eventos = eventoService.buscarPorUsuario(usuarioLogado.getId());
+		
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("eventos", eventos);
+		
+		return "dashboard/usuario/eventos-presenciais-concluidos";
+	}
+	
+	@GetMapping("/eventos/presenciais/verificar/certificado/{id}")
+	private String verificarAssiduidade(@PathVariable("id") Long id, RedirectAttributes model) {
+		
+		EventoPresencial evento = eventoService.buscarPor(id);
+		Usuario usuarioLogado = getUsuario();
+		
+		if(evento.assiduidade(usuarioLogado) <= 60) {
+			model.addFlashAttribute("alert", "alert alert-fill-warning");
+			model.addFlashAttribute("message", "você precisa ter mais de 60% de assiduidade para imprimir o certificado");
+			return "redirect:/dashboard/usuario/eventos/presenciais/concluidos";
+		}else {
+			return "redirect:/dashboard/usuario/eventos/presenciais/certificado/" + id;
+		}
+		
+	}
+	
+	
+	@GetMapping(value = "/eventos/presenciais/certificado/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
+	private @ResponseBody byte[] gerarListaPresenca(@PathVariable("id") Long id, Model model) {
 
+		EventoPresencial evento = eventoService.buscarPor(id);
+		Usuario usuarioLogado = getUsuario();
+		InputStream pdfCertificado = certificado.gerar(evento, getUsuario());
+
+		try {
+			return IOUtils.toByteArray(pdfCertificado);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+	
 	private Usuario getUsuario() {
 		autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.buscarPor(autenticado.getName());

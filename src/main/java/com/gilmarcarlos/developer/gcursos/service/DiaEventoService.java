@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.gilmarcarlos.developer.gcursos.model.eventos.DiaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.ProgramacaoPresencial;
-import com.gilmarcarlos.developer.gcursos.repository.AtividadePresencialRepository;
 import com.gilmarcarlos.developer.gcursos.repository.DiaEventoRepository;
 
 @Service
@@ -20,7 +19,7 @@ public class DiaEventoService {
 	private DiaEventoRepository repository;
 
 	@Autowired
-	private AtividadePresencialRepository atividadesRepository;
+	private AtividadePresencialService atividadesService;
 
 	public DiaEvento salvar(DiaEvento diaEvento) {
 		return repository.save(diaEvento);
@@ -75,7 +74,7 @@ public class DiaEventoService {
 		
 		if (dia.getData().isAfter(ultimoDia) || dia.getData().isBefore(primeiroDia)) {
 				if (dia.getAtividades() != null) {
-					atividadesRepository.deletePorDia(dia.getId());
+					atividadesService.deletePorDia(dia.getId());
 				}
 				deletar(dia.getId());
 		}

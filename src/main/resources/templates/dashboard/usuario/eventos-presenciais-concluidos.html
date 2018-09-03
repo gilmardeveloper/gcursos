@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{})">
+<title>ZEUS | Eventos presenciais</title>
+</head>
+
+<body>
+	<div class="container-scroller">
+		<!-- partial:../../partials/_navbar.html -->
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+
+		<!-- partial -->
+		<div class="container-fluid page-body-wrapper">
+			<div class="row row-offcanvas row-offcanvas-right">
+				<!-- partial:../../partials/_settings-panel.html -->
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					<!-- row -->
+					<div class="row">
+
+						<div class="col-lg-12" th:if="${alert != null}">
+							<div th:class="${alert}" role="alert">
+								<i class="mdi mdi-alert-circle"></i><span th:text="${message}"></span>
+								<button type="button" class="close" data-dismiss="alert"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+						</div>
+
+						<div class="col-12 grid-margin" th:unless="${#lists.isEmpty(eventos)}" th:each="evento : ${eventos}" >
+							<div class="card">
+								<div class="card-body">
+									<h5 class="card-title font-weight-bold" th:text="${evento.titulo}"></h5>
+									<div class="row">
+										
+										<div class="col-lg-12" th:each="inscricao : ${evento.inscricoes}">
+
+											<div class="row" th:if="${inscricao.inscrito(usuario)}">
+												<div class="col-lg-10">
+													<p th:text="${inscricao.atividadePresencial.titulo}"></p>
+												</div>
+												<div class="col-lg-2" th:if="${inscricao.isPresente()}">
+													<div class="badge badge-pill badge-success ml-auto px-1 py-1"><i class="mdi mdi-check font-weight-bold"></i></div>
+												</div>
+												<div class="col-lg-2" th:unless="${inscricao.isPresente()}">
+													<div class="badge badge-pill badge-danger ml-auto px-1 py-1"><i class="mdi mdi-check font-weight-bold"></i></div>
+												</div>
+											</div>	
+										</div>
+
+										<div class="col-lg-12" th:with="presenca=${evento.assiduidade(usuario)}">
+											<div class="progress progress-lg">
+											  <div class="progress-bar" role="progressbar" th:style="'width:' + ${presenca} +'%;'" th:attr="aria-valuenow='+ ${presenca} +'" aria-valuemin="0" aria-valuemax="100"><span th:text="${presenca} + '% de assiduidade'"></span></div>
+											</div>
+										</div>
+
+									</div>								
+								</div>
+								<div class="card-footer bg-light" th:if="${evento.isCertificado()}">
+									<a class="btn btn-success" th:href="@{/dashboard/usuario/eventos/presenciais/verificar/certificado/{id}(id=${evento.id})}">Certificado</a>				
+								</div>
+							</div>
+						</div>
+
+						<!-- paginação inicio -->
+						<!--<div class="col-lg-12">
+
+							<div class="pagination-area text-center"
+											th:unless="${#lists.isEmpty(inscricoes)}">
+								<ul class="pagination rounded"
+												th:if="${inscricoes.totalPages} &gt; 1">
+
+												<li class="page-item"><a
+													th:href="@{/dashboard/usuario/minhas/inscricoes/presenciais/pagina/{page}/(page=0)}"
+													th:class="${inscricoes.first} == true ? 'btn disabled' : 'page-link' "><i
+														class="mdi mdi-chevron-left"></i></a></li>
+												<li class="page-item" th:if="(${inscricoes.number} - 1) &gt; -1"><a
+													class="page-link"
+													th:href="@{/dashboard/usuario/minhas/inscricoes/presenciais/pagina/{page}/(page=${inscricoes.number} - 1)}"
+													th:text="${inscricoes.number} - 1">&laquo;</a></li>
+
+												<li th:if="${inscricoes.number} &lt; (${inscricoes.totalPages} - 1)"
+													th:each="index : ${#numbers.sequence(inscricoes.number, inscricoes.number + 1)}"
+													th:class="${index} == ${inscricoes.number} ? 'page-item active' : 'page-item'"><a
+													class="page-link"
+													th:href="@{/dashboard/usuario/minhas/inscricoes/presenciais/pagina/{page}/(page=${index})}"
+													th:text="${index}">&laquo;</a></li>
+
+												<li class="page-item"><a
+													th:href="@{/dashboard/usuario/minhas/inscricoes/presenciais/pagina/{page}/(page=${inscricoes.totalPages} - 1)}"
+													th:class="${inscricoes.last} == true ? 'btn disabled' : 'page-link' "><i
+														class="mdi mdi-chevron-right"></i></a></li>
+											</ul>
+										</div>
+
+									</div>-->
+									<!-- paginação final -->
+
+					</div>
+					<!-- end row -->
+
+				</div>
+				<!-- end content-wrapper -->
+				<!-- footer -->
+				<footer th:replace="fragments/footer :: footer"></footer>
+				<!-- end footer -->
+			</div>
+			<!-- row-offcanvas ends -->
+		</div>
+		<!-- page-body-wrapper ends -->
+	</div>
+	<!-- container-scroller -->
+	<span th:replace="fragments/base-script :: base"></span>
+	<span th:replace="fragments/base-script :: plugins"></span>
+
+	<script th:inline="javascript">
+
+	/*<![CDATA[*/
+	$(()=>{
+		
+	});
+
+	function abrirModal(id){
+
+		$.ajax({
+                  url: `/dashboard/eventos/presenciais/${id}/verifica/usuario/tem/codigo`,
+                  type: "GET", 
+
+              success: (result,status,xhr) => {
+                                                window.location.href = `/dashboard/eventos/presenciais/detalhes/${id}`
+                                              }, 
+              error: () => {
+
+              		$('#modal-id').val(id);
+					$('#modal-permissao-codigo').modal('show');   
+
+              }
+      });
+
+		   
+	}
+
+	
+	/*]]>*/
+	</script>
+</body>
+
+</html>

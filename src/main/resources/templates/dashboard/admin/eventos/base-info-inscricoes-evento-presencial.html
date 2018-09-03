@@ -45,12 +45,15 @@
 							<div class="row flex-grow">
 								<div class="col-12 grid-margin">
 									<nav aria-label="breadcrumb" role="navigation">
-				                      <ol class="breadcrumb breadcrumb-custom bg-inverse-primary">
-				                        <li class="breadcrumb-item"><a th:href="@{/dashboard/admin/eventos/presencial}">Eventos Presenciais</a></li>
-				                        <li class="breadcrumb-item active" aria-current="page"><span th:text="${evento.titulo}"></span></li>
-				                      </ol>
-				                    </nav>
-			                	</div>
+										<ol class="breadcrumb breadcrumb-custom bg-inverse-primary">
+											<li class="breadcrumb-item"><a
+												th:href="@{/dashboard/admin/eventos/presencial}">Eventos
+													Presenciais</a></li>
+											<li class="breadcrumb-item active" aria-current="page"><span
+												th:text="${evento.titulo}"></span></li>
+										</ol>
+									</nav>
+								</div>
 
 								<div class="col-12 grid-margin" th:if="${alert != null}">
 									<div th:if="${alert != null}">
@@ -66,12 +69,12 @@
 								</div>
 
 								<div class="col-lg-12">
-								<ul class="nav justify-content-end">
-									<li class="nav-item"><a class="nav-link" href="#"
+									<ul class="nav justify-content-end">
+										<li class="nav-item"><a class="nav-link" href="#"
 											data-toggle="modal" data-target="#modal-imagem-top">+
 												Logo e titulo da lista de presença</a></li>
-								</ul>
-							</div>
+									</ul>
+								</div>
 
 								<div class="col-12 grid-margin"
 									th:unless="${#lists.isEmpty(atividades)}"
@@ -80,12 +83,11 @@
 										<div class="card-body">
 											<div class="row">
 												<div class="col-lg-7">
-													<a
-														th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}(id=${atividade.id})}"
-														th:text="${atividade.titulo}"></a>
+													<p th:text="${atividade.titulo}"></p>
 												</div>
 												<div class="col-lg-3">
-													<p th:text="${#temporals.format(atividade.diaEvento.data,'dd/MM/yyyy')}"></p>
+													<p
+														th:text="${#temporals.format(atividade.diaEvento.data,'dd/MM/yyyy')}"></p>
 												</div>
 												<div class="col-lg-2">
 													<a class="btn btn-outline-dark pt-1 pb-1"
@@ -103,8 +105,11 @@
 														<div class="col-lg-6">
 															<div class="card">
 																<div class="card-body">
-																	<form th:action="@{/dashboard/admin/eventos/presencial/inscricoes/lancar/presenca/todos}" method="post" class="forms-sample">
-																		<input type="hidden" th:value="${atividade.id}" name="id" />
+																	<form
+																		th:action="@{/dashboard/admin/eventos/presencial/inscricoes/lancar/presenca/todos}"
+																		method="post" class="forms-sample">
+																		<input type="hidden" th:value="${atividade.id}"
+																			name="id" />
 																		<div class="row">
 																			<div class="col-lg-6">
 																				<div class="form-group">
@@ -116,9 +121,11 @@
 																			</div>
 																			<div class="col-lg-6">
 																				<div class="form-group">
-																					<button type="submit" class="btn btn-outline-success">Lançar para todos</button>
+																					<button type="submit"
+																						class="btn btn-outline-success">Lançar
+																						para todos</button>
 																				</div>
-																			</div>		
+																			</div>
 																		</div>
 																	</form>
 																</div>
@@ -128,7 +135,9 @@
 														<div class="col-lg-6">
 															<div class="card">
 																<div class="card-body">
-																	<a class="btn btn-outline-success" th:href="@{/dashboard/admin/eventos/presencial/inscricoes/{id}/gerar/lista(id=${atividade.id})}">Gerar lista de inscritos</a>
+																	<a class="btn btn-outline-success"
+																		th:href="@{/dashboard/admin/eventos/presencial/inscricoes/{id}/gerar/lista(id=${atividade.id})}">Gerar
+																		lista de inscritos</a>
 																</div>
 															</div>
 														</div>
@@ -148,11 +157,16 @@
 																			<td th:text="${inscricao.usuario.nome}"></td>
 																			<td th:text="${inscricao.usuario.dadosPessoais.cpf}"></td>
 
-																			<td class="text-center"><div class="icheck"><input class="presenca" type="checkbox" th:value="${inscricao.id}" th:checked="${inscricao.isPresente()}" /></div></td>
+																			<td class="text-center"><div class="icheck">
+																					<input class="presenca" type="checkbox"
+																						th:value="${inscricao.id}"
+																						th:checked="${inscricao.isPresente()}" />
+																				</div></td>
 
-																			<td class="text-center"><a class="btn btn-outline-danger pt-1 pb-1"
+																			<td class="text-center"><a
+																				class="btn btn-outline-danger pt-1 pb-1"
 																				th:href="@{/dashboard/admin/eventos/presencial/inscricoes/{id}/cancelar/inscricao(id=${inscricao.id})}"><i
-																					class="icon-user-unfollow"></i></a></td>		
+																					class="icon-user-unfollow"></i></a></td>
 																		</tr>
 																	</tbody>
 																</table>
@@ -178,7 +192,8 @@
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
-									<h5 class="modal-title" id="imagem-top-label">Logos e titulo do cabeçalho</h5>
+									<h5 class="modal-title" id="imagem-top-label">Logos e
+										titulo do cabeçalho</h5>
 									<button type="button" class="close" data-dismiss="modal"
 										aria-label="Close">
 										<span aria-hidden="true">&times;</span>
@@ -193,26 +208,34 @@
 										th:action="@{/dashboard/admin/eventos/presencial/lista/presenca/logo/salvar}"
 										method="post" enctype="multipart/form-data">
 										<input type="hidden" name="eventoPresencial"
-											th:value="${evento.id}"> 
+											th:value="${evento.id}">
 
 										<div class="form-group">
-											<label for="titulo">Titulo</label>
-											<input class="form-control" type="text" name="titulo" />
-										</div>	
-										
-										<div class="form-group">
-										<label for="esquerda">Logo esquerda</label>	
-										<input type="file"
-											class="dropify" name="imagemEsquerda" data-max-file-size="2mb"
-											data-default-file="" />
-										</div>	
+											<label for="titulo">Titulo</label> <input
+												class="form-control" type="text" name="titulo" />
+
+										</div>
 
 										<div class="form-group">
-										<label for="direita">Logo direita</label>		
-										<input type="file"
-											class="dropify" name="imagemDireita" data-max-file-size="2mb"
-											data-default-file="" />
-										</div>		
+											<label for="esquerda">Logo esquerda</label> <input
+												type="file" class="dropify" name="imagemEsquerda"
+												data-max-file-size="2mb" data-default-file="" />
+												<small>Tamanho: 100x50</small>
+										</div>
+
+										<div class="form-group">
+											<label for="direita">Logo direita</label> <input type="file"
+												class="dropify" name="imagemDireita"
+												data-max-file-size="2mb" data-default-file="" />
+												<small>Tamanho: 100x50</small>
+										</div>
+
+										<div class="form-group">
+											<label for="direita">Fundo do certificado</label> <input type="file"
+												class="dropify" name="imagemFundo"
+												data-max-file-size="2mb" data-default-file="" />
+												<small>Tamanho: 650x502</small>
+										</div>
 									</form>
 								</div>
 								<div class="modal-footer">

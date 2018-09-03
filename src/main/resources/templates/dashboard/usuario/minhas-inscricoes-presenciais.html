@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{})">
+<title>ZEUS | Eventos presenciais</title>
+</head>
+
+<body>
+	<div class="container-scroller">
+		<!-- partial:../../partials/_navbar.html -->
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+
+		<!-- partial -->
+		<div class="container-fluid page-body-wrapper">
+			<div class="row row-offcanvas row-offcanvas-right">
+				<!-- partial:../../partials/_settings-panel.html -->
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					<!-- row -->
+					<div class="row">
+
+						<div class="col-lg-12" th:if="${alert != null}">
+							<div th:class="${alert}" role="alert">
+								<i class="mdi mdi-alert-circle"></i><span th:text="${message}"></span>
+								<button type="button" class="close" data-dismiss="alert"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+						</div>
+
+						<div class="col-12 grid-margin" th:unless="${#lists.isEmpty(inscricoes)}" th:each="inscricao : ${inscricoes}" >
+							<div class="card">
+								<div class="card-body">
+									<div class="row">
+										<div class="col-lg-10">
+											<p th:text="${inscricao.atividadePresencial.titulo}"></p>
+										</div>
+										<div class="col-lg-2">
+											<a class="btn btn-outline-dark pt-1 pb-1"
+												data-toggle="collapse"
+												th:href="'#collapse-' + ${inscricao.id}" role="button"
+												aria-expanded="false"
+												th:attr="aria-controls='collapse-' + ${inscricao.id}"><i
+												class="icon-options-vertical"></i></a>
+										</div>
+									</div>
+
+									<div class="collapse" th:id="'collapse-' + ${inscricao.id}">
+										<div class="card card-body">
+											<div class="row">
+												<div class="col-lg-3">
+													<p class="">
+														data: <span class="text-muted"
+															th:text="${#temporals.format(inscricao.atividadePresencial.diaEvento.data, 'dd/MM/yyyy')}"></span>
+													</p>
+												</div>
+
+												<div class="col-lg-3">
+													<p class="">
+														início: <span class="text-muted"
+															th:text="${inscricao.atividadePresencial.horaInicio}"></span>
+													</p>
+												</div>
+
+												<div class="col-lg-3">
+													<p class="">
+														término: <span class="text-muted"
+															th:text="${inscricao.atividadePresencial.horaFim}"></span>
+													</p>
+												</div>
+
+												<div class="col-lg-3">
+													<p class="">
+														sala: <span class="text-muted"
+															th:text="${inscricao.atividadePresencial.sala}"></span>
+													</p>
+												</div>
+												
+												<div class="col-lg-7">
+													<p class="">
+														endereço: <span class="text-muted"
+															th:text="${inscricao.eventoPresencial.enderecoLocalEvento}"></span>
+													</p>
+												</div>
+
+												<div class="col-lg-5">
+													<p class="">
+														local: <span class="text-muted"
+															th:text="${inscricao.eventoPresencial.localEvento}"></span>
+													</p>
+												</div>
+
+												<div class="col-lg-9">
+													<p class="">
+														evento: <span class="text-muted"
+															th:text="${inscricao.eventoPresencial.titulo}"></span>
+													</p>
+												</div>
+
+												<div class="col-lg-3" th:unless="${inscricao.eventoPresencial.isFechado()}">
+													<a class="btn btn-warning" th:href="@{/dashboard/eventos/presenciais/atividade/{id}/cancelar/inscricao(id=${inscricao.atividadePresencial.id})}" >Cancelar inscrição</a>
+												</div>
+
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- paginação inicio -->
+						<div class="col-lg-12">
+
+							<div class="pagination-area text-center"
+											th:unless="${#lists.isEmpty(inscricoes)}">
+								<ul class="pagination rounded"
+												th:if="${inscricoes.totalPages} &gt; 1">
+
+												<li class="page-item"><a
+													th:href="@{/dashboard/usuario/minhas/inscricoes/presenciais/pagina/{page}/(page=0)}"
+													th:class="${inscricoes.first} == true ? 'btn disabled' : 'page-link' "><i
+														class="mdi mdi-chevron-left"></i></a></li>
+												<li class="page-item" th:if="(${inscricoes.number} - 1) &gt; -1"><a
+													class="page-link"
+													th:href="@{/dashboard/usuario/minhas/inscricoes/presenciais/pagina/{page}/(page=${inscricoes.number} - 1)}"
+													th:text="${inscricoes.number} - 1">&laquo;</a></li>
+
+												<li th:if="${inscricoes.number} &lt; (${inscricoes.totalPages} - 1)"
+													th:each="index : ${#numbers.sequence(inscricoes.number, inscricoes.number + 1)}"
+													th:class="${index} == ${inscricoes.number} ? 'page-item active' : 'page-item'"><a
+													class="page-link"
+													th:href="@{/dashboard/usuario/minhas/inscricoes/presenciais/pagina/{page}/(page=${index})}"
+													th:text="${index}">&laquo;</a></li>
+
+												<li class="page-item"><a
+													th:href="@{/dashboard/usuario/minhas/inscricoes/presenciais/pagina/{page}/(page=${inscricoes.totalPages} - 1)}"
+													th:class="${inscricoes.last} == true ? 'btn disabled' : 'page-link' "><i
+														class="mdi mdi-chevron-right"></i></a></li>
+											</ul>
+										</div>
+
+									</div>
+									<!-- paginação final -->
+
+					</div>
+					<!-- end row -->
+
+				</div>
+				<!-- end content-wrapper -->
+				<!-- footer -->
+				<footer th:replace="fragments/footer :: footer"></footer>
+				<!-- end footer -->
+			</div>
+			<!-- row-offcanvas ends -->
+		</div>
+		<!-- page-body-wrapper ends -->
+	</div>
+	<!-- container-scroller -->
+	<span th:replace="fragments/base-script :: base"></span>
+	<span th:replace="fragments/base-script :: plugins"></span>
+
+	<script th:inline="javascript">
+
+	/*<![CDATA[*/
+	$(()=>{
+		
+	});
+
+	function abrirModal(id){
+
+		$.ajax({
+                  url: `/dashboard/eventos/presenciais/${id}/verifica/usuario/tem/codigo`,
+                  type: "GET", 
+
+              success: (result,status,xhr) => {
+                                                window.location.href = `/dashboard/eventos/presenciais/detalhes/${id}`
+                                              }, 
+              error: () => {
+
+              		$('#modal-id').val(id);
+					$('#modal-permissao-codigo').modal('show');   
+
+              }
+      });
+
+		   
+	}
+
+	
+	/*]]>*/
+	</script>
+</body>
+
+</html>

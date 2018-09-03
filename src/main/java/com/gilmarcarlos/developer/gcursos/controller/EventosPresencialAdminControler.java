@@ -131,14 +131,18 @@ public class EventosPresencialAdminControler {
 	private Authentication autenticado;
 
 	private final static Integer MAXIMO_PAGES = 3;
-	private final static Integer MAXIMO_PAGES_LOGS = 20;
+	private final static Integer MAXIMO_PAGES_EVENTOS = 20;
 
 	private Page<DiaEvento> getDiaPaginacao(Long id, Integer page) {
 		return diaEventoPaginacaoService.listarDiasPorProgramacao(id, PageRequest.of(page, MAXIMO_PAGES));
 	}
+	
+	private Page<EventoPresencial> getEventoPaginacao(Integer page) {
+		return eventoPresencialService.listarTodos(PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
+	}
 
 	private Page<EventoPresencialLog> getLogEvePaginacao(Long id, Integer page) {
-		return logEventoPresencialPaginacaoService.listarLogsPorEvento(id, PageRequest.of(page, MAXIMO_PAGES_LOGS));
+		return logEventoPresencialPaginacaoService.listarLogsPorEvento(id, PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
 	}
 
 	@GetMapping({ "/", "" })
@@ -148,7 +152,21 @@ public class EventosPresencialAdminControler {
 		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
 		if (usuarioLogado.isPerfilCompleto()) {
 			model.addAttribute("usuario", usuarioLogado);
-			model.addAttribute("eventos", eventoPresencialService.listarTodos());
+			model.addAttribute("eventos", getEventoPaginacao(0));
+			return "dashboard/admin/eventos/base-info-evento-presencial";
+		} else {
+			return "redirect:/dashboard/complete-cadastro";
+		}
+	}
+	
+	@GetMapping({ "/pagina/{page}"})
+	public String eventosPresencial(@PathVariable("page") Integer page, Model model) {
+
+		Usuario usuarioLogado = getUsuario();
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		if (usuarioLogado.isPerfilCompleto()) {
+			model.addAttribute("usuario", usuarioLogado);
+			model.addAttribute("eventos", getEventoPaginacao(page));
 			return "dashboard/admin/eventos/base-info-evento-presencial";
 		} else {
 			return "redirect:/dashboard/complete-cadastro";
@@ -426,6 +444,7 @@ public class EventosPresencialAdminControler {
 	@PostMapping("/detalhes/atividades/salvar")
 	public String atividadesSalvar(AtividadePresencial atividade, RedirectAttributes model) {
 		try {
+			
 			atividadePresencialService.salvar(atividade);
 			eventoPresencialLogService.salvar(log("Atividade: " + atividade.getTitulo() + " foi alterada",
 					atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
@@ -719,7 +738,6 @@ public class EventosPresencialAdminControler {
 	private @ResponseBody byte[] gerarListaPresenca(@PathVariable("id") Long id, Model model) {
 
 		AtividadePresencial atividade = atividadePresencialService.buscarPor(id);
-		EventoPresencial evento = atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial();
 
 		InputStream pdfLista = listaPresenca.gerar(atividade);
 

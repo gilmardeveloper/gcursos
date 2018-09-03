@@ -209,10 +209,10 @@
 															 <select id="certificado" class="form-control" name="certificado">
 															 	<option 
 															 		value="true" 
-															 		th:selected="${evento != null and evento.certificado == 'true'}">SIM</option>
+															 		th:selected="${evento != null and evento.isCertificado()}">SIM</option>
 															 	<option 
 															 		value="false"
-															 		th:selected="${evento != null and evento.certificado == 'false'}">NÃO</option>
+															 		th:selected="${evento != null and !evento.isCertificado()}">NÃO</option>
 															 </select>
 														</div>
 													</div>
