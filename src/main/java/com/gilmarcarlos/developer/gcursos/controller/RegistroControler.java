@@ -10,8 +10,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.security.exception.RegistroException;
-import com.gilmarcarlos.developer.gcursos.service.AutenticadorService;
-import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.service.auth.AutenticadorService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 
 @Controller
 public class RegistroControler {

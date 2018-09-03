@@ -14,8 +14,8 @@ import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
 import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
-import com.gilmarcarlos.developer.gcursos.service.NotificacaoService;
-import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 
 @ControllerAdvice
 public class HandlerExceptionControler extends ResponseEntityExceptionHandler{

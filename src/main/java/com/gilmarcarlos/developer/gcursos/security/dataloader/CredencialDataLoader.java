@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
 import com.gilmarcarlos.developer.gcursos.model.auth.Privilegio;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
-import com.gilmarcarlos.developer.gcursos.repository.AutorizacaoRepository;
-import com.gilmarcarlos.developer.gcursos.repository.PrivilegioRepository;
-import com.gilmarcarlos.developer.gcursos.repository.UsuarioRepository;
+import com.gilmarcarlos.developer.gcursos.repository.auth.AutorizacaoRepository;
+import com.gilmarcarlos.developer.gcursos.repository.auth.PrivilegioRepository;
+import com.gilmarcarlos.developer.gcursos.repository.usuarios.UsuarioRepository;
 import com.gilmarcarlos.developer.gcursos.security.crypt.PasswordCrypt;
 
 @Component

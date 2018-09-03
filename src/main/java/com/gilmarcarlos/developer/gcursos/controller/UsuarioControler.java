@@ -28,30 +28,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gilmarcarlos.developer.gcursos.model.dados.complementares.CodigoFuncional;
-import com.gilmarcarlos.developer.gcursos.model.dados.complementares.DadosPessoais;
-import com.gilmarcarlos.developer.gcursos.model.dados.complementares.TelefoneUsuario;
-import com.gilmarcarlos.developer.gcursos.model.eventos.Certificado;
-import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.InscricaoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.certificados.Certificado;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
+import com.gilmarcarlos.developer.gcursos.model.locais.CodigoFuncional;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
 import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.DadosPessoais;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.TelefoneUsuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.UsuarioExisteException;
-import com.gilmarcarlos.developer.gcursos.service.CargoService;
-import com.gilmarcarlos.developer.gcursos.service.CodigoFuncionalService;
-import com.gilmarcarlos.developer.gcursos.service.DadosPessoaisService;
-import com.gilmarcarlos.developer.gcursos.service.EscolaridadeService;
-import com.gilmarcarlos.developer.gcursos.service.EventoPresencialService;
-import com.gilmarcarlos.developer.gcursos.service.ImagensService;
-import com.gilmarcarlos.developer.gcursos.service.InscricaoPresencialService;
-import com.gilmarcarlos.developer.gcursos.service.NotificacaoService;
-import com.gilmarcarlos.developer.gcursos.service.SexoService;
-import com.gilmarcarlos.developer.gcursos.service.TelefoneUsuarioService;
-import com.gilmarcarlos.developer.gcursos.service.UnidadeTrabalhoService;
-import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPresencialService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.InscricaoPresencialService;
+import com.gilmarcarlos.developer.gcursos.service.imagens.ImagensService;
+import com.gilmarcarlos.developer.gcursos.service.locais.CargoService;
+import com.gilmarcarlos.developer.gcursos.service.locais.CodigoFuncionalService;
+import com.gilmarcarlos.developer.gcursos.service.locais.UnidadeTrabalhoService;
+import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.DadosPessoaisService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.TelefoneUsuarioService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 
 @Controller
 @RequestMapping("/dashboard/usuario/")

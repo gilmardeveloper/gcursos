@@ -16,11 +16,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
-import com.gilmarcarlos.developer.gcursos.model.dados.complementares.CodigoFuncional;
-import com.gilmarcarlos.developer.gcursos.model.dados.complementares.DadosPessoais;
-import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.InscricaoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
+import com.gilmarcarlos.developer.gcursos.model.locais.CodigoFuncional;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 
 @Entity

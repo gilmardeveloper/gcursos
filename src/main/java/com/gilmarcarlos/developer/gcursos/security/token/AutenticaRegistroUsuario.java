@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 
 import com.gilmarcarlos.developer.gcursos.model.auth.UsuarioToken;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
-import com.gilmarcarlos.developer.gcursos.repository.UsuarioRepository;
-import com.gilmarcarlos.developer.gcursos.repository.VerificacaoTokenRepository;
-import com.gilmarcarlos.developer.gcursos.service.EmailService;
+import com.gilmarcarlos.developer.gcursos.repository.auth.VerificacaoTokenRepository;
+import com.gilmarcarlos.developer.gcursos.repository.usuarios.UsuarioRepository;
+import com.gilmarcarlos.developer.gcursos.service.email.EmailService;
 
 @Component
 public class AutenticaRegistroUsuario implements AutenticaToken {

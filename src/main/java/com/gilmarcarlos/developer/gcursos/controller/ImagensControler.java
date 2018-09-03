@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.gilmarcarlos.developer.gcursos.service.EventoPresencialService;
-import com.gilmarcarlos.developer.gcursos.service.ImagensService;
-import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPresencialService;
+import com.gilmarcarlos.developer.gcursos.service.imagens.ImagensService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 
 @Controller
 @RequestMapping("/imagens")

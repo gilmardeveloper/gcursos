@@ -11,21 +11,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gilmarcarlos.developer.gcursos.model.dados.complementares.DadosPessoais;
-import com.gilmarcarlos.developer.gcursos.model.dados.complementares.TelefoneUsuario;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
 import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.DadosPessoais;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.TelefoneUsuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
-import com.gilmarcarlos.developer.gcursos.service.CargoService;
-import com.gilmarcarlos.developer.gcursos.service.CodigoFuncionalService;
-import com.gilmarcarlos.developer.gcursos.service.DadosPessoaisService;
-import com.gilmarcarlos.developer.gcursos.service.EscolaridadeService;
-import com.gilmarcarlos.developer.gcursos.service.NotificacaoService;
-import com.gilmarcarlos.developer.gcursos.service.SexoService;
-import com.gilmarcarlos.developer.gcursos.service.TelefoneUsuarioService;
-import com.gilmarcarlos.developer.gcursos.service.UnidadeTrabalhoService;
-import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.service.locais.CargoService;
+import com.gilmarcarlos.developer.gcursos.service.locais.CodigoFuncionalService;
+import com.gilmarcarlos.developer.gcursos.service.locais.UnidadeTrabalhoService;
+import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.DadosPessoaisService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.TelefoneUsuarioService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 
 @Controller
 @RequestMapping("/")

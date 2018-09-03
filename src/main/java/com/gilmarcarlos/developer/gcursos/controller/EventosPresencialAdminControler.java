@@ -26,17 +26,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gilmarcarlos.developer.gcursos.model.eventos.AtividadePresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.CategoriaEvento;
-import com.gilmarcarlos.developer.gcursos.model.eventos.DiaEvento;
-import com.gilmarcarlos.developer.gcursos.model.eventos.EstiloPresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.EventoPresencialLog;
-import com.gilmarcarlos.developer.gcursos.model.eventos.InscricaoPresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.ListaPresenca;
-import com.gilmarcarlos.developer.gcursos.model.eventos.PermissoesEventoPresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.ProgramacaoPresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.Sobre;
+import com.gilmarcarlos.developer.gcursos.model.eventos.categorias.CategoriaEvento;
+import com.gilmarcarlos.developer.gcursos.model.eventos.listas.ListaPresenca;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.AtividadePresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.DiaEvento;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EstiloPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencialLog;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.PermissoesEventoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.ProgramacaoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.Sobre;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialDestaque;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialTop;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensLogoListaPresenca;
@@ -44,25 +44,25 @@ import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
 import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
-import com.gilmarcarlos.developer.gcursos.service.AtividadePresencialService;
-import com.gilmarcarlos.developer.gcursos.service.CargoService;
-import com.gilmarcarlos.developer.gcursos.service.CategoriaEventoService;
-import com.gilmarcarlos.developer.gcursos.service.DiaEventoPaginacaoService;
-import com.gilmarcarlos.developer.gcursos.service.DiaEventoService;
-import com.gilmarcarlos.developer.gcursos.service.EscolaridadeService;
-import com.gilmarcarlos.developer.gcursos.service.EstiloPresencialService;
-import com.gilmarcarlos.developer.gcursos.service.EventoPresencialLogService;
-import com.gilmarcarlos.developer.gcursos.service.EventoPresencialService;
-import com.gilmarcarlos.developer.gcursos.service.ImagensService;
-import com.gilmarcarlos.developer.gcursos.service.InscricaoPresencialService;
-import com.gilmarcarlos.developer.gcursos.service.LogEvePresencialPaginacaoService;
-import com.gilmarcarlos.developer.gcursos.service.NotificacaoService;
-import com.gilmarcarlos.developer.gcursos.service.PermissoesEventoPresencialService;
-import com.gilmarcarlos.developer.gcursos.service.ProgramacaoPresencialService;
-import com.gilmarcarlos.developer.gcursos.service.SexoService;
-import com.gilmarcarlos.developer.gcursos.service.SobreService;
-import com.gilmarcarlos.developer.gcursos.service.UnidadeTrabalhoService;
-import com.gilmarcarlos.developer.gcursos.service.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.categorias.CategoriaEventoService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.AtividadePresencialService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.DiaEventoPaginacaoService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.DiaEventoService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EstiloPresencialService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPresencialLogService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPresencialService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.InscricaoPresencialService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.LogEvePresencialPaginacaoService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.PermissoesEventoPresencialService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.ProgramacaoPresencialService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.SobreService;
+import com.gilmarcarlos.developer.gcursos.service.imagens.ImagensService;
+import com.gilmarcarlos.developer.gcursos.service.locais.CargoService;
+import com.gilmarcarlos.developer.gcursos.service.locais.UnidadeTrabalhoService;
+import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 
 @Controller
 @RequestMapping("/dashboard/admin/eventos/presencial")
@@ -153,7 +153,7 @@ public class EventosPresencialAdminControler {
 		if (usuarioLogado.isPerfilCompleto()) {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("eventos", getEventoPaginacao(0));
-			return "dashboard/admin/eventos/base-info-evento-presencial";
+			return "dashboard/admin/eventos/presencial/base-info-evento-presencial";
 		} else {
 			return "redirect:/dashboard/complete-cadastro";
 		}
@@ -167,7 +167,7 @@ public class EventosPresencialAdminControler {
 		if (usuarioLogado.isPerfilCompleto()) {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("eventos", getEventoPaginacao(page));
-			return "dashboard/admin/eventos/base-info-evento-presencial";
+			return "dashboard/admin/eventos/presencial/base-info-evento-presencial";
 		} else {
 			return "redirect:/dashboard/complete-cadastro";
 		}
@@ -181,7 +181,7 @@ public class EventosPresencialAdminControler {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("categorias", categoriaEventoService.listarTodos());
 
-			return "dashboard/admin/eventos/base-cadastro-evento-presencial";
+			return "dashboard/admin/eventos/presencial/base-cadastro-evento-presencial";
 		} else {
 			return "redirect:/dashboard/complete-cadastro";
 		}
@@ -223,7 +223,7 @@ public class EventosPresencialAdminControler {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("categorias", categoriaEventoService.listarTodos());
 			model.addAttribute("evento", eventoPresencialService.buscarPor(id));
-			return "dashboard/admin/eventos/base-cadastro-evento-presencial";
+			return "dashboard/admin/eventos/presencial/base-cadastro-evento-presencial";
 		} else {
 			return "redirect:/dashboard/admin/complete-cadastro";
 		}
@@ -304,7 +304,7 @@ public class EventosPresencialAdminControler {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("categorias", categoriaEventoService.listarTodos());
 			model.addAttribute("evento", eventoPresencialService.buscarPor(id));
-			return "dashboard/admin/eventos/base-estilo-evento-presencial";
+			return "dashboard/admin/eventos/presencial/base-estilo-evento-presencial";
 		} else {
 			return "redirect:/dashboard/admin/complete-cadastro";
 		}
@@ -365,7 +365,7 @@ public class EventosPresencialAdminControler {
 		model.addAttribute("evento", evento);
 		model.addAttribute("dias", getDiaPaginacao(evento.getProgramacao().getId(), 0));
 
-		return "dashboard/admin/eventos/base-detalhes-evento-presencial";
+		return "dashboard/admin/eventos/presencial/base-detalhes-evento-presencial";
 	}
 
 	@GetMapping("/detalhes/{id}/pagina/{page}")
@@ -379,7 +379,7 @@ public class EventosPresencialAdminControler {
 		model.addAttribute("evento", evento);
 		model.addAttribute("dias", getDiaPaginacao(evento.getProgramacao().getId(), page));
 
-		return "dashboard/admin/eventos/base-detalhes-evento-presencial";
+		return "dashboard/admin/eventos/presencial/base-detalhes-evento-presencial";
 	}
 
 	@GetMapping("/detalhes/imagens/top/deletar/{id}")
@@ -438,7 +438,7 @@ public class EventosPresencialAdminControler {
 		model.addAttribute("atividades", atividadePresencialService.buscarPorEvento(id));
 		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
 
-		return "dashboard/admin/eventos/base-cadastro-programacao-evento-presencial";
+		return "dashboard/admin/eventos/presencial/base-cadastro-programacao-evento-presencial";
 	}
 
 	@PostMapping("/detalhes/atividades/salvar")
@@ -492,7 +492,7 @@ public class EventosPresencialAdminControler {
 		model.addAttribute("evento", eventoPresencialService.buscarPor(id));
 		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
 
-		return "dashboard/admin/eventos/base-info-logs-evento-presencial";
+		return "dashboard/admin/eventos/presencial/base-info-logs-evento-presencial";
 	}
 
 	@GetMapping("/logs/{id}/deletar")
@@ -520,7 +520,7 @@ public class EventosPresencialAdminControler {
 		model.addAttribute("evento", eventoPresencialService.buscarPor(id));
 		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
 
-		return "dashboard/admin/eventos/base-info-logs-evento-presencial";
+		return "dashboard/admin/eventos/presencial/base-info-logs-evento-presencial";
 	}
 
 	@GetMapping("/categorias")
@@ -528,14 +528,14 @@ public class EventosPresencialAdminControler {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("categorias", categoriaEventoService.listarTodos());
 		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/eventos/base-info-categorias-evento-presencial";
+		return "dashboard/admin/eventos/presencial/base-info-categorias-evento-presencial";
 	}
 
 	@GetMapping("/categorias/novo")
 	public String categoriasNovo(Model model) {
 		model.addAttribute("usuario", getUsuario());
 		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/eventos/base-cadastro-categorias-evento-presencial";
+		return "dashboard/admin/eventos/presencial/base-cadastro-categorias-evento-presencial";
 	}
 
 	@PostMapping("/categorias/salvar")
@@ -544,7 +544,7 @@ public class EventosPresencialAdminControler {
 		model.addAttribute("categoria", categoriaEventoService.salvar(categorias));
 		model.addAttribute("alert", "alert alert-fill-success");
 		model.addAttribute("message", "salvo com sucesso");
-		return "dashboard/admin/eventos/base-cadastro-categorias-evento-presencial";
+		return "dashboard/admin/eventos/presencial/base-cadastro-categorias-evento-presencial";
 	}
 
 	@GetMapping("/categorias/alterar/{id}")
@@ -572,7 +572,7 @@ public class EventosPresencialAdminControler {
 			model.addAttribute("escolaridades", escolaridadeService.listarTodos());
 			model.addAttribute("sexos", sexoService.listarTodos());
 			model.addAttribute("cargos", cargoService.listarTodos());
-			return "dashboard/admin/eventos/base-cadastro-permissoes-evento-presencial";
+			return "dashboard/admin/eventos/presencial/base-cadastro-permissoes-evento-presencial";
 		} else {
 			return "redirect:/dashboard/admin/complete-cadastro";
 		}
@@ -596,7 +596,7 @@ public class EventosPresencialAdminControler {
 			model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
 			model.addAttribute("evento", eventoPresencialService.buscarPor(id));
 			model.addAttribute("atividades", atividadePresencialService.buscarPorEvento(id));
-			return "dashboard/admin/eventos/base-info-inscricoes-evento-presencial";
+			return "dashboard/admin/eventos/presencial/base-info-inscricoes-evento-presencial";
 		} else {
 			return "redirect:/dashboard/admin/complete-cadastro";
 		}
