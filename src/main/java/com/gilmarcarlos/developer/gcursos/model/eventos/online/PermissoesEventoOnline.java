@@ -89,8 +89,8 @@ public class PermissoesEventoOnline implements Serializable {
 		return codigo;
 	}
 
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
+	public void setCodigo(Boolean codigo) {
+		this.codigo = (codigo ? gerarToken() : null);
 	}
 
 	public String getDestinado() {

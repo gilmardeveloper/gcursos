@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -22,6 +23,8 @@ public class AtividadeOnline implements Serializable{
 	
 	private String titulo;
 	private String urlVideo;
+	
+	@Lob
 	private String conteudo;
 		
 	private AtividadeOnline anterior;

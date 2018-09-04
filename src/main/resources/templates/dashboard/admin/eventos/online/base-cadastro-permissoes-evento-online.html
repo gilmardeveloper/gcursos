@@ -40,7 +40,7 @@
 					<div class="col-12 grid-margin">
 						<nav aria-label="breadcrumb" role="navigation">
 				            <ol class="breadcrumb breadcrumb-custom bg-inverse-primary">
-				            <li class="breadcrumb-item"><a th:href="@{/dashboard/admin/eventos/presencial}">Eventos Presenciais</a></li>
+				            <li class="breadcrumb-item"><a th:href="@{/dashboard/admin/eventos/online}">Eventos Online</a></li>
 				            <li class="breadcrumb-item active" aria-current="page"><span th:text="${evento.titulo}"></span></li>
 				            </ol>
 				        </nav>
@@ -58,10 +58,10 @@
 										<div class="card-body">
 											<h4 class="card-title">Público alvo</h4>
 											<h6><span th:text="${evento.titulo}"></span></h6>
-											<form th:action="@{/dashboard/admin/eventos/presencial/permissoes/salvar}" class="forms-sample" method="post">
+											<form th:action="@{/dashboard/admin/eventos/online/permissoes/salvar}" class="forms-sample" method="post">
 												<div class="row">
 													
-													<input type="hidden" name="eventoPresencial" th:value="${evento} != null ? ${evento.id} : ''" />
+													<input type="hidden" name="eventoOnline" th:value="${evento} != null ? ${evento.id} : ''" />
 
 													<input type="hidden" name="id" th:value="${evento.permissoes} != null ? ${evento.permissoes.id} : ''" />
 
@@ -147,6 +147,8 @@
 	<!-- container-scroller -->
 	<span th:replace="fragments/base-script :: base"></span>
 	<script th:src="@{~/js/select2.min.js}"></script>
+	<script th:src="@{~/js/nouislider.min.js}"></script>
+	<script th:src="@{~/js/wNumb.js}"></script>
 	<span th:replace="fragments/base-script :: plugins"></span>
 	
 	<script th:inline="javascript">

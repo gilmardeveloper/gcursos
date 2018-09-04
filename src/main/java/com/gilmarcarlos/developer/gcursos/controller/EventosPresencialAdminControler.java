@@ -105,10 +105,10 @@ public class EventosPresencialAdminControler {
 	private LogEvePresencialPaginacaoService logEventoPresencialPaginacaoService;
 
 	@Autowired
-	private UnidadeTrabalhoService unidadeService;
+	private InscricaoPresencialService inscricaoPresencialService;
 
 	@Autowired
-	private InscricaoPresencialService inscricaoPresencialService;
+	private UnidadeTrabalhoService unidadeService;
 
 	@Autowired
 	private CargoService cargoService;

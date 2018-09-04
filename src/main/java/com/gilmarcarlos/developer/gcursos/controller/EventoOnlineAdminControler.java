@@ -22,16 +22,25 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EstiloOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnlineLog;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.Modulo;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.PermissoesEventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.SobreOnline;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoOnlineDestaque;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoOnlineTop;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.eventos.categorias.CategoriaEventoService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.online.AtividadeOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EstiloOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineLogService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.online.ModuloService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.online.PermissoesEventoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.SobreOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.imagens.ImagensService;
+import com.gilmarcarlos.developer.gcursos.service.locais.CargoService;
+import com.gilmarcarlos.developer.gcursos.service.locais.UnidadeTrabalhoService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 
 @Controller
@@ -55,6 +64,27 @@ public class EventoOnlineAdminControler {
 	
 	@Autowired
 	private EstiloOnlineService estiloOnlineService;
+	
+	@Autowired
+	private UnidadeTrabalhoService unidadeService;
+
+	@Autowired
+	private CargoService cargoService;
+
+	@Autowired
+	private SexoService sexoService;
+
+	@Autowired
+	private EscolaridadeService escolaridadeService;
+
+	@Autowired
+	private PermissoesEventoOnlineService permissoesEveOnlineService;
+
+	@Autowired
+	private ModuloService moduloService;
+	
+	@Autowired
+	private AtividadeOnlineService atividadeService;
 	
 	@Autowired
 	private ImagensService imagensService;
@@ -221,7 +251,7 @@ public class EventoOnlineAdminControler {
 		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
 		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("evento", evento);
-
+		
 		return "dashboard/admin/eventos/online/base-detalhes-evento-online";
 	}
 
@@ -309,13 +339,126 @@ public class EventoOnlineAdminControler {
 
 		return "dashboard/admin/eventos/online/base-info-logs-evento-online";
 	}
+	
+	@GetMapping("/permissoes/{id}")
+	private String permissoesEventoOnline(@PathVariable("id") Long id, Model model) {
+		Usuario usuarioLogado = getUsuario();
+		if (usuarioLogado.isPerfilCompleto()) {
+			model.addAttribute("usuario", usuarioLogado);
+			model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+			model.addAttribute("evento", eventoOnlineService.buscarPor(id));
+			model.addAttribute("unidades", unidadeService.listarTodos());
+			model.addAttribute("escolaridades", escolaridadeService.listarTodos());
+			model.addAttribute("sexos", sexoService.listarTodos());
+			model.addAttribute("cargos", cargoService.listarTodos());
+			return "dashboard/admin/eventos/online/base-cadastro-permissoes-evento-online";
+		} else {
+			return "redirect:/dashboard/admin/complete-cadastro";
+		}
+	}
 
+	@PostMapping("/permissoes/salvar")
+	private String permissoesEventoOnlineSalvar(PermissoesEventoOnline permissoes, RedirectAttributes model) {
+
+		permissoesEveOnlineService.salvar(permissoes);
+		model.addFlashAttribute("alert", "alert alert-fill-success alert-dismissible fade show");
+		model.addFlashAttribute("message", "salvo com sucesso");
+
+		return "redirect:/dashboard/admin/eventos/online";
+	}
+
+	
+	@GetMapping("/cancelar/{id}")
+	public String cancelar(@PathVariable("id") Long id, RedirectAttributes model) {
+		Usuario usuarioLogado = getUsuario();
+		if (usuarioLogado.isPerfilCompleto()) {
+			eventoOnlineService.cancelar(id);
+			logEventoOnlineService
+					.salvar(log("Evento presencial foi cancelado", eventoOnlineService.buscarPor(id)));
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "Evento online foi cancelado com sucesso");
+			return "redirect:/dashboard/admin/eventos/online";
+		} else {
+			return "redirect:/dashboard/admin/complete-cadastro";
+		}
+	}
+
+	@GetMapping("/ativar/{id}")
+	public String ativar(@PathVariable("id") Long id, RedirectAttributes model) {
+		Usuario usuarioLogado = getUsuario();
+		if (usuarioLogado.isPerfilCompleto()) {
+			eventoOnlineService.ativar(id);
+			logEventoOnlineService
+					.salvar(log("Evento presencial foi ativado", eventoOnlineService.buscarPor(id)));
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "evento ativado com sucesso");
+			return "redirect:/dashboard/admin/eventos/online";
+		} else {
+			return "redirect:/dashboard/admin/complete-cadastro";
+		}
+	}
+	
+	@GetMapping("/publicacao/ativar/{id}")
+	public String ativarPublicacao(@PathVariable("id") Long id, RedirectAttributes model) {
+		Usuario usuarioLogado = getUsuario();
+		if (usuarioLogado.isPerfilCompleto()) {
+			try {
+				eventoOnlineService.publicar(id);
+				logEventoOnlineService
+						.salvar(log("Evento presencial foi publicado", eventoOnlineService.buscarPor(id)));
+				model.addFlashAttribute("alert", "alert alert-fill-success");
+				model.addFlashAttribute("message", "evento publicado com sucesso");
+				return "redirect:/dashboard/admin/eventos/online";
+			} catch (Exception e) {
+
+				model.addFlashAttribute("alert", "alert alert-fill-danger");
+				model.addFlashAttribute("message", e.getMessage());
+				return "redirect:/dashboard/admin/eventos/online";
+			}
+		} else {
+			return "redirect:/dashboard/admin/complete-cadastro";
+		}
+	}
+
+	@GetMapping("/publicacao/desativar/{id}")
+	public String desativarPublicacao(@PathVariable("id") Long id, RedirectAttributes model) {
+		Usuario usuarioLogado = getUsuario();
+		if (usuarioLogado.isPerfilCompleto()) {
+			eventoOnlineService.cancelarPublicacao(id);
+			logEventoOnlineService.salvar(
+					log("A publicação do evento presencial foi removida", eventoOnlineService.buscarPor(id)));
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "evento teve sua publicação desativada com sucesso");
+			return "redirect:/dashboard/admin/eventos/online";
+		} else {
+			return "redirect:/dashboard/admin/complete-cadastro";
+		}
+	}
+
+	@PostMapping("/modulos/salvar")
+	public String modulosSalvar(Modulo modulo, RedirectAttributes model) {
+		
+		moduloService.salvar(modulo);
+		return "redirect:/dashboard/admin/eventos/online/detalhes/" + modulo.getEventoOnline().getId();
+	}
+	
+	@GetMapping("/atividades/{id}")
+	public String atividades(@PathVariable("id") Long id, RedirectAttributes model) {
+		
+		Usuario usuarioLogado = getUsuario();
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("evento", eventoOnlineService.buscarPor(id));
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		
+		return "dashboard/admin/eventos/online/base-cadastro-atividades-evento-online";
+	}
+	
 	private Usuario getUsuario() {
 		autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.buscarPor(autenticado.getName());
 		return usuario;
 	}
-
+	
 	private EventoOnlineLog log(String mensagem, EventoOnline evento) {
 		EventoOnlineLog eventoOnlineLog = new EventoOnlineLog();
 		eventoOnlineLog.setData(LocalDate.now());
