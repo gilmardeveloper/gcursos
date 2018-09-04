@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+<title>ZEUS | Logs</title>
+<link rel="stylesheet" th:href="@{~/css/dataTables.bootstrap4.css}" />
+</head>
+
+<body>
+	<!-- container-scroller -->
+	<div class="container-scroller">
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+
+		<!-- container-fluid -->
+		<div class="container-fluid page-body-wrapper">
+			<!-- row-offcanvas -->
+			<div class="row row-offcanvas row-offcanvas-right">
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					
+					<div class="col-12 grid-margin">
+						<nav aria-label="breadcrumb" role="navigation">
+				            <ol class="breadcrumb breadcrumb-custom bg-inverse-primary">
+				            <li class="breadcrumb-item"><a th:href="@{/dashboard/admin/eventos/online}">Eventos Online</a></li>
+				            <li class="breadcrumb-item active" aria-current="page"><span th:text="${evento.titulo}"></span></li>
+				            </ol>
+				        </nav>
+			        </div>
+
+					<!-- row justify-content -->
+					<div class="row justify-content-center">
+
+						<!-- card table -->
+						<div th:unless="${#lists.isEmpty(logs)}" class="card">
+							<div class="card-header">
+								<a class="btn btn-outline-success"
+									th:href="@{/dashboard/admin/eventos/online/logs/{id}/deletar(id=${evento.id})}">Apagar
+									todas</a>
+								<div th:if="${alert != null}">
+									<div th:class="${alert}" role="alert">
+										<i class="mdi mdi-alert-circle"></i> <span
+											th:text="${message}"></span>
+										<button type="button" class="close" data-dismiss="alert"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								</div>
+							</div>
+							<div class="card-body">
+								<h4 class="card-title">Logs</h4>
+								<div class="row">
+									<div class="col-12">
+										<div class="table-responsive">
+											<table id="order-listing-logs" class="table">
+												<thead>
+													<tr>
+														<th>Data</th>
+														<th>Mensagem</th>
+														<th>::</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="log : ${logs}">
+														<td th:text="${#temporals.format(log.data, 'dd/MM/yyyy')}"></td>
+														<td th:text="${log.msg}"></td>
+														<td><a class="btn btn-outline-danger pt-1 pb-1"
+															th:href="@{/dashboard/admin/eventos/online/logs/{id}/deletar/{log}(id=${evento.id},log=${log.id})}"><i
+																class="icon-close"></i></a></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+
+									<!-- paginação inicio -->
+									<div class="col-lg-12">
+
+										<div class="pagination-area text-center"
+											th:unless="${#lists.isEmpty(logs)}">
+											<ul class="pagination rounded"
+												th:if="${logs.totalPages} &gt; 1">
+
+												<li class="page-item"><a
+													th:href="@{/dashboard/admin/eventos/online/logs/{id}/pagina/{page}/(id=${evento.id},page=0)}"
+													th:class="${logs.first} == true ? 'btn disabled' : 'page-link' "><i
+														class="mdi mdi-chevron-left"></i></a></li>
+												<li class="page-item" th:if="(${logs.number} - 1) &gt; -1"><a
+													class="page-link"
+													th:href="@{/dashboard/admin/eventos/online/logs/{id}/pagina/{page}/(id=${evento.id},page=${logs.number} - 1)}"
+													th:text="${logs.number} - 1">&laquo;</a></li>
+
+												<li th:if="${logs.number} &lt; (${logs.totalPages} - 1)"
+													th:each="index : ${#numbers.sequence(logs.number, logs.number + 1)}"
+													th:class="${index} == ${logs.number} ? 'page-item active' : 'page-item'"><a
+													class="page-link"
+													th:href="@{/dashboard/admin/eventos/online/logs/{id}/pagina/{page}/(id=${evento.id},page=${index})}"
+													th:text="${index}">&laquo;</a></li>
+
+												<li class="page-item"><a
+													th:href="@{/dashboard/admin/eventos/online/logs/{id}/pagina/{page}/(id=${evento.id},page=${logs.totalPages} - 1)}"
+													th:class="${logs.last} == true ? 'btn disabled' : 'page-link' "><i
+														class="mdi mdi-chevron-right"></i></a></li>
+											</ul>
+										</div>
+
+									</div>
+									<!-- paginação final -->
+								</div>
+							</div>
+						</div>
+						<!-- end card table -->
+					</div>
+					<!-- end row justify-content -->
+				</div>
+				<!-- end content-wrapper -->
+
+				<!-- footer -->
+				<footer th:replace="fragments/footer :: footer"></footer>
+				<!-- end footer -->
+			</div>
+			<!-- end row-offcanvas -->
+		</div>
+		<!-- end container-fluid  -->
+
+	</div>
+	<!-- end container-scroller -->
+
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/jquery.dataTables.js}"></script>
+	<script async="async" th:src="@{~/js/dataTables.bootstrap4.js}"></script>
+	<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script>
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<!--<script  th:src="@{~/js/datatable-init.js}"></script> -->
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		$(()=>{
+			var table = $('#order-listing-logs').DataTable({
+				"paging": false,
+				 "ordering": false
+			});
+		});
+		/*]]>*/
+	</script>
+
+</body>
+
+</html>

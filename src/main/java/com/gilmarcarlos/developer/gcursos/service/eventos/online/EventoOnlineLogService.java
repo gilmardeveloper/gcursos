@@ -35,5 +35,9 @@ public class EventoOnlineLogService {
 	public Page<EventoOnlineLog> listarTodos(Pageable pageable){
 		return repository.listarTodos(pageable);
 	}
+	
+	public Page<EventoOnlineLog> listarLogsPorEvento(Long id, Pageable pageable){
+		return repository.listarLogsPorEvento(id, pageable);
+	}
 		
 }

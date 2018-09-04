@@ -20,5 +20,8 @@ public interface EventoOnlineLogRepository extends CrudRepository<EventoOnlineLo
 	
 	@Query("select e from EventoOnlineLog e order by e.data desc")
 	Page<EventoOnlineLog> listarTodos(Pageable pageable);
+
+	@Query("select e from EventoOnlineLog e where e.eventoOnline.id = :pid order by e.data desc")
+	Page<EventoOnlineLog> listarLogsPorEvento(@Param("pid")Long id, Pageable pageable);
 	
 }

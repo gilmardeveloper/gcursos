@@ -16,6 +16,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
@@ -58,6 +60,9 @@ public class Usuario implements Serializable {
 
 	@OneToMany(mappedBy = "responsavel")
 	private List<EventoPresencial> eventoPresencial;
+
+	@OneToMany(mappedBy = "responsavel")
+	private List<EventoOnline> eventoOnline;
 	
 	@OneToMany(mappedBy = "usuario")
 	private List<InscricaoPresencial> inscricoes;
@@ -162,6 +167,14 @@ public class Usuario implements Serializable {
 
 	public void setInscricoes(List<InscricaoPresencial> inscricoes) {
 		this.inscricoes = inscricoes;
+	}
+	
+	public List<EventoOnline> getEventoOnline() {
+		return eventoOnline;
+	}
+
+	public void setEventoOnline(List<EventoOnline> eventoOnline) {
+		this.eventoOnline = eventoOnline;
 	}
 
 	@Transient

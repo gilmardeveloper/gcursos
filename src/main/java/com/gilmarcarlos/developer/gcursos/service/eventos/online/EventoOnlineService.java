@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.DataFinalMenorException;
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventoCanceladoException;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.EventoOnlineRepository;
@@ -22,7 +21,7 @@ public class EventoOnlineService {
 	@Autowired
 	private NotificacaoService notificacoes;
 
-	public EventoOnline salvar(EventoOnline eventoOnline) throws DataFinalMenorException {
+	public EventoOnline salvar(EventoOnline eventoOnline){
 
 		if (eventoOnline.getId() == null) {
 			eventoOnline.ativarEvento();

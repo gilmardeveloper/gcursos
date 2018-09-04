@@ -97,7 +97,7 @@ public class EventoPresencial implements Serializable {
 	}
 
 	public String getTitulo() {
-		return titulo;
+		return titulo.toUpperCase();
 	}
 
 	public void setTitulo(String titulo) {

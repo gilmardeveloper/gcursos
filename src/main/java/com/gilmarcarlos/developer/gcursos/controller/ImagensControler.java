@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.imagens.ImagensService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
@@ -28,10 +29,13 @@ public class ImagensControler {
 	private EventoPresencialService eventoPresencialService;
 	
 	@Autowired
+	private EventoOnlineService eventoOnlineService;
+	
+	@Autowired
 	private ImagensService imagensService;
 	
 	
-	@GetMapping("/evento/presencial/{id}/responsavel.png")
+	@GetMapping("/evento/{id}/responsavel.png")
 	public @ResponseBody byte[] imagemResponsavel(@PathVariable("id") Long id) {
 		Blob imagem = usuarioService.buscarPor(id).getImagens().getImagem();
 		try {
@@ -61,9 +65,39 @@ public class ImagensControler {
 		}
 	}
 	
+	@GetMapping("/evento/online/{id}/imagem-top.png")
+	public @ResponseBody byte[] imagemOnlineTop(@PathVariable("id") Long id) {
+		Blob imagem = eventoOnlineService.buscarPor(id).getImagemTopDetalhes().getImagem();
+		try {
+			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
+			bufferedImage = imagensService.verifica(bufferedImage, 250, 1000);
+			ImageIO.write(bufferedImage, "png", byteOutStream);
+			return byteOutStream.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	@GetMapping("/evento/presencial/{id}/imagem-destaque.png")
 	public @ResponseBody byte[] imagemDestaque(@PathVariable("id") Long id) {
 		Blob imagem = eventoPresencialService.buscarPor(id).getImagemDestaque().getImagem();
+		try {
+			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
+			bufferedImage = imagensService.verifica(bufferedImage, 293, 367);
+			ImageIO.write(bufferedImage, "png", byteOutStream);
+			return byteOutStream.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	@GetMapping("/evento/online/{id}/imagem-destaque.png")
+	public @ResponseBody byte[] imagemOnlineDestaque(@PathVariable("id") Long id) {
+		Blob imagem = eventoOnlineService.buscarPor(id).getImagemDestaque().getImagem();
 		try {
 			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());

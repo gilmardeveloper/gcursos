@@ -51,7 +51,8 @@ public class EventoOnline implements Serializable {
 	
 	@OneToMany(mappedBy = "eventoOnline")
 	private List<Modulo> modulos;
-		
+	
+	@OneToOne
 	private Usuario responsavel;
 
 	@OneToMany(mappedBy = "eventoOnline")
@@ -63,9 +64,13 @@ public class EventoOnline implements Serializable {
 	@OneToOne
 	private CategoriaEvento categoria;
 
+	@OneToOne(mappedBy = "eventoOnline")
+	private SobreOnline sobre;
+	
 	private Boolean publicado;
 
 	private Boolean ativo;
+	
 
 	public Long getId() {
 		return id;
@@ -76,7 +81,7 @@ public class EventoOnline implements Serializable {
 	}
 
 	public String getTitulo() {
-		return titulo;
+		return titulo.toUpperCase();
 	}
 
 	public void setTitulo(String titulo) {
@@ -189,6 +194,22 @@ public class EventoOnline implements Serializable {
 
 	public void setCertificado(Boolean certificado) {
 		this.certificado = certificado;
+	}
+
+	public List<Modulo> getModulos() {
+		return modulos;
+	}
+
+	public void setModulos(List<Modulo> modulos) {
+		this.modulos = modulos;
+	}
+
+	public SobreOnline getSobre() {
+		return sobre;
+	}
+
+	public void setSobre(SobreOnline sobre) {
+		this.sobre = sobre;
 	}
 
 	@Transient
