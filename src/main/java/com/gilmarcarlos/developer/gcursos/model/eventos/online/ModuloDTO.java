@@ -2,35 +2,22 @@ package com.gilmarcarlos.developer.gcursos.model.eventos.online;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.OneToOne;
-
-@Entity
-public class AtividadeOnline implements Serializable{
+public class ModuloDTO implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
 	private String titulo;
-	private String urlVideo;
-	
-	@Lob
-	private String conteudo;
-		
 	private Integer posicao;
 	
-	@OneToOne
-	private Modulo modulo;
+	public ModuloDTO(Modulo modulo) {
+		this.id = modulo.getId();
+		this.titulo = modulo.getTitulo();
+		this.posicao = modulo.getPosicao();
+	}
 
 	public Long getId() {
 		return id;
@@ -48,21 +35,6 @@ public class AtividadeOnline implements Serializable{
 		this.titulo = titulo;
 	}
 
-	public String getUrlVideo() {
-		return urlVideo;
-	}
-
-	public void setUrlVideo(String urlVideo) {
-		this.urlVideo = urlVideo;
-	}
-
-	public String getConteudo() {
-		return conteudo;
-	}
-
-	public void setConteudo(String conteudo) {
-		this.conteudo = conteudo;
-	}
 
 	public Integer getPosicao() {
 		return posicao;
@@ -70,14 +42,6 @@ public class AtividadeOnline implements Serializable{
 
 	public void setPosicao(Integer posicao) {
 		this.posicao = posicao;
-	}
-
-	public Modulo getModulo() {
-		return modulo;
-	}
-
-	public void setModulo(Modulo modulo) {
-		this.modulo = modulo;
 	}
 
 	@Override
@@ -96,7 +60,7 @@ public class AtividadeOnline implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AtividadeOnline other = (AtividadeOnline) obj;
+		ModuloDTO other = (ModuloDTO) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

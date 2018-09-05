@@ -132,12 +132,33 @@
 													role="tabpanel" aria-labelledby="avatar-tab">
 													<div class="row">
 
-														<div class="col-lg-12 mb-2"
+														<div class="col-lg-12 border-bottom pt-2 pb-2">
+															<div class="row justify-content-between">
+																	
+																	<div class="col-lg-8">
+																		<h4 class="font-weight-bold">Módulos</h4>
+																	</div>
+
+																	<div class="col-lg-4">
+																		<h4 class="text-muted text-center">Atividades</h4>
+																	</div>
+															</div>
+														</div>
+
+														<div class="col-lg-12 border-bottom pt-4"
 															th:unless="${#lists.isEmpty(evento.modulos)}"
 															th:each="modulo : ${evento.modulos}">
 
-															<h5 class="font-weight-bold" th:text="${modulo.titulo}"></h5>
+															<div class="row justify-content-between">
+																<div class="col-lg-10">
+																	<a th:href="@{/dashboard/admin/eventos/online/modulos/{id}(id=${modulo.id})}"><h5 class="font-weight-bold" th:text="${modulo.titulo}"></h5></a>
+																</div>
 
+																<div class="col-lg-2">
+																	<p class="text-muted" th:text="${#lists.isEmpty(modulo.atividades)} ? '0' : ${#lists.size(modulo.atividades)}"></p>
+																</div>
+															</div>
+															
 														</div>
 
 														<!-- paginação inicio -->
@@ -373,7 +394,19 @@
 										<input type="hidden" name="eventoOnline"
 											th:value="${evento.id}" />
 
+										<input type="hidden" id="id" name="id" />	
+
 										<div class="row">
+
+											<div class="col-lg-12" th:unless="${#lists.isEmpty(evento.modulos)}">
+												<div class="form-group">
+													<label for="select-modulo">Módulos</label>
+													<select class="form-control" id="select-modulo">
+														<option value="-1">Adicionar novo</option>
+														<option th:each="modulo : ${evento.modulos}" th:text="${modulo.titulo}" th:value="${modulo.id}"></option>
+													</select>
+												</div>
+											</div>
 											
 											<div class="col-lg-12">
 												<div class="form-group">
@@ -381,6 +414,15 @@
 													<input class="form-control" id="titulo"
 														placeholder="título do módulo" 
 														required="true" name="titulo" />
+												</div>
+											</div>
+
+											<div class="col-lg-12">
+												<div class="form-group">
+													<label for="posicao">Qual a posição do módulo dentro do evento?</label> <input type="number"
+												class="form-control" id="posicao"
+												placeholder="informe a posição do módulo" name="posicao"
+												required="true" min="1" />
 												</div>
 											</div>
 
@@ -474,6 +516,49 @@
 			    $(".js-select-single").select2();
 			  }
 		})(jQuery);
+	/*]]>*/
+	</script>
+
+	<script th:inline="javascript" th:unless="${#lists.isEmpty(evento.modulos)}">
+
+	/*<![CDATA[*/
+		$(()=>{
+
+			$('#select-modulo').on('change', preencheModalModulo);
+
+		});
+
+		function preencheModalModulo(){
+
+			var id = $('#select-modulo').val();
+			if(id !== -1){
+
+					$.ajax({
+		                  url: `/dashboard/admin/eventos/online/modulo/dto/${id}`,
+		                  type: "GET", 
+
+		              success: (result,status,xhr) => {
+		                                                  $('#id').val(result.id);
+		                                                  $('#titulo').val(result.titulo);
+		                                                  $('#posicao').val(result.posicao);
+		                                                  console.log(result);
+		                                              }, 
+		              error: () => {
+		              	
+		              	$('#id').val('');
+				         $('#titulo').val('');
+				         $('#posicao').val('');
+		              	console.log("error");
+
+		              }
+		      		});
+			}else{
+				 $('#id').val('');
+		         $('#titulo').val('');
+		         $('#posicao').val('');
+			}
+		}
+
 	/*]]>*/
 	</script>
 

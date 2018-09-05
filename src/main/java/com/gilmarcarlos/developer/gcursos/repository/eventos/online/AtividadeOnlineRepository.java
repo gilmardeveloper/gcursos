@@ -12,13 +12,16 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.online.AtividadeOnline;
 
 public interface AtividadeOnlineRepository extends CrudRepository<AtividadeOnline, Long> {
 	
-	@Query("select a from AtividadeOnline a")
+	@Query("select a from AtividadeOnline a order by a.posicao")
 	List<AtividadeOnline> listAll();
 	
 	@Query("select a from AtividadeOnline a where a.id = :pid")
-	AtividadeOnline buscarPor(@Param("pid")Long id);
+	AtividadeOnline buscarPor(@Param("pid") Long id);
 
-	@Query("select a from AtividadeOnline a")
+	@Query("select a from AtividadeOnline a order by a.posicao")
 	Page<AtividadeOnline> listarTodos(Pageable pageable);
+
+	@Query("select a from AtividadeOnline a where a.modulo.eventoOnline.id = :pid order by a.posicao")
+	List<AtividadeOnline> buscarPorEvento(@Param("pid") Long id);
 
 }

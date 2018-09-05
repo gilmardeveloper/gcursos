@@ -281,4 +281,33 @@
           </ul>
 </nav>
 
+<!-- sidebar para evento online -->
+<nav th:fragment="sidebar-modulo-online" class="sidebar sidebar-offcanvas" id="sidebar">
+          <ul class="nav">
+
+            <li th:replace="fragments/sidebar :: credenciais"></li>
+
+             <div class="nav-link pt-2 pb-2 border-top">
+              <small class="text-success font-weight-bold" th:text="${evento.titulo}"></small>
+            </div>
+
+            <div class="nav-link pt-4 pb-2 border-top">
+              <p class="font-weight-bold text-white">MÓDULO-<span th:text="${modulo.posicao}"></span></p>
+              <p class="text-muted font-weight-bold" th:text="${modulo.titulo}"></p>
+            </div>
+
+            <div class="nav-link pt-4 pb-2 border-top">
+              <p class="font-weight-bold text-muted">ATIVIDADES:</p>
+            </div>
+
+            <li class="nav-item" th:each="ativ : ${modulo.atividades}">
+              <a class="nav-link" th:href="@{/dashboard/admin/eventos/online/modulos/{id}/atividade/{posicao}(id=${modulo.id},posicao=${ativ.posicao})}">
+                <i class="icon-fire menu-icon text-white"></i>
+                <span class="menu-title" th:text="${ativ.titulo}"></span>
+              </a>
+            </li>
+           
+          </ul>
+</nav>
+
 </html>

@@ -27,8 +27,7 @@ public class Modulo implements Serializable {
 	@OneToMany(mappedBy = "modulo")
 	private List<AtividadeOnline> atividades;
 		
-	private Modulo anterior;
-	private Modulo proximo;
+	private Integer posicao;
 	
 	@OneToOne
 	private EventoOnline eventoOnline;
@@ -50,6 +49,7 @@ public class Modulo implements Serializable {
 	}
 
 	public List<AtividadeOnline> getAtividades() {
+		atividades.sort((a1, a2) -> Integer.compare(a1.getPosicao(), a2.getPosicao()));
 		return atividades;
 	}
 
@@ -57,20 +57,12 @@ public class Modulo implements Serializable {
 		this.atividades = atividades;
 	}
 
-	public Modulo getAnterior() {
-		return anterior;
+	public Integer getPosicao() {
+		return posicao;
 	}
 
-	public void setAnterior(Modulo anterior) {
-		this.anterior = anterior;
-	}
-
-	public Modulo getProximo() {
-		return proximo;
-	}
-
-	public void setProximo(Modulo proximo) {
-		this.proximo = proximo;
+	public void setPosicao(Integer posicao) {
+		this.posicao = posicao;
 	}
 
 	public EventoOnline getEventoOnline() {

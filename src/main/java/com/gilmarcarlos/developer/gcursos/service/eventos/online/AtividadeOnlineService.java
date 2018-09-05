@@ -34,4 +34,8 @@ public class AtividadeOnlineService {
 		return repository.buscarPor(id);
 	}
 
+	public List<AtividadeOnline> buscarPorEvento(Long id) {
+		return repository.buscarPorEvento(id);
+	}
+
 }

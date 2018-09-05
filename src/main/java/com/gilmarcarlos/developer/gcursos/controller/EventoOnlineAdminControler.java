@@ -17,14 +17,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.AtividadeOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EstiloOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnlineLog;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.Modulo;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.ModuloDTO;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.PermissoesEventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.SobreOnline;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.AtividadePresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.ProgramacaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoOnlineDestaque;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoOnlineTop;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
@@ -61,10 +66,10 @@ public class EventoOnlineAdminControler {
 
 	@Autowired
 	private SobreOnlineService sobreService;
-	
+
 	@Autowired
 	private EstiloOnlineService estiloOnlineService;
-	
+
 	@Autowired
 	private UnidadeTrabalhoService unidadeService;
 
@@ -82,10 +87,10 @@ public class EventoOnlineAdminControler {
 
 	@Autowired
 	private ModuloService moduloService;
-	
+
 	@Autowired
 	private AtividadeOnlineService atividadeService;
-	
+
 	@Autowired
 	private ImagensService imagensService;
 
@@ -143,7 +148,7 @@ public class EventoOnlineAdminControler {
 			return "redirect:/dashboard/complete-cadastro";
 		}
 	}
-	
+
 	@GetMapping("/alterar/{id}")
 	public String alterar(@PathVariable("id") Long id, Model model) {
 		Usuario usuarioLogado = getUsuario();
@@ -157,10 +162,10 @@ public class EventoOnlineAdminControler {
 			return "redirect:/dashboard/admin/complete-cadastro";
 		}
 	}
-	
+
 	@PostMapping("/salvar")
 	public String eventoPresencialSalvar(EventoOnline evento, RedirectAttributes model) {
-		
+
 		EventoOnline novoEvento = eventoOnlineService.salvar(evento);
 		logEventoOnlineService.salvar(log("Evento online criado", novoEvento));
 
@@ -170,7 +175,7 @@ public class EventoOnlineAdminControler {
 		return "redirect:/dashboard/admin/eventos/online";
 
 	}
-	
+
 	@GetMapping("/estilo/{id}")
 	public String estilo(@PathVariable("id") Long id, Model model) {
 		Usuario usuarioLogado = getUsuario();
@@ -184,7 +189,7 @@ public class EventoOnlineAdminControler {
 			return "redirect:/dashboard/admin/complete-cadastro";
 		}
 	}
-	
+
 	@PostMapping("/imagens/destaque/salvar")
 	public String salvarImagensDestaque(@Valid ImagensEventoOnlineDestaque imagens, BindingResult result,
 			RedirectAttributes model) {
@@ -196,8 +201,7 @@ public class EventoOnlineAdminControler {
 
 			if (imagens != null) {
 				imagensService.salvarImagemEveOnlineDestaque(imagens);
-				logEventoOnlineService
-						.salvar(log("Imagem de destaque foi alterada", imagens.getEventoOnline()));
+				logEventoOnlineService.salvar(log("Imagem de destaque foi alterada", imagens.getEventoOnline()));
 			}
 			return "redirect:/dashboard/admin/eventos/online/estilo/" + imagens.getEventoOnline().getId();
 		} else {
@@ -224,14 +228,13 @@ public class EventoOnlineAdminControler {
 	public String salvarEstiloDestaque(EstiloOnline estilo, RedirectAttributes model) {
 
 		EstiloOnline novoEstilo = estiloOnlineService.salvar(estilo);
-		logEventoOnlineService
-				.salvar(log("Estilo da página de destaque foi alterado", novoEstilo.getEventoOnline()));
+		logEventoOnlineService.salvar(log("Estilo da página de destaque foi alterado", novoEstilo.getEventoOnline()));
 		return "redirect:/dashboard/admin/eventos/online/estilo/" + novoEstilo.getEventoOnline().getId();
 	}
-	
+
 	@GetMapping("/detalhes/{id}")
 	public String eventoDetalhes(@PathVariable("id") Long id, Model model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 		EventoOnline evento = eventoOnlineService.buscarPor(id);
 
@@ -251,7 +254,7 @@ public class EventoOnlineAdminControler {
 		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
 		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("evento", evento);
-		
+
 		return "dashboard/admin/eventos/online/base-detalhes-evento-online";
 	}
 
@@ -300,7 +303,7 @@ public class EventoOnlineAdminControler {
 		return "redirect:/dashboard/admin/eventos/online/detalhes/" + sobre.getEventoOnline().getId();
 
 	}
-	
+
 	@GetMapping("/logs/{id}")
 	public String eventoOnlineLogs(@PathVariable("id") Long id, Model model) {
 
@@ -339,7 +342,7 @@ public class EventoOnlineAdminControler {
 
 		return "dashboard/admin/eventos/online/base-info-logs-evento-online";
 	}
-	
+
 	@GetMapping("/permissoes/{id}")
 	private String permissoesEventoOnline(@PathVariable("id") Long id, Model model) {
 		Usuario usuarioLogado = getUsuario();
@@ -367,14 +370,12 @@ public class EventoOnlineAdminControler {
 		return "redirect:/dashboard/admin/eventos/online";
 	}
 
-	
 	@GetMapping("/cancelar/{id}")
 	public String cancelar(@PathVariable("id") Long id, RedirectAttributes model) {
 		Usuario usuarioLogado = getUsuario();
 		if (usuarioLogado.isPerfilCompleto()) {
 			eventoOnlineService.cancelar(id);
-			logEventoOnlineService
-					.salvar(log("Evento presencial foi cancelado", eventoOnlineService.buscarPor(id)));
+			logEventoOnlineService.salvar(log("Evento presencial foi cancelado", eventoOnlineService.buscarPor(id)));
 			model.addFlashAttribute("alert", "alert alert-fill-success");
 			model.addFlashAttribute("message", "Evento online foi cancelado com sucesso");
 			return "redirect:/dashboard/admin/eventos/online";
@@ -388,8 +389,7 @@ public class EventoOnlineAdminControler {
 		Usuario usuarioLogado = getUsuario();
 		if (usuarioLogado.isPerfilCompleto()) {
 			eventoOnlineService.ativar(id);
-			logEventoOnlineService
-					.salvar(log("Evento presencial foi ativado", eventoOnlineService.buscarPor(id)));
+			logEventoOnlineService.salvar(log("Evento presencial foi ativado", eventoOnlineService.buscarPor(id)));
 			model.addFlashAttribute("alert", "alert alert-fill-success");
 			model.addFlashAttribute("message", "evento ativado com sucesso");
 			return "redirect:/dashboard/admin/eventos/online";
@@ -397,7 +397,7 @@ public class EventoOnlineAdminControler {
 			return "redirect:/dashboard/admin/complete-cadastro";
 		}
 	}
-	
+
 	@GetMapping("/publicacao/ativar/{id}")
 	public String ativarPublicacao(@PathVariable("id") Long id, RedirectAttributes model) {
 		Usuario usuarioLogado = getUsuario();
@@ -425,8 +425,8 @@ public class EventoOnlineAdminControler {
 		Usuario usuarioLogado = getUsuario();
 		if (usuarioLogado.isPerfilCompleto()) {
 			eventoOnlineService.cancelarPublicacao(id);
-			logEventoOnlineService.salvar(
-					log("A publicação do evento presencial foi removida", eventoOnlineService.buscarPor(id)));
+			logEventoOnlineService
+					.salvar(log("A publicação do evento presencial foi removida", eventoOnlineService.buscarPor(id)));
 			model.addFlashAttribute("alert", "alert alert-fill-success");
 			model.addFlashAttribute("message", "evento teve sua publicação desativada com sucesso");
 			return "redirect:/dashboard/admin/eventos/online";
@@ -437,20 +437,109 @@ public class EventoOnlineAdminControler {
 
 	@PostMapping("/modulos/salvar")
 	public String modulosSalvar(Modulo modulo, RedirectAttributes model) {
-		
+
 		moduloService.salvar(modulo);
 		return "redirect:/dashboard/admin/eventos/online/detalhes/" + modulo.getEventoOnline().getId();
 	}
 	
-	@GetMapping("/atividades/{id}")
-	public String atividades(@PathVariable("id") Long id, RedirectAttributes model) {
+	@GetMapping("/modulos/{id}")
+	public String modulos(@PathVariable("id") Long id, Model model, RedirectAttributes red) {
+		
+		Modulo modulo = moduloService.buscarPor(id);
+		
+		if(modulo.getAtividades().isEmpty()) {
+			red.addFlashAttribute("alert", "alert alert-fill-danger");
+			red.addFlashAttribute("message", "você precisa adicionar atividades antes");
+			return "redirect:/dashboard/admin/eventos/online/detalhes/" + modulo.getEventoOnline().getId();
+		}else {
+			return "redirect:/dashboard/admin/eventos/online/modulos/" + id + "/atividade/" + modulo.getAtividades().get(0).getPosicao();
+		}
+		
+		
+	}
+	
+	@GetMapping("/modulos/{id}/atividade/{posicao}")
+	public String modulos(@PathVariable("id") Long id, @PathVariable("posicao") Integer posicao, Model model, RedirectAttributes red) {
+		
+		Modulo modulo = moduloService.buscarPor(id);
+		AtividadeOnline atividade = modulo.getAtividades().stream().filter(a -> a.getPosicao() == posicao).findAny().get();
 		
 		Usuario usuarioLogado = getUsuario();
 		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("evento", eventoOnlineService.buscarPor(id));
 		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("modulo", modulo);
+		model.addAttribute("atividade", atividade);
+		model.addAttribute("evento", modulo.getEventoOnline());
 		
-		return "dashboard/admin/eventos/online/base-cadastro-atividades-evento-online";
+		return "dashboard/admin/eventos/online/base-detalhes-modulo-evento-online";
+		
+	}
+
+	@GetMapping("/atividades/{id}")
+	public String atividades(@PathVariable("id") Long id, Model model, RedirectAttributes red) {
+
+		EventoOnline evento = eventoOnlineService.buscarPor(id);
+		
+		if (evento.getModulos().isEmpty()) {
+		
+			red.addFlashAttribute("alert", "alert alert-fill-danger");
+			red.addFlashAttribute("message", "você precisa adicionar um módulo antes");
+			return "redirect:/dashboard/admin/eventos/online/detalhes/" + id;
+		
+		} else {
+
+			Usuario usuarioLogado = getUsuario();
+			model.addAttribute("usuario", usuarioLogado);
+			model.addAttribute("evento", evento);
+			model.addAttribute("modulos", evento.getModulos());
+			model.addAttribute("atividades", atividadeService.buscarPorEvento(id));
+			model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+
+			return "dashboard/admin/eventos/online/base-cadastro-atividades-evento-online";
+		}
+	}
+	
+	@PostMapping("/atividades/salvar")
+	public String atividadesSalvar(AtividadeOnline atividade, RedirectAttributes model) {
+	
+			atividadeService.salvar(atividade);
+			logEventoOnlineService.salvar(log("Atividade: " + atividade.getTitulo() + " foi alterada",
+					atividade.getModulo().getEventoOnline()));
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "salvo com sucesso");
+			return "redirect:/dashboard/admin/eventos/online/detalhes/"
+					+ atividade.getModulo().getEventoOnline().getId();
+
+	}
+
+	@GetMapping("/atividades/alterar/{id}")
+	public String atividadesAlterar(@PathVariable("id") Long id, RedirectAttributes model) {
+		AtividadeOnline atividade = atividadeService.buscarPor(id);
+		model.addFlashAttribute("atividade", atividade);
+		return "redirect:/dashboard/admin/eventos/online/atividades/"
+				+ atividade.getModulo().getEventoOnline().getId();
+	}
+
+	@GetMapping("/atividades/deletar/{id}")
+	public String atividadesDeletar(@PathVariable("id") Long id, RedirectAttributes model) {
+		
+		AtividadeOnline atividade = atividadeService.buscarPor(id);
+		logEventoOnlineService.salvar(log("Atividade: " + atividade.getTitulo() + " foi deletada",
+				atividade.getModulo().getEventoOnline()));
+		EventoOnline evento = atividade.getModulo().getEventoOnline();
+		atividadeService.deletar(id);
+
+		model.addFlashAttribute("alert", "alert alert-fill-success");
+		model.addFlashAttribute("message", "removido com sucesso");
+		model.addFlashAttribute("atividade", atividade);
+		
+		return "redirect:/dashboard/admin/eventos/online/atividades/" + evento.getId();
+	}
+	
+	@GetMapping(value = "/modulo/dto/{id}", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public ModuloDTO moduloDTO(@PathVariable("id") Long id) {
+		return new ModuloDTO(moduloService.buscarPor(id));
 	}
 	
 	private Usuario getUsuario() {
@@ -458,7 +547,7 @@ public class EventoOnlineAdminControler {
 		Usuario usuario = usuarioService.buscarPor(autenticado.getName());
 		return usuario;
 	}
-	
+
 	private EventoOnlineLog log(String mensagem, EventoOnline evento) {
 		EventoOnlineLog eventoOnlineLog = new EventoOnlineLog();
 		eventoOnlineLog.setData(LocalDate.now());

@@ -764,7 +764,7 @@ public class EventosPresencialAdminControler {
 		} else {
 			model.addFlashAttribute("alert", "alert alert-fill-danger");
 			model.addFlashAttribute("message", "imagem vazia ou arquivo não é uma imagem");
-			return "redirect:/dashboard/admin/eventos/presencial/incricoes/" + imagens.getEventoPresencial().getId();
+			return "redirect:/dashboard/admin/eventos/presencial"; 
 
 		}
 	}

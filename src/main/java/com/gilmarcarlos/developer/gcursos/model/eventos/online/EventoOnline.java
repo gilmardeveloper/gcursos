@@ -197,6 +197,7 @@ public class EventoOnline implements Serializable {
 	}
 
 	public List<Modulo> getModulos() {
+		modulos.sort((m1, m2) -> Integer.compare(m1.getPosicao(), m2.getPosicao()));
 		return modulos;
 	}
 
