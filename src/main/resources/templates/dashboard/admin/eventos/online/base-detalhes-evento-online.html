@@ -10,6 +10,7 @@
 <link rel="stylesheet" th:href="@{~/css/select2-bootstrap.min.css}" />
 <link rel="stylesheet" th:href="@{~/css/summernote-bs4.css}" />
 <link rel="stylesheet" th:href="@{~/css/sweetalert2.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/dragula.min.css}" />
 </head>
 
 <body>
@@ -76,14 +77,14 @@
 											Sobre</a></li>
 									<li class="nav-item"><a class="nav-link" href="#"
 										data-toggle="modal" data-target="#modal-modulos">+ Módulos</a></li>
+									<li class="nav-item"><a class="nav-link" href="#"
+										data-toggle="modal" data-target="#modal-modulo-remover">- Módulos</a></li>
 									<li class="nav-item"><a class="nav-link" th:href="@{/dashboard/admin/eventos/online/atividades/{id}(id=${evento.id})}">+ Atividades</a></li>
 									<li class="nav-item"><a class="nav-link" href="#"
 										th:onclick="'showSwal(' + ${evento.id} + ')'">+ Evento</a></li>
 									<li class="nav-item"><a class="nav-link"
 										th:href="@{/dashboard/admin/eventos/online/estilo/{id}(id=${evento.id})}">+
 											Estilo da página de destaque</a></li>
-									<li class="nav-item"><a class="nav-link" href="#">Visualizar</a>
-									</li>
 								</ul>
 							</div>
 
@@ -150,7 +151,12 @@
 															th:each="modulo : ${evento.modulos}">
 
 															<div class="row justify-content-between">
-																<div class="col-lg-10">
+																
+																<div class="col-lg-1">
+																	<a href="#" data-toggle="modal" data-target="#modal-ordenar-modulo"><i class="icon-layers"></i></a> 
+																</div>
+
+																<div class="col-lg-9">
 																	<a th:href="@{/dashboard/admin/eventos/online/modulos/{id}(id=${modulo.id})}"><h5 class="font-weight-bold" th:text="${modulo.titulo}"></h5></a>
 																</div>
 
@@ -403,7 +409,7 @@
 													<label for="select-modulo">Módulos</label>
 													<select class="form-control" id="select-modulo">
 														<option value="-1">Adicionar novo</option>
-														<option th:each="modulo : ${evento.modulos}" th:text="${modulo.titulo}" th:value="${modulo.id}"></option>
+														<option th:unless="${#lists.isEmpty(evento.modulos)}" th:each="modulo : ${evento.modulos}" th:text="${modulo.titulo}" th:value="${modulo.id}"></option>
 													</select>
 												</div>
 											</div>
@@ -440,6 +446,84 @@
 
 					</div>
 
+					<!-- modal modulos remover -->
+					<div class="modal fade" id="modal-modulo-remover" tabindex="-1"
+						role="dialog" aria-labelledby="modal-label-modulos"
+						aria-hidden="true" th:unless="${#lists.isEmpty(evento.modulos)}">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modal-label-modulos">Remover um módulo</h5>
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div class="wrapper mb-3 mt-1">
+										<span class="badge badge-warning text-white">Nota : </span>
+										<p class="d-inline ml-3 text-muted">Essa ação vai excluir todas as atividades do módulo se houver</p>
+									</div>
+									<form
+										th:action="@{/dashboard/admin/eventos/online/modulos/deletar}"
+										id="formulario-modulos-remover" method="post">
+
+										<div class="row">
+
+											<div class="col-lg-12" th:unless="${#lists.isEmpty(evento.modulos)}">
+												<div class="form-group">
+													<label for="modulo-remover">Módulos</label>
+													<select class="form-control" id="modulo-remover" name="id">
+														<option th:each="modulo : ${evento.modulos}" th:text="${modulo.titulo}" th:value="${modulo.id}"></option>
+													</select>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary"
+										data-dismiss="modal">Cancelar</button>
+									<button type="submit" form="formulario-modulos-remover"
+										class="btn btn-warning">Remover</button>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<!-- modal dragula -->
+					<div class="modal fade" th:unless="${#lists.isEmpty(evento.modulos)}" id="modal-ordenar-modulo" tabindex="-1"
+						role="dialog" aria-labelledby="modal-label-ordenar-modulo"
+						aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="imagem-top-label">Ordene os módulos (ARRASTE E SOLTE )</h5>
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div id="dragula-modulos" class="h-100">
+										<div th:id="${m.id}" class="card mb-1" th:each="m : ${evento.modulos}">
+											<div class="card-body">
+												<p class="card-text" th:text="${m.titulo}"></p>
+											</div>
+										</div> 
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary"
+										data-dismiss="modal">Cancelar</button>
+									<button id="btn-ordenar" type="button" class="btn btn-primary" onclick="ordenar()" disabled="disabled">Salvar</button>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
 				</div>
 				<!-- end content-wrapper -->
 
@@ -457,6 +541,7 @@
 	<script th:src="@{~/js/select2.min.js}"></script>
 	<script th:src="@{~/js/summernote-bs4.min.js}"></script>
 	<script th:src="@{~/js/sweetalert2.min.js}"></script>
+	<script th:src="@{~/js/dragula.min.js}"></script>
 	<span th:replace="fragments/base-script :: plugins"></span>
 	<script th:src="@{~/js/dropify.js}"></script>
 
@@ -486,7 +571,58 @@
 	     	tabsize: 2
 	     });
 
+	    var drake = dragula([document.querySelector('#dragula-modulos')]);
+		drake.on('drop', function(el) {
+            	var modulos = [].slice.call(el.parentElement.children);
+            	preencherLista(modulos);
+            	 $('#btn-ordenar').prop('disabled', false);
+        	});
+
 	    });
+
+	    function getElementIndex(el) {
+ 		   return [].slice.call(el.parentElement.children).indexOf(el);
+		}
+
+		var lista;
+
+		 function preencherLista(modulos){
+
+		 	var index;
+		 	lista = [];
+		 	for(index in modulos){
+		 		lista.push({id: modulos[index].id});
+		 	}
+		 }
+
+		 function ordenar(){
+		 	
+		 	var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			var dados = JSON.stringify(lista);
+
+		 	$.ajax({
+                  
+                  beforeSend: function(xhrObj){
+		                xhrObj.setRequestHeader(header,token);
+       			 },
+
+                  url: "/dashboard/admin/eventos/online/modulos/ordenar",
+                  type: "POST", 
+                  data: dados,
+                  contentType: "application/json",
+                  cache: false,
+        		  timeout: 600000,
+
+              	success: (result,status,xhr) => {
+                    console.log(status);
+                    window.location.reload();
+                },     
+		        error: () => {
+	              	console.log("acorreu um erro");
+		        }
+      		});
+		 }	
 
 	    function showSwal(id){
 	          
@@ -524,7 +660,7 @@
 	/*<![CDATA[*/
 		$(()=>{
 
-			$('#select-modulo').on('change', preencheModalModulo);
+			 $('#select-modulo').on('change', preencheModalModulo);	
 
 		});
 

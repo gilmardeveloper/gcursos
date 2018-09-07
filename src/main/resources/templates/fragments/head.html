@@ -5,6 +5,9 @@
 	<!-- Required meta tags -->
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 	<title th:replace=${title}>ZEUS</title>
 
 	<link rel="preconnect" th:href="@{~/fonts/materialdesignicons-webfont.woff2?v=2.0.46}" />	

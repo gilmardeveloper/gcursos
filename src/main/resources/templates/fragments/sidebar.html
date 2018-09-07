@@ -303,9 +303,20 @@
             <li class="nav-item" th:each="ativ : ${modulo.atividades}">
               <a class="nav-link" th:href="@{/dashboard/admin/eventos/online/modulos/{id}/atividade/{posicao}(id=${modulo.id},posicao=${ativ.posicao})}">
                 <i class="icon-fire menu-icon text-white"></i>
-                <span class="menu-title" th:text="${ativ.titulo}"></span>
+                Atividade-<span class="menu-title" th:text="${ativ.posicao}"></span>
               </a>
+              <p class="text-muted font-weight-bold ml-5 mr-1" th:text="${ativ.titulo}"></p>
             </li>
+
+            <div class="nav-link pt-4 pb-2 border-top">
+              <p class="font-weight-bold text-muted">MÓDULOS:</p>
+              <select id="select-modulos" class="form-control">
+                <option th:each="modu : ${evento.modulos}"
+                        th:text="${modu.titulo}"
+                        th:value="${modu.id}"
+                        th:selected="${modu.id == modulo.id}"></option>
+              </select>
+            </div>
            
           </ul>
 </nav>

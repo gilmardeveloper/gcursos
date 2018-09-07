@@ -66,8 +66,8 @@
 							<div class="col-lg-12">
 								<ul class="nav">
 									<li class="nav-item"><a class="nav-link" href="#"
-										data-toggle="modal" data-target="#modal-editor-sobre">+
-											Sobre</a></li>
+										data-toggle="modal" data-target="#modal-editor-extra">+
+											Extra</a></li>
 									<li class="nav-item"><a class="nav-link" th:href="@{/dashboard/admin/eventos/online/atividades/{id}(id=${evento.id})}">+ Atividades</a></li>
 								</ul>
 							</div>
@@ -78,9 +78,15 @@
 										<h3 class="card-text text-white">ATIVIDADE-<span th:text="${atividade.posicao}"></span>: <span th:text="${atividade.titulo}"></span></h3>
 									</div>
 									<div class="card-body">
-										<div class="embed-responsive embed-responsive-16by9" th:utext="${atividade.urlVideo}">
-											  
+										
+										<div th:if="${atividade.urlVideo != ''}" class="embed-responsive embed-responsive-16by9 mb-4" th:utext="${atividade.urlVideo}">
 										</div>
+
+										<div class="pt-2 border-top" th:if="${atividade.conteudo != null}" th:utext="${atividade.conteudo}"></div>
+
+									</div>
+									<div class="card-footer bg-light text-right">
+										<a class="btn btn-lg btn-success" href="#">Próxima atividade</a>
 									</div>
 								</div>
 							</div>
@@ -90,14 +96,13 @@
 					</div>
 
 					<!-- modal editor sobre -->
-					<div class="modal fade" id="modal-editor-sobre" tabindex="-1"
-						role="dialog" aria-labelledby="modal-label-editor-sobre"
+					<div class="modal fade" id="modal-editor-extra" tabindex="-1"
+						role="dialog" aria-labelledby="modal-label-editor-extra"
 						aria-hidden="true">
 						<div class="modal-dialog modal-lg">
 							<div class="modal-content">
 								<div class="modal-header">
-									<h5 class="modal-title" id="imagem-top-label">Mais
-										detalhes sobre o evento</h5>
+									<h5 class="modal-title" id="modal-label-editor-extra">Adicione conteúdo extra, leitura adicional ou a trancrição do vídeo</h5>
 									<button type="button" class="close" data-dismiss="modal"
 										aria-label="Close">
 										<span aria-hidden="true">&times;</span>
@@ -105,65 +110,18 @@
 								</div>
 								<div class="modal-body">
 									<form
-										th:action="@{/dashboard/admin/eventos/online/detalhes/sobre/salvar}"
+										th:action="@{/dashboard/admin/eventos/online/atividades/conteudo/salvar}"
 										id="formulario-editor-sobre" method="post">
-										<input type="hidden" name="eventoOnline"
-											th:value="${evento.id}" />
+										<input type="hidden" name="id"
+											th:value="${atividade.id}" />
 										<textarea id="summernote" name="conteudo"
-											th:utext="${evento.sobre != null} ?  ${evento.sobre.conteudo} : ''"></textarea>
+											th:utext="${atividade.conteudo != null} ?  ${atividade.conteudo} : ''"></textarea>
 									</form>
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-secondary"
 										data-dismiss="modal">Cancelar</button>
 									<button type="submit" form="formulario-editor-sobre"
-										class="btn btn-primary">Salvar</button>
-								</div>
-							</div>
-						</div>
-
-					</div>
-
-					<!-- modal modulos -->
-					<div class="modal fade" id="modal-modulos" tabindex="-1"
-						role="dialog" aria-labelledby="modal-label-modulos"
-						aria-hidden="true">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="modal-label-modulos">Adicione
-										um módulo ao seu evento</h5>
-									<button type="button" class="close" data-dismiss="modal"
-										aria-label="Close">
-										<span aria-hidden="true">&times;</span>
-									</button>
-								</div>
-								<div class="modal-body">
-									<form
-										th:action="@{/dashboard/admin/eventos/online/modulos/salvar}"
-										id="formulario-modulos" method="post">
-
-										<input type="hidden" name="eventoOnline"
-											th:value="${evento.id}" />
-
-										<div class="row">
-											
-											<div class="col-lg-12">
-												<div class="form-group">
-													<label for="titulo">Titulo</label>
-													<input class="form-control" id="titulo"
-														placeholder="título do módulo" 
-														required="true" name="titulo" />
-												</div>
-											</div>
-
-										</div>
-									</form>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary"
-										data-dismiss="modal">Cancelar</button>
-									<button type="submit" form="formulario-modulos"
 										class="btn btn-primary">Salvar</button>
 								</div>
 							</div>
@@ -195,7 +153,9 @@
 
 	    $(document).ready(function(){
 
-	    $('#titulo').on('input', () => {$('#qtd-titulo').text($('#titulo').val().length)});	
+	    $('#titulo').on('input', () => {$('#qtd-titulo').text($('#titulo').val().length)});
+
+	    $('#select-modulos').on('change', alterarModulo);
 
 	     $('#summernote').summernote({
 	     	 toolbar: [
@@ -218,6 +178,11 @@
 	     });
 
 	    });
+
+	    function alterarModulo(){
+			var id = $('#select-modulos').val();
+			window.location.href = `/dashboard/admin/eventos/online/modulos/${id}`;
+		}
 
 	    function showSwal(id){
 	          

@@ -1,12 +1,15 @@
 package com.gilmarcarlos.developer.gcursos.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -15,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,10 +30,10 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnlineLog;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.Modulo;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.ModuloDTO;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.OrdenarHelper;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.PermissoesEventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.SobreOnline;
-import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.AtividadePresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.ProgramacaoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.exceptions.PosicaoExisteException;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoOnlineDestaque;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoOnlineTop;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
@@ -438,8 +442,34 @@ public class EventoOnlineAdminControler {
 	@PostMapping("/modulos/salvar")
 	public String modulosSalvar(Modulo modulo, RedirectAttributes model) {
 
-		moduloService.salvar(modulo);
-		return "redirect:/dashboard/admin/eventos/online/detalhes/" + modulo.getEventoOnline().getId();
+		try {
+			moduloService.salvar(modulo);
+			logEventoOnlineService.salvar(log("Módulo: " + modulo.getTitulo() + " foi alterado",
+					modulo.getEventoOnline()));
+			return "redirect:/dashboard/admin/eventos/online/detalhes/" + modulo.getEventoOnline().getId();
+		
+		} catch (PosicaoExisteException e) {
+			model.addFlashAttribute("alert", "alert alert-fill-danger");
+			model.addFlashAttribute("message", e.getMessage());
+			return "redirect:/dashboard/admin/eventos/online/detalhes/" + modulo.getEventoOnline().getId();
+		}
+	}
+	
+	@PostMapping("/modulos/deletar")
+	public String modulosDeletar(@RequestParam("id")Long id, RedirectAttributes model) {
+		
+		Modulo modulo = moduloService.buscarPor(id);
+		EventoOnline evento = modulo.getEventoOnline();
+		
+		if(!modulo.getAtividades().isEmpty()) {
+			modulo.getAtividades().forEach(a -> atividadeService.deletar(a.getId()));
+		}
+		
+		logEventoOnlineService.salvar(log("Módulo: " + modulo.getTitulo() + " foi excluído",
+				modulo.getEventoOnline()));
+		moduloService.deletar(id);
+		
+		return "redirect:/dashboard/admin/eventos/online/detalhes/" + evento.getId();
 	}
 	
 	@GetMapping("/modulos/{id}")
@@ -456,6 +486,14 @@ public class EventoOnlineAdminControler {
 		}
 		
 		
+	}
+	
+	@PostMapping(value = "/modulos/ordenar")
+	@ResponseBody
+	public ResponseEntity<?> modulosOrdenar(@RequestBody List<OrdenarHelper> dados) {
+		
+		moduloService.ordenar(dados);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@GetMapping("/modulos/{id}/atividade/{posicao}")
@@ -502,16 +540,33 @@ public class EventoOnlineAdminControler {
 	@PostMapping("/atividades/salvar")
 	public String atividadesSalvar(AtividadeOnline atividade, RedirectAttributes model) {
 	
-			atividadeService.salvar(atividade);
-			logEventoOnlineService.salvar(log("Atividade: " + atividade.getTitulo() + " foi alterada",
-					atividade.getModulo().getEventoOnline()));
-			model.addFlashAttribute("alert", "alert alert-fill-success");
-			model.addFlashAttribute("message", "salvo com sucesso");
-			return "redirect:/dashboard/admin/eventos/online/detalhes/"
-					+ atividade.getModulo().getEventoOnline().getId();
+			try {
+				atividadeService.salvar(atividade);
+				logEventoOnlineService.salvar(log("Atividade: " + atividade.getTitulo() + " foi alterada",
+						atividade.getModulo().getEventoOnline()));
+				model.addFlashAttribute("alert", "alert alert-fill-success");
+				model.addFlashAttribute("message", "salvo com sucesso");
+				return "redirect:/dashboard/admin/eventos/online/detalhes/"
+				+ atividade.getModulo().getEventoOnline().getId();
+			} catch (PosicaoExisteException e) {
+				logEventoOnlineService.salvar(log("Atividade: " + atividade.getTitulo() + " foi alterada",
+						atividade.getModulo().getEventoOnline()));
+				model.addFlashAttribute("alert", "alert alert-fill-danger");
+				model.addFlashAttribute("message", e.getMessage());
+				return "redirect:/dashboard/admin/eventos/online/detalhes/"
+				+ atividade.getModulo().getEventoOnline().getId();
+			}
 
 	}
-
+	
+	@PostMapping(value = "/atividades/ordenar")
+	@ResponseBody
+	public ResponseEntity<?> atividadesOrdenar(@RequestBody List<OrdenarHelper> dados) {
+		
+		atividadeService.ordenar(dados);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
 	@GetMapping("/atividades/alterar/{id}")
 	public String atividadesAlterar(@PathVariable("id") Long id, RedirectAttributes model) {
 		AtividadeOnline atividade = atividadeService.buscarPor(id);
@@ -534,6 +589,24 @@ public class EventoOnlineAdminControler {
 		model.addFlashAttribute("atividade", atividade);
 		
 		return "redirect:/dashboard/admin/eventos/online/atividades/" + evento.getId();
+	}
+	
+	@PostMapping("/atividades/conteudo/salvar")
+	public String atividadeConteudoSalvar(@RequestParam("id") Long id, @RequestParam("conteudo") String conteudo, RedirectAttributes model) {
+		
+		AtividadeOnline atividade = atividadeService.buscarPor(id);
+		try {
+			atividade.setConteudo(conteudo);
+			atividadeService.salvar(atividade);
+			return "redirect:/dashboard/admin/eventos/online/modulos/" + atividade.getModulo().getId() + "/atividade/" + atividade.getPosicao();
+		} catch (PosicaoExisteException e) {
+			model.addFlashAttribute("alert", "alert alert-fill-danger");
+			model.addFlashAttribute("message", e.getMessage());
+			return "redirect:/dashboard/admin/eventos/online/modulos/" + atividade.getModulo().getId() + "/atividade/" + atividade.getPosicao();
+
+		}
+		
+		
 	}
 	
 	@GetMapping(value = "/modulo/dto/{id}", produces = "application/json;charset=UTF-8")

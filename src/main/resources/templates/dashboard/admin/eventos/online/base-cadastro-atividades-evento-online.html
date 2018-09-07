@@ -9,6 +9,7 @@
 <link rel="stylesheet" th:href="@{~/css/select2.min.css}" />
 <link rel="stylesheet" th:href="@{~/css/select2-bootstrap.min.css}" />
 <link rel="stylesheet" th:href="@{~/css/sweetalert2.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/dragula.min.css}" />
 </head>
 
 <body>
@@ -77,6 +78,7 @@
 													<tr>
 														<th class="">módulo</th>
 														<th class="">titulo</th>
+														<th class="">posição</th>
 														<th>::</th>
 														<th>::</th>
 													</tr>
@@ -84,8 +86,9 @@
 												<tbody>
 													<tr th:each="atividade : ${atividades}">
 													
-														<td class="" th:text="${atividade.modulo.titulo}"></td>
+														<td class=""><a href="#" data-toggle="modal" th:attr="data-target='#modal-' + ${atividade.modulo.id}"><i class="icon-layers"></i></a> <span th:text="${atividade.modulo.titulo}"></span></td>
 														<td class="" th:text="${atividade.titulo}"></td>
+														<td class="" th:text="${atividade.posicao}"></td>
 														<td><a class="btn btn-outline-primary pt-1 pb-1"
 															href="#" th:onclick="'alterar(' + ${atividade.id} + ')'"><i
 																class="icon-pencil"></i></a></td>
@@ -143,13 +146,29 @@
 										</div>
 									</div>
 
-									<div class="form-group col-lg-6">
-										<label for="nomeResponsavel">URL do vídeo</label> <input
+									<div class="form-group col-lg-12">
+										<label for="nomeResponsavel">Vídeo iframe</label> <input
 												type="text" class="form-control" id="urlVideo"
-												placeholder="informe a url do vídeo"
+												placeholder="adicione o código  <iframe></frame> do vídeo"
 												name="urlVideo"
 												th:value="${atividade != null} ? ${atividade.urlVideo} : ''"
 												/>
+												<small>compartilhe apenas o código iframe com tela fixa 
+												<br />
+												Exemplos:
+												<br />
+												vimeo
+												<br />
+												<kbd>
+													&lt;iframe src="https://player.vimeo.com/video/286505925?title=0&byline=0&portrait=0&badge=0" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>&lt;/iframe>
+												</kbd>
+												<br />
+												youtube
+												<br />
+												<kbd>
+													&lt;iframe width="560" height="315" src="https://www.youtube.com/embed/fZB-ptAnoQc?rel=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>&lt;/iframe>
+												</kbd>
+												</small>
 									</div>
 
 									<div class="form-group col-lg-12">
@@ -182,6 +201,39 @@
 
 					</div>
 					<!-- end row justify-content -->
+
+					<!-- modal dragula -->
+					<div class="modal fade" th:unless="${#lists.isEmpty(modulos)}" th:each="modulo : ${modulos}" th:id="'modal-' + ${modulo.id}" tabindex="-1"
+						role="dialog" aria-labelledby="modal-label-editor-sobre"
+						aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="imagem-top-label">Ordene as atividades (ARRASTE E SOLTE )</h5>
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div id="dragula-atividades" class="h-100">
+										<div th:id="${a.id}" class="card mb-1" th:each="a : ${modulo.atividades}">
+											<div class="card-body">
+												<p class="card-text" th:text="${a.titulo}"></p>
+											</div>
+										</div> 
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary"
+										data-dismiss="modal">Cancelar</button>
+									<button id="btn-ordenar" type="button" class="btn btn-primary" onclick="ordenar()" disabled="disabled">Salvar</button>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
 				</div>
 				<!-- end content-wrapper -->
 
@@ -201,14 +253,66 @@
 	<script async="async" th:src="@{~/js/dataTables.bootstrap4.js}"></script>
 	<script th:src="@{~/js/select2.min.js}"></script>
 	<script th:src="@{~/js/sweetalert2.min.js}"></script>
+	<script th:src="@{~/js/dragula.min.js}"></script>
 	<span th:replace="fragments/base-script :: plugins"></span>
 	<!--<script  th:src="@{~/js/datatable-init.js}"></script> -->
 
 	<script>
+		
 		$(document).ready(function() {
 			$('#order-listing-atividades').DataTable();
+
+			var drake = dragula([document.querySelector('#dragula-atividades')]);
+			drake.on('drop', function(el) {
+            	var atividades = [].slice.call(el.parentElement.children);
+            	preencherLista(atividades);
+            	 $('#btn-ordenar').prop('disabled', false);
+        	});
 		});
 
+		function getElementIndex(el) {
+ 		   return [].slice.call(el.parentElement.children).indexOf(el);
+		}
+
+		var lista;
+
+		 function preencherLista(atividades){
+
+		 	var index;
+		 	lista = [];
+		 	for(index in atividades){
+		 		lista.push({id: atividades[index].id});
+		 	}
+		 }
+
+		 function ordenar(){
+		 	
+		 	var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			var dados = JSON.stringify(lista);
+
+		 	$.ajax({
+                  
+                  beforeSend: function(xhrObj){
+		                xhrObj.setRequestHeader(header,token);
+       			 },
+
+                  url: "/dashboard/admin/eventos/online/atividades/ordenar",
+                  type: "POST", 
+                  data: dados,
+                  contentType: "application/json",
+                  cache: false,
+        		  timeout: 600000,
+
+              	success: (result,status,xhr) => {
+                    console.log(status);
+                    window.location.reload();
+                },     
+		        error: () => {
+	              	console.log("acorreu um erro");
+		        }
+      		});
+		 }	
 
 		 function alterar(id){
 	          
