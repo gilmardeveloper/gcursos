@@ -1,5 +1,6 @@
 package com.gilmarcarlos.developer.gcursos.model.eventos.online;
 
+import java.beans.Transient;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
@@ -8,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
+
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
 @Entity
 public class AtividadeOnline implements Serializable{

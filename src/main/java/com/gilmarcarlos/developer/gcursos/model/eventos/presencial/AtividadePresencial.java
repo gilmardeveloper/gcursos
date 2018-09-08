@@ -113,7 +113,7 @@ public class AtividadePresencial implements Serializable {
 	}
 	
 	@Transient
-	public Boolean inscrito(Usuario usuario) {
+	public Boolean isInscrito(Usuario usuario) {
 		return inscricoes.stream().anyMatch( i -> i.getUsuario().equals(usuario));
 	}
 	

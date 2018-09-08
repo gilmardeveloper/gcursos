@@ -25,7 +25,7 @@ public class EventoOnlineLog implements Serializable{
 	
 	@OneToOne
 	private EventoOnline eventoOnline;
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -57,6 +57,8 @@ public class EventoOnlineLog implements Serializable{
 	public void setEventoOnline(EventoOnline eventoOnline) {
 		this.eventoOnline = eventoOnline;
 	}
+	
+	
 
 	@Override
 	public int hashCode() {

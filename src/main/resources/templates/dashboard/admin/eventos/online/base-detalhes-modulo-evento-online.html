@@ -34,7 +34,7 @@
 				<!-- end right-sidebar -->
 
 				<!-- sidebar sidebar-offcanvas -->
-				<nav th:replace="fragments/sidebar :: sidebar-modulo-online"></nav>
+				<nav th:replace="fragments/sidebar :: sidebar-modulo-online-admin"></nav>
 				<!-- end sidebar sidebar-offcanvas -->
 
 				<!-- content-wrapper -->
@@ -86,7 +86,7 @@
 
 									</div>
 									<div class="card-footer bg-light text-right">
-										<a class="btn btn-lg btn-success" href="#">Próxima atividade</a>
+										<a class="btn btn-lg btn-success" th:href="@{/dashboard/admin/eventos/online/modulos/{id}/proxima-atividade/{posicao}(id=${modulo.id},posicao=${atividade.posicao})}">Próxima atividade</a>
 									</div>
 								</div>
 							</div>

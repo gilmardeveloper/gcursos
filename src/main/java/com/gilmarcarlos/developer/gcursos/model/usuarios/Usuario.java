@@ -17,7 +17,7 @@ import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
-import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
@@ -66,6 +66,9 @@ public class Usuario implements Serializable {
 	
 	@OneToMany(mappedBy = "usuario")
 	private List<InscricaoPresencial> inscricoes;
+	
+	@OneToMany(mappedBy = "usuario")
+	private List<InscricaoOnline> inscricoesOnline;
 
 	public Usuario() {
 		this.habilitado = false;
@@ -177,6 +180,14 @@ public class Usuario implements Serializable {
 		this.eventoOnline = eventoOnline;
 	}
 
+	public List<InscricaoOnline> getInscricoesOnline() {
+		return inscricoesOnline;
+	}
+
+	public void setInscricoesOnline(List<InscricaoOnline> inscricoesOnline) {
+		this.inscricoesOnline = inscricoesOnline;
+	}
+	
 	@Transient
 	public String getStatus() {
 		return autorizacoes.get(0).getNome().split("_")[1];
@@ -185,6 +196,26 @@ public class Usuario implements Serializable {
 	@Transient
 	public Boolean isPerfilCompleto() {
 		return (this.codigoFuncional != null && this.dadosPessoais != null);
+	}
+	
+	@Transient
+	public List<Notificacao> getNotificaoesNaoLidas() {
+		return this.notificacoes.stream().filter(n -> !n.getFoiLido()).collect(Collectors.toList());
+	}
+	
+	@Transient
+	public List<Notificacao> getNotificaoesLidas() {
+		return this.notificacoes.stream().filter(n -> n.getFoiLido()).collect(Collectors.toList());
+	}
+
+	@Transient
+	public boolean ehResponsavel(EventoOnline evento) {
+		return getEventoOnline().stream().anyMatch( e-> e.equals(evento));
+	}
+	
+	@Transient
+	public boolean ehResponsavel(EventoPresencial evento) {
+		return getEventoPresencial().stream().anyMatch( e-> e.equals(evento));
 	}
 
 	@Override
@@ -216,14 +247,6 @@ public class Usuario implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
-
-	public List<Notificacao> getNotificaoesNaoLidas() {
-		return this.notificacoes.stream().filter(n -> !n.getFoiLido()).collect(Collectors.toList());
-	}
-	
-	public List<Notificacao> getNotificaoesLidas() {
-		return this.notificacoes.stream().filter(n -> n.getFoiLido()).collect(Collectors.toList());
 	}
 
 }

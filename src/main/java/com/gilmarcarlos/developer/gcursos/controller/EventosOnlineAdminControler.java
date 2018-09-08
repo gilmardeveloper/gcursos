@@ -54,7 +54,7 @@ import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 
 @Controller
 @RequestMapping("/dashboard/admin/eventos/online")
-public class EventoOnlineAdminControler {
+public class EventosOnlineAdminControler {
 
 	@Autowired
 	private CategoriaEventoService categoriaEventoService;
@@ -491,7 +491,6 @@ public class EventoOnlineAdminControler {
 	@PostMapping(value = "/modulos/ordenar")
 	@ResponseBody
 	public ResponseEntity<?> modulosOrdenar(@RequestBody List<OrdenarHelper> dados) {
-		
 		moduloService.ordenar(dados);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -510,6 +509,32 @@ public class EventoOnlineAdminControler {
 		model.addAttribute("evento", modulo.getEventoOnline());
 		
 		return "dashboard/admin/eventos/online/base-detalhes-modulo-evento-online";
+		
+	}
+	
+	@GetMapping("/modulos/{id}/proxima-atividade/{posicao}")
+	public String proximaAtividade(@PathVariable("id") Long id, @PathVariable("posicao") Integer posicao, Model model, RedirectAttributes red) {
+		
+		Modulo modulo = moduloService.buscarPor(id);
+		EventoOnline evento = modulo.getEventoOnline();
+		
+		if(posicao < modulo.getAtividades().size()) { 
+			
+			AtividadeOnline atividade = modulo.getAtividades().stream().filter(a -> a.getPosicao() > posicao).findFirst().get();
+			return "redirect:/dashboard/admin/eventos/online/modulos/" + id + "/atividade/" + atividade.getPosicao();
+
+		}else{
+			
+			if(modulo.getPosicao() < evento.getModulos().size()) {
+				Modulo proximoModulo = evento.getModulos().stream().filter(m -> m.getPosicao() > modulo.getPosicao()).findFirst().get();
+				return "redirect:/dashboard/admin/eventos/online/modulos/" + proximoModulo.getId();
+			}else {
+				red.addFlashAttribute("alert", "alert alert-fill-success");
+				red.addFlashAttribute("message", "você finalizou esse evento");
+				return "redirect:/dashboard/admin/eventos/online";
+			}
+			
+		}
 		
 	}
 

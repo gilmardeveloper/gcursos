@@ -169,6 +169,12 @@ public class EventosPresencialControler {
 		Usuario usuarioLogado = getUsuario();
 		EventoPresencial evento = eventoPresencialService.buscarPor(id);
 		
+		if(!evento.getPermissoes().valida(usuarioLogado)) {
+			red.addFlashAttribute("alert", "alert alert-fill-danger");
+			red.addFlashAttribute("message", "você não tem permissão");
+			return "redirect:/dashboard/eventos/online";
+		}
+		
 		if(evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
 			red.addFlashAttribute("alert", "alert alert-fill-danger");
 			red.addFlashAttribute("message", "você não tem permissão para acessar esse evento");
@@ -188,6 +194,12 @@ public class EventosPresencialControler {
 
 		Usuario usuarioLogado = getUsuario();
 		EventoPresencial evento = eventoPresencialService.buscarPor(id);
+		
+		if(!evento.getPermissoes().valida(usuarioLogado)) {
+			red.addFlashAttribute("alert", "alert alert-fill-danger");
+			red.addFlashAttribute("message", "você não tem permissão");
+			return "redirect:/dashboard/eventos/online";
+		}
 		
 		if(evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
 			red.addFlashAttribute("alert", "alert alert-fill-danger");
@@ -245,7 +257,7 @@ public class EventosPresencialControler {
 		Usuario usuarioLogado = getUsuario();
 		AtividadePresencial atividade = atividadePresencialService.buscarPor(id);
 
-		if (atividade.inscrito(usuarioLogado)) {
+		if (atividade.isInscrito(usuarioLogado)) {
 			
 			inscricaoPresencialService.deletar(atividade.getInscricao(usuarioLogado));
 			model.addFlashAttribute("alert", "alert alert-fill-success");

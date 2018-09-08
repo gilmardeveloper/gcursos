@@ -214,16 +214,31 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="collapse" href="#page-layouts" aria-expanded="false" aria-controls="page-layouts">
+              <a class="nav-link" data-toggle="collapse" href="#page-presencial" aria-expanded="false" aria-controls="page-presencial">
                 <i class="icon-check menu-icon"></i>
                 <span class="menu-title">Eventos presenciais</span>
                 <span class="badge badge-danger">3</span>
               </a>
-              <div class="collapse" id="page-layouts">
+              <div class="collapse" id="page-presencial">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/eventos/presenciais}">Publicados</a></li>
                   <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/usuario/minhas/inscricoes/presenciais}">Minhas inscrições</a></li>
-                  <li class="nav-item d-none d-lg-block"> <a class="nav-link" th:href="@{/dashboard/usuario/eventos/presenciais/concluidos}">Acompanhe</a></li>
+                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/usuario/eventos/presenciais/concluidos}">Acompanhe</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="collapse" href="#page-online" aria-expanded="false" aria-controls="page-online">
+                <i class="icon-globe menu-icon"></i>
+                <span class="menu-title">Eventos online</span>
+                <span class="badge badge-info">3</span>
+              </a>
+              <div class="collapse" id="page-online">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/eventos/online}">Publicados</a></li>
+                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/usuario/minhas/inscricoes/presenciais}">Minhas inscrições</a></li>
+                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/usuario/eventos/presenciais/concluidos}">Acompanhe</a></li>
                 </ul>
               </div>
             </li>
@@ -281,8 +296,8 @@
           </ul>
 </nav>
 
-<!-- sidebar para evento online -->
-<nav th:fragment="sidebar-modulo-online" class="sidebar sidebar-offcanvas" id="sidebar">
+<!-- sidebar para evento online admin -->
+<nav th:fragment="sidebar-modulo-online-admin" class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
 
             <li th:replace="fragments/sidebar :: credenciais"></li>
@@ -317,6 +332,54 @@
                         th:selected="${modu.id == modulo.id}"></option>
               </select>
             </div>
+           
+          </ul>
+</nav>
+
+<!-- sidebar para evento online -->
+<nav th:fragment="sidebar-modulo-online" class="sidebar sidebar-offcanvas" id="sidebar">
+          <ul class="nav">
+
+            <li th:replace="fragments/sidebar :: credenciais"></li>
+
+             <div class="nav-link pt-2 pb-2 border-top">
+              <small class="text-success font-weight-bold" th:text="${evento.titulo}"></small>
+            </div>
+
+            <div class="nav-link pt-4 pb-2 border-top">
+              <p class="font-weight-bold text-white">MÓDULO-<span th:text="${modulo.posicao}"></span></p>
+              <p class="text-muted font-weight-bold" th:text="${modulo.titulo}"></p>
+            </div>
+
+            <div class="nav-link pt-4 pb-2 border-top">
+              <p class="font-weight-bold text-muted">ATIVIDADES:</p>
+            </div>
+
+            <li class="nav-item" th:each="ativ : ${modulo.atividades}">
+              <a class="nav-link" th:href="@{/dashboard/eventos/online/modulos/{id}/atividade/{posicao}(id=${modulo.id},posicao=${ativ.posicao})}">
+                <i class="icon-fire menu-icon text-white"></i>
+                Atividade-<span class="menu-title" th:text="${ativ.posicao}"></span>
+              </a>
+              <p th:if="${evento.getInscricao(usuario).realizou(ativ)}" class="text-success font-weight-bold ml-5 mr-1" th:text="${ativ.titulo}"></p>
+
+               <p th:unless="${evento.getInscricao(usuario).realizou(ativ)}" class="text-muted font-weight-bold ml-5 mr-1" th:text="${ativ.titulo}"></p>
+            </li>
+
+            <div class="nav-link pt-4 pb-2 border-top">
+              <p class="font-weight-bold text-muted">MÓDULOS:</p>
+              <select id="select-modulos" class="form-control">
+                <option th:each="modu : ${evento.modulos}"
+                        th:text="${modu.titulo}"
+                        th:value="${modu.id}"
+                        th:selected="${modu.id == modulo.id}"></option>
+              </select>
+            </div>
+
+            <li class="nav-item border-top">
+              <a class="nav-link" th:href="@{/dashboard/eventos/online}">
+                <i class="icon-badge menu-icon text-white"></i> <span class="menu-title">Trocar de evento</span>
+              </a>
+            </li>
            
           </ul>
 </nav>

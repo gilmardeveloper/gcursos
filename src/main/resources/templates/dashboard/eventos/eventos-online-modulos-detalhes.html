@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+<title>ZEUS | Eventos</title>
+<link rel="stylesheet" th:href="@{~/css/dropify.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2-bootstrap.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/summernote-bs4.css}" />
+<link rel="stylesheet" th:href="@{~/css/sweetalert2.min.css}" />
+</head>
+
+<body class="sidebar-dark">
+	<div class="container-scroller">
+		<!-- partial:../../partials/_navbar.html -->
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-modulo-online"></nav>
+		<!-- end navbar -->
+
+		<!-- partial -->
+		<div class="container-fluid page-body-wrapper">
+			<div class="row row-offcanvas row-offcanvas-right">
+				<!-- partial:../../partials/_settings-panel.html -->
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-modulo-online"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					<div class="container-fluid">
+						<div class="row">
+
+							<div class="col-lg-12" th:if="${alert != null}">
+								<div th:class="${alert}" role="alert">
+									<i class="mdi mdi-alert-circle"></i> <span th:text="${message}"></span>
+									<button type="button" class="close" data-dismiss="alert"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+							</div>
+
+							<div class="col-lg-12">
+								<div class="card mb-3">
+									<div class="card-header bg-dark">
+										<h3 class="card-text text-white">ATIVIDADE-<span th:text="${atividade.posicao}"></span>: <span th:text="${atividade.titulo}"></span></h3>
+									</div>
+									<div class="card-body">
+										
+										<div th:if="${atividade.urlVideo != ''}" class="embed-responsive embed-responsive-16by9 mb-4" th:utext="${atividade.urlVideo}">
+										</div>
+
+										<div class="pt-2 border-top" th:if="${atividade.conteudo != null}" th:utext="${atividade.conteudo}"></div>
+
+									</div>
+									<div class="card-footer bg-light text-right">
+										<a class="btn btn-lg btn-success" th:href="@{/dashboard/eventos/online/modulos/{id}/proxima-atividade/{posicao}(id=${modulo.id},posicao=${atividade.posicao})}"><span th:unless="${evento.isUltimo(atividade)}">Próxima atividade</span><span th:if="${evento.isUltimo(atividade)}">Finalizar</span></a>
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+				<!-- end content-wrapper -->
+
+				<!-- footer -->
+				<footer th:replace="fragments/footer :: footer"></footer>
+				<!-- end footer -->
+			</div>
+			<!-- row-offcanvas ends -->
+		</div>
+		<!-- page-body-wrapper ends -->
+	</div>
+	<!-- container-scroller -->
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/dropify.min.js}"></script>
+	<script th:src="@{~/js/select2.min.js}"></script>
+	<script th:src="@{~/js/summernote-bs4.min.js}"></script>
+	<script th:src="@{~/js/sweetalert2.min.js}"></script>
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<script th:src="@{~/js/dropify.js}"></script>
+
+	<script>
+
+	    $(document).ready(function(){
+
+		    $('#select-modulos').on('change', alterarModulo);
+
+	    });
+
+	    function alterarModulo(){
+			var id = $('#select-modulos').val();
+			window.location.href = `/dashboard/eventos/online/modulos/${id}`;
+		}
+
+		
+
+  	</script>
+
+</body>
+
+</html>

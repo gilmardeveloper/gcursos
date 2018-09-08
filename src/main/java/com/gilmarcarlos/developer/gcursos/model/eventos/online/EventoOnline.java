@@ -71,6 +71,9 @@ public class EventoOnline implements Serializable {
 
 	private Boolean ativo;
 	
+	@OneToMany(mappedBy = "eventoOnline")
+	private List<InscricaoOnline> inscricoes;
+	
 
 	public Long getId() {
 		return id;
@@ -212,7 +215,32 @@ public class EventoOnline implements Serializable {
 	public void setSobre(SobreOnline sobre) {
 		this.sobre = sobre;
 	}
+	
+	public List<InscricaoOnline> getInscricoes() {
+		return inscricoes;
+	}
 
+	public void setInscricoes(List<InscricaoOnline> inscricoes) {
+		this.inscricoes = inscricoes;
+	}
+	
+	@Transient
+	public Boolean isUltimo(AtividadeOnline atividade) {
+		Modulo ultimoModulo = getModulos().get(getModulos().size() - 1); 
+		AtividadeOnline ultimaAtividade = ultimoModulo.getAtividades().get(ultimoModulo.getAtividades().size() - 1); 
+		return ultimaAtividade.equals(atividade);
+	}
+	
+	@Transient
+	public Boolean isInscrito(Usuario usuario) {
+		return getInscricoes().stream().anyMatch((i -> i.getUsuario().equals(usuario)));
+	}
+	
+	@Transient
+	public InscricaoOnline getInscricao(Usuario usuario) {
+		return getInscricoes().stream().filter((i -> i.getUsuario().equals(usuario))).findFirst().get() ;
+	}
+	
 	@Transient
 	public EventoStatus getStatus() {
 		if (isAtivo()) {
