@@ -14,8 +14,8 @@ public class InscricaoOnlineService {
 	@Autowired
 	private InscricaoOnlineRepository repository;
 	
-	public InscricaoOnline salvar(InscricaoOnline atividade){
-		return repository.save(atividade);
+	public InscricaoOnline salvar(InscricaoOnline inscricao){
+		return repository.save(inscricao);
 	}
 
 	public void deletar(Long id) {

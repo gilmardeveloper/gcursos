@@ -48,6 +48,8 @@ import com.gilmarcarlos.developer.gcursos.service.eventos.online.CertificadoOnli
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EstiloOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineLogService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.online.InscricaoOnlineAtividadeService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.online.InscricaoOnlineModuloService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.InscricaoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.ModuloService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.PermissoesEventoOnlineService;
@@ -108,6 +110,12 @@ public class EventosOnlineAdminControler {
 
 	@Autowired
 	private InscricaoOnlineService inscricaoService;
+	
+	@Autowired
+	private InscricaoOnlineModuloService inscricaoModuloService;
+	
+	@Autowired
+	private InscricaoOnlineAtividadeService inscricaoAtividadeService;
 
 	@Autowired
 	private NotificacaoService notificacaoService;
@@ -681,7 +689,7 @@ public class EventosOnlineAdminControler {
 		InscricaoOnline inscricao = inscricaoService.buscarPor(id);
 		Usuario usuarioInscrito = inscricao.getUsuario();
 		EventoOnline evento = inscricao.getEventoOnline();
-
+		
 		logEventoOnlineService.salvar(log(
 				usuarioInscrito.getNome() + " teve sua inscrição cancelada do evento: " + evento.getTitulo(), evento));
 
@@ -691,6 +699,14 @@ public class EventosOnlineAdminControler {
 		notificacaoService.salvar(new Notificacao(getUsuario(), "Cancelou a inscrição do usuário", IconeType.INFORMACAO,
 				StatusType.SUCESSO, "Cancelou a inscrição do usuário com email: " + usuarioInscrito.getEmail()
 						+ ",  do evento " + evento.getTitulo()));
+		
+		if(!inscricao.getAtividades().isEmpty()) {
+			inscricao.getAtividades().forEach(a -> inscricaoAtividadeService.deletar(a.getId()));
+		}
+		
+		if(!inscricao.getModulos().isEmpty()) {
+			inscricao.getModulos().forEach(m -> inscricaoModuloService.deletar(m.getId()));
+		}
 
 		inscricaoService.deletar(id);
 		model.addFlashAttribute("alert", "alert alert-fill-success");

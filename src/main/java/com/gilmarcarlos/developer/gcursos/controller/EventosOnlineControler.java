@@ -24,6 +24,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.AtividadeOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnline;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnlineAtividade;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnlineModulo;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.Modulo;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.PermissoesEventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
@@ -31,6 +33,8 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresenc
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.AtividadeOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.online.InscricaoOnlineAtividadeService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.online.InscricaoOnlineModuloService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.InscricaoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.ModuloService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.PermissoesEventoOnlineService;
@@ -61,6 +65,12 @@ public class EventosOnlineControler {
 
 	@Autowired
 	private InscricaoOnlineService inscricaoService;
+	
+	@Autowired
+	private InscricaoOnlineModuloService inscricaoModuloService;
+	
+	@Autowired
+	private InscricaoOnlineAtividadeService inscricaoAtividadeService;
 
 	private Authentication autenticado;
 
@@ -206,6 +216,15 @@ public class EventosOnlineControler {
 	public String eventoDesistir(@PathVariable("id") Long id, RedirectAttributes red) {
 
 		InscricaoOnline inscricao = eventoOnlineService.buscarPor(id).getInscricao(getUsuario());
+		
+		if(!inscricao.getAtividades().isEmpty()) {
+			inscricao.getAtividades().forEach(a -> inscricaoAtividadeService.deletar(a.getId()));
+		}
+		
+		if(!inscricao.getModulos().isEmpty()) {
+			inscricao.getModulos().forEach(m -> inscricaoModuloService.deletar(m.getId()));
+		}
+		
 		inscricaoService.deletar(inscricao.getId());
 
 		return "redirect:/dashboard/eventos/online/detalhes/" + id;
@@ -258,17 +277,11 @@ public class EventosOnlineControler {
 		InscricaoOnline inscricao = evento.getInscricao(getUsuario());
 
 		if (!inscricao.realizou(modulo)) {
-			List<Modulo> modulos = inscricao.getModulos();
-			modulos.add(modulo);
-			inscricao.setModulos(modulos);
-			inscricaoService.salvar(inscricao);
+			inscricaoModuloService.salvar(new InscricaoOnlineModulo(inscricao, modulo));
 		}
 
 		if (!inscricao.realizou(atividade)) {
-			List<AtividadeOnline> atividades = inscricao.getAtividades();
-			atividades.add(atividade);
-			inscricao.setAtividades(atividades);
-			inscricaoService.salvar(inscricao);
+			inscricaoAtividadeService.salvar(new InscricaoOnlineAtividade(inscricao, atividade));
 		}
 
 		if (posicao < modulo.getAtividades().size()) {
@@ -285,10 +298,7 @@ public class EventosOnlineControler {
 						.findFirst().get();
 				
 				if (!inscricao.realizou(proximoModulo)) {
-					List<Modulo> modulos = inscricao.getModulos();
-					modulos.add(proximoModulo);
-					inscricao.setModulos(modulos);
-					inscricaoService.salvar(inscricao);
+					inscricaoModuloService.salvar(new InscricaoOnlineModulo(inscricao, proximoModulo));
 				}
 
 				return "redirect:/dashboard/eventos/online/modulos/" + proximoModulo.getId();

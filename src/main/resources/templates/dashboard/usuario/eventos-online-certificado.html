@@ -3,49 +3,22 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
-<head th:replace="fragments/head :: head(~{::title},~{::link})">
-<title>ZEUS | Estilo</title>
-<link rel="stylesheet" th:href="@{~/css/dropify.min.css}" />
-<link rel="stylesheet" th:href="@{~/css/summernote-bs4.css}" />
+<head th:replace="fragments/head :: head(~{::title},~{})">
+<title>ZEUS | Certificado</title>
 </head>
 
 <body>
-	<div class="container-scroller bg-light">
-		<!-- partial:../../partials/_navbar.html -->
 
-		<!-- partial -->
-		<div class="container-fluid page-body-wrapper">
-			<div class="row row-offcanvas row-offcanvas-right">
-				<!-- partial:../../partials/_settings-panel.html -->
-				<!-- content-wrapper -->
-				<div class="content-wrapper">
-					<!-- row -->
-					<div class="row">
+	<button type="button" class="btn btn-outline-dark mt-4 ml-5 d-print-none" onclick="window.print()">Imprimir</button>
 
-						<!-- evento -->
-						<div class="col-md-6 col-lg-8 grid-margin">
-							<div class="row">
-								<div class="col-lg-12">
-									<div id="box" style="height: 502px; width: 650px; -webkit-print-color-adjust: exact;">
-										<div th:if="${evento.certificadoOnline != null}" th:style="'background-image: url(/imagens/evento/online/' + ${evento.id} + '/imagem-certificado.png); height: 502px; width: 650px; background-repeat: no-repeat;'">
-											<div id="conteudo" th:if="${evento.certificadoOnline.conteudo != null}" th:utext="${evento.certificadoOnline.conteudo}"></div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- end evento -->
-					</div>
-					<!-- end row -->
-				</div>
-				<!-- end content-wrapper -->
-
+	<div id="to-print" class="mt-5 ml-5">
+		<div id="box" style="height: 502px; width: 1050px; -webkit-print-color-adjust: exact;">
+			<div th:if="${evento.certificadoOnline != null}" th:style="'background-image: url(/imagens/evento/online/' + ${evento.id} + '/imagem-certificado.png); height: 502px; width: 650px; background-repeat: no-repeat;'">
+				<div id="conteudo" th:if="${evento.certificadoOnline.conteudo != null}" th:utext="${evento.certificadoOnline.conteudo}"></div>
 			</div>
-			<!-- row-offcanvas ends -->
 		</div>
-		<!-- page-body-wrapper ends -->
 	</div>
-	<!-- container-scroller -->
+
 	<span th:replace="fragments/base-script :: base"></span>
 	<span th:replace="fragments/base-script :: plugins"></span>
 

@@ -3,15 +3,14 @@ package com.gilmarcarlos.developer.gcursos.model.eventos.online;
 import java.beans.Transient;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
@@ -34,11 +33,11 @@ public class InscricaoOnline implements Serializable {
 	@OneToOne
 	private Usuario usuario;
 
-	@ElementCollection
-	private List<Modulo> modulos;
+	@OneToMany(mappedBy = "inscricaoOnline")	
+	private List<InscricaoOnlineModulo> modulos;
 
-	@ElementCollection
-	private List<AtividadeOnline> atividades;
+	@OneToMany(mappedBy = "inscricaoOnline")		
+	private List<InscricaoOnlineAtividade> atividades;
 	
 	private Boolean finalizado;
 	
@@ -80,22 +79,22 @@ public class InscricaoOnline implements Serializable {
 		this.usuario = usuario;
 	}
 
-	public List<Modulo> getModulos() {
-		return (modulos.isEmpty() ? new ArrayList<>() : modulos);
+	public List<InscricaoOnlineModulo> getModulos() {
+		return modulos;
 	}
 
-	public void setModulos(List<Modulo> modulos) {
+	public void setModulos(List<InscricaoOnlineModulo> modulos) {
 		this.modulos = modulos;
 	}
 
-	public List<AtividadeOnline> getAtividades() {
-		return (atividades.isEmpty() ? new ArrayList<>() : atividades);
+	public List<InscricaoOnlineAtividade> getAtividades() {
+		return atividades;
 	}
 
-	public void setAtividades(List<AtividadeOnline> atividades) {
+	public void setAtividades(List<InscricaoOnlineAtividade> atividades) {
 		this.atividades = atividades;
 	}
-	
+
 	public Boolean getFinalizado() {
 		return finalizado;
 	}
@@ -130,8 +129,8 @@ public class InscricaoOnline implements Serializable {
 		if (this.modulos.isEmpty()) {
 			return this.eventoOnline.getModulos().get(0);
 		} else {
-			this.modulos.sort((m1, m2) -> Integer.compare(m1.getPosicao(), m2.getPosicao()));
-			return this.modulos.get(this.modulos.size() - 1);
+			this.modulos.sort((m1, m2) -> Integer.compare(m1.getModulo().getPosicao(), m2.getModulo().getPosicao()));
+			return this.modulos.get(this.modulos.size() - 1).getModulo();
 		}
 	}
 
@@ -151,12 +150,12 @@ public class InscricaoOnline implements Serializable {
 
 	@Transient
 	public Boolean realizou(Modulo modulo) {
-		return getModulos().contains(modulo);
+		return getModulos().stream().anyMatch(m -> m.getModulo().equals(modulo));
 	}
 
 	@Transient
 	public Boolean realizou(AtividadeOnline atividade) {
-		return getAtividades().contains(atividade);
+		return getAtividades().stream().anyMatch(a -> a.getAtividadeOnline().equals(atividade));
 	}
 
 	@Override
