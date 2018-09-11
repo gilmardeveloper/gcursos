@@ -24,4 +24,7 @@ public interface EventoOnlineRepository extends CrudRepository<EventoOnline, Lon
 	@Query("select e from EventoOnline e")
 	Page<EventoOnline> listarTodos(Pageable pageable);
 
+	@Query("select distinct e from EventoOnline e join fetch e.inscricoes i where i.usuario.id = :pid")
+	List<EventoOnline> buscarPorUsuario(@Param("pid") Long id);
+
 }

@@ -296,6 +296,7 @@ public class EventosOnlineControler {
 				
 				if(!inscricao.isFinalizado()) {
 					inscricao.setFinalizado(true);
+					inscricao.setDataConclusao(LocalDate.now());
 					inscricaoService.salvar(inscricao);
 					red.addFlashAttribute("alert", "alert alert-fill-success");
 					red.addFlashAttribute("message", "você finalizou esse evento");

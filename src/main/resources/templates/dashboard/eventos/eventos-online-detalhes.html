@@ -65,6 +65,13 @@
 										</p>
 									</div>
 									<div class="card-footer bg-light text-right">
+
+										<div th:if="${evento.isInscrito(usuario)}" class="col-lg-12 mb-2" th:with="progresso=${evento.progresso(usuario)}">
+											<div class="progress progress-lg">
+											  <div class="progress-bar progress-bar-striped bg-success" role="progressbar" th:style="'width:' + ${progresso} +'%;'" th:attr="aria-valuenow='+ ${progresso} +'" aria-valuemin="0" aria-valuemax="100"><span th:text="${progresso} + '%'"></span></div>
+											</div>
+										</div>
+
 										<a class="btn btn-success btn-lg" th:href="@{/dashboard/eventos/online/iniciar/{id}(id=${evento.id})}"><i class="icon-control-play"></i> <span th:unless="${evento.isInscrito(usuario)}">Iniciar</span><span th:if="${evento.isInscrito(usuario) and !evento.getInscricao(usuario).isFinalizado()}">Continuar</span><span th:if="${evento.isInscrito(usuario) and evento.getInscricao(usuario).isFinalizado()}">Acessar</span></a>
 
 										<a th:if="${evento.isInscrito(usuario)}" class="btn btn-outline-danger btn-lg" href="#" th:onclick="'desistir(' + ${evento.id} + ')'"><i class="icon-ban"></i> <span >Desistir</span></a>

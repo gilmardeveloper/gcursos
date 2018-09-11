@@ -18,8 +18,12 @@ public class LocalDateSpringConverter implements Converter<String, LocalDate> {
 
 	@Override
 	public LocalDate convert(String value) {
+		if(value != null) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		return LocalDate.parse(value, formatter);
+		}else {
+			return null;
+		}
 	}
 
 }

@@ -223,7 +223,7 @@
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/eventos/presenciais}">Publicados</a></li>
                   <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/usuario/minhas/inscricoes/presenciais}">Minhas inscrições</a></li>
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/usuario/eventos/presenciais/concluidos}">Acompanhe</a></li>
+                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/usuario/eventos/presenciais/progresso}">Acompanhe</a></li>
                 </ul>
               </div>
             </li>
@@ -232,13 +232,12 @@
               <a class="nav-link" data-toggle="collapse" href="#page-online" aria-expanded="false" aria-controls="page-online">
                 <i class="icon-globe menu-icon"></i>
                 <span class="menu-title">Eventos online</span>
-                <span class="badge badge-info">3</span>
+                <span class="badge badge-info">2</span>
               </a>
               <div class="collapse" id="page-online">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/eventos/online}">Publicados</a></li>
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/usuario/minhas/inscricoes/presenciais}">Minhas inscrições</a></li>
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/usuario/eventos/presenciais/concluidos}">Acompanhe</a></li>
+                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/usuario/eventos/online/progresso}">Acompanhe</a></li>
                 </ul>
               </div>
             </li>
@@ -343,7 +342,11 @@
             <li th:replace="fragments/sidebar :: credenciais"></li>
 
              <div class="nav-link pt-2 pb-2 border-top">
-              <small class="text-success font-weight-bold" th:text="${evento.titulo}"></small>
+              <small th:unless="${evento.getInscricao(usuario).isFinalizado()}" class="text-muted font-weight-bold" th:text="${evento.titulo}"></small>
+              <small th:if="${evento.getInscricao(usuario).isFinalizado()}" class="text-success font-weight-bold" th:text="${evento.titulo}"></small>
+              <div class="progress progress-sm" th:with="progresso=${evento.progresso(usuario)}">
+                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" th:style="'width:' + ${progresso} +'%;'" th:attr="aria-valuenow='+ ${progresso} +'" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
             </div>
 
             <div class="nav-link pt-4 pb-2 border-top">

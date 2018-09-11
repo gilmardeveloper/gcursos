@@ -116,4 +116,8 @@ public class EventoOnlineService {
 		}
 	}
 
+	public List<EventoOnline> buscarPorUsuario(Long id) {
+		return repository.buscarPorUsuario(id);
+	}
+
 }

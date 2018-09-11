@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.certificados.Certificado;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
@@ -40,6 +41,7 @@ import com.gilmarcarlos.developer.gcursos.model.usuarios.DadosPessoais;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.TelefoneUsuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.UsuarioExisteException;
+import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.InscricaoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.imagens.ImagensService;
@@ -89,6 +91,9 @@ public class UsuarioControler {
 	
 	@Autowired
 	private EventoPresencialService eventoService;
+	
+	@Autowired
+	private EventoOnlineService eventoOnlineService;
 
 	@Autowired
 	private UnidadeTrabalhoService unidadeService;
@@ -267,8 +272,8 @@ public class UsuarioControler {
 		return "dashboard/usuario/minhas-inscricoes-presenciais";
 	}
 	
-	@GetMapping("/eventos/presenciais/concluidos")
-	public String eventosConcluidos(Model model) {
+	@GetMapping("/eventos/presenciais/progresso")
+	public String eventosPresencialProgresso(Model model) {
 		
 		Usuario usuarioLogado = getUsuario();
 		List<EventoPresencial> eventos = eventoService.buscarPorUsuario(usuarioLogado.getId());
@@ -277,7 +282,32 @@ public class UsuarioControler {
 		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
 		model.addAttribute("eventos", eventos);
 		
-		return "dashboard/usuario/eventos-presenciais-concluidos";
+		return "dashboard/usuario/eventos-presenciais-progresso";
+	}
+	
+	@GetMapping("/eventos/online/progresso")
+	public String eventosOnlineProgresso(Model model) {
+		
+		Usuario usuarioLogado = getUsuario();
+		List<EventoOnline> eventos = eventoOnlineService.buscarPorUsuario(usuarioLogado.getId());
+		
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("eventos", eventos);
+		
+		return "dashboard/usuario/eventos-online-progresso";
+	}
+	
+	@GetMapping("/eventos/online/certificado/{id}")
+	public String certificadoOnline(@PathVariable("id") Long id, Model model) {
+		
+		Usuario usuarioLogado = getUsuario();
+				
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("evento", eventoOnlineService.buscarPor(id));
+		
+		return "dashboard/usuario/eventos-online-certificado";
 	}
 	
 	@GetMapping("/eventos/presenciais/verificar/certificado/{id}")

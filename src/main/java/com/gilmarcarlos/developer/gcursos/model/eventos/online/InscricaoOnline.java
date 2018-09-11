@@ -2,6 +2,7 @@ package com.gilmarcarlos.developer.gcursos.model.eventos.online;
 
 import java.beans.Transient;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -40,6 +41,10 @@ public class InscricaoOnline implements Serializable {
 	private List<AtividadeOnline> atividades;
 	
 	private Boolean finalizado;
+	
+	private LocalDate dataInicio;
+	
+	private LocalDate dataConclusao;
 
 	public InscricaoOnline() {
 
@@ -48,6 +53,7 @@ public class InscricaoOnline implements Serializable {
 	public InscricaoOnline(Usuario usuario, EventoOnline evento) {
 		this.usuario = usuario;
 		this.eventoOnline = evento;
+		this.dataInicio = LocalDate.now();
 	}
 
 	public Long getId() {
@@ -98,6 +104,22 @@ public class InscricaoOnline implements Serializable {
 		this.finalizado = finalizado;
 	}
 	
+	public LocalDate getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(LocalDate dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public LocalDate getDataConclusao() {
+		return dataConclusao;
+	}
+
+	public void setDataConclusao(LocalDate dataConclusao) {
+		this.dataConclusao = dataConclusao;
+	}
+
 	@Transient
 	public Boolean isFinalizado() {
 		return (finalizado != null ? finalizado : false);

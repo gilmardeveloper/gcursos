@@ -4,6 +4,7 @@ import java.beans.Transient;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,20 +27,20 @@ public class EventoOnline implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	private String titulo;
 	private String descricao;
 	private Boolean certificado;
 	private String cargaHoraria;
 	private String tipoEvento;
-	
+
 	@OneToOne(mappedBy = "eventoOnline")
 	private EstiloOnline estilo;
-	
+
 	@OneToOne(mappedBy = "eventoOnline")
 	private PermissoesEventoOnline permissoes;
 
@@ -48,32 +49,34 @@ public class EventoOnline implements Serializable {
 
 	@OneToOne(mappedBy = "eventoOnline")
 	private ImagensEventoOnlineTop imagemTopDetalhes;
-	
+
 	@OneToMany(mappedBy = "eventoOnline")
 	private List<Modulo> modulos;
-	
+
 	@OneToOne
 	private Usuario responsavel;
 
 	@OneToMany(mappedBy = "eventoOnline")
 	private List<EventoOnlineLog> logs;
-	
+
 	private LocalDate dataCriacao;
 	private LocalDate dataAtualizacao;
-	
+
 	@OneToOne
 	private CategoriaEvento categoria;
 
 	@OneToOne(mappedBy = "eventoOnline")
 	private SobreOnline sobre;
-	
+
 	private Boolean publicado;
 
 	private Boolean ativo;
-	
+
 	@OneToMany(mappedBy = "eventoOnline")
 	private List<InscricaoOnline> inscricoes;
-	
+
+	@OneToOne(mappedBy = "eventoOnline")
+	private CertificadoOnline certificadoOnline;
 
 	public Long getId() {
 		return id;
@@ -186,11 +189,11 @@ public class EventoOnline implements Serializable {
 	public void setCategoria(CategoriaEvento categoria) {
 		this.categoria = categoria;
 	}
-	
+
 	public Boolean isPublicado() {
 		return publicado;
 	}
-	
+
 	public Boolean isCertificado() {
 		return certificado;
 	}
@@ -215,7 +218,7 @@ public class EventoOnline implements Serializable {
 	public void setSobre(SobreOnline sobre) {
 		this.sobre = sobre;
 	}
-	
+
 	public List<InscricaoOnline> getInscricoes() {
 		return inscricoes;
 	}
@@ -223,24 +226,36 @@ public class EventoOnline implements Serializable {
 	public void setInscricoes(List<InscricaoOnline> inscricoes) {
 		this.inscricoes = inscricoes;
 	}
-	
+
+	public CertificadoOnline getCertificadoOnline() {
+		return certificadoOnline;
+	}
+
+	public void setCertificadoOnline(CertificadoOnline certificadoOnline) {
+		this.certificadoOnline = certificadoOnline;
+	}
+
 	@Transient
 	public Boolean isUltimo(AtividadeOnline atividade) {
-		Modulo ultimoModulo = getModulos().get(getModulos().size() - 1); 
-		AtividadeOnline ultimaAtividade = ultimoModulo.getAtividades().get(ultimoModulo.getAtividades().size() - 1); 
+		Modulo ultimoModulo = getModulos().get(getModulos().size() - 1);
+		AtividadeOnline ultimaAtividade = ultimoModulo.getAtividades().get(ultimoModulo.getAtividades().size() - 1);
 		return ultimaAtividade.equals(atividade);
 	}
-	
+
 	@Transient
 	public Boolean isInscrito(Usuario usuario) {
 		return getInscricoes().stream().anyMatch((i -> i.getUsuario().equals(usuario)));
 	}
-	
+
 	@Transient
 	public InscricaoOnline getInscricao(Usuario usuario) {
-		return getInscricoes().stream().filter((i -> i.getUsuario().equals(usuario))).findFirst().get() ;
+		try {
+			return getInscricoes().stream().filter((i -> i.getUsuario().equals(usuario))).findFirst().get();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
 	}
-	
+
 	@Transient
 	public EventoStatus getStatus() {
 		if (isAtivo()) {
@@ -263,7 +278,7 @@ public class EventoOnline implements Serializable {
 
 	@Transient
 	public void ativarPublicacao() throws EventoCanceladoException {
-		if(!isAtivo()) {
+		if (!isAtivo()) {
 			throw new EventoCanceladoException();
 		}
 		this.publicado = true;
@@ -284,22 +299,33 @@ public class EventoOnline implements Serializable {
 		return (isPublicado() ? "SIM" : "NÃO");
 	}
 
-	
 	@Transient
 	public Boolean isAtivo() {
 		return ativo;
 	}
-	
+
 	@Transient
-	public Long assiduidade(Usuario usuario) {
-		
+	public Long progresso(Usuario usuario) {
+
 		Double numerador = 0.0;
 		Double denominador = 0.0;
 		Double presenca = 0.0;
-			
+
+		InscricaoOnline inscricao = getInscricao(usuario);
+
+		for (Modulo modulo : getModulos()) {
+
+			for (AtividadeOnline atividade : modulo.getAtividades()) {
+				if (inscricao.realizou(atividade)) {
+					numerador += 100.00;
+				}
+				denominador++;
+			}
+
+		}
+
 		presenca = numerador / denominador;
-		
-		
+
 		return Math.round(presenca);
 	}
 
@@ -327,6 +353,5 @@ public class EventoOnline implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
+
 }

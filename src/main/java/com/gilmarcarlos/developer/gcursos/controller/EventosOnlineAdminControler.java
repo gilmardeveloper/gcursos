@@ -25,9 +25,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.AtividadeOnline;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.CertificadoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EstiloOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnlineLog;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.Modulo;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.ModuloDTO;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.OrdenarHelper;
@@ -36,18 +38,24 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.online.SobreOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.exceptions.PosicaoExisteException;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoOnlineDestaque;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoOnlineTop;
+import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
+import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
+import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.eventos.categorias.CategoriaEventoService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.AtividadeOnlineService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.online.CertificadoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EstiloOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineLogService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.online.InscricaoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.ModuloService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.PermissoesEventoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.SobreOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.imagens.ImagensService;
 import com.gilmarcarlos.developer.gcursos.service.locais.CargoService;
 import com.gilmarcarlos.developer.gcursos.service.locais.UnidadeTrabalhoService;
+import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
@@ -97,6 +105,15 @@ public class EventosOnlineAdminControler {
 
 	@Autowired
 	private ImagensService imagensService;
+
+	@Autowired
+	private InscricaoOnlineService inscricaoService;
+
+	@Autowired
+	private NotificacaoService notificacaoService;
+	
+	@Autowired
+	private CertificadoOnlineService certificadoService;
 
 	private Authentication autenticado;
 
@@ -444,111 +461,115 @@ public class EventosOnlineAdminControler {
 
 		try {
 			moduloService.salvar(modulo);
-			logEventoOnlineService.salvar(log("Módulo: " + modulo.getTitulo() + " foi alterado",
-					modulo.getEventoOnline()));
+			logEventoOnlineService
+					.salvar(log("Módulo: " + modulo.getTitulo() + " foi alterado", modulo.getEventoOnline()));
 			return "redirect:/dashboard/admin/eventos/online/detalhes/" + modulo.getEventoOnline().getId();
-		
+
 		} catch (PosicaoExisteException e) {
 			model.addFlashAttribute("alert", "alert alert-fill-danger");
 			model.addFlashAttribute("message", e.getMessage());
 			return "redirect:/dashboard/admin/eventos/online/detalhes/" + modulo.getEventoOnline().getId();
 		}
 	}
-	
+
 	@PostMapping("/modulos/deletar")
-	public String modulosDeletar(@RequestParam("id")Long id, RedirectAttributes model) {
-		
+	public String modulosDeletar(@RequestParam("id") Long id, RedirectAttributes model) {
+
 		Modulo modulo = moduloService.buscarPor(id);
 		EventoOnline evento = modulo.getEventoOnline();
-		
-		if(!modulo.getAtividades().isEmpty()) {
+
+		if (!modulo.getAtividades().isEmpty()) {
 			modulo.getAtividades().forEach(a -> atividadeService.deletar(a.getId()));
 		}
-		
-		logEventoOnlineService.salvar(log("Módulo: " + modulo.getTitulo() + " foi excluído",
-				modulo.getEventoOnline()));
+
+		logEventoOnlineService.salvar(log("Módulo: " + modulo.getTitulo() + " foi excluído", modulo.getEventoOnline()));
 		moduloService.deletar(id);
-		
+
 		return "redirect:/dashboard/admin/eventos/online/detalhes/" + evento.getId();
 	}
-	
+
 	@GetMapping("/modulos/{id}")
 	public String modulos(@PathVariable("id") Long id, Model model, RedirectAttributes red) {
-		
+
 		Modulo modulo = moduloService.buscarPor(id);
-		
-		if(modulo.getAtividades().isEmpty()) {
+
+		if (modulo.getAtividades().isEmpty()) {
 			red.addFlashAttribute("alert", "alert alert-fill-danger");
 			red.addFlashAttribute("message", "você precisa adicionar atividades antes");
 			return "redirect:/dashboard/admin/eventos/online/detalhes/" + modulo.getEventoOnline().getId();
-		}else {
-			return "redirect:/dashboard/admin/eventos/online/modulos/" + id + "/atividade/" + modulo.getAtividades().get(0).getPosicao();
+		} else {
+			return "redirect:/dashboard/admin/eventos/online/modulos/" + id + "/atividade/"
+					+ modulo.getAtividades().get(0).getPosicao();
 		}
-		
-		
+
 	}
-	
+
 	@PostMapping(value = "/modulos/ordenar")
 	@ResponseBody
 	public ResponseEntity<?> modulosOrdenar(@RequestBody List<OrdenarHelper> dados) {
 		moduloService.ordenar(dados);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/modulos/{id}/atividade/{posicao}")
-	public String modulos(@PathVariable("id") Long id, @PathVariable("posicao") Integer posicao, Model model, RedirectAttributes red) {
-		
+	public String modulos(@PathVariable("id") Long id, @PathVariable("posicao") Integer posicao, Model model,
+			RedirectAttributes red) {
+
 		Modulo modulo = moduloService.buscarPor(id);
-		AtividadeOnline atividade = modulo.getAtividades().stream().filter(a -> a.getPosicao() == posicao).findAny().get();
-		
+		AtividadeOnline atividade = modulo.getAtividades().stream().filter(a -> a.getPosicao() == posicao).findAny()
+				.get();
+
 		Usuario usuarioLogado = getUsuario();
 		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
 		model.addAttribute("modulo", modulo);
 		model.addAttribute("atividade", atividade);
 		model.addAttribute("evento", modulo.getEventoOnline());
-		
+
 		return "dashboard/admin/eventos/online/base-detalhes-modulo-evento-online";
-		
+
 	}
-	
+
 	@GetMapping("/modulos/{id}/proxima-atividade/{posicao}")
-	public String proximaAtividade(@PathVariable("id") Long id, @PathVariable("posicao") Integer posicao, Model model, RedirectAttributes red) {
-		
+	public String proximaAtividade(@PathVariable("id") Long id, @PathVariable("posicao") Integer posicao, Model model,
+			RedirectAttributes red) {
+
 		Modulo modulo = moduloService.buscarPor(id);
 		EventoOnline evento = modulo.getEventoOnline();
-		
-		if(posicao < modulo.getAtividades().size()) { 
-			
-			AtividadeOnline atividade = modulo.getAtividades().stream().filter(a -> a.getPosicao() > posicao).findFirst().get();
+
+		if (posicao < modulo.getAtividades().size()) {
+
+			AtividadeOnline atividade = modulo.getAtividades().stream().filter(a -> a.getPosicao() > posicao)
+					.findFirst().get();
 			return "redirect:/dashboard/admin/eventos/online/modulos/" + id + "/atividade/" + atividade.getPosicao();
 
-		}else{
-			
-			if(modulo.getPosicao() < evento.getModulos().size()) {
-				Modulo proximoModulo = evento.getModulos().stream().filter(m -> m.getPosicao() > modulo.getPosicao()).findFirst().get();
+		} else {
+
+			if (modulo.getPosicao() < evento.getModulos().size()) {
+				Modulo proximoModulo = evento.getModulos().stream().filter(m -> m.getPosicao() > modulo.getPosicao())
+						.findFirst().get();
 				return "redirect:/dashboard/admin/eventos/online/modulos/" + proximoModulo.getId();
-			}else {
+			} else {
 				red.addFlashAttribute("alert", "alert alert-fill-success");
 				red.addFlashAttribute("message", "você finalizou esse evento");
 				return "redirect:/dashboard/admin/eventos/online";
 			}
-			
+
 		}
-		
+
 	}
 
 	@GetMapping("/atividades/{id}")
 	public String atividades(@PathVariable("id") Long id, Model model, RedirectAttributes red) {
 
 		EventoOnline evento = eventoOnlineService.buscarPor(id);
-		
+
 		if (evento.getModulos().isEmpty()) {
-		
+
 			red.addFlashAttribute("alert", "alert alert-fill-danger");
 			red.addFlashAttribute("message", "você precisa adicionar um módulo antes");
 			return "redirect:/dashboard/admin/eventos/online/detalhes/" + id;
-		
+
 		} else {
 
 			Usuario usuarioLogado = getUsuario();
@@ -561,83 +582,159 @@ public class EventosOnlineAdminControler {
 			return "dashboard/admin/eventos/online/base-cadastro-atividades-evento-online";
 		}
 	}
-	
+
 	@PostMapping("/atividades/salvar")
 	public String atividadesSalvar(AtividadeOnline atividade, RedirectAttributes model) {
-	
-			try {
-				atividadeService.salvar(atividade);
-				logEventoOnlineService.salvar(log("Atividade: " + atividade.getTitulo() + " foi alterada",
-						atividade.getModulo().getEventoOnline()));
-				model.addFlashAttribute("alert", "alert alert-fill-success");
-				model.addFlashAttribute("message", "salvo com sucesso");
-				return "redirect:/dashboard/admin/eventos/online/detalhes/"
-				+ atividade.getModulo().getEventoOnline().getId();
-			} catch (PosicaoExisteException e) {
-				logEventoOnlineService.salvar(log("Atividade: " + atividade.getTitulo() + " foi alterada",
-						atividade.getModulo().getEventoOnline()));
-				model.addFlashAttribute("alert", "alert alert-fill-danger");
-				model.addFlashAttribute("message", e.getMessage());
-				return "redirect:/dashboard/admin/eventos/online/detalhes/"
-				+ atividade.getModulo().getEventoOnline().getId();
-			}
+
+		try {
+			atividadeService.salvar(atividade);
+			logEventoOnlineService.salvar(log("Atividade: " + atividade.getTitulo() + " foi alterada",
+					atividade.getModulo().getEventoOnline()));
+			model.addFlashAttribute("alert", "alert alert-fill-success");
+			model.addFlashAttribute("message", "salvo com sucesso");
+			return "redirect:/dashboard/admin/eventos/online/detalhes/"
+					+ atividade.getModulo().getEventoOnline().getId();
+		} catch (PosicaoExisteException e) {
+			logEventoOnlineService.salvar(log("Atividade: " + atividade.getTitulo() + " foi alterada",
+					atividade.getModulo().getEventoOnline()));
+			model.addFlashAttribute("alert", "alert alert-fill-danger");
+			model.addFlashAttribute("message", e.getMessage());
+			return "redirect:/dashboard/admin/eventos/online/detalhes/"
+					+ atividade.getModulo().getEventoOnline().getId();
+		}
 
 	}
-	
+
 	@PostMapping(value = "/atividades/ordenar")
 	@ResponseBody
 	public ResponseEntity<?> atividadesOrdenar(@RequestBody List<OrdenarHelper> dados) {
-		
+
 		atividadeService.ordenar(dados);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/atividades/alterar/{id}")
 	public String atividadesAlterar(@PathVariable("id") Long id, RedirectAttributes model) {
 		AtividadeOnline atividade = atividadeService.buscarPor(id);
 		model.addFlashAttribute("atividade", atividade);
-		return "redirect:/dashboard/admin/eventos/online/atividades/"
-				+ atividade.getModulo().getEventoOnline().getId();
+		return "redirect:/dashboard/admin/eventos/online/atividades/" + atividade.getModulo().getEventoOnline().getId();
 	}
 
 	@GetMapping("/atividades/deletar/{id}")
 	public String atividadesDeletar(@PathVariable("id") Long id, RedirectAttributes model) {
-		
+
 		AtividadeOnline atividade = atividadeService.buscarPor(id);
-		logEventoOnlineService.salvar(log("Atividade: " + atividade.getTitulo() + " foi deletada",
-				atividade.getModulo().getEventoOnline()));
+		logEventoOnlineService.salvar(
+				log("Atividade: " + atividade.getTitulo() + " foi deletada", atividade.getModulo().getEventoOnline()));
 		EventoOnline evento = atividade.getModulo().getEventoOnline();
 		atividadeService.deletar(id);
 
 		model.addFlashAttribute("alert", "alert alert-fill-success");
 		model.addFlashAttribute("message", "removido com sucesso");
 		model.addFlashAttribute("atividade", atividade);
-		
+
 		return "redirect:/dashboard/admin/eventos/online/atividades/" + evento.getId();
 	}
-	
+
 	@PostMapping("/atividades/conteudo/salvar")
-	public String atividadeConteudoSalvar(@RequestParam("id") Long id, @RequestParam("conteudo") String conteudo, RedirectAttributes model) {
-		
+	public String atividadeConteudoSalvar(@RequestParam("id") Long id, @RequestParam("conteudo") String conteudo,
+			RedirectAttributes model) {
+
 		AtividadeOnline atividade = atividadeService.buscarPor(id);
 		try {
 			atividade.setConteudo(conteudo);
 			atividadeService.salvar(atividade);
-			return "redirect:/dashboard/admin/eventos/online/modulos/" + atividade.getModulo().getId() + "/atividade/" + atividade.getPosicao();
+			return "redirect:/dashboard/admin/eventos/online/modulos/" + atividade.getModulo().getId() + "/atividade/"
+					+ atividade.getPosicao();
 		} catch (PosicaoExisteException e) {
 			model.addFlashAttribute("alert", "alert alert-fill-danger");
 			model.addFlashAttribute("message", e.getMessage());
-			return "redirect:/dashboard/admin/eventos/online/modulos/" + atividade.getModulo().getId() + "/atividade/" + atividade.getPosicao();
+			return "redirect:/dashboard/admin/eventos/online/modulos/" + atividade.getModulo().getId() + "/atividade/"
+					+ atividade.getPosicao();
 
 		}
-		
-		
+
 	}
-	
+
 	@GetMapping(value = "/modulo/dto/{id}", produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public ModuloDTO moduloDTO(@PathVariable("id") Long id) {
 		return new ModuloDTO(moduloService.buscarPor(id));
+	}
+
+	@GetMapping("/inscricoes/{id}")
+	private String incricoesEventoPresencial(@PathVariable("id") Long id, Model model) {
+		Usuario usuarioLogado = getUsuario();
+		if (usuarioLogado.isPerfilCompleto()) {
+			model.addAttribute("usuario", usuarioLogado);
+			model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+			model.addAttribute("evento", eventoOnlineService.buscarPor(id));
+			return "dashboard/admin/eventos/online/base-info-inscricoes-evento-online";
+		} else {
+			return "redirect:/dashboard/admin/complete-cadastro";
+		}
+	}
+
+	@GetMapping("/inscricoes/{id}/cancelar/inscricao")
+	public String incricoesEventoCancelarInscricao(@PathVariable("id") Long id, RedirectAttributes model) {
+
+		InscricaoOnline inscricao = inscricaoService.buscarPor(id);
+		Usuario usuarioInscrito = inscricao.getUsuario();
+		EventoOnline evento = inscricao.getEventoOnline();
+
+		logEventoOnlineService.salvar(log(
+				usuarioInscrito.getNome() + " teve sua inscrição cancelada do evento: " + evento.getTitulo(), evento));
+
+		notificacaoService.salvar(new Notificacao(usuarioInscrito, "Inscrição cancelada", IconeType.INFORMACAO,
+				StatusType.SUCESSO,
+				"Sua inscrição foi cancelada para o evento " + evento.getTitulo() + " por " + getUsuario().getNome()));
+		notificacaoService.salvar(new Notificacao(getUsuario(), "Cancelou a inscrição do usuário", IconeType.INFORMACAO,
+				StatusType.SUCESSO, "Cancelou a inscrição do usuário com email: " + usuarioInscrito.getEmail()
+						+ ",  do evento " + evento.getTitulo()));
+
+		inscricaoService.deletar(id);
+		model.addFlashAttribute("alert", "alert alert-fill-success");
+		model.addFlashAttribute("message", "inscrição foi cancelada com sucesso");
+
+		return "redirect:/dashboard/admin/eventos/online/inscricoes/" + evento.getId();
+
+	}
+	
+	@GetMapping("/certificado/{id}")
+	public String certificadoOnline(@PathVariable("id") Long id, Model model) {
+		
+		Usuario usuarioLogado = getUsuario();
+				
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("evento", eventoOnlineService.buscarPor(id));
+		
+		return "dashboard/admin/eventos/online/base-certificado-evento-online";
+	}
+	
+	@PostMapping("/certificado/fundo/salvar")
+	public String salvarImagensCertificado(@Valid CertificadoOnline certificado, BindingResult result,
+			RedirectAttributes model) {
+
+		if (!result.hasErrors()) {
+			if (certificado.getId() != null) {
+				certificadoService.atualizarImagemFundo(certificado);
+			}else {
+				certificadoService.salvar(certificado);
+			}
+			return "redirect:/dashboard/admin/eventos/online/certificado/" + certificado.getEventoOnline().getId();
+		} else {
+			
+			model.addFlashAttribute("alert", "alert alert-fill-danger");
+			model.addFlashAttribute("message", "imagem vazia ou arquivo não é uma imagem");
+			return "redirect:/dashboard/admin/eventos/online/certificado/" + certificado.getEventoOnline().getId();
+		}
+	}
+	
+	@PostMapping("/certificado/conteudo/salvar")
+	public String salvarConteudoCertificado(CertificadoOnline certificado, RedirectAttributes model) {
+			certificadoService.atualizarConteudo(certificado);
+			return "redirect:/dashboard/admin/eventos/online/certificado/" + certificado.getEventoOnline().getId();
 	}
 	
 	private Usuario getUsuario() {

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+<title>ZEUS | Estilo</title>
+<link rel="stylesheet" th:href="@{~/css/dropify.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/summernote-bs4.css}" />
+</head>
+
+<body>
+	<div class="container-scroller bg-light">
+		<!-- partial:../../partials/_navbar.html -->
+
+		<!-- partial -->
+		<div class="container-fluid page-body-wrapper">
+			<div class="row row-offcanvas row-offcanvas-right">
+				<!-- partial:../../partials/_settings-panel.html -->
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					<!-- row -->
+					<div class="row">
+
+						<!-- evento -->
+						<div class="col-md-6 col-lg-8 grid-margin">
+							<div class="row">
+								<div class="col-lg-12">
+									<div id="box" style="height: 502px; width: 650px; -webkit-print-color-adjust: exact;">
+										<div th:if="${evento.certificadoOnline != null}" th:style="'background-image: url(/imagens/evento/online/' + ${evento.id} + '/imagem-certificado.png); height: 502px; width: 650px; background-repeat: no-repeat;'">
+											<div id="conteudo" th:if="${evento.certificadoOnline.conteudo != null}" th:utext="${evento.certificadoOnline.conteudo}"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- end evento -->
+					</div>
+					<!-- end row -->
+				</div>
+				<!-- end content-wrapper -->
+
+			</div>
+			<!-- row-offcanvas ends -->
+		</div>
+		<!-- page-body-wrapper ends -->
+	</div>
+	<!-- container-scroller -->
+	<span th:replace="fragments/base-script :: base"></span>
+	<span th:replace="fragments/base-script :: plugins"></span>
+
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+	    
+
+	    var usuarioNome = /*[[${usuario.nome}]]*/ ;
+	    var usuarioCpf = /*[[${usuario.dadosPessoais.cpf}]]*/ ;
+	    var usuarioCargaHoraria = /*[[${evento.cargaHoraria}]]*/ ;
+	    var usuarioDataInicio = /*[[${#temporals.format(evento.getInscricao(usuario).dataInicio, 'dd/MM/yyyy')}]]*/ ; 
+	    var usuarioDataConclusao = /*[[${#temporals.format(evento.getInscricao(usuario).dataConclusao, 'dd/MM/yyyy')}]]*/ ; 
+	    var tituloEvento = /*[[${evento.titulo}]]*/ ; 
+
+	    
+	/*]]>*/
+	</script>
+
+	<script>
+		$(() => {
+			
+			$('.usuarioNome').text(usuarioNome);
+			$('.usuarioCpf').text(usuarioCpf);
+			$('.usuarioCargaHoraria').text(usuarioCargaHoraria);
+			$('.usuarioDataInicio').text(usuarioDataInicio);
+			$('.usuarioDataConclusao').text(usuarioDataConclusao); 
+			$('.tituloEvento').text(tituloEvento); 
+
+		});
+
+	</script>
+
+
+</body>
+
+</html>

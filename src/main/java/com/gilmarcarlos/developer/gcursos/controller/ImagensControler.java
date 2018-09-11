@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.gilmarcarlos.developer.gcursos.service.eventos.online.CertificadoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.imagens.ImagensService;
@@ -33,6 +34,9 @@ public class ImagensControler {
 	
 	@Autowired
 	private ImagensService imagensService;
+	
+	@Autowired
+	private CertificadoOnlineService certificadoOnlineService;
 	
 	
 	@GetMapping("/evento/{id}/responsavel.png")
@@ -102,6 +106,21 @@ public class ImagensControler {
 			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
 			bufferedImage = imagensService.verifica(bufferedImage, 293, 367);
+			ImageIO.write(bufferedImage, "png", byteOutStream);
+			return byteOutStream.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	@GetMapping("/evento/online/{id}/imagem-certificado.png")
+	public @ResponseBody byte[] imagemOnlineCertificado(@PathVariable("id") Long id) {
+		Blob imagem = certificadoOnlineService.buscarPor(id).getImagemFundo();
+		try {
+			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
+			bufferedImage = certificadoOnlineService.verifica(bufferedImage, 502, 650);
 			ImageIO.write(bufferedImage, "png", byteOutStream);
 			return byteOutStream.toByteArray();
 		} catch (Exception e) {
