@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+<title>ZEUS | Eventos</title>
+<link rel="stylesheet" th:href="@{~/css/sweetalert2.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/bootstrap-datepicker.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/bootstrap-clockpicker.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2-bootstrap.min.css}" />
+</head>
+
+<body>
+	<div class="container-scroller">
+		<!-- partial:../../partials/_navbar.html -->
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+
+		<!-- partial -->
+		<div class="container-fluid page-body-wrapper">
+			<div class="row row-offcanvas row-offcanvas-right">
+				<!-- partial:../../partials/_settings-panel.html -->
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					<!-- row -->
+					<div class="row">
+
+						<!-- div 1 -->
+						<div class="col-lg-12 d-flex align-items-stretch grid-margin">
+							<!-- row -->
+							<div class="row flex-grow">
+
+								<div class="col-12 grid-margin">
+									<form class="forms-sample" th:action="@{/dashboard/admin/relatorios/inscricoes/presenciais/periodo}" method="post">
+										
+									<div class="row">
+										<div class="col-lg-5">	
+											<div class="form-group mb-2">
+												<label for="eventoOpcoes">Evento</label>
+												<select id="eventoOpcoes" class="form-control js-select-single"
+													aria-describedby="eventoOpcoes" style="width: 100%;">
+													<option value="-1">TODOS</option>
+													<option th:unless="${#lists.isEmpty(eventoOpcoes)}"
+														th:each="opcaoEvento : ${eventoOpcoes}"
+														th:value="${opcaoEvento.id}" th:text="${opcaoEvento.titulo}"
+														th:selected="${opcaoEvento.id == eventos.content[0].id and eventos.totalElements == 1}">
+													</option>
+												</select>
+											</div>
+										</div>
+
+										<div class="col-lg-3">
+											<div class="form-group">
+												<label for="dataInicio">Início</label>
+										        <div id="datepicker-popup-inicio" class="input-group date datepicker">
+													<input id="datepicker-inicio" type="text" class="form-control" name="dataInicio" />
+													<div class="input-group-addon input-group-text">
+														<span class="mdi mdi-calendar"></span>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-lg-3">
+											<div class="form-group">
+												<label for="dataTermino">Término</label>
+												 <div id="datepicker-popup-termino" class="input-group date datepicker">
+													<input id="datepicker-termino" type="text" class="form-control" name="dataTermino" />
+													<div class="input-group-addon input-group-text">
+														<span class="mdi mdi-calendar"></span>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-1 mt-4">
+											<button type="submit" class="btn btn-primary mb-3"><i class="icon-magnifier"></i></button>
+										</div>
+										
+									</div>	
+									</form>
+								</div>
+
+								<div class="col-12 grid-margin" th:if="${alert != null}">
+									<div th:if="${alert != null}">
+										<div th:class="${alert}" role="alert">
+											<i class="mdi mdi-alert-circle"></i> <span
+												th:text="${message}"></span>
+											<button type="button" class="close" data-dismiss="alert"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-12 grid-margin"
+									th:unless="${#lists.isEmpty(eventos)}"
+									th:each="evento : ${eventos}">
+									<div class="card">
+										<div class="card-body">
+											<div class="row">
+												<div class="col-lg-10">
+													<a
+														th:href="@{/dashboard/admin/relatorios/inscricoes/presenciais/detalhes/{id}(id=${evento.id})}"
+														th:text="${evento.titulo}"></a>
+												</div>
+												<div class="col-lg-2">
+													<a class="btn btn-outline-dark pt-1 pb-1"
+														data-toggle="collapse"
+														th:href="'#collapse-' + ${evento.id}" role="button"
+														aria-expanded="false"
+														th:attr="aria-controls='collapse-' + ${evento.id}"><i
+														class="icon-options-vertical"></i></a>
+												</div>
+											</div>
+
+											<div class="collapse" th:id="'collapse-' + ${evento.id}">
+												<div class="card card-body">
+													<div class="row">
+														<div class="col-lg-3">
+															<p class="">
+																status: <span class="text-muted"
+																	th:text="${evento.status}"></span>
+															</p>
+														</div>
+														<div class="col-lg-3">
+															<p class="">
+																publicado: <span class="text-muted"
+																	th:text="${evento.displayPublicado}"></span>
+															</p>
+														</div>
+														<div class="col-lg-3">
+															<p class="">
+																criado em: <span class="text-muted"
+																	th:text="${#temporals.format(evento.dataCriacao, 'dd/MM/yyyy')}"></span>
+															</p>
+														</div>
+														<div class="col-lg-3">
+															<p class="">
+																atualizado em: <span class="text-muted"
+																	th:text="${#temporals.format(evento.dataAtualizacao, 'dd/MM/yyyy')}"></span>
+															</p>
+														</div>
+
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- end row -->
+						</div>
+						<!-- end div 1 -->
+
+						<!-- paginação inicio -->
+						<div class="col-lg-12">
+
+							<div class="pagination-area text-center"
+								th:unless="${#lists.isEmpty(eventos)}">
+								<ul class="pagination rounded"
+									th:if="${eventos.totalPages} &gt; 1">
+
+									<li class="page-item"><a
+										th:href="@{/dashboard/admin/eventos/presencial/pagina/{page}/(page=0)}"
+										th:class="${eventos.first} == true ? 'btn disabled' : 'page-link' "><i
+											class="mdi mdi-chevron-left"></i></a></li>
+									<li class="page-item" th:if="(${eventos.number} - 1) &gt; -1"><a
+										class="page-link"
+										th:href="@{/dashboard/admin/eventos/presencial/pagina/{page}/(page=${eventos.number} - 1)}"
+										th:text="${eventos.number} - 1">&laquo;</a></li>
+
+									<li th:if="${eventos.number} &lt; (${eventos.totalPages} - 1)"
+										th:each="index : ${#numbers.sequence(eventos.number, eventos.number + 1)}"
+										th:class="${index} == ${eventos.number} ? 'page-item active' : 'page-item'"><a
+										class="page-link"
+										th:href="@{/dashboard/admin/eventos/presencial/pagina/{page}/(page=${index})}"
+										th:text="${index}">&laquo;</a></li>
+
+									<li class="page-item"><a
+										th:href="@{/dashboard/admin/eventos/presencial/pagina/{page}/(page=${eventos.totalPages} - 1)}"
+										th:class="${eventos.last} == true ? 'btn disabled' : 'page-link' "><i
+											class="mdi mdi-chevron-right"></i></a></li>
+								</ul>
+							</div>
+
+						</div>
+						<!-- paginação final -->
+
+					</div>
+					<!-- end row -->
+				</div>
+				<!-- end content-wrapper -->
+				<!-- footer -->
+				<footer th:replace="fragments/footer :: footer"></footer>
+				<!-- end footer -->
+			</div>
+			<!-- row-offcanvas ends -->
+		</div>
+		<!-- page-body-wrapper ends -->
+	</div>
+	<!-- container-scroller -->
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/dropify.min.js}"></script>
+	<script th:src="@{~/js/bootstrap-datepicker.min.js}"></script>
+	<script th:src="@{~/js/bootstrap-clockpicker.min.js}"></script>
+	<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script>
+	<script th:src="@{~/js/select2.min.js}"></script>
+	<script th:src="@{~/js/sweetalert2.min.js}"></script>
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<script th:src="@{~/js/dropify.js}"></script>
+
+	<script th:inline="javascript">
+
+	/*<![CDATA[*/
+	$(() =>{
+
+		$('#datepicker-popup-inicio').datepicker({
+	      format: 'dd/mm/yyyy',
+	        language: 'pt-BR',
+	      });
+
+		 $('#datepicker-popup-termino').datepicker({
+	      format: 'dd/mm/yyyy',
+	        language: 'pt-BR',
+	      });
+	    
+	     $('#eventoOpcoes').on('change', alterarEvento);	
+
+	});
+
+	function alterarEvento(){
+			var id = $('#eventoOpcoes').val();
+			if(id !== '-1'){
+				window.location.href = `/dashboard/admin/relatorios/inscricoes/presenciais/${id}`;
+			}else{
+				window.location.href = `/dashboard/admin/relatorios/inscricoes/presenciais`;
+			}
+		}
+
+	 function showSwal(id){
+	          
+	            swal({
+	              title: 'Tem certeza?',
+	              text: "Todos as inscrições serão canceladas se essa ação for tomada, se ainda não existem inscrições realizadas, favor desconsidere esse alerta!",
+	              type: 'warning',
+	              showCancelButton: true,
+	              confirmButtonColor: '#3085d6',
+	              cancelButtonColor: '#d33',
+	              cancelButtonText: 'Cancelar',
+	              confirmButtonText: 'Continuar'
+	            }).then(function () {
+	              window.location.href = `/dashboard/admin/eventos/presencial/cancelar/${id}`	
+	          });
+	  }        
+	/*]]>*/
+	</script>
+
+	<script th:inline="javascript">
+
+	/*<![CDATA[*/
+		(function($) {
+			  'use strict';
+
+			  if($(".js-select-single").length){
+			    $(".js-select-single").select2();
+			  }
+		})(jQuery);
+	/*]]>*/
+	</script>
+
+</body>
+
+</html>

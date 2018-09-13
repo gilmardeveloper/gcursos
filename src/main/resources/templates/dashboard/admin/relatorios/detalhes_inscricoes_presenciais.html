@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+<title>ZEUS | Eventos</title>
+<link rel="stylesheet" th:href="@{~/css/dropify.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/all.css}" />
+</head>
+
+<body>
+	<div class="container-scroller">
+		<!-- partial:../../partials/_navbar.html -->
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+
+		<!-- partial -->
+		<div class="container-fluid page-body-wrapper">
+			<div class="row row-offcanvas row-offcanvas-right">
+				<!-- partial:../../partials/_settings-panel.html -->
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					<!-- row -->
+					<div class="row">
+
+						<!-- div 1 -->
+						<div class="col-lg-12 d-flex align-items-stretch grid-margin">
+							<!-- row -->
+							<div class="row flex-grow">
+								<div class="col-12 grid-margin">
+									<nav aria-label="breadcrumb" role="navigation">
+										<ol class="breadcrumb breadcrumb-custom bg-inverse-primary">
+											<li class="breadcrumb-item"><a
+												th:href="@{/dashboard/admin/relatorios/inscricoes/presenciais}">Inscricões Presenciais</a></li>
+											<li class="breadcrumb-item active" aria-current="page"><span
+												th:text="${evento.titulo}"></span></li>
+										</ol>
+									</nav>
+								</div>
+
+								<div class="col-12 grid-margin" th:if="${alert != null}">
+									<div th:if="${alert != null}">
+										<div th:class="${alert}" role="alert">
+											<i class="mdi mdi-alert-circle"></i> <span
+												th:text="${message}"></span>
+											<button type="button" class="close" data-dismiss="alert"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-12 grid-margin">
+									<div class="card">
+										<div class="card-body">
+											<div class="row">
+												<div class="col-lg-12">
+													<h6 class="font-weight-bold text-muted" th:text="${evento.titulo}"></h6>
+												</div>
+												<div class="col-lg-4">
+													<p  class="font-weight-bold text-muted">Local: <span th:text="${evento.localEvento}"></span></p>
+												</div>
+												<div class="col-lg-4">
+													<p  class="font-weight-bold text-muted">Período: <span th:text="${#temporals.format(evento.dataInicio, 'dd/MM/yyyy')}"></span> a <span th:text="${#temporals.format(evento.dataTermino, 'dd/MM/yyyy')}"></span></p>
+												</div>
+
+												<div class="col-lg-4">
+													<p  class="font-weight-bold text-muted">Responsável: <span th:text="${evento.responsavel.nome}"></span></p>
+												</div>
+
+												<div class="col-lg-3">
+													<p  class="font-weight-bold text-muted">Inscritos: <span th:text="${#lists.size(evento.inscricoes)}"></span></p>
+												</div>
+
+												<div class="col-lg-3">
+													<p  class="font-weight-bold text-muted">Presentes: <span th:text="${evento.qtdPresentes()}"></span></p>
+												</div>
+
+												<div class="col-lg-3">
+													<p  class="font-weight-bold text-muted">Ausentes: <span th:text="${evento.qtdAusentes()}"></span></p>
+												</div>
+
+												<div class="col-lg-3">
+													<p  class="font-weight-bold text-muted">Assiduidade: <span th:text="${evento.assiduidadeTotal()}"></span>%</p>
+												</div>
+											</div>
+										</div>
+									</div>				
+								</div>
+
+								<div class="col-6 grid-margin">
+									<div class="card">
+										<div class="card-body">
+											<div id="chart_core"></div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-6 grid-margin">
+									<div class="card">
+										<div class="card-body">
+											<div id="chart_core_assiduidade"></div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-12 grid-margin">
+									<div class="card">
+										<div class="card-body">
+											<div id="chart_column"></div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-12 grid-margin"
+									th:unless="${#lists.isEmpty(atividades)}"
+									th:each="atividade : ${atividades}">
+									<div class="card">
+										<div class="card-body">
+											<div class="row">
+												<div class="col-lg-7">
+													<p th:text="${atividade.titulo}"></p>
+												</div>
+												<div class="col-lg-3">
+													<p
+														th:text="${#temporals.format(atividade.diaEvento.data,'dd/MM/yyyy')}"></p>
+												</div>
+												<div class="col-lg-2">
+													<a class="btn btn-outline-dark pt-1 pb-1"
+														data-toggle="collapse"
+														th:href="'#collapse-' + ${atividade.id}" role="button"
+														aria-expanded="false"
+														th:attr="aria-controls='collapse-' + ${atividade.id}"><i
+														class="icon-options-vertical"></i></a>
+												</div>
+											</div>
+
+											<div class="collapse" th:id="'collapse-' + ${atividade.id}">
+												<div class="card card-body">
+													<div class="row">
+														<div class="col-lg-8">
+															<div class="card">
+																<div class="card-body">
+																	<form th:action="@{/dashboard/admin/relatorios/inscricoes/presenciais/gerar/relatorio}" method="post" class="forms-sample">
+
+																		<input type="hidden" name="id" th:value="${atividade.id}" />
+
+																		<div class="row">
+																			<div class="col-lg-6">
+																				<div class="form-group">
+																					<select class="form-control" name="tipo">
+																						<option value="todos">TODOS</option>
+																						<option value="ausentes">AUSENTES</option>
+																						<option value="presentes">PRESENTES</option>
+																					</select>
+																				</div>
+																			</div>
+																			<div class="col-lg-6">
+																				<button class="btn btn-outline-success" type="submit" >Gerar relatório</button>
+																			</div>
+																		</div>						
+																	</form>
+																</div>
+															</div>
+														</div>
+														
+														<div class="col-12">
+															<div class="table-responsive">
+																<table id="order-listing-inscricoes" class="table">
+																	<thead>
+																		<tr>
+																			<th>Nome</th>
+																			<th>CPF</th>
+																			<th class="text-center">Unidade</th>
+																			<th class="text-center">Presença</th>
+																			<th class="text-center">::</th>
+																			
+																		</tr>
+																	</thead>
+																	<tbody>
+																		<tr th:each="inscricao : ${atividade.inscricoes}">
+																			<td th:text="${inscricao.usuario.nome}"></td>
+																			<td th:text="${inscricao.usuario.dadosPessoais.cpf}"></td>
+																			<td th:text="${inscricao.usuario.codigoFuncional.unidadeTrabalho.nome} + ' - ' + ${inscricao.usuario.codigoFuncional.unidadeTrabalho.departamento.identidade}"></td>
+
+																			<td class="text-center" th:text="${inscricao.isPresente()} ? 'P' : 'F'"></td>
+
+																			<td class="text-center"><a
+																				class="btn btn-outline-danger pt-1 pb-1"
+																				th:href="@{/dashboard/admin/eventos/presencial/inscricoes/{id}/cancelar/inscricao(id=${inscricao.id})}"><i
+																					class="icon-user-unfollow"></i></a></td>
+																		</tr>
+																	</tbody>
+																</table>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- end row -->
+						</div>
+						<!-- end div 1 -->
+
+					</div>
+					<!-- end row -->
+
+					<div class="modal fade" id="modal-imagem-top" tabindex="-1"
+						role="dialog" aria-labelledby="imagem-top-label"
+						aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="imagem-top-label">Logos e
+										titulo do cabeçalho</h5>
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div class="wrapper mb-2 mt-1">
+										<span class="badge badge-warning text-white">Nota : </span>
+										<p class="d-inline ml-3 text-muted">100x50 e no máximo 2MB</p>
+									</div>
+									<form id="formulario-imagem-top"
+										th:action="@{/dashboard/admin/eventos/presencial/lista/presenca/logo/salvar}"
+										method="post" enctype="multipart/form-data">
+										<input type="hidden" name="eventoPresencial"
+											th:value="${evento.id}" />
+
+										<div class="form-group">
+											<label for="titulo">Titulo</label> <input
+												class="form-control" type="text" name="titulo" />
+
+										</div>
+
+										<div class="form-group">
+											<label for="esquerda">Logo esquerda</label> <input
+												type="file" class="dropify" name="imagemEsquerda"
+												data-max-file-size="2mb" data-default-file="" />
+												<small>Tamanho: 100x50</small>
+										</div>
+
+										<div class="form-group">
+											<label for="direita">Logo direita</label> <input type="file"
+												class="dropify" name="imagemDireita"
+												data-max-file-size="2mb" data-default-file="" />
+												<small>Tamanho: 100x50</small>
+										</div>
+
+										<div class="form-group">
+											<label for="direita">Fundo do certificado</label> <input type="file"
+												class="dropify" name="imagemFundo"
+												data-max-file-size="2mb" data-default-file="" />
+												<small>Tamanho: 650x502</small>
+										</div>
+									</form>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary"
+										data-dismiss="modal">Cancelar</button>
+									<button type="submit" form="formulario-imagem-top"
+										class="btn btn-primary">Salvar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+				<!-- end content-wrapper -->
+				<!-- footer -->
+				<footer th:replace="fragments/footer :: footer"></footer>
+				<!-- end footer -->
+			</div>
+			<!-- row-offcanvas ends -->
+		</div>
+		<!-- page-body-wrapper ends -->
+	</div>
+	<!-- container-scroller -->
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/dropify.min.js}"></script>
+	<script th:src="@{~/js/icheck.min.js}"></script>
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<script th:src="@{~/js/dropify.js}"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script th:inline="javascript">
+
+	/*<![CDATA[*/
+
+      // Load the Visualization API and the corechart package.
+      google.charts.load('current', {'packages':['corechart']});
+	  google.charts.setOnLoadCallback(drawChartCore);
+
+	  google.charts.load('current', {'packages':['corechart']});
+	  google.charts.setOnLoadCallback(drawChartCoreAssiduidade);
+
+	  google.charts.load('current', {'packages':['bar']});
+      google.charts.setOnLoadCallback(drawChart);
+     
+      function drawChartCore() {
+
+      	var atividades = [[${graficoAtividades}]] ;
+      	var rows = [];
+      	for(index in atividades){
+        	rows[index] = [atividades[index].titulo, atividades[index].qtdInscritos];
+    	}
+      	
+      	console.log(rows);
+
+        // Create the data table.
+        var dataInscricoes = new google.visualization.DataTable();
+        dataInscricoes.addColumn('string', 'Topping');
+        dataInscricoes.addColumn('number', 'Slices');
+        dataInscricoes.addRows(rows);
+
+        // Set chart options
+        var optionsCore = {'title':'Inscrições por atividade'};
+
+        // Instantiate and draw our chart, passing in some options.
+        var chartCore = new google.visualization.PieChart(document.getElementById('chart_core'));
+	    chartCore.draw(dataInscricoes, optionsCore);
+
+      }
+
+      function drawChartCoreAssiduidade() {
+
+      	var ass = /*[[${evento.assiduidadeTotal()}]]*/;
+      	var rows = []; 
+      	rows.push(['Assiduidade', ass]);
+      	rows.push(['Absenteísmo', 100 - ass]);
+      	
+      	console.log(rows);
+
+        // Create the data table.
+        var dataInscricoes = new google.visualization.DataTable();
+        dataInscricoes.addColumn('string', 'Topping');
+        dataInscricoes.addColumn('number', 'Slices');
+        dataInscricoes.addRows(rows);
+
+        // Set chart options
+        var optionsCore = {'title':'Absenteísmo / Assiduidade'};
+
+        // Instantiate and draw our chart, passing in some options.
+        var chartCore = new google.visualization.PieChart(document.getElementById('chart_core_assiduidade'));
+	    chartCore.draw(dataInscricoes, optionsCore);
+
+      }
+
+
+      function drawChart() {
+
+      	var atividades = [[${graficoAtividades}]] ;
+      	var rows = [];
+      	rows.push(['Atividades', 'Presença', 'Ausência']);
+      	for(index in atividades){
+        	rows.push([atividades[index].titulo, atividades[index].qtdPresenca, atividades[index].qtdAusencia]);
+    	}
+
+        var data = google.visualization.arrayToDataTable(rows);
+
+        var options = {
+          chart: {
+            title: 'Presença por atividade'
+          },
+          bars: 'horizontal'
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('chart_column'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+      }
+      /*]]>*/
+    </script>
+
+	<script th:inline="javascript">
+
+	/*<![CDATA[*/
+	$(()=>{
+		$('.icheck input').iCheck({
+	      checkboxClass: 'icheckbox_flat-green', 
+	      radioClass: 'iradio_minimal',
+	      increaseArea: '20%'
+	 	 });
+
+		$('.icheck input').on('ifChecked', function(event){
+		  presente($(this).val()); 
+		});
+
+		$('.icheck input').on('ifUnchecked', function(event){
+		  ausente($(this).val()); 
+		});
+	});
+
+	function presente(id){
+		
+       $.ajax({
+                  url: `/dashboard/admin/eventos/presencial/inscricoes/${id}/presenca/presente`,
+                  type: "GET", 
+
+              success: (result,status,xhr) => {
+                                                 if(status === 'success'){
+                                                 	console.log(status);
+                                                 }
+                                              }, 
+              error: () => console.log("error")
+      });
+	}
+
+	function ausente(id){
+		
+       $.ajax({
+                  url: `/dashboard/admin/eventos/presencial/inscricoes/${id}/presenca/ausente`,
+                  type: "GET", 
+
+              success: (result,status,xhr) => {
+                                                 if(status === 'success'){
+                                                 	console.log(status);
+                                                 }
+                                              }, 
+              error: () => console.log("error")
+      });
+	}
+	/*]]>*/
+	</script>
+</body>
+
+</html>

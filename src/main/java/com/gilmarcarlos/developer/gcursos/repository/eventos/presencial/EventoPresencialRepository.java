@@ -1,5 +1,6 @@
 package com.gilmarcarlos.developer.gcursos.repository.eventos.presencial;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -25,5 +26,11 @@ public interface EventoPresencialRepository extends CrudRepository<EventoPresenc
 
 	@Query("select e from EventoPresencial e")
 	Page<EventoPresencial> listarTodos(Pageable pageable);
+	
+	@Query("select e from EventoPresencial e where e.id = :pid")
+	Page<EventoPresencial> buscarPor(@Param("pid") Long id, Pageable pageable);
+	
+	@Query("select e from EventoPresencial e where e.dataInicio between :pinicio and :ptermino")
+	Page<EventoPresencial> buscarPor(@Param("pinicio") LocalDate inicio, @Param("ptermino") LocalDate termino, Pageable pageable);
 
 }

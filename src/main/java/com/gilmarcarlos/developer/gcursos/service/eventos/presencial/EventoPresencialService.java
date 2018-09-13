@@ -1,9 +1,11 @@
 package com.gilmarcarlos.developer.gcursos.service.eventos.presencial;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +68,17 @@ public class EventoPresencialService {
 
 		removerPublicaoSeEstiverFechado();
 		return repository.listarTodos(pageable);
+	}
+	
+	public Page<EventoPresencial> buscarPor(Long id, Pageable pageable) {
+		return repository.buscarPor(id, pageable);
+	}
+	
+	public Page<EventoPresencial> buscarPor(LocalDate inicio, LocalDate termino, Pageable pageable) throws DataFinalMenorException {
+		if(termino.isBefore(inicio)) {
+			throw new DataFinalMenorException();
+		}
+		return repository.buscarPor(inicio, termino, pageable);
 	}
 
 	private void removerPublicaoSeEstiverFechado() {
@@ -148,5 +161,7 @@ public class EventoPresencialService {
 			eventoPresencial.desativarPublicacao();
 		}
 	}
+
+	
 
 }

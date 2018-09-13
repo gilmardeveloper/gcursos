@@ -44,10 +44,10 @@ public class EventoPresencial implements Serializable {
 
 	@OneToOne(mappedBy = "eventoPresencial")
 	private Sobre sobre;
-	
+
 	@OneToOne(mappedBy = "eventoPresencial")
 	private EstiloPresencial estilo;
-	
+
 	@OneToOne(mappedBy = "eventoPresencial")
 	private PermissoesEventoPresencial permissoes;
 
@@ -56,7 +56,7 @@ public class EventoPresencial implements Serializable {
 
 	@OneToOne(mappedBy = "eventoPresencial")
 	private ImagensEventoPresencialTop imagemTopDetalhes;
-	
+
 	@OneToOne(mappedBy = "eventoPresencial")
 	private ImagensLogoListaPresenca imagemLogo;
 
@@ -68,7 +68,7 @@ public class EventoPresencial implements Serializable {
 
 	@OneToMany(mappedBy = "eventoPresencial")
 	private List<EventoPresencialLog> logs;
-	
+
 	@OneToMany(mappedBy = "eventoPresencial")
 	private List<InscricaoPresencial> inscricoes;
 
@@ -87,7 +87,7 @@ public class EventoPresencial implements Serializable {
 	private Boolean publicado;
 
 	private Boolean ativo;
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -275,7 +275,7 @@ public class EventoPresencial implements Serializable {
 	public void setPermissoes(PermissoesEventoPresencial permissoes) {
 		this.permissoes = permissoes;
 	}
-	
+
 	public EstiloPresencial getEstilo() {
 		return estilo;
 	}
@@ -283,7 +283,7 @@ public class EventoPresencial implements Serializable {
 	public void setEstilo(EstiloPresencial estilo) {
 		this.estilo = estilo;
 	}
-	
+
 	public List<InscricaoPresencial> getInscricoes() {
 		return inscricoes;
 	}
@@ -291,7 +291,7 @@ public class EventoPresencial implements Serializable {
 	public void setInscricoes(List<InscricaoPresencial> inscricoes) {
 		this.inscricoes = inscricoes;
 	}
-	
+
 	public ImagensLogoListaPresenca getImagemLogo() {
 		return imagemLogo;
 	}
@@ -304,7 +304,7 @@ public class EventoPresencial implements Serializable {
 	public LocalTime getTimeAbertura() {
 		return LocalTime.parse(this.horaAbertura, DateTimeFormatter.ofPattern("HH:mm"));
 	}
-	
+
 	@Transient
 	public LocalTime getTimeTermino() {
 		return LocalTime.parse(this.horaTermino, DateTimeFormatter.ofPattern("HH:mm"));
@@ -332,7 +332,7 @@ public class EventoPresencial implements Serializable {
 
 	@Transient
 	public void ativarPublicacao() throws EventoCanceladoException {
-		if(!isAtivo()) {
+		if (!isAtivo()) {
 			throw new EventoCanceladoException();
 		}
 		this.publicado = true;
@@ -355,32 +355,76 @@ public class EventoPresencial implements Serializable {
 
 	@Transient
 	public Boolean isFechado() {
-		return getDataTermino().isBefore(LocalDate.now()); 
+		return getDataTermino().isBefore(LocalDate.now());
 	}
 
 	@Transient
 	public Boolean isAtivo() {
 		return ativo;
 	}
-	
+
 	@Transient
 	public Long assiduidade(Usuario usuario) {
-		
+
 		Double numerador = 0.0;
 		Double denominador = 0.0;
 		Double presenca = 0.0;
-		
-			for(InscricaoPresencial i : getInscricoes()) {
-				if(i.getUsuario().equals(usuario)) {
-					numerador += (i.isPresente() ? 100.0 : 0.0);
-					denominador++;
-				}
+
+		for (InscricaoPresencial i : getInscricoes()) {
+			if (i.getUsuario().equals(usuario)) {
+				numerador += (i.isPresente() ? 100.0 : 0.0);
+				denominador++;
 			}
-			
+		}
+
 		presenca = numerador / denominador;
-		
-		
+
 		return Math.round(presenca);
+	}
+
+	@Transient
+	public Long assiduidadeTotal() {
+
+		Double numerador = 0.0;
+		Double denominador = 0.0;
+		Double presenca = 0.0;
+
+		for (InscricaoPresencial i : getInscricoes()) {
+			numerador += (i.isPresente() ? 100.0 : 0.0);
+			denominador++;
+		}
+
+		presenca = numerador / denominador;
+
+		return Math.round(presenca);
+	}
+
+	@Transient
+	public Long qtdPresentes() {
+
+		Long numerador = 0l;
+
+		for (InscricaoPresencial i : getInscricoes()) {
+
+			if (i.isPresente()) {
+				numerador++;
+			}
+		}
+		return numerador;
+	}
+	
+	@Transient
+	public Long qtdAusentes() {
+
+		Long numerador = 0l;
+
+		for (InscricaoPresencial i : getInscricoes()) {
+
+			if (!i.isPresente()) {
+				numerador++;
+			}
+		}
+		return numerador;
 	}
 
 	@Override

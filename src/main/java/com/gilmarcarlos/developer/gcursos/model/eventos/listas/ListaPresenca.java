@@ -165,7 +165,7 @@ public class ListaPresenca implements  Serializable{
 			
 			presenca.setNome(i.getUsuario().getNome());
 			presenca.setCpf(i.getUsuario().getDadosPessoais().getCpf());
-			presenca.setUnidadeTrabalho(i.getUsuario().getCodigoFuncional().getUnidadeTrabalho().getNome());
+			presenca.setUnidadeTrabalho(i.getUsuario().getCodigoFuncional().getUnidadeTrabalho().getNome() + " - " + i.getUsuario().getCodigoFuncional().getUnidadeTrabalho().getDepartamento().getIdentidade());
 			presenca.setCodigoFuncional(i.getUsuario().getCodigoFuncional().getCodigo());
 			presenca.setIndex(this.lista.size() + 1);
 			this.lista.add(presenca);
