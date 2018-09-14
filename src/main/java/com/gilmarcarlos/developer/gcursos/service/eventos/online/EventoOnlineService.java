@@ -120,4 +120,8 @@ public class EventoOnlineService {
 		return repository.buscarPorUsuario(id);
 	}
 
+	public Page<EventoOnline> buscarPor(Long id, Pageable pageable) {
+		return repository.buscarPor(id, pageable);
+	}
+
 }

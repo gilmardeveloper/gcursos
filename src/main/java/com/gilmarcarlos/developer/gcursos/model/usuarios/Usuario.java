@@ -22,6 +22,7 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresenc
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
 import com.gilmarcarlos.developer.gcursos.model.locais.CodigoFuncional;
+import com.gilmarcarlos.developer.gcursos.model.notifications.Mensagens;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 
 @Entity
@@ -54,6 +55,9 @@ public class Usuario implements Serializable {
 
 	@OneToMany(mappedBy = "usuario")
 	private List<Notificacao> notificacoes;
+	
+	@OneToMany(mappedBy = "usuario")
+	private List<Mensagens> mensagens;
 
 	@OneToOne(mappedBy = "usuario")
 	private Imagens imagens;
@@ -84,6 +88,14 @@ public class Usuario implements Serializable {
 
 	public void setNotificacoes(List<Notificacao> notificacoes) {
 		this.notificacoes = notificacoes;
+	}
+	
+	public List<Mensagens> getMensagens() {
+		return mensagens;
+	}
+
+	public void setMensagens(List<Mensagens> mensagens) {
+		this.mensagens = mensagens;
 	}
 
 	public void setCodigoFuncional(CodigoFuncional codigoFuncional) {
@@ -206,6 +218,16 @@ public class Usuario implements Serializable {
 	@Transient
 	public List<Notificacao> getNotificaoesLidas() {
 		return this.notificacoes.stream().filter(n -> n.getFoiLido()).collect(Collectors.toList());
+	}
+	
+	@Transient
+	public List<Mensagens> getMensagensNaoLidas() {
+		return this.mensagens.stream().filter(m -> !m.getFoiLido()).collect(Collectors.toList());
+	}
+	
+	@Transient
+	public List<Mensagens> getMensagensLidas() {
+		return this.mensagens.stream().filter(m -> m.getFoiLido()).collect(Collectors.toList());
 	}
 
 	@Transient

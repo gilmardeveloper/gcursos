@@ -14,7 +14,9 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,6 +37,7 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresenc
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
 import com.gilmarcarlos.developer.gcursos.model.locais.CodigoFuncional;
+import com.gilmarcarlos.developer.gcursos.model.notifications.Mensagens;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
 import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
@@ -48,6 +52,8 @@ import com.gilmarcarlos.developer.gcursos.service.imagens.ImagensService;
 import com.gilmarcarlos.developer.gcursos.service.locais.CargoService;
 import com.gilmarcarlos.developer.gcursos.service.locais.CodigoFuncionalService;
 import com.gilmarcarlos.developer.gcursos.service.locais.UnidadeTrabalhoService;
+import com.gilmarcarlos.developer.gcursos.service.notificacoes.MensagensHelper;
+import com.gilmarcarlos.developer.gcursos.service.notificacoes.MensagensService;
 import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.DadosPessoaisService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
@@ -73,6 +79,9 @@ public class UsuarioControler {
 
 	@Autowired
 	private NotificacaoService notificacaoService;
+	
+	@Autowired
+	private MensagensService mensagensService;
 
 	@Autowired
 	private ImagensService imagensService;
@@ -113,6 +122,7 @@ public class UsuarioControler {
 	public String painel(Model model) {
 		Usuario usuarioLogado = getUsuario();
 		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("mensagens", usuarioLogado.getMensagensNaoLidas());
 
 		int naoVisualizadas = usuarioLogado.getNotificaoesNaoLidas().size();
 		int visualizadas = usuarioLogado.getNotificaoesLidas().size();
@@ -214,6 +224,57 @@ public class UsuarioControler {
 		model.addFlashAttribute("alert", "alert alert-fill-success alert-dismissible fade show");
 		model.addFlashAttribute("message", "removido com sucesso");
 		return "redirect:/dashboard/usuario/notificacoes";
+	}
+	
+	@GetMapping("mensagens")
+	public String mensagens(Model model) {
+		
+		Usuario usuarioLogado = getUsuario();
+		
+		usuarioLogado.getMensagensNaoLidas().forEach(m -> mensagensService.foiLida(m));
+		
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("messages", usuarioLogado.getMensagens());
+		
+		return "dashboard/usuario/mensagens";
+	}
+	
+	@PostMapping("/mensagens/responder")
+	@ResponseBody
+	public ResponseEntity<?> novaMensagem(@RequestBody MensagensHelper mensagem) {
+			
+			if(mensagem.getDestinatario() == null || mensagem.getTitulo().length() == 0  || mensagem.getMensagem().length() == 0) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}else {
+				
+				Mensagens temp = mensagensService.buscarPor(mensagem.getDestinatario());
+				Usuario usuarioLogado = getUsuario();
+				Usuario destinatario = temp.getDestinatario();
+				
+				mensagensService.salvar(new Mensagens(destinatario, usuarioLogado, mensagem.getTitulo() + temp.getMensagem(), mensagem.getMensagem()));
+				
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
+		
+	}
+
+	@GetMapping("mensagens/deletar")
+	public String mensDeletarTodas(RedirectAttributes model) {
+		
+		getUsuario().getMensagens().forEach(m -> mensagensService.deletar(m.getId()));
+		model.addFlashAttribute("alert", "alert alert-fill-success alert-dismissible fade show");
+		model.addFlashAttribute("message", "removidos com sucesso");
+		return "redirect:/dashboard/usuario/mensagens";
+	}
+
+	@GetMapping("mensagens/deletar/{id}")
+	public String msgDeletar(@PathVariable("id") Long id, RedirectAttributes model) {
+		
+		mensagensService.deletar(id);
+		model.addFlashAttribute("alert", "alert alert-fill-success alert-dismissible fade show");
+		model.addFlashAttribute("message", "removido com sucesso");
+		return "redirect:/dashboard/usuario/mensagens";
 	}
 
 	@GetMapping("/avatar.png")

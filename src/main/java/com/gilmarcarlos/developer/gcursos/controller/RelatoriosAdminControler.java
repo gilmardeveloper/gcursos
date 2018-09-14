@@ -26,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.DataFinalMenorException;
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventosNaoEncontradosException;
 import com.gilmarcarlos.developer.gcursos.model.eventos.listas.GraficoAtividade;
+import com.gilmarcarlos.developer.gcursos.model.eventos.listas.RelatorioInscricoesOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.listas.RelatorioInscricoesPresenciais;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.AtividadePresencial;
@@ -64,10 +65,17 @@ public class RelatoriosAdminControler {
 	@Autowired
 	private RelatorioInscricoesPresenciais relatoriosPresenciais;
 
+	@Autowired
+	private RelatorioInscricoesOnline relatoriosOnline;
+
 	private Authentication autenticado;
 
 	private final static Integer MAXIMO_PAGES = 3;
 	private final static Integer MAXIMO_PAGES_EVENTOS = 20;
+	
+	private Page<Usuario> getUsuarioPaginacao(Integer page) {
+		return usuarioService.listarTodos(PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
+	}
 
 	private Page<EventoOnline> getEventoOnlinePaginacao(Integer page) {
 		return eventoOnlineService.listarTodos(PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
@@ -80,11 +88,15 @@ public class RelatoriosAdminControler {
 	private Page<EventoPresencial> getEventoPresencialPaginacao(Integer page) {
 		return eventoPresencialService.listarTodos(PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
 	}
-
+	
+	private Page<EventoOnline> getEventoOnlineIdPaginacao(Long id) {
+		return eventoOnlineService.buscarPor(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
+	
 	private Page<EventoPresencial> getEventoPresencialIdPaginacao(Long id) {
 		return eventoPresencialService.buscarPor(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
 	}
-
+	
 	private Page<EventoPresencial> getEventoPresencialPeriodoPaginacao(LocalDate inicio, LocalDate termino)
 			throws DataFinalMenorException, EventosNaoEncontradosException {
 		Page<EventoPresencial> pages = eventoPresencialService.buscarPor(inicio, termino,
@@ -96,9 +108,21 @@ public class RelatoriosAdminControler {
 
 		return pages;
 	}
+	
+	@GetMapping("/inscricoes/usuarios")
+	public String inscricaoUsuario(Model model) {
+
+		Usuario usuarioLogado = getUsuario();
+
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("usuarios", getUsuarioPaginacao(0));
+
+		return "dashboard/admin/relatorios/consulta_inscricoes_usuario";
+	}
 
 	@GetMapping("/inscricoes/presenciais")
-	public String inscricaoUsuario(Model model) {
+	public String inscricaoPresencial(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
 
@@ -109,9 +133,22 @@ public class RelatoriosAdminControler {
 
 		return "dashboard/admin/relatorios/consulta_inscricoes_presenciais";
 	}
+	
+	@GetMapping("/inscricoes/presenciais/pagina/{page}")
+	public String inscricaoPresencial(@PathVariable("page") Integer page, Model model) {
+
+		Usuario usuarioLogado = getUsuario();
+
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("eventoOpcoes", eventoPresencialService.listarTodos());
+		model.addAttribute("eventos", getEventoPresencialPaginacao(page));
+
+		return "dashboard/admin/relatorios/consulta_inscricoes_presenciais";
+	}
 
 	@GetMapping("/inscricoes/presenciais/{id}")
-	public String inscricaoUsuario(@PathVariable("id") Long id, Model model) {
+	public String inscricaoPresencial(@PathVariable("id") Long id, Model model) {
 
 		Usuario usuarioLogado = getUsuario();
 
@@ -124,7 +161,7 @@ public class RelatoriosAdminControler {
 	}
 
 	@PostMapping("/inscricoes/presenciais/periodo")
-	public String incricaoUsuario(@RequestParam("dataInicio") LocalDate dataInicio,
+	public String incricaoPresencial(@RequestParam("dataInicio") LocalDate dataInicio,
 			@RequestParam("dataTermino") LocalDate dataTermino, Model model, RedirectAttributes red) {
 
 		try {
@@ -194,7 +231,89 @@ public class RelatoriosAdminControler {
 		}
 
 	}
+	
+	@GetMapping("/inscricoes/online")
+	public String inscricaoOnline(Model model) {
 
+		Usuario usuarioLogado = getUsuario();
+
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("eventoOpcoes", eventoOnlineService.listarTodos());
+		model.addAttribute("eventos", getEventoOnlinePaginacao(0));
+
+		return "dashboard/admin/relatorios/consulta_inscricoes_online";
+	}
+	
+	@GetMapping("/inscricoes/online/pagina/{page}")
+	public String inscricaoOnline(@PathVariable("page") Integer page, Model model) {
+
+		Usuario usuarioLogado = getUsuario();
+
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("eventoOpcoes", eventoOnlineService.listarTodos());
+		model.addAttribute("eventos", getEventoOnlinePaginacao(page));
+
+		return "dashboard/admin/relatorios/consulta_inscricoes_online";
+	}
+	
+	@GetMapping("/inscricoes/online/{id}")
+	public String inscricaoOnline(@PathVariable("id") Long id, Model model) {
+
+		Usuario usuarioLogado = getUsuario();
+
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("eventoOpcoes", eventoOnlineService.listarTodos());
+		model.addAttribute("eventos", getEventoOnlineIdPaginacao(id));
+
+		return "dashboard/admin/relatorios/consulta_inscricoes_online";
+	}
+	
+	@GetMapping("/inscricoes/online/detalhes/{id}")
+	public String inscricoesOnlineDetalhes(@PathVariable("id") Long id, Model model) {
+
+		Usuario usuarioLogado = getUsuario();
+		EventoOnline evento = eventoOnlineService.buscarPor(id);
+		
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("evento", evento);
+
+		return "dashboard/admin/relatorios/detalhes_inscricoes_online";
+	}
+	
+	@PostMapping(value = "/inscricoes/online/gerar/relatorio")
+	private String gerarListaOnline(@RequestParam("id") Long id, @RequestParam("tipo") String tipo, RedirectAttributes model) {
+
+		EventoOnline evento = eventoOnlineService.buscarPor(id);
+
+		if (!evento.getInscricoes().isEmpty()) {
+			return "redirect:/dashboard/admin/relatorios/inscricoes/online/" + id + "/gerar/relatorio-inscritos/" + tipo;
+		} else {
+			model.addFlashAttribute("alert", "alert alert-fill-warning");
+			model.addFlashAttribute("message", "não existem inscritos para esse evento");
+			return "redirect:/dashboard/admin/eventos/online/inscricoes/" + evento.getId();
+		}
+	}
+
+	@GetMapping(value = "/inscricoes/online/{id}/gerar/relatorio-inscritos/{tipo}", produces = MediaType.APPLICATION_PDF_VALUE)
+	private @ResponseBody byte[] gerarListaProgresso(@PathVariable("id") Long id, @PathVariable("tipo") String tipo, Model model) {
+
+		EventoOnline evento = eventoOnlineService.buscarPor(id);
+
+		InputStream pdfLista = relatoriosOnline.gerar(evento, tipo);
+
+		try {
+			return IOUtils.toByteArray(pdfLista);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+	
 	private Usuario getUsuario() {
 		autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.buscarPor(autenticado.getName());

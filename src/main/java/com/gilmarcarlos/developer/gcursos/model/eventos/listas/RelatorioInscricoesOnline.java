@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,9 +11,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.AtividadePresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnline;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -45,7 +43,7 @@ import net.sf.jasperreports.export.SimplePdfReportConfiguration;
  * */
 
 @Component
-public class RelatorioInscricoesPresenciais implements Serializable {
+public class RelatorioInscricoesOnline implements Serializable {
 
 	/**
 	 * 
@@ -54,12 +52,6 @@ public class RelatorioInscricoesPresenciais implements Serializable {
 
 	private Integer index;
 	private String titulo;
-	private String atividade;
-	private String data;
-	private String horaInicio;
-	private String horaFim;
-	private String sala;
-	private String vagas;
 	private String responsavel;
 	private String nome;
 	private String cpf;
@@ -67,12 +59,12 @@ public class RelatorioInscricoesPresenciais implements Serializable {
 	private String unidadeTrabalho;
 	private String participacao;
 
-	private List<RelatorioInscricoesPresenciais> lista;
+	private List<RelatorioInscricoesOnline> lista;
 
 	/* metodo publico para realizar o parse e gerar o contrato */
-	public InputStream gerar(AtividadePresencial atividade, String tipo) {
+	public InputStream gerar(EventoOnline evento, String tipo) {
 		this.lista = new ArrayList<>();
-		parse(atividade, tipo);
+		parse(evento, tipo);
 		return gerarPdf();
 	}
 
@@ -95,13 +87,13 @@ public class RelatorioInscricoesPresenciais implements Serializable {
 
 		try {
 
-			print = JasperFillManager.fillReport("relatorio_inscricoes_evento_presencial.jasper", parametros,
+			print = JasperFillManager.fillReport("relatorio_inscricoes_evento_online.jasper", parametros,
 					dataSource); // em produção alterar para "/caminho_da_pasta/" + "arquivo.jasper"
 			JRPdfExporter exporter = new JRPdfExporter();
 
 			exporter.setExporterInput(new SimpleExporterInput(print));
 			exporter.setExporterOutput(
-					new SimpleOutputStreamExporterOutput("relatorio_inscricoes_evento_presencial.pdf")); // em produção
+					new SimpleOutputStreamExporterOutput("relatorio_inscricoes_evento_online.pdf")); // em produção
 																											// alterar
 																											// para
 																											// "/caminho_da_pasta/arquivo.pdf"
@@ -121,7 +113,7 @@ public class RelatorioInscricoesPresenciais implements Serializable {
 			exporter.exportReport();
 			System.out.println("retornando o arquivo");
 
-			return new FileInputStream(new File("relatorio_inscricoes_evento_presencial.pdf")); // em produção alterar
+			return new FileInputStream(new File("relatorio_inscricoes_evento_online.pdf")); // em produção alterar
 																								// para
 																								// "/caminho_da_pasta/"
 																								// + "arquivo.pdf"
@@ -137,22 +129,22 @@ public class RelatorioInscricoesPresenciais implements Serializable {
 	 * Transforma todos os campos necessários para gerar o pdf, em campos de string
 	 * 
 	 */
-	private void parse(AtividadePresencial atividade, String tipo) {
-		atividade.getInscricoes().forEach(i -> {
+	private void parse(EventoOnline evento, String tipo) {
+		evento.getInscricoes().forEach(i -> {
 
 			if (tipo.equalsIgnoreCase("todos")) {
 
-				preencherDados(atividade, i);
+				preencherDados(evento, i);
 
-			} else if (tipo.equalsIgnoreCase("ausentes")) {
+			} else if (tipo.equalsIgnoreCase("andamento")) {
 				
-				if(!i.isPresente()) {
-					preencherDados(atividade, i);
+				if(!i.isFinalizado()) {
+					preencherDados(evento, i);
 				}
 				
 			} else {
-				if(i.isPresente()) {
-					preencherDados(atividade, i);
+				if(i.isFinalizado()) {
+					preencherDados(evento, i);
 				}
 			}
 
@@ -160,21 +152,13 @@ public class RelatorioInscricoesPresenciais implements Serializable {
 
 	}
 
-	private void preencherDados(AtividadePresencial atividade, InscricaoPresencial i) {
-		RelatorioInscricoesPresenciais presenca = new RelatorioInscricoesPresenciais();
-		EventoPresencial eventoPresencial = atividade.getDiaEvento().getProgramacaoPresencial()
-				.getEventoPresencial();
+	private void preencherDados(EventoOnline evento, InscricaoOnline i) {
+		RelatorioInscricoesOnline presenca = new RelatorioInscricoesOnline();
+		
+		presenca.setTitulo(evento.getTitulo());
+		presenca.setResponsavel(evento.getResponsavel().getNome());
 
-		presenca.setTitulo(eventoPresencial.getTitulo());
-		presenca.setAtividade(atividade.getTitulo());
-		presenca.setData(DateTimeFormatter.ofPattern("dd/MM/yyyy").format(atividade.getDiaEvento().getData()));
-		presenca.setHoraInicio(atividade.getHoraInicio());
-		presenca.setHoraFim(atividade.getHoraFim());
-		presenca.setSala(atividade.getSala());
-		presenca.setVagas(String.valueOf(atividade.getVagas()));
-		presenca.setResponsavel(atividade.getNomeResponsavel());
-
-		presenca.setParticipacao((i.isPresente() ? "PRESENTE" : "AUSENTE"));
+		presenca.setParticipacao(evento.progresso(i.getUsuario()) + "%");
 
 		presenca.setNome(i.getUsuario().getNome());
 		presenca.setCpf(i.getUsuario().getDadosPessoais().getCpf());
@@ -201,54 +185,6 @@ public class RelatorioInscricoesPresenciais implements Serializable {
 
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
-	}
-
-	public String getAtividade() {
-		return atividade;
-	}
-
-	public void setAtividade(String atividade) {
-		this.atividade = atividade;
-	}
-
-	public String getData() {
-		return data;
-	}
-
-	public void setData(String data) {
-		this.data = data;
-	}
-
-	public String getHoraInicio() {
-		return horaInicio;
-	}
-
-	public void setHoraInicio(String horaInicio) {
-		this.horaInicio = horaInicio;
-	}
-
-	public String getHoraFim() {
-		return horaFim;
-	}
-
-	public void setHoraFim(String horaFim) {
-		this.horaFim = horaFim;
-	}
-
-	public String getSala() {
-		return sala;
-	}
-
-	public void setSala(String sala) {
-		this.sala = sala;
-	}
-
-	public String getVagas() {
-		return vagas;
-	}
-
-	public void setVagas(String vagas) {
-		this.vagas = vagas;
 	}
 
 	public String getResponsavel() {

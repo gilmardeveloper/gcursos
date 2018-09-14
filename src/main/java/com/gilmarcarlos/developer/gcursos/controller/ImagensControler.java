@@ -39,6 +39,21 @@ public class ImagensControler {
 	private CertificadoOnlineService certificadoOnlineService;
 	
 	
+	@GetMapping("/usuario/{id}/avatar.png")
+	public @ResponseBody byte[] imagemUsuario(@PathVariable("id") Long id) {
+		Blob imagem = usuarioService.buscarPor(id).getImagens().getImagem();
+		try {
+			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
+			bufferedImage = imagensService.verifica(bufferedImage, 100, 100);
+			ImageIO.write(bufferedImage, "png", byteOutStream);
+			return byteOutStream.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	@GetMapping("/evento/{id}/responsavel.png")
 	public @ResponseBody byte[] imagemResponsavel(@PathVariable("id") Long id) {
 		Blob imagem = usuarioService.buscarPor(id).getImagens().getImagem();

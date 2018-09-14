@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+<title>ZEUS | Notificações</title>
+<link rel="stylesheet" th:href="@{~/css/dataTables.bootstrap4.css}" />
+<link rel="stylesheet" th:href="@{~/css/jquery.toast.min.css}" />
+</head>
+
+<body>
+	<!-- container-scroller -->
+	<div class="container-scroller">
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+
+		<!-- container-fluid -->
+		<div class="container-fluid page-body-wrapper">
+			<!-- row-offcanvas -->
+			<div class="row row-offcanvas row-offcanvas-right">
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+					
+					<div class="col-lg-12 grid-margin">	
+						
+							<!-- card table -->
+							<div class="card">
+								
+								<div class="card-header" th:unless="${#lists.isEmpty(messages)}">
+									<a class="btn btn-outline-success"
+										th:href="@{/dashboard/usuario/mensagens/deletar}">Apagar
+										todas</a>
+									
+									<div th:if="${alert != null}">
+										<div th:class="${alert}" role="alert">
+											<i class="mdi mdi-alert-circle"></i> <span
+												th:text="${message}"></span>
+											<button type="button" class="close" data-dismiss="alert"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+									</div>
+								</div>
+								
+								<div class="card-body">
+									
+									<div class="preview-list" th:unless="${#lists.isEmpty(messages)}">
+											
+											<div id="preview-id" class="preview-item border-bottom px-0" th:each="msg : ${messages}">
+												<div class="preview-thumbnail" >
+
+													<img th:if="${msg.destinatario.imagens == null}" src="http://via.placeholder.com/36x36/f4f4f4/000000" alt="image" class="rounded-circle"/>
+
+													<img th:unless="${msg.destinatario.imagens == null}" th:src="@{/imagens/usuario/{id}/avatar.png(id=${msg.destinatario.id})}" alt="image" class="rounded-circle"/>
+
+												</div>
+												<div class="preview-item-content d-flex flex-grow">
+													<div class="flex-grow">
+														<h6 class="preview-subject"><strong th:text="${msg.destinatario.nome}"></strong>
+															<span class="float-right small">
+																<span class="text-muted pr-3" th:text="${#temporals.format(msg.dataMensagem, 'dd/MM/yyyy')}"></span>
+															</span>
+														</h6>
+														<p><strong th:text="${msg.titulo}"></strong></p>
+														<p><span th:text="${msg.mensagem}"></span>
+															<span class="float-right small">
+																<button type="button" class="btn btn-info btn-sm" th:onclick="'enviarMsg(' + ${msg.id} + ')'">Responder</button>
+																<a class="btn btn-danger btn-sm" th:href="@{/dashboard/usuario/mensagens/deletar/{id}(id=${msg.id})}">Deletar</a>
+															</span>
+														</p>
+														
+													</div>
+												</div>
+											</div>
+									</div>
+
+									<p th:if="${#lists.isEmpty(messages)}">Não existem mensagens</p>		
+
+								</div>
+							</div>
+							<!-- end card table -->
+
+					</div>
+
+					<div class="modal fade" id="modal-mensagens" tabindex="-1"
+						role="dialog" aria-labelledby="mensagens-label"
+						aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="imagem-top-label">Envie uma mensagem</h5>
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									
+									<form id="formulario-mensagens">
+										
+										<input id="destinatario" type="hidden" name="destinatario" />
+
+										<div class="form-group">
+											<label for="mensagem">Mensagem</label> <textarea class="form-control" type="text" id="mensagem" name="mensagem" maxlength="255" required="required" rows="3"></textarea>
+										</div>
+										
+									</form>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary"
+										data-dismiss="modal">Cancelar</button>
+									<button type="button" onclick="enviar()" class="btn btn-primary">Responder</button>
+								</div>
+							</div>
+						</div>
+					</div>	
+				</div>
+				<!-- end content-wrapper -->
+
+				<!-- footer -->
+				<footer th:replace="fragments/footer :: footer"></footer>
+				<!-- end footer -->
+			</div>
+			<!-- end row-offcanvas -->
+		</div>
+		<!-- end container-fluid  -->
+
+	</div>
+	<!-- end container-scroller -->
+
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/jquery.dataTables.js}"></script>
+	<script async="async" th:src="@{~/js/dataTables.bootstrap4.js}"></script>
+	<script th:src="@{~/js/jquery.inputmask.bundle.js}"></script>
+	<script th:src="@{~/js/jquery.toast.min.js}"></script>
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<!--<script  th:src="@{~/js/datatable-init.js}"></script> -->
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		$(()=>{
+			
+		});
+
+		function enviarMsg(id){
+
+		$('#destinatario').val(id);
+		$('#titulo').val(''),
+		$('#mensagem').val(''),
+		$('#modal-mensagens').modal('show');
+	}
+
+	function enviar(){
+		 	
+		 	var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			
+			var dados = {
+				titulo: 'Re:',
+				mensagem: $('#mensagem').val(),
+				destinatario: $('#destinatario').val()
+			};
+
+			var mensagem = JSON.stringify(dados);
+
+		 	$.ajax({
+                  
+                  beforeSend: function(xhrObj){
+		                xhrObj.setRequestHeader(header,token);
+       			 },
+
+                  url: "/dashboard/usuario/mensagens/responder",
+                  type: "POST", 
+                  data: mensagem,
+                  contentType: "application/json",
+                  cache: false,
+        		  timeout: 600000,
+
+              	success: (result,status,xhr) => {
+                    console.log(status);
+                    $('#modal-mensagens').modal('hide');
+                    showSuccessToast();
+                    //window.location.reload();
+                },     
+		        error: () => {
+		        	$('#modal-mensagens').modal('hide');
+		        	showWarningToast();
+	              	console.log("acorreu um erro");
+		        }
+      		});
+		 }
+		
+		 showWarningToast = function(){
+	        'use strict';
+	        resetToastPosition();
+	        $.toast({
+	            heading: 'Alerta',
+	            text: 'Favor preencha todos os campos',
+	            showHideTransition: 'slide',
+	            icon: 'warning',
+	            loaderBg: '#57c7d4',
+	            position: 'top-right'
+	        })
+   		 };
+
+   		 showSuccessToast = function(){
+	        'use strict';
+	        resetToastPosition();
+	        $.toast({
+	            heading: 'Mensagem enviada',
+	            text: 'sua mensagem foi enviada com sucesso!',
+	            showHideTransition: 'slide',
+	            icon: 'success',
+	            loaderBg: '#f96868',
+	            position: 'top-right'
+	        })
+	    };
+
+	    resetToastPosition = function() {
+	        $('.jq-toast-wrap').removeClass('bottom-left bottom-right top-left top-right mid-center'); // to remove previous position class
+	        $(".jq-toast-wrap").css({"top": "", "left": "", "bottom":"", "right": ""}); //to remove previous position style
+	    }	
+		/*]]>*/
+	</script>
+
+</body>
+
+</html>

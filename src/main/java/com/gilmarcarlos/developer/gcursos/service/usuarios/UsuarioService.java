@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
@@ -143,6 +145,10 @@ public class UsuarioService {
 	
 	public Boolean emailExiste(String email) {
 		return repository.existsByEmail(email);
+	}
+
+	public Page<Usuario> listarTodos(Pageable pageable) {
+		return repository.listarTodos(pageable);
 	}
 	
 }

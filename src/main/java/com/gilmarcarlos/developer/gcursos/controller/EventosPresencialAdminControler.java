@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.categorias.CategoriaEvento;
+import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.DataFinalMenorException;
+import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventosNaoEncontradosException;
 import com.gilmarcarlos.developer.gcursos.model.eventos.listas.ListaPresenca;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.AtividadePresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.DiaEvento;
@@ -145,6 +147,22 @@ public class EventosPresencialAdminControler {
 		return logEventoPresencialPaginacaoService.listarLogsPorEvento(id, PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
 	}
 
+	private Page<EventoPresencial> getEventoPresencialIdPaginacao(Long id) {
+		return eventoPresencialService.buscarPor(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
+	
+	private Page<EventoPresencial> getEventoPresencialPeriodoPaginacao(LocalDate inicio, LocalDate termino)
+			throws DataFinalMenorException, EventosNaoEncontradosException {
+		Page<EventoPresencial> pages = eventoPresencialService.buscarPor(inicio, termino,
+				PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+
+		if (pages.getNumberOfElements() == 0) {
+			throw new EventosNaoEncontradosException();
+		}
+
+		return pages;
+	}
+	
 	@GetMapping({ "/", "" })
 	public String eventosPresencial(Model model) {
 
@@ -153,6 +171,7 @@ public class EventosPresencialAdminControler {
 		if (usuarioLogado.isPerfilCompleto()) {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("eventos", getEventoPaginacao(0));
+			model.addAttribute("eventoOpcoes", eventoPresencialService.listarTodos());
 			return "dashboard/admin/eventos/presencial/base-info-evento-presencial";
 		} else {
 			return "redirect:/dashboard/complete-cadastro";
@@ -167,12 +186,46 @@ public class EventosPresencialAdminControler {
 		if (usuarioLogado.isPerfilCompleto()) {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("eventos", getEventoPaginacao(page));
+			model.addAttribute("eventoOpcoes", eventoPresencialService.listarTodos());
 			return "dashboard/admin/eventos/presencial/base-info-evento-presencial";
 		} else {
 			return "redirect:/dashboard/complete-cadastro";
 		}
 	}
+	
+	@GetMapping("/{id}")
+	public String eventoPresencial(@PathVariable("id") Long id, Model model) {
 
+		Usuario usuarioLogado = getUsuario();
+
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("eventoOpcoes", eventoPresencialService.listarTodos());
+		model.addAttribute("eventos", getEventoPresencialIdPaginacao(id));
+
+		return "dashboard/admin/eventos/presencial/base-info-evento-presencial";
+	}
+	
+	@PostMapping("/periodo")
+	public String eventoPresencial(@RequestParam("dataInicio") LocalDate dataInicio,
+			@RequestParam("dataTermino") LocalDate dataTermino, Model model, RedirectAttributes red) {
+
+		try {
+
+			Usuario usuarioLogado = getUsuario();
+			model.addAttribute("usuario", usuarioLogado);
+			model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+			model.addAttribute("eventoOpcoes", eventoPresencialService.listarTodos());
+			model.addAttribute("eventos", getEventoPresencialPeriodoPaginacao(dataInicio, dataTermino));
+
+		} catch (DataFinalMenorException | EventosNaoEncontradosException e) {
+			red.addFlashAttribute("alert", "alert alert-fill-danger");
+			red.addFlashAttribute("message", e.getMessage());
+		}
+
+		return "dashboard/admin/eventos/presencial/base-info-evento-presencial";
+	}
+	
 	@GetMapping("/novo")
 	public String novo(Model model) {
 		Usuario usuarioLogado = getUsuario();

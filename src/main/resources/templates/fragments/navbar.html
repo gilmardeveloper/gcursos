@@ -117,34 +117,7 @@
         <ul sec:authorize="hasRole('ROLE_Administrador')"  th:replace="fragments/navbar :: navbar-admin-menu-cursos"></ul>
 
         <ul class="navbar-nav navbar-nav-right">
-          <!--
-          <li class="nav-item dropdown d-none d-lg-flex">
-            <a class="nav-link dropdown-toggle" id="languageDropdown" href="#" data-toggle="dropdown">
-              <i class="flag-icon flag-icon-gb"></i>
-              English
-            </a>
-            <div class="dropdown-menu navbar-dropdown" aria-labelledby="languageDropdown">
-              <a class="dropdown-item font-weight-medium" href="#">
-                <i class="flag-icon flag-icon-fr"></i>
-                French
-              </a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item font-weight-medium" href="#">
-                <i class="flag-icon flag-icon-es"></i>
-                Espanol
-              </a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item font-weight-medium" href="#">
-                <i class="flag-icon flag-icon-lt"></i>
-                Latin
-              </a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item font-weight-medium" href="#">
-                <i class="flag-icon flag-icon-ae"></i>
-                Arabic
-              </a>
-            </div>
-          </li> -->
+          
 
           <li class="nav-item dropdown" th:if="${usuario.isPerfilCompleto()}">
             
@@ -188,34 +161,54 @@
             </div>
           </li>
           
-          <!--<li id="message-dropdown" class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" id="messageDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+          <li id="message-dropdown" class="nav-item dropdown">
+            
+            <a th:unless="${#lists.isEmpty(mensagens)}" class="nav-link count-indicator dropdown-toggle" id="messageDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
               <i class="icon-envelope mx-0"></i>
               <span class="count"></span>
             </a>
-            <div  class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+
+            <a th:if="${#lists.isEmpty(mensagens)}" class="nav-link" id="messageDropdown" th:href="@{/dashboard/usuario/mensagens}">
+              <i class="icon-envelope mx-0"></i>
+              <span class="count"></span>
+            </a>
+
+            <div  class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown" th:unless="${#lists.isEmpty(mensagens)}">
                 <div class="dropdown-item">
-                  <p class="mb-0 font-weight-normal float-left">Você tem novas mensagens
-                  </p>
+                   <p class="mb-0 font-weight-normal float-left" th:if="${#lists.size(notificacoes)} &gt; 1">Você tem <span th:text="${#lists.size(mensagens)}"></span> novas mensagens
+                </p>
+                <p class="mb-0 font-weight-normal float-left" th:unless="${#lists.size(notificacoes)} &gt; 1">Você tem <span th:text="${#lists.size(mensagens)}"></span> nova mensagem
+                </p>
                   <span class="badge badge-info badge-pill float-right">veja</span>
                 </div>
                 <div class="dropdown-divider"></div>
                 
-                <a class="dropdown-item preview-item">
+                <a class="dropdown-item preview-item" th:href="@{/dashboard/usuario/mensagens}" th:each="mensagem : ${mensagens}">
                   <div class="preview-thumbnail">
-                    <img src="http://via.placeholder.com/100x100/f4f4f4/000000" alt="image" class="profile-pic">
+                    <img th:if="${mensagem.destinatario.imagens == null}" src="http://via.placeholder.com/100x100/f4f4f4/000000" alt="image" class="profile-pic" />
+
+                    <img th:unless="${mensagem.destinatario.imagens == null}" th:src="@{/imagens/usuario/{id}/avatar.png(id=${mensagem.destinatario.id})}" alt="image" class="profile-pic" />
                   </div>
                   <div class="preview-item-content flex-grow">
-                    <h6 class="preview-subject ellipsis font-weight-medium">Adminsitrador
-                      <span class="float-right font-weight-light small-text">agora mesmo</span>
-                    </h6>
-                    <p id="mensagem" class="font-weight-light small-text">
-                      Administrador alterou seus dados
-                    </p>
+                    <h6 class="preview-subject ellipsis font-weight-medium"><strong th:text="${mensagem.destinatario.nome}"></strong></h6>
+
+                    <span class="float-left font-weight-light small-text">
+                      <span th:text="${#strings.length(mensagem.titulo)} &gt; 20 ? ${#strings.substring(mensagem.titulo,0,17)} : ${mensagem.titulo}"></span>
+                    </span>
+
+                     <span class="float-right font-weight-light small-text" th:if="${mensagem.periodo} == 0">
+                    Agora mesmo
+                      </span>
+                      <span class="float-right font-weight-light small-text" th:if="${mensagem.periodo} == 1">
+                        Um dia atrás
+                      </span>
+                      <span class="float-right font-weight-light small-text" th:if="${mensagem.periodo} &gt; 1"><span th:text="${mensagem.periodo}"></span> dias atrás
+                      </span>
+
                   </div>
                 </a>
             </div> 
-          </li> -->
+          </li> 
 
           <li class="nav-item nav-settings d-none d-lg-block">
             <a class="nav-link" href="#">

@@ -135,6 +135,10 @@ public class EventosOnlineAdminControler {
 	private Page<EventoOnlineLog> getLogEvePaginacao(Long id, Integer page) {
 		return logEventoOnlineService.listarLogsPorEvento(id, PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
 	}
+	
+	private Page<EventoOnline> getEventoOnlineIdPaginacao(Long id) {
+		return eventoOnlineService.buscarPor(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
 
 	@GetMapping({ "/", "" })
 	public String eventosOnline(Model model) {
@@ -144,6 +148,7 @@ public class EventosOnlineAdminControler {
 		if (usuarioLogado.isPerfilCompleto()) {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("eventos", getEventoPaginacao(0));
+			model.addAttribute("eventoOpcoes", eventoOnlineService.listarTodos());
 			return "dashboard/admin/eventos/online/base-info-evento-online";
 		} else {
 			return "redirect:/dashboard/complete-cadastro";
@@ -158,12 +163,26 @@ public class EventosOnlineAdminControler {
 		if (usuarioLogado.isPerfilCompleto()) {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("eventos", getEventoPaginacao(page));
+			model.addAttribute("eventoOpcoes", eventoOnlineService.listarTodos());
 			return "dashboard/admin/eventos/online/base-info-evento-online";
 		} else {
 			return "redirect:/dashboard/complete-cadastro";
 		}
 	}
+	
+	@GetMapping("/{id}")
+	public String eventoOnline(@PathVariable("id") Long id, Model model) {
 
+		Usuario usuarioLogado = getUsuario();
+
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("eventoOpcoes", eventoOnlineService.listarTodos());
+		model.addAttribute("eventos", getEventoOnlineIdPaginacao(id));
+
+		return "dashboard/admin/eventos/online/base-info-evento-online";
+	}
+	
 	@GetMapping("/novo")
 	public String novo(Model model) {
 		Usuario usuarioLogado = getUsuario();

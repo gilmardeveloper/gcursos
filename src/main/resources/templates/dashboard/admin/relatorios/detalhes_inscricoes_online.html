@@ -5,6 +5,7 @@
 
 <head th:replace="fragments/head :: head(~{::title},~{::link})">
 <title>ZEUS | Eventos</title>
+<link rel="stylesheet" th:href="@{~/css/dataTables.bootstrap4.css}" />
 <link rel="stylesheet" th:href="@{~/css/jquery.toast.min.css}" />
 </head>
 
@@ -46,7 +47,8 @@
 									<nav aria-label="breadcrumb" role="navigation">
 										<ol class="breadcrumb breadcrumb-custom bg-inverse-primary">
 											<li class="breadcrumb-item"><a
-												th:href="@{/dashboard/admin/relatorios/inscricoes/presenciais}">Inscricões Presenciais</a></li>
+												th:href="@{/dashboard/admin/relatorios/inscricoes/online}">Inscricões
+													Online</a></li>
 											<li class="breadcrumb-item active" aria-current="page"><span
 												th:text="${evento.titulo}"></span></li>
 										</ol>
@@ -71,37 +73,54 @@
 										<div class="card-body">
 											<div class="row">
 												<div class="col-lg-12">
-													<h6 class="font-weight-bold text-muted" th:text="${evento.titulo}"></h6>
+													<h6 class="font-weight-bold text-muted"
+														th:text="${evento.titulo}"></h6>
 												</div>
 												<div class="col-lg-4">
-													<p  class="font-weight-bold text-muted">Local: <span th:text="${evento.localEvento}"></span></p>
+													<p class="font-weight-bold text-muted">
+														Quantidade de módulos: <span
+															th:text="${evento.qtdModulos()}"></span>
+													</p>
 												</div>
 												<div class="col-lg-4">
-													<p  class="font-weight-bold text-muted">Período: <span th:text="${#temporals.format(evento.dataInicio, 'dd/MM/yyyy')}"></span> a <span th:text="${#temporals.format(evento.dataTermino, 'dd/MM/yyyy')}"></span></p>
+													<p class="font-weight-bold text-muted">
+														Quantidade de atividades: <span
+															th:text="${evento.qtdAtividades()}"></span>
+													</p>
 												</div>
 
 												<div class="col-lg-4">
-													<p  class="font-weight-bold text-muted">Responsável: <span th:text="${evento.responsavel.nome}"></span></p>
+													<p class="font-weight-bold text-muted">
+														Responsável: <span th:text="${evento.responsavel.nome}"></span>
+													</p>
 												</div>
 
 												<div class="col-lg-3">
-													<p  class="font-weight-bold text-muted">Inscritos: <span th:text="${#lists.size(evento.inscricoes)}"></span></p>
+													<p class="font-weight-bold text-muted">
+														Inscritos: <span th:text="${evento.qtdInscricoes()}"></span>
+													</p>
 												</div>
 
 												<div class="col-lg-3">
-													<p  class="font-weight-bold text-muted">Presentes: <span th:text="${evento.qtdPresentes()}"></span></p>
+													<p class="font-weight-bold text-muted">
+														Andamento: <span th:text="${evento.qtdAndamento()}"></span>
+													</p>
 												</div>
 
 												<div class="col-lg-3">
-													<p  class="font-weight-bold text-muted">Ausentes: <span th:text="${evento.qtdAusentes()}"></span></p>
+													<p class="font-weight-bold text-muted">
+														Finalizados: <span th:text="${evento.qtdFinalizado()}"></span>
+													</p>
 												</div>
 
 												<div class="col-lg-3">
-													<p  class="font-weight-bold text-muted">Assiduidade: <span th:text="${evento.assiduidadeTotal()}"></span>%</p>
+													<p class="font-weight-bold text-muted">
+														Progresso: <span th:text="${evento.progressoTotal()}"></span>%
+													</p>
 												</div>
 											</div>
 										</div>
-									</div>				
+									</div>
 								</div>
 
 								<div class="col-6 grid-margin">
@@ -112,103 +131,71 @@
 									</div>
 								</div>
 
-								<div class="col-6 grid-margin">
-									<div class="card">
-										<div class="card-body">
-											<div id="chart_core_assiduidade"></div>
-										</div>
-									</div>
-								</div>
-
 								<div class="col-12 grid-margin">
 									<div class="card">
 										<div class="card-body">
-											<div id="chart_column"></div>
-										</div>
-									</div>
-								</div>
-
-								<div class="col-12 grid-margin"
-									th:unless="${#lists.isEmpty(atividades)}"
-									th:each="atividade : ${atividades}">
-									<div class="card">
-										<div class="card-body">
 											<div class="row">
-												<div class="col-lg-7">
-													<p th:text="${atividade.titulo}"></p>
-												</div>
-												<div class="col-lg-3">
-													<p
-														th:text="${#temporals.format(atividade.diaEvento.data,'dd/MM/yyyy')}"></p>
-												</div>
-												<div class="col-lg-2">
-													<a class="btn btn-outline-dark pt-1 pb-1"
-														data-toggle="collapse"
-														th:href="'#collapse-' + ${atividade.id}" role="button"
-														aria-expanded="false"
-														th:attr="aria-controls='collapse-' + ${atividade.id}"><i
-														class="icon-options-vertical"></i></a>
-												</div>
-											</div>
+												<div class="col-lg-8">
+													<div class="card">
+														<div class="card-body">
+															<form
+																th:action="@{/dashboard/admin/relatorios/inscricoes/online/gerar/relatorio}"
+																method="post" class="forms-sample">
 
-											<div class="collapse" th:id="'collapse-' + ${atividade.id}">
-												<div class="card card-body">
-													<div class="row">
-														<div class="col-lg-8">
-															<div class="card">
-																<div class="card-body">
-																	<form th:action="@{/dashboard/admin/relatorios/inscricoes/presenciais/gerar/relatorio}" method="post" class="forms-sample">
+																<input type="hidden" name="id" th:value="${evento.id}" />
 
-																		<input type="hidden" name="id" th:value="${atividade.id}" />
-
-																		<div class="row">
-																			<div class="col-lg-6">
-																				<div class="form-group">
-																					<select class="form-control" name="tipo">
-																						<option value="todos">TODOS</option>
-																						<option value="ausentes">AUSENTES</option>
-																						<option value="presentes">PRESENTES</option>
-																					</select>
-																				</div>
-																			</div>
-																			<div class="col-lg-6">
-																				<button class="btn btn-outline-success" type="submit" >Gerar relatório</button>
-																			</div>
-																		</div>						
-																	</form>
+																<div class="row">
+																	<div class="col-lg-6">
+																		<div class="form-group">
+																			<select class="form-control" name="tipo">
+																				<option value="todos">TODOS</option>
+																				<option value="andamento">ANDAMENTO</option>
+																				<option value="finalizados">FINALIZADOS</option>
+																			</select>
+																		</div>
+																	</div>
+																	<div class="col-lg-6">
+																		<button class="btn btn-outline-success" type="submit">Gerar
+																			relatório</button>
+																	</div>
 																</div>
-															</div>
+															</form>
 														</div>
-														
-														<div class="col-12">
-															<div class="table-responsive">
-																<table id="order-listing-inscricoes" class="table">
-																	<thead>
-																		<tr>
-																			<th>Nome</th>
-																			<th>CPF</th>
-																			<th class="text-center">Unidade</th>
-																			<th class="text-center">Presença</th>
-																			<th class="text-center">::</th>
-																			
-																		</tr>
-																	</thead>
-																	<tbody>
-																		<tr th:each="inscricao : ${atividade.inscricoes}">
-																			<td th:text="${inscricao.usuario.nome}"></td>
-																			<td th:text="${inscricao.usuario.dadosPessoais.cpf}"></td>
-																			<td th:text="${inscricao.usuario.codigoFuncional.unidadeTrabalho.nome} + ' - ' + ${inscricao.usuario.codigoFuncional.unidadeTrabalho.departamento.identidade}"></td>
+													</div>
+												</div>
 
-																			<td class="text-center" th:text="${inscricao.isPresente()} ? 'P' : 'F'"></td>
+												<div class="col-12">
+													<div class="table-responsive">
+														<table id="order-listing-inscricoes" class="table">
+															<thead>
+																<tr>
+																	<th>Nome</th>
+																	<th>CPF</th>
+																	<th class="text-center">Unidade</th>
+																	<th class="text-center">Progresso</th>
+																	<th class="text-center">::</th>
 
-																			<td class="text-center"><button
-																				class="btn btn-outline-info pt-1 pb-1" th:onclick="'enviarMsg(' + ${inscricao.usuario.id} + ')'" type="button"><i
-																					class="icon-bubbles"></i></button></td>
-																		</tr>
-																	</tbody>
-																</table>
-															</div>
-														</div>
+																</tr>
+															</thead>
+															<tbody>
+																<tr th:each="inscricao : ${evento.inscricoes}">
+																	<td th:text="${inscricao.usuario.nome}"></td>
+																	<td th:text="${inscricao.usuario.dadosPessoais.cpf}"></td>
+																	<td
+																		th:text="${inscricao.usuario.codigoFuncional.unidadeTrabalho.nome} + ' - ' + ${inscricao.usuario.codigoFuncional.unidadeTrabalho.departamento.identidade}"></td>
+
+																	<td class="text-center"
+																		th:text="${evento.progresso(inscricao.usuario)}"></td>
+
+																	<td class="text-center"><button
+																			class="btn btn-outline-info pt-1 pb-1"
+																			th:onclick="'enviarMsg(' + ${inscricao.usuario.id} + ')'"
+																			type="button">
+																			<i class="icon-bubbles"></i>
+																		</button></td>
+																</tr>
+															</tbody>
+														</table>
 													</div>
 												</div>
 											</div>
@@ -224,38 +211,42 @@
 					<!-- end row -->
 
 					<div class="modal fade" id="modal-mensagens" tabindex="-1"
-						role="dialog" aria-labelledby="mensagens-label"
-						aria-hidden="true">
+						role="dialog" aria-labelledby="mensagens-label" aria-hidden="true">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
-									<h5 class="modal-title" id="imagem-top-label">Envie uma mensagem</h5>
+									<h5 class="modal-title" id="imagem-top-label">Envie uma
+										mensagem</h5>
 									<button type="button" class="close" data-dismiss="modal"
 										aria-label="Close">
 										<span aria-hidden="true">&times;</span>
 									</button>
 								</div>
 								<div class="modal-body">
-									
+
 									<form id="formulario-mensagens">
-										
+
 										<input id="destinatario" type="hidden" name="destinatario" />
 
 										<div class="form-group">
 											<label for="titulo">Titulo</label> <input
-												class="form-control" type="text" id="titulo" name="titulo" required="required" />
+												class="form-control" type="text" id="titulo" name="titulo"
+												required="required" />
 										</div>
 
 										<div class="form-group">
-											<label for="mensagem">Mensagem</label> <textarea class="form-control" type="text" id="mensagem" name="mensagem" maxlength="255" required="required" rows="3"></textarea>
+											<label for="mensagem">Mensagem</label>
+											<textarea class="form-control" type="text" id="mensagem"
+												name="mensagem" maxlength="255" required="required" rows="3"></textarea>
 										</div>
-										
+
 									</form>
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-secondary"
 										data-dismiss="modal">Cancelar</button>
-									<button type="button" onclick="enviar()" class="btn btn-primary">Enviar</button>
+									<button type="button" onclick="enviar()"
+										class="btn btn-primary">Enviar</button>
 								</div>
 							</div>
 						</div>
@@ -274,10 +265,13 @@
 	</div>
 	<!-- container-scroller -->
 	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/jquery.dataTables.js}"></script>
+	<script async="async" th:src="@{~/js/dataTables.bootstrap4.js}"></script>
 	<span th:replace="fragments/base-script :: plugins"></span>
 	<script th:src="@{~/js/jquery.toast.min.js}"></script>
-	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script th:inline="javascript">
+	<script type="text/javascript"
+		src="https://www.gstatic.com/charts/loader.js"></script>
+	<script th:inline="javascript">
 
 	/*<![CDATA[*/
 
@@ -285,19 +279,15 @@
       google.charts.load('current', {'packages':['corechart']});
 	  google.charts.setOnLoadCallback(drawChartCore);
 
-	  google.charts.load('current', {'packages':['corechart']});
-	  google.charts.setOnLoadCallback(drawChartCoreAssiduidade);
-
-	  google.charts.load('current', {'packages':['bar']});
-      google.charts.setOnLoadCallback(drawChart);
-     
       function drawChartCore() {
 
-      	var atividades = [[${graficoAtividades}]] ;
+      	var inscricoes = /*[[${evento.qtdInscricoes()}]]*/ ;
+      	var andamento = /*[[${evento.qtdAndamento()}]]*/ ;
+      	var finalizados = /*[[${evento.qtdFinalizado()}]]*/ ;
       	var rows = [];
-      	for(index in atividades){
-        	rows[index] = [atividades[index].titulo, atividades[index].qtdInscritos];
-    	}
+      	//rows.push(['Inscrições', inscricoes]);
+      	rows.push(['Finalizados', finalizados]);
+      	rows.push(['Andamento', andamento]);
       	
         // Create the data table.
         var dataInscricoes = new google.visualization.DataTable();
@@ -306,7 +296,7 @@
         dataInscricoes.addRows(rows);
 
         // Set chart options
-        var optionsCore = {'title':'Inscrições por atividade'};
+        var optionsCore = {'title':'Progresso'};
 
         // Instantiate and draw our chart, passing in some options.
         var chartCore = new google.visualization.PieChart(document.getElementById('chart_core'));
@@ -314,51 +304,6 @@
 
       }
 
-      function drawChartCoreAssiduidade() {
-
-      	var ass = /*[[${evento.assiduidadeTotal()}]]*/;
-      	var rows = []; 
-      	rows.push(['Assiduidade', ass]);
-      	rows.push(['Absenteísmo', 100 - ass]);
-      	
-        // Create the data table.
-        var dataInscricoes = new google.visualization.DataTable();
-        dataInscricoes.addColumn('string', 'Topping');
-        dataInscricoes.addColumn('number', 'Slices');
-        dataInscricoes.addRows(rows);
-
-        // Set chart options
-        var optionsCore = {'title':'Absenteísmo / Assiduidade'};
-
-        // Instantiate and draw our chart, passing in some options.
-        var chartCore = new google.visualization.PieChart(document.getElementById('chart_core_assiduidade'));
-	    chartCore.draw(dataInscricoes, optionsCore);
-
-      }
-
-
-      function drawChart() {
-
-      	var atividades = [[${graficoAtividades}]] ;
-      	var rows = [];
-      	rows.push(['Atividades', 'Presença', 'Ausência']);
-      	for(index in atividades){
-        	rows.push([atividades[index].titulo, atividades[index].qtdPresenca, atividades[index].qtdAusencia]);
-    	}
-
-        var data = google.visualization.arrayToDataTable(rows);
-
-        var options = {
-          chart: {
-            title: 'Presença por atividade'
-          },
-          bars: 'horizontal'
-        };
-
-        var chart = new google.charts.Bar(document.getElementById('chart_column'));
-
-        chart.draw(data, google.charts.Bar.convertOptions(options));
-      }
       /*]]>*/
     </script>
 
@@ -366,6 +311,8 @@
 
 	/*<![CDATA[*/
 	$(()=>{
+
+		$('#order-listing-inscricoes').DataTable();
 
 	});
 

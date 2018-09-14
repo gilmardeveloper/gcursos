@@ -4,8 +4,7 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
 <head th:replace="fragments/head :: head(~{::title},~{::link})">
-<title>ZEUS | Informações</title>
-<link rel="stylesheet" th:href="@{~/css/sweetalert2.min.css}" />
+<title>ZEUS | Eventos</title>
 <link rel="stylesheet" th:href="@{~/css/select2.min.css}" />
 <link rel="stylesheet" th:href="@{~/css/select2-bootstrap.min.css}" />
 </head>
@@ -37,7 +36,6 @@
 
 				<!-- content-wrapper -->
 				<div class="content-wrapper">
-
 					<!-- row -->
 					<div class="row">
 
@@ -46,13 +44,7 @@
 							<!-- row -->
 							<div class="row flex-grow">
 
-								<div class="col-2 grid-margin">
-									<a class="btn btn-outline-success mt-4"
-										th:href="@{/dashboard/admin/eventos/online/novo}">+
-										Novo</a>
-								</div>
-
-								<div class="col-10 grid-margin">
+								<div class="col-12 grid-margin">
 									<form class="forms-sample">
 
 										<div class="row">
@@ -97,7 +89,7 @@
 											<div class="row">
 												<div class="col-lg-10">
 													<a
-														th:href="@{/dashboard/admin/eventos/online/detalhes/{id}(id=${evento.id})}"
+														th:href="@{/dashboard/admin/relatorios/inscricoes/online/detalhes/{id}(id=${evento.id})}"
 														th:text="${evento.titulo}"></a>
 												</div>
 												<div class="col-lg-2">
@@ -138,50 +130,6 @@
 															</p>
 														</div>
 
-														<div class="col-lg-9" th:if="${evento.permissoes} != null">
-															<p class="">
-																código para inscrição: <span class="text-muted"
-																	th:text="${evento.permissoes.codigo}"></span>
-															</p>
-														</div>
-
-														<div class="col-lg-3">
-															<a class="btn btn-outline-dark"
-																th:href="@{/dashboard/admin/eventos/online/inscricoes/{id}(id=${evento.id})}">Inscrições</a>
-														</div>
-
-														<div class="col-lg-3">
-															<a class="btn btn-outline-dark"
-																th:href="@{/dashboard/admin/eventos/online/logs/{id}(id=${evento.id})}">Logs</a>
-														</div>
-
-														<div class="col-lg-3" th:unless="${evento.isPublicado()}">
-															<a class="btn btn-outline-dark"
-																th:href="@{/dashboard/admin/eventos/online/publicacao/ativar/{id}(id=${evento.id})}">Publicar</a>
-														</div>
-
-														<div class="col-lg-3" th:if="${evento.isPublicado()}">
-															
-															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/online/publicacao/desativar/{id}(id=${evento.id})}">Cancelar
-																publicação</a>
-														</div>
-
-														<div class="col-lg-3" th:if="${evento.isAtivo()}">
-															<a class="btn btn-outline-dark" th:onclick="'showSwal(' + ${evento.id} + ')'">Cancelar
-																evento</a>
-														</div>
-
-														<div class="col-lg-3" th:unless="${evento.isAtivo()}">
-															<a class="btn btn-outline-dark"
-																th:href="@{/dashboard/admin/eventos/online/ativar/{id}(id=${evento.id})}">Ativar
-																evento</a>
-														</div>
-
-														<div class="col-lg-3">
-															<a class="btn btn-outline-dark"
-																th:href="@{/dashboard/admin/eventos/online/permissoes/{id}(id=${evento.id})}">Permissões</a>
-														</div>
-
 													</div>
 												</div>
 											</div>
@@ -198,26 +146,27 @@
 
 							<div class="pagination-area text-center"
 								th:unless="${#lists.isEmpty(eventos)}">
-								<ul class="pagination rounded" th:if="${eventos.totalPages} &gt; 1">
+								<ul class="pagination rounded"
+									th:if="${eventos.totalPages} &gt; 1">
 
 									<li class="page-item"><a
-										th:href="@{/dashboard/admin/eventos/online/pagina/{page}/(page=0)}"
+										th:href="@{/dashboard/admin/relatorios/inscricoes/online/pagina/{page}(page=0)}"
 										th:class="${eventos.first} == true ? 'btn disabled' : 'page-link' "><i
 											class="mdi mdi-chevron-left"></i></a></li>
 									<li class="page-item" th:if="(${eventos.number} - 1) &gt; -1"><a
 										class="page-link"
-										th:href="@{/dashboard/admin/eventos/online/pagina/{page}/(page=${eventos.number} - 1)}"
+										th:href="@{/dashboard/admin/relatorios/inscricoes/online/pagina/{page}(page=${eventos.number} - 1)}"
 										th:text="${eventos.number} - 1">&laquo;</a></li>
 
 									<li th:if="${eventos.number} &lt; (${eventos.totalPages} - 1)"
 										th:each="index : ${#numbers.sequence(eventos.number, eventos.number + 1)}"
 										th:class="${index} == ${eventos.number} ? 'page-item active' : 'page-item'"><a
 										class="page-link"
-										th:href="@{/dashboard/admin/eventos/online/pagina/{page}/(page=${index})}"
+										th:href="@{/dashboard/admin/relatorios/inscricoes/online/pagina/{page}(page=${index})}"
 										th:text="${index}">&laquo;</a></li>
 
 									<li class="page-item"><a
-										th:href="@{/dashboard/admin/eventos/online/pagina/{page}/(page=${eventos.totalPages} - 1)}"
+										th:href="@{/dashboard/admin/relatorios/inscricoes/online/pagina/{page}(page=${eventos.totalPages} - 1)}"
 										th:class="${eventos.last} == true ? 'btn disabled' : 'page-link' "><i
 											class="mdi mdi-chevron-right"></i></a></li>
 								</ul>
@@ -240,43 +189,27 @@
 	</div>
 	<!-- container-scroller -->
 	<span th:replace="fragments/base-script :: base"></span>
-	<script th:src="@{~/js/sweetalert2.min.js}"></script>
 	<script th:src="@{~/js/select2.min.js}"></script>
 	<span th:replace="fragments/base-script :: plugins"></span>
 
-	 <script th:inline="javascript">
+	<script th:inline="javascript">
 
 	/*<![CDATA[*/
 	$(() =>{
 
-		$('#eventoOpcoes').on('change', alterarEvento);
+	     $('#eventoOpcoes').on('change', alterarEvento);	
 
 	});
 
 	function alterarEvento(){
 			var id = $('#eventoOpcoes').val();
 			if(id !== '-1'){
-				window.location.href = `/dashboard/admin/eventos/online/${id}`;
+				window.location.href = `/dashboard/admin/relatorios/inscricoes/online/${id}`;
 			}else{
-				window.location.href = `/dashboard/admin/eventos/online`;
+				window.location.href = `/dashboard/admin/relatorios/inscricoes/online`;
 			}
-	}		
+		}
 
-	 function showSwal(id){
-	          
-	            swal({
-	              title: 'Tem certeza?',
-	              text: "Todos as inscrições serão canceladas se essa ação for tomada, se ainda não existem inscrições realizadas, favor desconsidere esse alerta!",
-	              type: 'warning',
-	              showCancelButton: true,
-	              confirmButtonColor: '#3085d6',
-	              cancelButtonColor: '#d33',
-	              cancelButtonText: 'Cancelar',
-	              confirmButtonText: 'Continuar'
-	            }).then(function () {
-	              window.location.href = `/dashboard/admin/eventos/online/cancelar/${id}`	
-	          });
-	  }        
 	/*]]>*/
 	</script>
 

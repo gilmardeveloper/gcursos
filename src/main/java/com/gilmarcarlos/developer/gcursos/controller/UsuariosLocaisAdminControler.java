@@ -3,6 +3,8 @@ package com.gilmarcarlos.developer.gcursos.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -10,8 +12,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gilmarcarlos.developer.gcursos.model.locais.Cargo;
@@ -20,6 +24,7 @@ import com.gilmarcarlos.developer.gcursos.model.locais.Departamento;
 import com.gilmarcarlos.developer.gcursos.model.locais.EnderecoUnidade;
 import com.gilmarcarlos.developer.gcursos.model.locais.TelefoneUnidade;
 import com.gilmarcarlos.developer.gcursos.model.locais.UnidadeTrabalho;
+import com.gilmarcarlos.developer.gcursos.model.notifications.Mensagens;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 import com.gilmarcarlos.developer.gcursos.model.type.Escolaridade;
 import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
@@ -37,6 +42,8 @@ import com.gilmarcarlos.developer.gcursos.service.locais.DepartamentoService;
 import com.gilmarcarlos.developer.gcursos.service.locais.EnderecoUnidadeService;
 import com.gilmarcarlos.developer.gcursos.service.locais.TelefoneUnidadeService;
 import com.gilmarcarlos.developer.gcursos.service.locais.UnidadeTrabalhoService;
+import com.gilmarcarlos.developer.gcursos.service.notificacoes.MensagensHelper;
+import com.gilmarcarlos.developer.gcursos.service.notificacoes.MensagensService;
 import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.DadosPessoaisService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
@@ -90,6 +97,9 @@ public class UsuariosLocaisAdminControler {
 
 	@Autowired
 	private NotificacaoService notificacaoService;
+	
+	@Autowired
+	private MensagensService mensagensService;
 
 	private Authentication autenticado;
 
@@ -576,7 +586,24 @@ public class UsuariosLocaisAdminControler {
 		model.addFlashAttribute("message", "removido com sucesso");
 		return "redirect:/dashboard/admin/cargos";
 	}
-
+	
+	@PostMapping("/mensagens/nova")
+	@ResponseBody
+	public ResponseEntity<?> novaMensagem(@RequestBody MensagensHelper mensagem) {
+			
+			if(mensagem.getDestinatario() == null || mensagem.getTitulo().length() == 0  || mensagem.getMensagem().length() == 0) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}else {
+				
+				Usuario usuarioLogado = getUsuario();
+				Usuario destinatario = usuarioService.buscarPor(mensagem.getDestinatario());
+				mensagensService.salvar(new Mensagens(destinatario, usuarioLogado, mensagem.getTitulo(), mensagem.getMensagem()));
+				
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
+		
+	}
+	
 	private Usuario getUsuario() {
 		autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.buscarPor(autenticado.getName());

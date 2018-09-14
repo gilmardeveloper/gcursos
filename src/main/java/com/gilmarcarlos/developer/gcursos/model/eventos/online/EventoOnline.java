@@ -329,6 +329,36 @@ public class EventoOnline implements Serializable {
 		return Math.round(presenca);
 	}
 
+	@Transient
+	public Long progressoTotal() {
+		return (qtdFinalizado() * 100) / qtdInscricoes();
+	}
+
+	@Transient
+	public Integer qtdModulos() {
+		return getModulos().size();
+	}
+
+	@Transient
+	public Integer qtdAtividades() {
+		return getModulos().stream().mapToInt(m -> m.getAtividades().size()).sum();
+	}
+
+	@Transient
+	public Integer qtdInscricoes() {
+		return getInscricoes().size();
+	}
+
+	@Transient
+	public Long qtdAndamento() {
+		return getInscricoes().stream().filter(i -> !i.isFinalizado()).count();
+	}
+
+	@Transient
+	public Long qtdFinalizado() {
+		return getInscricoes().stream().filter(i -> i.isFinalizado()).count();
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -6,6 +6,9 @@
 <head th:replace="fragments/head :: head(~{::title},~{::link})">
 <title>ZEUS | Informações</title>
 <link rel="stylesheet" th:href="@{~/css/sweetalert2.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/bootstrap-datepicker.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/select2-bootstrap.min.css}" />
 </head>
 
 <body>
@@ -43,10 +46,60 @@
 							<!-- row -->
 							<div class="row flex-grow">
 
-								<div class="col-12 grid-margin">
-									<a class="btn btn-outline-success"
+								<div class="col-2 grid-margin">
+									<a class="btn btn-outline-success mt-4"
 										th:href="@{/dashboard/admin/eventos/presencial/novo}">+
 										Novo</a>
+								</div>
+
+								<div class="col-10 grid-margin">
+									<form class="forms-sample" th:action="@{/dashboard/admin/eventos/presencial/periodo}" method="post">
+										
+									<div class="row">
+										<div class="col-lg-5">	
+											<div class="form-group mb-2">
+												<label for="eventoOpcoes">Evento</label>
+												<select id="eventoOpcoes" class="form-control js-select-single"
+													aria-describedby="eventoOpcoes" style="width: 100%;">
+													<option value="-1">TODOS</option>
+													<option th:unless="${#lists.isEmpty(eventoOpcoes)}"
+														th:each="opcaoEvento : ${eventoOpcoes}"
+														th:value="${opcaoEvento.id}" th:text="${opcaoEvento.titulo}"
+														th:selected="${opcaoEvento.id == eventos.content[0].id and eventos.totalElements == 1}">
+													</option>
+												</select>
+											</div>
+										</div>
+
+										<div class="col-lg-3">
+											<div class="form-group">
+												<label for="dataInicio">Início</label>
+										        <div id="datepicker-popup-inicio" class="input-group date datepicker">
+													<input id="datepicker-inicio" type="text" class="form-control" name="dataInicio" />
+													<div class="input-group-addon input-group-text">
+														<span class="mdi mdi-calendar"></span>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-lg-3">
+											<div class="form-group">
+												<label for="dataTermino">Término</label>
+												 <div id="datepicker-popup-termino" class="input-group date datepicker">
+													<input id="datepicker-termino" type="text" class="form-control" name="dataTermino" />
+													<div class="input-group-addon input-group-text">
+														<span class="mdi mdi-calendar"></span>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-1 mt-4">
+											<button type="submit" class="btn btn-primary mb-3"><i class="icon-magnifier"></i></button>
+										</div>
+										
+									</div>	
+									</form>
 								</div>
 
 								<div class="col-12 grid-margin" th:if="${alert != null}">
@@ -214,13 +267,39 @@
 	</div>
 	<!-- container-scroller -->
 	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/bootstrap-datepicker.min.js}"></script>
+	<script th:src="@{~/js/select2.min.js}"></script>
 	<script th:src="@{~/js/sweetalert2.min.js}"></script>
 	<span th:replace="fragments/base-script :: plugins"></span>
 
 	 <script th:inline="javascript">
 
 	/*<![CDATA[*/
-	$(() =>{});
+	$(() =>{
+
+		$('#datepicker-popup-inicio').datepicker({
+	      format: 'dd/mm/yyyy',
+	        language: 'pt-BR',
+	      });
+
+		 $('#datepicker-popup-termino').datepicker({
+	      format: 'dd/mm/yyyy',
+	        language: 'pt-BR',
+	      });
+	    
+	     $('#eventoOpcoes').on('change', alterarEvento);
+
+
+	});
+
+	 function alterarEvento(){
+			var id = $('#eventoOpcoes').val();
+			if(id !== '-1'){
+				window.location.href = `/dashboard/admin/eventos/presencial/${id}`;
+			}else{
+				window.location.href = `/dashboard/admin/eventos/presencial`;
+			}
+		}	
 
 	 function showSwal(id){
 	          
@@ -237,6 +316,19 @@
 	              window.location.href = `/dashboard/admin/eventos/presencial/cancelar/${id}`	
 	          });
 	  }        
+	/*]]>*/
+	</script>
+
+	<script th:inline="javascript">
+
+	/*<![CDATA[*/
+		(function($) {
+			  'use strict';
+
+			  if($(".js-select-single").length){
+			    $(".js-select-single").select2();
+			  }
+		})(jQuery);
 	/*]]>*/
 	</script>
 

@@ -2,6 +2,8 @@ package com.gilmarcarlos.developer.gcursos.repository.usuarios;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -26,5 +28,8 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
 
 	@Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM Usuario u WHERE u.email = :pemail and u.id != :pid")
 	boolean existsByEmail(@Param("pemail") String email, @Param("pid") Long id);
+	
+	@Query("select u from Usuario u")
+	Page<Usuario> listarTodos(Pageable pageable);
 
 }

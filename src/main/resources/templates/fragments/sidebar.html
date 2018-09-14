@@ -289,14 +289,15 @@
 
             <li sec:authorize="hasRole('ROLE_Administrador')" th:if="${usuario.isPerfilCompleto()}" class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#ui-relatorios" aria-expanded="false" aria-controls="ui-relatorios">
-                <i class="icon-chart menu-icon"></i>
+                <i class="icon-pie-chart menu-icon"></i>
                 <span class="menu-title">+ Relatórios</span>
-                <span class="badge badge-success">2</span>
+                <span class="badge badge-success">3</span>
               </a>
               <div class="collapse" id="ui-relatorios">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/relatorios/inscricoes/presenciais}">Inscricoes presenciais</a></li>
                   <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/relatorios/inscricoes/online}">Inscricoes online</a></li>
+                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/relatorios/inscricoes/usuarios}">Inscricoes usuários</a></li>
                 </ul>
               </div>
             </li>
@@ -305,6 +306,13 @@
               <a class="nav-link" th:href="@{/dashboard/usuario/notificacoes}">
                 <i class="icon-bell menu-icon"></i>
                 <span class="menu-title">Notificações</span>
+              </a>
+            </li>
+
+             <li class="nav-item">
+              <a class="nav-link" th:href="@{/dashboard/usuario/mensagens}">
+                <i class="icon-envelope menu-icon"></i>
+                <span class="menu-title">Mensagens</span>
               </a>
             </li>
           </ul>
