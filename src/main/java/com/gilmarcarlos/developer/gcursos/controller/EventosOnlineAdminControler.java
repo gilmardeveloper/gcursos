@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gilmarcarlos.developer.gcursos.model.eventos.EventoDTO;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.AtividadeOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.CertificadoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EstiloOnline;
@@ -687,6 +688,12 @@ public class EventosOnlineAdminControler {
 	@ResponseBody
 	public ModuloDTO moduloDTO(@PathVariable("id") Long id) {
 		return new ModuloDTO(moduloService.buscarPor(id));
+	}
+	
+	@GetMapping(value = "/dto", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public List<EventoDTO> eventoDTO() {
+		return eventoOnlineService.listarTodosDTO();
 	}
 
 	@GetMapping("/inscricoes/{id}")

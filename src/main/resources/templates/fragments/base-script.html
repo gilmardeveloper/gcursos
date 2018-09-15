@@ -21,6 +21,19 @@
 	<script async="async" th:src="@{~/js/todolist.js}"></script>
 	<!-- endinject -->
 
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+	$(()=>{
+		$('#count-sub-menu-usuarios').text($( "#sub-menu-usuarios li" ).length);
+		$('#count-sub-menu-eventos').text($( "#sub-menu-eventos li" ).length);
+		$('#count-sub-menu-locais').text($( "#sub-menu-locais li" ).length);
+		$('#count-sub-menu-relatorios').text($( "#sub-menu-relatorios li" ).length);
+	});
+	/*]]>*/
+</script>
+
 </span>
+
+
 
 </html>

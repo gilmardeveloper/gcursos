@@ -3,6 +3,8 @@ package com.gilmarcarlos.developer.gcursos.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gilmarcarlos.developer.gcursos.model.auth.Permissoes;
 import com.gilmarcarlos.developer.gcursos.model.locais.Cargo;
 import com.gilmarcarlos.developer.gcursos.model.locais.CodigoFuncional;
 import com.gilmarcarlos.developer.gcursos.model.locais.Departamento;
@@ -33,9 +36,11 @@ import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.DadosPessoais;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.TelefoneUsuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.UsuarioDTO;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.CpfExisteException;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.UsuarioExisteException;
 import com.gilmarcarlos.developer.gcursos.service.auth.AutorizacaoService;
+import com.gilmarcarlos.developer.gcursos.service.auth.PermissoesService;
 import com.gilmarcarlos.developer.gcursos.service.locais.CargoService;
 import com.gilmarcarlos.developer.gcursos.service.locais.CodigoFuncionalService;
 import com.gilmarcarlos.developer.gcursos.service.locais.DepartamentoService;
@@ -100,13 +105,87 @@ public class UsuariosLocaisAdminControler {
 	
 	@Autowired
 	private MensagensService mensagensService;
+	
+	@Autowired
+	private PermissoesService permissoesService;
 
 	private Authentication autenticado;
+	
+	private final static Integer MAXIMO_PAGES = 3;
+	private final static Integer MAXIMO_PAGES_EVENTOS = 20;
+	
+	private Page<Usuario> getUsuarioPaginacao(Integer page) {
+		return usuarioService.listarTodos(PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
+	}
+	
+	private Page<Usuario> getUsuarioIdPaginacao(Long id) {
+		return usuarioService.buscarPor(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
+	
+	private Page<Usuario> getUsuarioUnidadesPaginacao(Long id) {
+		return usuarioService.buscarPorUnidade(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
+	
+	private Page<Usuario> getUsuarioCargosPaginacao(Long id) {
+		return usuarioService.buscarPorCargo(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
 
 	@GetMapping("usuarios/atuais")
 	public String cadastrosCompleto(Model model) {
 		model.addAttribute("usuario", getUsuario());
-		model.addAttribute("atuais", usuarioService.listarCadastrosCompleots());
+		model.addAttribute("atuais", getUsuarioPaginacao(0));
+		model.addAttribute("cargos", cargoService.listarTodos());
+		model.addAttribute("unidades", unidadeService.listarTodos());
+		model.addAttribute("formacoes", escolaridadeService.listarTodos());
+		model.addAttribute("sexos", sexoService.listarTodos());
+		model.addAttribute("autorizacoes", autorizacaoService.listarTodos());
+		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
+		return "dashboard/admin/usuarios/base-info-usuarios";
+	}
+	
+	@GetMapping("usuarios/atuais/{id}")
+	public String cadastrosCompleto(@PathVariable("id") Long id, Model model) {
+		model.addAttribute("usuario", getUsuario());
+		model.addAttribute("atuais", getUsuarioIdPaginacao(id));
+		model.addAttribute("cargos", cargoService.listarTodos());
+		model.addAttribute("unidades", unidadeService.listarTodos());
+		model.addAttribute("formacoes", escolaridadeService.listarTodos());
+		model.addAttribute("sexos", sexoService.listarTodos());
+		model.addAttribute("autorizacoes", autorizacaoService.listarTodos());
+		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
+		return "dashboard/admin/usuarios/base-info-usuarios";
+	}
+	
+	@GetMapping("usuarios/atuais/cargos/{id}")
+	public String cadastrosCompletoCargos(@PathVariable("id") Long id, Model model) {
+		model.addAttribute("usuario", getUsuario());
+		model.addAttribute("atuais", getUsuarioCargosPaginacao(id));
+		model.addAttribute("cargos", cargoService.listarTodos());
+		model.addAttribute("unidades", unidadeService.listarTodos());
+		model.addAttribute("formacoes", escolaridadeService.listarTodos());
+		model.addAttribute("sexos", sexoService.listarTodos());
+		model.addAttribute("autorizacoes", autorizacaoService.listarTodos());
+		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
+		return "dashboard/admin/usuarios/base-info-usuarios";
+	}
+	
+	@GetMapping("usuarios/atuais/unidades/{id}")
+	public String cadastrosCompletoUnidades(@PathVariable("id") Long id, Model model) {
+		model.addAttribute("usuario", getUsuario());
+		model.addAttribute("atuais", getUsuarioUnidadesPaginacao(id));
+		model.addAttribute("cargos", cargoService.listarTodos());
+		model.addAttribute("unidades", unidadeService.listarTodos());
+		model.addAttribute("formacoes", escolaridadeService.listarTodos());
+		model.addAttribute("sexos", sexoService.listarTodos());
+		model.addAttribute("autorizacoes", autorizacaoService.listarTodos());
+		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
+		return "dashboard/admin/usuarios/base-info-usuarios";
+	}
+	
+	@GetMapping("usuarios/atuais/pagina/{page}")
+	public String cadastrosCompleto(@PathVariable("page") Integer page, Model model) {
+		model.addAttribute("usuario", getUsuario());
+		model.addAttribute("atuais", getUsuarioPaginacao(page));
 		model.addAttribute("cargos", cargoService.listarTodos());
 		model.addAttribute("unidades", unidadeService.listarTodos());
 		model.addAttribute("formacoes", escolaridadeService.listarTodos());
@@ -602,6 +681,41 @@ public class UsuariosLocaisAdminControler {
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 		
+	}
+	
+	@GetMapping("/usuarios/permissoes/{id}")
+	private String permissoesUsuarios(@PathVariable("id") Long id, Model model) {
+		
+		Usuario usuarioLogado = getUsuario();
+		Usuario user = usuarioService.buscarPor(id);
+		
+		if (usuarioLogado.isPerfilCompleto()) {
+			
+			model.addAttribute("usuario", usuarioLogado);
+			model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+			model.addAttribute("user", user);
+			model.addAttribute("departamentos", departamentoService.listarTodos());
+			
+			return "dashboard/admin/usuarios/base-cadastro-permissoes";
+		} else {
+			return "redirect:/dashboard/admin/complete-cadastro";
+		}
+	}
+
+	@PostMapping("/usuarios/permissoes/salvar")
+	private String permissoesUsuariosSalvar(Permissoes permissoes, RedirectAttributes model) {
+
+		permissoesService.salvar(permissoes);
+		model.addFlashAttribute("alert", "alert alert-fill-success alert-dismissible fade show");
+		model.addFlashAttribute("message", "salvo com sucesso");
+
+		return "redirect:/dashboard/admin/usuarios/atuais";
+	}
+	
+	@GetMapping(value = "/usuarios/dto", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public List<UsuarioDTO> moduloDTO() {
+		return usuarioService.listarUsuariosDTO();
 	}
 	
 	private Usuario getUsuario() {

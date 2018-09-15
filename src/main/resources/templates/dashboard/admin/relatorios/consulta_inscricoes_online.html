@@ -50,16 +50,12 @@
 										<div class="row">
 											<div class="col-lg-5">
 												<div class="form-group mb-2">
-													<label for="eventoOpcoes">Evento</label> <select
+													<select
 														id="eventoOpcoes" class="form-control js-select-single"
 														aria-describedby="eventoOpcoes" style="width: 100%;">
+														<option value="-1">TITULO</option>
 														<option value="-1">TODOS</option>
-														<option th:unless="${#lists.isEmpty(eventoOpcoes)}"
-															th:each="opcaoEvento : ${eventoOpcoes}"
-															th:value="${opcaoEvento.id}"
-															th:text="${opcaoEvento.titulo}"
-															th:selected="${opcaoEvento.id == eventos.content[0].id and eventos.totalElements == 1}">
-														</option>
+														
 													</select>
 												</div>
 											</div>
@@ -197,10 +193,39 @@
 	/*<![CDATA[*/
 	$(() =>{
 
+		 eventoDto();	
 	     $('#eventoOpcoes').on('change', alterarEvento);	
 
 	});
 
+	function eventoDto(){
+
+					$.ajax({
+		                  url: `/dashboard/admin/eventos/online/dto`,
+		                  type: "GET", 
+
+		              success: (result,status,xhr) => {
+		                                                  
+		                                                  result.forEach(preencherSelect);
+		                                              }, 
+		              error: () => {
+		              
+		              	console.log("error");
+
+		              }
+		      		});
+		}
+
+	function preencherSelect(value, index, array){
+
+			var option = document.createElement("option");
+			option.text = value.titulo;
+			option.value = value.id;
+			$('#eventoOpcoes').append(option);
+
+			
+		}
+			
 	function alterarEvento(){
 			var id = $('#eventoOpcoes').val();
 			if(id !== '-1'){

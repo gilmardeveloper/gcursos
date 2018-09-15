@@ -45,6 +45,92 @@
 							<!-- row -->
 							<div class="row flex-grow">
 
+								<div class="col-12 grid-margin">
+									<form class="forms-sample">
+
+										<div class="row">
+											<div class="col-lg-4">
+												<div class="form-group mb-2">
+													<select
+														id="usuarioNome" class="form-control js-select-single"
+														aria-describedby="usuarioNome" style="width: 100%;">
+														<option value="-1">NOME</option>
+														<option value="-1">TODOS</option>
+														
+													</select>
+												</div>
+											</div>
+
+											<div class="col-lg-4">
+												<div class="form-group mb-2">
+													<select
+														id="usuarioEmail" class="form-control js-select-single"
+														aria-describedby="usuarioEmail" style="width: 100%;">
+														<option value="-1">EMAIL</option>
+														<option value="-1">TODOS</option>
+														
+													</select>
+												</div>
+											</div>
+
+											<div class="col-lg-4">
+												<div class="form-group mb-2">
+													<select
+														id="usuarioCpf" class="form-control js-select-single"
+														aria-describedby="usuarioCpf" style="width: 100%;">
+														<option value="-1">CPF</option>
+														<option value="-1">TODOS</option>
+														
+													</select>
+												</div>
+											</div>
+
+											<div class="col-lg-4">
+												<div class="form-group mb-2">
+													<select
+														id="unidadeTrabalho" class="form-control js-select-single"
+														aria-describedby="unidadeTrabalho" style="width: 100%;">
+														<option value="-1">UNIDADE TRABALHO</option>
+														<option value="-1">TODOS</option>
+														<option th:each="unidade : ${unidades}"
+																th:value="${unidade.id}" 
+																th:text="${unidade.nome}"></option>
+														
+													</select>
+												</div>
+											</div>
+
+											<div class="col-lg-4">
+												<div class="form-group mb-2">
+													<select
+														id="cargo" class="form-control js-select-single"
+														aria-describedby="unidadeTrabalho" style="width: 100%;">
+														<option value="-1">CARGO</option>
+														<option value="-1">TODOS</option>
+														<option th:each="cargo : ${cargos}"
+																th:value="${cargo.id}" 
+																th:text="${cargo.nome}"></option>
+														
+													</select>
+												</div>
+											</div>
+
+											<div class="col-lg-4">
+												<div class="form-group mb-2">
+													<select
+														id="usuarioCodigoFuncional" class="form-control js-select-single"
+														aria-describedby="usuarioCodigoFuncional" style="width: 100%;">
+														<option value="-1">CÓDIGO FUNCIONAL</option>
+														<option value="-1">TODOS</option>
+														
+													</select>
+												</div>
+											</div>
+
+										</div>
+									</form>
+								</div>
+
 								<div class="col-12 grid-margin" th:if="${alert != null}">
 									<div th:if="${alert != null}">
 										<div th:class="${alert}" role="alert">
@@ -88,19 +174,27 @@
 																	th:text="${usuario.dadosPessoais.cpf}"></span>
 															</p>
 														</div>
-														<div class="col-lg-3">
+
+														<div class="col-lg-9">
+															<p class="">
+																unidade: <span class="text-muted"
+																	th:text="${usuario.codigoFuncional.unidadeTrabalho.nome} + ' - ' + ${usuario.codigoFuncional.unidadeTrabalho.departamento.identidade}"></span>
+															</p>
+														</div>
+
+														<div class="col-lg-5">
 															<p class="">
 																email: <span class="text-muted"
 																	th:text="${usuario.email}"></span>
 															</p>
 														</div>
-														<div class="col-lg-6">
+
+														<div class="col-lg-7">
 															<p class="">
-																unidade: <span class="text-muted"
-																	th:text="${usuario.codigoFuncional.unidadeTrabalho.nome}"></span>
+																cargo: <span class="text-muted"
+																	th:text="${usuario.codigoFuncional.cargo.nome}"></span>
 															</p>
 														</div>
-
 													</div>
 												</div>
 											</div>
@@ -116,9 +210,9 @@
 						<div class="col-lg-12">
 
 							<div class="pagination-area text-center"
-								th:unless="${#lists.isEmpty(eventos)}">
+								th:unless="${#lists.isEmpty(usuarios)}">
 								<ul class="pagination rounded"
-									th:if="${eventos.totalPages} &gt; 1">
+									th:if="${usuarios.totalPages} &gt; 1">
 
 									<li class="page-item"><a
 										th:href="@{/dashboard/admin/relatorios/inscricoes/usuario/pagina/{page}(page=0)}"
@@ -129,7 +223,7 @@
 										th:href="@{/dashboard/admin/relatorios/inscricoes/usuario/pagina/{page}(page=${usuarios.number} - 1)}"
 										th:text="${usuarios.number} - 1">&laquo;</a></li>
 
-									<li th:if="${eventos.number} &lt; (${eventos.totalPages} - 1)"
+									<li th:if="${usuarios.number} &lt; (${usuarios.totalPages} - 1)"
 										th:each="index : ${#numbers.sequence(usuarios.number, usuarios.number + 1)}"
 										th:class="${index} == ${eventos.number} ? 'page-item active' : 'page-item'"><a
 										class="page-link"
@@ -170,10 +264,104 @@
 	/*<![CDATA[*/
 	$(() =>{
 
-		
+		usuariosDto();
+
+		$('#usuarioNome').on('change', alterarNome);	
+		$('#usuarioCpf').on('change', alterarCpf);	
+		$('#usuarioEmail').on('change', alterarEmail);	
+		$('#usuarioCodigoFuncional').on('change', alterarCodigo);
+		$('#unidadeTrabalho').on('change', alterarUnidade);
+		$('#cargo').on('change', alterarCargo);	
 	});
 
+	function usuariosDto(){
 
+					$.ajax({
+		                  url: `/dashboard/admin/usuarios/dto`,
+		                  type: "GET", 
+
+		              success: (result,status,xhr) => {
+		                                                  
+		                                                  result.forEach(preencherSelect);
+		                                              }, 
+		              error: () => {
+		              
+		              	console.log("error");
+
+		              }
+		      		});
+		}
+
+		function preencherSelect(value, index, array){
+
+			var optionNome = document.createElement("option");
+			optionNome.text = value.nome;
+			optionNome.value = value.id;
+			$('#usuarioNome').append(optionNome);
+
+			var optionCpf = document.createElement("option");
+			optionCpf.text = value.cpf;
+			optionCpf.value = value.id;
+			$('#usuarioCpf').append(optionCpf);
+
+			var optionEmail = document.createElement("option");
+			optionEmail.text = value.email;
+			optionEmail.value = value.id;
+			$('#usuarioEmail').append(optionEmail);
+
+			if(value.codigo !== 'nf'){
+				var optionCodigo = document.createElement("option");
+				optionCodigo.text = value.codigo;
+				optionCodigo.value = value.id;
+				$('#usuarioCodigoFuncional').append(optionCodigo);
+			}
+		}
+
+		function alterarNome(){
+			var id = $('#usuarioNome').val();
+			enviarRequisicao(id);
+		}
+
+		function alterarCpf(){
+			var id = $('#usuarioCpf').val();
+			enviarRequisicao(id);
+		}
+
+		function alterarEmail(){
+			var id = $('#usuarioEmail').val();
+			enviarRequisicao(id);
+		}
+
+		function alterarCodigo(){
+			var id = $('#usuarioCodigoFuncional').val();
+			enviarRequisicao(id);
+		}
+
+		function alterarUnidade(){
+			var id = $('#unidadeTrabalho').val();
+			if(id !== '-1'){
+				window.location.href = `/dashboard/admin/relatorios/inscricoes/usuarios/unidades/${id}`;
+			}else{
+				window.location.href = `/dashboard/admin/relatorios/inscricoes/usuarios`;
+			}
+		}
+
+		function alterarCargo(){
+			var id = $('#cargo').val();
+			if(id !== '-1'){
+				window.location.href = `/dashboard/admin/relatorios/inscricoes/usuarios/cargos/${id}`;
+			}else{
+				window.location.href = `/dashboard/admin/relatorios/inscricoes/usuarios`;
+			}
+		}
+
+		function enviarRequisicao(id){
+			if(id !== '-1'){
+				window.location.href = `/dashboard/admin/relatorios/inscricoes/usuarios/${id}`;
+			}else{
+				window.location.href = `/dashboard/admin/relatorios/inscricoes/usuarios`;
+			}
+		}
 	/*]]>*/
 	</script>
 

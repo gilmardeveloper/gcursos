@@ -11,62 +11,47 @@
 	<!-- menu administrador -->
 	<ul th:fragment="navbar-admin-menu-usuarios" class="navbar-nav" >
           
-          <li class="nav-item dropdown d-none d-lg-flex" th:if="${usuario.isPerfilCompleto()}" >
+          <li class="nav-item dropdown d-none d-lg-flex" th:if="${usuario.isPerfilCompleto() and (usuario.podeVisualizar('usuarios') or usuario.podeVisualizar('opcoesSexuais') or usuario.podeVisualizar('escolaridade') or usuario.podeVisualizar('tudo'))}" >
             <a class="nav-link dropdown-toggle nav-btn" id="actionDropdown" href="#" data-toggle="dropdown">
               <span class="btn">+ Usuários</span>
             </a>
             <div class="dropdown-menu navbar-dropdown dropdown-left" aria-labelledby="actionDropdown">
-              <a class="dropdown-item" th:href="@{/dashboard/admin/usuarios/atuais}">
+              <a th:if="${usuario.podeVisualizar('usuarios') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/usuarios/atuais}">
                 <i class="icon-user text-primary"></i>
                 Usuários
               </a>
               <div class="dropdown-divider"></div>
-             <!-- <a class="dropdown-item" th:href="@{/dashboard/admin/usuarios/antigos}">
-                <i class="icon-user text-primary"></i>
-                Cadastros antigos
-              </a>
-              <div class="dropdown-divider"></div> -->
-              <a class="dropdown-item" th:href="@{/dashboard/admin/usuarios/opcoes}">
+              <a th:if="${usuario.podeVisualizar('opcoesSexuais') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/usuarios/opcoes}">
                 <i class="icon-question text-info"></i>
                 Opções sexuais
               </a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" th:href="@{/dashboard/admin/usuarios/escolaridades}">
+              <a th:if="${usuario.podeVisualizar('escolaridade') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/usuarios/escolaridades}">
                 <i class="icon-eyeglass text-success"></i>
                 Escolaridade
               </a>
-             <!-- <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">
-                <i class="icon-user-following text-warning"></i>
-                Admin User
-              </a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">
-                <i class="icon-docs text-success"></i>
-                Sales report
-              </a> -->
             </div>
           </li>
   </ul>
 
   <ul th:fragment="navbar-admin-menu-unidades" class="navbar-nav" >
           
-          <li class="nav-item dropdown d-none d-lg-flex" th:if="${usuario.isPerfilCompleto()}" >
+          <li class="nav-item dropdown d-none d-lg-flex" th:if="${usuario.isPerfilCompleto() and (usuario.podeVisualizar('unidades') or usuario.podeVisualizar('departamentos') or usuario.podeVisualizar('cargos') or usuario.podeVisualizar('tudo'))}" >
             <a class="nav-link dropdown-toggle nav-btn" id="actionDropdown" href="#" data-toggle="dropdown">
               <span class="btn">+ Locais</span>
             </a>
             <div class="dropdown-menu navbar-dropdown dropdown-left" aria-labelledby="actionDropdown">
-              <a class="dropdown-item" th:href="@{/dashboard/admin/unidades}">
+              <a th:if="${usuario.podeVisualizar('unidades') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/unidades}">
                 <i class="icon-briefcase text-primary"></i>
                 Unidades de trabalho
               </a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" th:href="@{/dashboard/admin/departamentos}">
+              <a th:if="${usuario.podeVisualizar('departamentos') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/departamentos}">
                 <i class="icon-briefcase text-warning"></i>
                 Departamentos
               </a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" th:href="@{/dashboard/admin/cargos}">
+              <a th:if="${usuario.podeVisualizar('cargos') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/cargos}">
                 <i class="icon-briefcase text-info"></i>
                 Cargos
               </a>
@@ -76,22 +61,22 @@
 
    <ul th:fragment="navbar-admin-menu-cursos" class="navbar-nav" >
           
-          <li class="nav-item dropdown d-none d-lg-flex" th:if="${usuario.isPerfilCompleto()}" >
+          <li class="nav-item dropdown d-none d-lg-flex" th:if="${usuario.isPerfilCompleto() and (usuario.podeVisualizar('eventosOnline') or usuario.podeVisualizar('eventosPresenciais') or usuario.podeVisualizar('categorias') or usuario.podeVisualizar('tudo'))}" >
             <a class="nav-link dropdown-toggle nav-btn" id="actionDropdown" href="#" data-toggle="dropdown">
               <span class="btn">+ Eventos</span>
             </a>
             <div class="dropdown-menu navbar-dropdown dropdown-left" aria-labelledby="actionDropdown">
-              <a class="dropdown-item" th:href="@{/dashboard/admin/eventos/presencial}">
+              <a th:if="${usuario.podeVisualizar('eventosPresenciais') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/eventos/presencial}">
                 <i class="icon-badge text-primary"></i>
                 Eventos presenciais
               </a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" th:href="@{/dashboard/admin/eventos/online}">
+              <a th:if="${usuario.podeVisualizar('eventosOnline') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/eventos/online}">
                 <i class="icon-badge text-success"></i>
                 Eventos online
               </a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" th:href="@{/dashboard/admin/eventos/presencial/categorias}">
+              <a th:if="${usuario.podeVisualizar('categorias') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/eventos/presencial/categorias}">
                 <i class="icon-layers text-danger"></i>
                 Categorias
               </a>
@@ -110,11 +95,11 @@
           <span class="icon-menu"></span>
         </button>
         
-        <ul sec:authorize="hasRole('ROLE_Administrador')"  th:replace="fragments/navbar :: navbar-admin-menu-usuarios"></ul>
+        <ul sec:authorize="hasRole('ROLE_Administrador')" th:replace="fragments/navbar :: navbar-admin-menu-usuarios"></ul>
 
-        <ul sec:authorize="hasRole('ROLE_Administrador')"  th:replace="fragments/navbar :: navbar-admin-menu-unidades"></ul>
+        <ul sec:authorize="hasRole('ROLE_Administrador')" th:replace="fragments/navbar :: navbar-admin-menu-unidades"></ul>
 
-        <ul sec:authorize="hasRole('ROLE_Administrador')"  th:replace="fragments/navbar :: navbar-admin-menu-cursos"></ul>
+        <ul sec:authorize="hasRole('ROLE_Administrador')" th:replace="fragments/navbar :: navbar-admin-menu-cursos"></ul>
 
         <ul class="navbar-nav navbar-nav-right">
           

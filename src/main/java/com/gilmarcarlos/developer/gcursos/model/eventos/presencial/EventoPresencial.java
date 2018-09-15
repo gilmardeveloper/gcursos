@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.gilmarcarlos.developer.gcursos.interfaces.Eventos;
 import com.gilmarcarlos.developer.gcursos.model.eventos.categorias.CategoriaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventoCanceladoException;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialDestaque;
@@ -23,7 +24,7 @@ import com.gilmarcarlos.developer.gcursos.model.type.EventoStatus;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
 @Entity
-public class EventoPresencial implements Serializable {
+public class EventoPresencial implements Serializable, Eventos {
 
 	/**
 	 * 

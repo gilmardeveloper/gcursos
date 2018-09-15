@@ -7,11 +7,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.UsuarioDTO;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.UsuarioExisteException;
 import com.gilmarcarlos.developer.gcursos.repository.auth.AutorizacaoRepository;
 import com.gilmarcarlos.developer.gcursos.repository.usuarios.UsuarioRepository;
@@ -151,4 +153,22 @@ public class UsuarioService {
 		return repository.listarTodos(pageable);
 	}
 	
+	public List<UsuarioDTO> listarUsuariosDTO(){
+		
+		List<UsuarioDTO> usuarios = new ArrayList<>();
+		listarCadastrosCompleots().forEach( u ->usuarios.add(new UsuarioDTO(u)));		
+		return usuarios;
+	}
+
+	public Page<Usuario> buscarPor(Long id, Pageable pageable) {
+		return repository.buscarPor(id, pageable);
+	}
+
+	public Page<Usuario> buscarPorUnidade(Long id, Pageable pageable) {
+		return repository.buscarPorUnidade(id, pageable);
+	}
+	
+	public Page<Usuario> buscarPorCargo(Long id, Pageable pageable) {
+		return repository.buscarPorCargo(id, pageable);
+	}
 }

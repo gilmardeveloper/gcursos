@@ -1,5 +1,6 @@
 package com.gilmarcarlos.developer.gcursos.service.eventos.online;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.gilmarcarlos.developer.gcursos.model.eventos.EventoDTO;
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventoCanceladoException;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.EventoOnlineRepository;
@@ -122,6 +124,12 @@ public class EventoOnlineService {
 
 	public Page<EventoOnline> buscarPor(Long id, Pageable pageable) {
 		return repository.buscarPor(id, pageable);
+	}
+
+	public List<EventoDTO> listarTodosDTO() {
+		List<EventoDTO> lista = new ArrayList<>();
+		listarTodos().forEach( e -> lista.add(new EventoDTO(e)));
+		return lista;
 	}
 
 }

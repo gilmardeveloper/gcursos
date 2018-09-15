@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
+import com.gilmarcarlos.developer.gcursos.model.auth.Permissoes;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
@@ -73,6 +74,9 @@ public class Usuario implements Serializable {
 	
 	@OneToMany(mappedBy = "usuario")
 	private List<InscricaoOnline> inscricoesOnline;
+	
+	@OneToOne(mappedBy = "usuario")
+	private Permissoes permissoes;
 
 	public Usuario() {
 		this.habilitado = false;
@@ -200,6 +204,14 @@ public class Usuario implements Serializable {
 		this.inscricoesOnline = inscricoesOnline;
 	}
 	
+	public Permissoes getPermissoes() {
+		return permissoes;
+	}
+
+	public void setPermissoes(Permissoes permissoes) {
+		this.permissoes = permissoes;
+	}
+
 	@Transient
 	public String getStatus() {
 		return autorizacoes.get(0).getNome().split("_")[1];
@@ -240,6 +252,66 @@ public class Usuario implements Serializable {
 		return getEventoPresencial().stream().anyMatch( e-> e.equals(evento));
 	}
 
+	@Transient
+	public Integer qtdInscricoesPresenciais() {
+		return getInscricoes().size();
+	}
+	
+	@Transient
+	public Integer qtdInscricoesOnline() {
+		return getInscricoesOnline().size();
+	}
+	
+	@Transient
+	public Integer qtdInscricoesTotal() {
+		return qtdInscricoesOnline() + qtdInscricoesPresenciais();
+	}
+	
+	@Transient
+	public Long assiduidadeTotal() {
+		return getInscricoes().stream().filter(i -> i.isPresente()).count();
+	}
+	
+	@Transient
+	public Long absenteismoTotal() {
+		return getInscricoes().stream().filter(i -> !i.isPresente()).count();
+	}
+	
+	@Transient
+	public Long progressoTotal() {
+		return getInscricoesOnline().stream().filter(i -> i.isFinalizado()).count();
+	}
+	
+	@Transient
+	public Long andamentoTotal() {
+		return getInscricoesOnline().stream().filter(i -> !i.isFinalizado()).count();
+	}
+	
+	@Transient
+	public Boolean isAdmin() {
+		return getAutorizacoes().get(0).getNome().equals("ROLE_Administrador");
+	}
+	
+	@Transient
+	public Boolean podeCriar(String opcao) {
+		return (getPermissoes() == null ? false : getPermissoes().getCriar().contains(opcao));
+	}
+	
+	@Transient
+	public Boolean podeVisualizar(String opcao) {
+		return (getPermissoes() == null ? false : getPermissoes().getVisualizar().contains(opcao));
+	}
+	
+	@Transient
+	public Boolean podeAlterar(String opcao) {
+		return (getPermissoes() == null ? false : getPermissoes().getAlterar().contains(opcao));
+	}
+	
+	@Transient
+	public Boolean podeDeletar(String opcao) {
+		return (getPermissoes() == null ? false : getPermissoes().getDeletar().contains(opcao));
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

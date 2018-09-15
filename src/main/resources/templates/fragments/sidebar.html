@@ -242,62 +242,62 @@
               </div>
             </li>
 
-             <li sec:authorize="hasRole('ROLE_Administrador')" th:if="${usuario.isPerfilCompleto()}" class="nav-item">
+             <li sec:authorize="hasRole('ROLE_Administrador')" th:if="${usuario.isPerfilCompleto() and (usuario.podeVisualizar('eventosOnline') or usuario.podeVisualizar('eventosPresenciais') or usuario.podeVisualizar('categorias') or usuario.podeVisualizar('tudo'))}" class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
                 <i class="icon-badge menu-icon"></i>
                 <span class="menu-title">+ Eventos</span>
-                <span class="badge badge-success">3</span>
+                <span id="count-sub-menu-eventos" class="badge badge-success">3</span>
               </a>
               <div class="collapse" id="ui-basic">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/eventos/presencial}">Eventos presenciais</a></li>
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/eventos/online}">Eventos online</a></li>
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/eventos/presencial/categorias}">Categorias</a></li>
+                <ul id="sub-menu-eventos" class="nav flex-column sub-menu">
+                  <li th:if="${usuario.podeVisualizar('eventosPresenciais') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/eventos/presencial}">Eventos presenciais</a></li>
+                  <li th:if="${usuario.podeVisualizar('eventosOnline') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/eventos/online}">Eventos online</a></li>
+                  <li th:if="${usuario.podeVisualizar('categorias') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/eventos/presencial/categorias}">Categorias</a></li>
                 </ul>
               </div>
             </li>
             
-             <li sec:authorize="hasRole('ROLE_Administrador')" th:if="${usuario.isPerfilCompleto()}" class="nav-item">
+             <li sec:authorize="hasRole('ROLE_Administrador')" th:if="${usuario.isPerfilCompleto() and (usuario.podeVisualizar('usuarios') or usuario.podeVisualizar('opcoesSexuais') or usuario.podeVisualizar('escolaridade') or usuario.podeVisualizar('tudo'))}" class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#general-pages" aria-expanded="false" aria-controls="general-pages">
                 <i class="icon-user menu-icon"></i>
                 <span class="menu-title">+ Usuários</span>
-                <span class="badge badge-warning">3</span>
+                <span id="count-sub-menu-usuarios" class="badge badge-warning">3</span>
               </a>
               <div class="collapse" id="general-pages">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/usuarios/atuais}">Usuários </a></li>
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/usuarios/opcoes}"> Opções sexuais</a></li>
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/usuarios/escolaridades}">Escolaridade</a></li>
+                <ul id="sub-menu-usuarios" class="nav flex-column sub-menu">
+                  <li th:if="${usuario.podeVisualizar('usuarios') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/usuarios/atuais}">Usuários </a></li>
+                  <li th:if="${usuario.podeVisualizar('opcoesSexuais') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/usuarios/opcoes}"> Opções sexuais</a></li>
+                  <li th:if="${usuario.podeVisualizar('escolaridade') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/usuarios/escolaridades}">Escolaridade</a></li>
                 </ul>
               </div>
             </li>
            
-            <li sec:authorize="hasRole('ROLE_Administrador')" th:if="${usuario.isPerfilCompleto()}" class="nav-item">
+            <li sec:authorize="hasRole('ROLE_Administrador')" th:if="${usuario.isPerfilCompleto() and (usuario.podeVisualizar('unidades') or usuario.podeVisualizar('departamentos') or usuario.podeVisualizar('cargos') or usuario.podeVisualizar('tudo'))}" class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#e-commerce" aria-expanded="false" aria-controls="e-commerce">
                 <i class="icon-briefcase menu-icon"></i>
                 <span class="menu-title">+ Locais</span>
-                <span class="badge badge-info">3</span>
+                <span id="count-sub-menu-locais" class="badge badge-info">3</span>
               </a>
               <div class="collapse" id="e-commerce">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/unidades}">Unidades de trabalho</a></li>
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/departamentos}">Departamentos</a></li>
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/cargos}">Cargos</a></li>
+                <ul id="sub-menu-locais" class="nav flex-column sub-menu">
+                  <li th:if="${usuario.podeVisualizar('unidades') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/unidades}">Unidades de trabalho</a></li>
+                  <li th:if="${usuario.podeVisualizar('departamentos') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/departamentos}">Departamentos</a></li>
+                  <li th:if="${usuario.podeVisualizar('cargos') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/cargos}">Cargos</a></li>
                 </ul>
               </div>
             </li>
 
-            <li sec:authorize="hasRole('ROLE_Administrador')" th:if="${usuario.isPerfilCompleto()}" class="nav-item">
+            <li sec:authorize="hasRole('ROLE_Administrador')" th:if="${usuario.isPerfilCompleto() and (usuario.podeVisualizar('relatoriosOnline') or usuario.podeVisualizar('relatoriosPresenciais') or usuario.podeVisualizar('relatoriosUsuarios') or usuario.podeVisualizar('tudo'))}" class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#ui-relatorios" aria-expanded="false" aria-controls="ui-relatorios">
                 <i class="icon-pie-chart menu-icon"></i>
                 <span class="menu-title">+ Relatórios</span>
-                <span class="badge badge-success">3</span>
+                <span id="count-sub-menu-relatorios" class="badge badge-success">3</span>
               </a>
               <div class="collapse" id="ui-relatorios">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/relatorios/inscricoes/presenciais}">Inscricoes presenciais</a></li>
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/relatorios/inscricoes/online}">Inscricoes online</a></li>
-                  <li class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/relatorios/inscricoes/usuarios}">Inscricoes usuários</a></li>
+                <ul id="sub-menu-relatorios" class="nav flex-column sub-menu">
+                  <li th:if="${usuario.podeVisualizar('relatoriosPresenciais') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/relatorios/inscricoes/presenciais}">Inscricoes presenciais</a></li>
+                  <li th:if="${usuario.podeVisualizar('relatoriosOnline') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/relatorios/inscricoes/online}">Inscricoes online</a></li>
+                  <li th:if="${usuario.podeVisualizar('relatoriosUsuarios') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/relatorios/inscricoes/usuarios}">Inscricoes usuários</a></li>
                 </ul>
               </div>
             </li>

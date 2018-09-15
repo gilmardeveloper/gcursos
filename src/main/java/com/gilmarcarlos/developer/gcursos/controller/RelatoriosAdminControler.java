@@ -38,6 +38,8 @@ import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.AtividadePr
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.DiaEventoPaginacaoService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.DiaEventoService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPresencialService;
+import com.gilmarcarlos.developer.gcursos.service.locais.CargoService;
+import com.gilmarcarlos.developer.gcursos.service.locais.UnidadeTrabalhoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 
 @Controller
@@ -64,6 +66,12 @@ public class RelatoriosAdminControler {
 	
 	@Autowired
 	private RelatorioInscricoesPresenciais relatoriosPresenciais;
+	
+	@Autowired
+	private CargoService cargoService;
+	
+	@Autowired
+	private UnidadeTrabalhoService unidadeService;
 
 	@Autowired
 	private RelatorioInscricoesOnline relatoriosOnline;
@@ -76,7 +84,19 @@ public class RelatoriosAdminControler {
 	private Page<Usuario> getUsuarioPaginacao(Integer page) {
 		return usuarioService.listarTodos(PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
 	}
-
+	
+	private Page<Usuario> getUsuarioIdPaginacao(Long id) {
+		return usuarioService.buscarPor(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
+	
+	private Page<Usuario> getUsuarioUnidadesPaginacao(Long id) {
+		return usuarioService.buscarPorUnidade(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
+	
+	private Page<Usuario> getUsuarioCargosPaginacao(Long id) {
+		return usuarioService.buscarPorCargo(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
+	
 	private Page<EventoOnline> getEventoOnlinePaginacao(Integer page) {
 		return eventoOnlineService.listarTodos(PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
 	}
@@ -117,10 +137,81 @@ public class RelatoriosAdminControler {
 		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
 		model.addAttribute("usuarios", getUsuarioPaginacao(0));
+		model.addAttribute("cargos", cargoService.listarTodos());
+		model.addAttribute("unidades", unidadeService.listarTodos());
 
 		return "dashboard/admin/relatorios/consulta_inscricoes_usuario";
 	}
+	
+	@GetMapping("/inscricoes/usuarios/pagina/{page}")
+	public String inscricaoUsuario(@PathVariable("page")Integer page, Model model) {
 
+		Usuario usuarioLogado = getUsuario();
+
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("usuarios", getUsuarioPaginacao(page));
+		model.addAttribute("cargos", cargoService.listarTodos());
+		model.addAttribute("unidades", unidadeService.listarTodos());
+
+		return "dashboard/admin/relatorios/consulta_inscricoes_usuario";
+	}
+	
+	@GetMapping("/inscricoes/usuarios/{id}")
+	public String inscricaoUsuario(@PathVariable("id") Long id, Model model) {
+
+		Usuario usuarioLogado = getUsuario();
+
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("usuarios", getUsuarioIdPaginacao(id));
+		model.addAttribute("cargos", cargoService.listarTodos());
+		model.addAttribute("unidades", unidadeService.listarTodos());
+
+		return "dashboard/admin/relatorios/consulta_inscricoes_usuario";
+	}
+	
+	@GetMapping("/inscricoes/usuarios/unidades/{id}")
+	public String inscricaoUsuarioUnidades(@PathVariable("id") Long id, Model model) {
+
+		Usuario usuarioLogado = getUsuario();
+
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("usuarios", getUsuarioUnidadesPaginacao(id));
+		model.addAttribute("cargos", cargoService.listarTodos());
+		model.addAttribute("unidades", unidadeService.listarTodos());
+
+		return "dashboard/admin/relatorios/consulta_inscricoes_usuario";
+	}
+	
+	@GetMapping("/inscricoes/usuarios/cargos/{id}")
+	public String inscricaoUsuarioCargos(@PathVariable("id") Long id, Model model) {
+
+		Usuario usuarioLogado = getUsuario();
+
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("usuarios", getUsuarioCargosPaginacao(id));
+		model.addAttribute("cargos", cargoService.listarTodos());
+		model.addAttribute("unidades", unidadeService.listarTodos());
+
+		return "dashboard/admin/relatorios/consulta_inscricoes_usuario";
+	}
+	
+	@GetMapping("/inscricoes/usuario/detalhes/{id}")
+	public String inscricoesUsuarioDetalhes(@PathVariable("id") Long id, Model model) {
+
+		Usuario usuarioLogado = getUsuario();
+		Usuario user = usuarioService.buscarPor(id);
+		
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("user", user);
+
+		return "dashboard/admin/relatorios/detalhes_inscricoes_usuario";
+	}
+	
 	@GetMapping("/inscricoes/presenciais")
 	public String inscricaoPresencial(Model model) {
 
@@ -128,7 +219,6 @@ public class RelatoriosAdminControler {
 
 		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("eventoOpcoes", eventoPresencialService.listarTodos());
 		model.addAttribute("eventos", getEventoPresencialPaginacao(0));
 
 		return "dashboard/admin/relatorios/consulta_inscricoes_presenciais";
@@ -141,7 +231,6 @@ public class RelatoriosAdminControler {
 
 		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("eventoOpcoes", eventoPresencialService.listarTodos());
 		model.addAttribute("eventos", getEventoPresencialPaginacao(page));
 
 		return "dashboard/admin/relatorios/consulta_inscricoes_presenciais";
@@ -154,7 +243,6 @@ public class RelatoriosAdminControler {
 
 		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("eventoOpcoes", eventoPresencialService.listarTodos());
 		model.addAttribute("eventos", getEventoPresencialIdPaginacao(id));
 
 		return "dashboard/admin/relatorios/consulta_inscricoes_presenciais";
@@ -169,7 +257,6 @@ public class RelatoriosAdminControler {
 			Usuario usuarioLogado = getUsuario();
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-			model.addAttribute("eventoOpcoes", eventoPresencialService.listarTodos());
 			model.addAttribute("eventos", getEventoPresencialPeriodoPaginacao(dataInicio, dataTermino));
 
 		} catch (DataFinalMenorException | EventosNaoEncontradosException e) {
@@ -239,7 +326,6 @@ public class RelatoriosAdminControler {
 
 		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("eventoOpcoes", eventoOnlineService.listarTodos());
 		model.addAttribute("eventos", getEventoOnlinePaginacao(0));
 
 		return "dashboard/admin/relatorios/consulta_inscricoes_online";
@@ -252,7 +338,6 @@ public class RelatoriosAdminControler {
 
 		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("eventoOpcoes", eventoOnlineService.listarTodos());
 		model.addAttribute("eventos", getEventoOnlinePaginacao(page));
 
 		return "dashboard/admin/relatorios/consulta_inscricoes_online";
@@ -265,7 +350,6 @@ public class RelatoriosAdminControler {
 
 		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("eventoOpcoes", eventoOnlineService.listarTodos());
 		model.addAttribute("eventos", getEventoOnlineIdPaginacao(id));
 
 		return "dashboard/admin/relatorios/consulta_inscricoes_online";

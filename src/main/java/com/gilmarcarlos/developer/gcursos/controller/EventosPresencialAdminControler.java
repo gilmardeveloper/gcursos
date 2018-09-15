@@ -3,6 +3,7 @@ package com.gilmarcarlos.developer.gcursos.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gilmarcarlos.developer.gcursos.model.eventos.EventoDTO;
 import com.gilmarcarlos.developer.gcursos.model.eventos.categorias.CategoriaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.DataFinalMenorException;
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventosNaoEncontradosException;
@@ -820,6 +822,12 @@ public class EventosPresencialAdminControler {
 			return "redirect:/dashboard/admin/eventos/presencial"; 
 
 		}
+	}
+	
+	@GetMapping(value = "/dto", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public List<EventoDTO> eventoDTO() {
+		return eventoPresencialService.listarTodosDTO();
 	}
 
 	private Usuario getUsuario() {
