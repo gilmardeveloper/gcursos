@@ -93,14 +93,14 @@
 											class="dropify" name="imagemFundo" data-max-file-size="2mb"
 											data-default-file="" />
 
-										<div class="form-group mt-5">
+										<div th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}" class="form-group mt-5">
 											<button type="submit" class="btn btn-success mr-2">Alterar</button>
 											<a th:href="@{/dashboard/admin/eventos/online/certificado/{id}(id=${evento.id})}" class="btn btn-outline-danger">Cancelar</a>
 										</div>
 									</form>
 								</div>
 								<div class="card-footer bg-light" th:if="${evento.certificadoOnline != null}">
-									<button class="btn btn-lg btn-success" data-toggle="modal" data-target="#modal-editor-extra">Abrir editor</button>
+									<button th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}" class="btn btn-lg btn-success" data-toggle="modal" data-target="#modal-editor-extra">Abrir editor</button>
 								</div>
 							</div>
 						</div>

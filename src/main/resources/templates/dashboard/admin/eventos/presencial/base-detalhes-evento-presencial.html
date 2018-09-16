@@ -63,7 +63,7 @@
 									</div>
 							</div>
 
-							<div class="col-lg-12">
+							<div class="col-lg-12" th:if="${usuario.podeAlterar('eventosPresenciais') or usuario.podeAlterar('tudo')}">
 								<ul class="nav">
 									<li class="nav-item"><a class="nav-link" href="#"
 										data-toggle="modal" data-target="#modal-imagem-top">+
@@ -324,7 +324,7 @@
 					</div>
 
 					<!-- Modal imagem top -->
-					<div class="modal fade" id="modal-imagem-top" tabindex="-1"
+					<div th:if="${usuario.podeAlterar('eventosPresenciais') or usuario.podeAlterar('tudo')}" class="modal fade" id="modal-imagem-top" tabindex="-1"
 						role="dialog" aria-labelledby="imagem-top-label"
 						aria-hidden="true">
 						<div class="modal-dialog" role="document">
@@ -363,7 +363,7 @@
 					</div>
 
 					<!-- modal editor sobre -->
-					<div class="modal fade" id="modal-editor-sobre" tabindex="-1"
+					<div th:if="${usuario.podeAlterar('eventosPresenciais') or usuario.podeAlterar('tudo')}" class="modal fade" id="modal-editor-sobre" tabindex="-1"
 						role="dialog" aria-labelledby="modal-label-editor-sobre"
 						aria-hidden="true">
 						<div class="modal-dialog modal-lg">

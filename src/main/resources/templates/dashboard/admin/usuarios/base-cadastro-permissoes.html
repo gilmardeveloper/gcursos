@@ -160,6 +160,7 @@
 															<option value="eventosOnline" th:selected="${user.permissoes} != null and ${#lists.contains(user.permissoes.deletar, 'eventosOnline')}">EVENTOS ONLINE</option>
 															<option value="eventosPresenciais" th:selected="${user.permissoes} != null and ${#lists.contains(user.permissoes.deletar, 'eventosPresenciais')}">EVENTOS PRESENCIAIS</option>
 															<option value="categorias" th:selected="${user.permissoes} != null and ${#lists.contains(user.permissoes.deletar, 'categorias')}">CATEGORIAS</option>
+															<option value="logs" th:selected="${user.permissoes} != null and ${#lists.contains(user.permissoes.deletar, 'logs')}">LOGS DE EVENTO</option>
 
 															<!-- usuarios -->
 															<option value="usuarios" th:selected="${user.permissoes} != null and ${#lists.contains(user.permissoes.deletar, 'usuarios')}">USUÁRIOS</option>

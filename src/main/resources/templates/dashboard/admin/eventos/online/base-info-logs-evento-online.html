@@ -51,9 +51,10 @@
 						<!-- card table -->
 						<div th:unless="${#lists.isEmpty(logs)}" class="card">
 							<div class="card-header">
-								<a class="btn btn-outline-success"
+								<a th:if="${usuario.podeDeletar('logs') or usuario.podeDeletar('tudo')}" class="btn btn-outline-success"
 									th:href="@{/dashboard/admin/eventos/online/logs/{id}/deletar(id=${evento.id})}">Apagar
 									todas</a>
+
 								<div th:if="${alert != null}">
 									<div th:class="${alert}" role="alert">
 										<i class="mdi mdi-alert-circle"></i> <span
@@ -75,14 +76,14 @@
 													<tr>
 														<th>Data</th>
 														<th>Mensagem</th>
-														<th>::</th>
+														<th th:if="${usuario.podeDeletar('logs') or usuario.podeDeletar('tudo')}">::</th>
 													</tr>
 												</thead>
 												<tbody>
 													<tr th:each="log : ${logs}">
 														<td th:text="${#temporals.format(log.data, 'dd/MM/yyyy')}"></td>
 														<td th:text="${log.msg}"></td>
-														<td><a class="btn btn-outline-danger pt-1 pb-1"
+														<td th:if="${usuario.podeDeletar('logs') or usuario.podeDeletar('tudo')}"><a class="btn btn-outline-danger pt-1 pb-1"
 															th:href="@{/dashboard/admin/eventos/online/logs/{id}/deletar/{log}(id=${evento.id},log=${log.id})}"><i
 																class="icon-close"></i></a></td>
 													</tr>

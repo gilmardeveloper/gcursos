@@ -46,7 +46,7 @@
 							<!-- row -->
 							<div class="row flex-grow">
 
-								<div class="col-2 grid-margin">
+								<div th:if="${usuario.podeCriar('eventosPresenciais') or usuario.podeCriar('tudo')}" class="col-2 grid-margin">
 									<a class="btn btn-outline-success mt-4"
 										th:href="@{/dashboard/admin/eventos/presencial/novo}">+
 										Novo</a>
@@ -178,30 +178,28 @@
 																th:href="@{/dashboard/admin/eventos/presencial/logs/{id}(id=${evento.id})}">Logs</a>
 														</div>
 
-														<div class="col-lg-3" th:unless="${evento.isPublicado()}">
+														<div class="col-lg-3" th:if="${!evento.isPublicado() and (usuario.podeAlterar('eventosPresenciais') or usuario.podeAlterar('tudo'))}">
 															<a class="btn btn-outline-dark"
 																th:href="@{/dashboard/admin/eventos/presencial/publicacao/ativar/{id}(id=${evento.id})}">Publicar</a>
 														</div>
 
-														<div class="col-lg-3" th:if="${evento.isPublicado()}">
-															<!-- th:href="@{/dashboard/admin/eventos/presencial/cancelar/{id}(id=${evento.id})}" -->
-
+														<div class="col-lg-3" th:if="${evento.isPublicado() and (usuario.podeAlterar('eventosPresenciais') or usuario.podeAlterar('tudo'))}">
 															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/presencial/publicacao/desativar/{id}(id=${evento.id})}">Cancelar
 																publicação</a>
 														</div>
 
-														<div class="col-lg-3" th:if="${evento.isAtivo()}">
+														<div class="col-lg-3" th:if="${evento.isAtivo() and (usuario.podeAlterar('eventosPresenciais') or usuario.podeAlterar('tudo'))}">
 															<a class="btn btn-outline-dark" th:onclick="'showSwal(' + ${evento.id} + ')'">Cancelar
 																evento</a>
 														</div>
 
-														<div class="col-lg-3" th:unless="${evento.isAtivo()}">
+														<div class="col-lg-3" th:if="${!evento.isAtivo() and (usuario.podeAlterar('eventosPresenciais') or usuario.podeAlterar('tudo'))}">
 															<a class="btn btn-outline-dark"
 																th:href="@{/dashboard/admin/eventos/presencial/ativar/{id}(id=${evento.id})}">Ativar
 																evento</a>
 														</div>
 
-														<div class="col-lg-3">
+														<div th:if="${usuario.podeAlterar('eventosPresenciais') or usuario.podeAlterar('tudo')}" class="col-lg-3">
 															<a class="btn btn-outline-dark"
 																th:href="@{/dashboard/admin/eventos/presencial/permissoes/{id}(id=${evento.id})}">Permissões</a>
 														</div>
@@ -341,7 +339,7 @@
 	              confirmButtonText: 'Continuar'
 	            }).then(function () {
 	              window.location.href = `/dashboard/admin/eventos/presencial/cancelar/${id}`	
-	          });
+	          }).catch(swal.noop);
 	  }        
 	/*]]>*/
 	</script>

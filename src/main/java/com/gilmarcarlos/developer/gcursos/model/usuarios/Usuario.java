@@ -312,6 +312,11 @@ public class Usuario implements Serializable {
 		return (getPermissoes() == null ? false : getPermissoes().getDeletar().contains(opcao));
 	}
 	
+	@Transient
+	public Boolean temRestricao(String opcao) {
+		return (getPermissoes() == null ? false : getPermissoes().getRestringir().contains(opcao));
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

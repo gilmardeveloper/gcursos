@@ -76,7 +76,7 @@
 									</div>
 								</div>
 
-								<div class="col-lg-12 mt-4">
+								<div class="col-lg-12 mt-4" th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}">
 									<div class="card">
 										<div class="card-body">
 											<form
@@ -195,8 +195,8 @@
 										</div>
 
 										<div class="form-group mt-5">
-											<button type="submit" class="btn btn-success mr-2">Alterar</button>
-											<a th:href="@{/dashboard/}" class="btn btn-outline-danger">Cancelar</a>
+											<button th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}" type="submit" class="btn btn-success mr-2">Alterar</button>
+											<a th:href="@{/dashboard/admin/eventos/online/detalhes/{id}(id=${evento.id})}" class="btn btn-outline-danger">Cancelar</a>
 										</div>
 									</form>
 								</div>
@@ -220,8 +220,8 @@
 											class="dropify" name="imagem" data-max-file-size="2mb"
 											data-default-file="" />
 										<div class="form-group mt-5">
-											<button type="submit" class="btn btn-success mr-2">Alterar</button>
-											<a th:href="@{/dashboard/}" class="btn btn-outline-danger">Cancelar</a>
+											<button th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}" type="submit" class="btn btn-success mr-2">Alterar</button>
+											<a th:href="@{/dashboard/admin/eventos/online/detalhes/{id}(id=${evento.id})}" class="btn btn-outline-danger">Cancelar</a>
 										</div>
 									</form>
 								</div>

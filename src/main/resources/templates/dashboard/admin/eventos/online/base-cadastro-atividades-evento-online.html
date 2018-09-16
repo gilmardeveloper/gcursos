@@ -79,8 +79,8 @@
 														<th class="">módulo</th>
 														<th class="">titulo</th>
 														<th class="">posição</th>
-														<th>::</th>
-														<th>::</th>
+														<th th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}">::</th>
+														<th th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}">::</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -89,10 +89,10 @@
 														<td class=""><a href="#" data-toggle="modal" th:attr="data-target='#modal-' + ${atividade.modulo.id}"><i class="icon-layers"></i></a> <span th:text="${atividade.modulo.titulo}"></span></td>
 														<td class="" th:text="${atividade.titulo}"></td>
 														<td class="" th:text="${atividade.posicao}"></td>
-														<td><a class="btn btn-outline-primary pt-1 pb-1"
+														<td th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}"><a class="btn btn-outline-primary pt-1 pb-1"
 															href="#" th:onclick="'alterar(' + ${atividade.id} + ')'"><i
 																class="icon-pencil"></i></a></td>
-														<td><a class="btn btn-outline-danger pt-1 pb-1"
+														<td th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}"><a class="btn btn-outline-danger pt-1 pb-1"
 															href="#" th:onclick="'deletar(' + ${atividade.id} + ')'"><i
 																class="icon-close"></i></a></td>
 													</tr>
@@ -190,7 +190,7 @@
 
 										
 								</div>			
-										<button type="submit" class="btn btn-success mr-2">Salvar</button>
+										<button th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}" type="submit" class="btn btn-success mr-2">Salvar</button>
 										<a class="btn btn-danger"
 											th:href="@{/dashboard/admin/eventos/online/detalhes/{id}(id=${evento.id})}">Cancelar</a>
 								</form>
@@ -216,6 +216,10 @@
 									</button>
 								</div>
 								<div class="modal-body">
+									<div class="wrapper mb-3 mt-1">
+										<span class="badge badge-warning text-white">Nota : </span>
+										<p class="d-inline ml-3 text-muted font-weight-bold">Essa ação pode alterar uma inscrição em progresso</p>
+									</div>
 									<div id="dragula-atividades" class="h-100">
 										<div th:id="${a.id}" class="card mb-1" th:each="a : ${modulo.atividades}">
 											<div class="card-body">
@@ -227,7 +231,7 @@
 								<div class="modal-footer">
 									<button type="button" class="btn btn-secondary"
 										data-dismiss="modal">Cancelar</button>
-									<button id="btn-ordenar" type="button" class="btn btn-primary" onclick="ordenar()" disabled="disabled">Salvar</button>
+									<button th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}" id="btn-ordenar" type="button" class="btn btn-primary" onclick="ordenar()" disabled="disabled">Salvar</button>
 								</div>
 							</div>
 						</div>
@@ -318,7 +322,7 @@
 	          
 	            swal({
 	              title: 'Alterar a atividade',
-	              text: "Todas as inscrições serão excluídas caso a data ou horário da atividade seja alterada, se ainda não existem inscrições realizadas, favor desconsidere esse alerta!",
+	              text: "Todas as inscrições serão afetadas caso a atividade seja alterada, se ainda não existem inscrições realizadas, favor desconsidere esse alerta!",
 	              type: 'warning',
 	              showCancelButton: true,
 	              confirmButtonColor: '#3085d6',
@@ -327,14 +331,14 @@
 	              confirmButtonText: 'Continuar'
 	            }).then(function () {
 	              window.location.href = `/dashboard/admin/eventos/online/atividades/alterar/${id}`	
-	          });
+	          }).catch(swal.noop);
 	  }    
 
 	  function deletar(id){
 	          
 	            swal({
 	              title: 'Deletar a atividade',
-	              text: "Todas as inscrições serão excluídas, se ainda não existem inscrições realizadas, favor desconsidere esse alerta!",
+	              text: "Todas as inscrições em andamento ou finalizadas terá a exclusão desta atividade, se ainda não existem inscrições realizadas, favor desconsidere esse alerta!",
 	              type: 'warning',
 	              showCancelButton: true,
 	              confirmButtonColor: '#3085d6',
@@ -343,7 +347,7 @@
 	              confirmButtonText: 'Continuar'
 	            }).then(function () {
 	              window.location.href = `/dashboard/admin/eventos/online/atividades/deletar/${id}`	
-	          });
+	          }).catch(swal.noop);
 	  }    
 
 

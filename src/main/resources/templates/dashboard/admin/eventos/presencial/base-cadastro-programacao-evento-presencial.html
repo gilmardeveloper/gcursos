@@ -81,8 +81,8 @@
 														<th class="">hora inicio</th>
 														<th class="">hora fim</th>
 														<th class="">responsável</th>
-														<th>::</th>
-														<th>::</th>
+														<th th:if="${usuario.podeAlterar('eventosPresenciais') or usuario.podeAlterar('tudo')}">::</th>
+														<th th:if="${usuario.podeAlterar('eventosPresenciais') or usuario.podeAlterar('tudo')}">::</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -95,10 +95,10 @@
 														<td class="" th:text="${atividade.horaInicio}"></td>
 														<td class="" th:text="${atividade.horaFim}"></td>
 														<td class="" th:text="${atividade.nomeResponsavel}"></td>
-														<td><a class="btn btn-outline-primary pt-1 pb-1"
+														<td th:if="${usuario.podeAlterar('eventosPresenciais') or usuario.podeAlterar('tudo')}"><a class="btn btn-outline-primary pt-1 pb-1"
 															href="#" th:onclick="'alterar(' + ${atividade.id} + ')'"><i
 																class="icon-pencil"></i></a></td>
-														<td><a class="btn btn-outline-danger pt-1 pb-1"
+														<td th:if="${usuario.podeAlterar('eventosPresenciais') or usuario.podeAlterar('tudo')}"><a class="btn btn-outline-danger pt-1 pb-1"
 															href="#" th:onclick="'deletar(' + ${atividade.id} + ')'"><i
 																class="icon-close"></i></a></td>
 													</tr>
@@ -111,7 +111,7 @@
 						</div>
 
 						<!-- card -->
-						<div class="card">
+						<div class="card" th:if="${usuario.podeAlterar('eventosPresenciais') or usuario.podeAlterar('tudo')}">
 							<div class="card-body">
 								<h4 class="card-title">+ Nova atividade</h4>
 								<h5 class="card-title" th:text="${evento.titulo}"></h5>

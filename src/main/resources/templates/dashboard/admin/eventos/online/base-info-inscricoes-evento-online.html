@@ -68,7 +68,7 @@
 									</div>
 								</div>
 
-								<div class="col-lg-12">
+								<div class="col-lg-12" th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}">
 									<ul class="nav justify-content-end">
 										<li class="nav-item"><a class="nav-link" th:href="@{/dashboard/admin/eventos/online/certificado/{id}(id=${evento.id})}">+
 												Certificado</a></li>
@@ -88,7 +88,7 @@
 																	<th>Nome</th>
 																	<th>CPF</th>
 																	<th class="text-center">Progresso</th>
-																	<th class="text-center">Cancelar a inscrição</th>
+																	<th th:if="${usuario.podeAlterar('inscricoes') or usuario.podeAlterar('tudo')}" class="text-center">Cancelar a inscrição</th>
 																</tr>
 															</thead>
 															<tbody>
@@ -98,7 +98,7 @@
 
 																	<td class="text-center"><span th:text="${evento.progresso(inscricao.usuario)}"></span>%</td>
 
-																	<td class="text-center"><a
+																	<td th:if="${usuario.podeAlterar('inscricoes') or usuario.podeAlterar('tudo')}" class="text-center"><a
 																		class="btn btn-outline-danger pt-1 pb-1"
 																		th:href="@{/dashboard/admin/eventos/online/inscricoes/{id}/cancelar/inscricao(id=${inscricao.id})}"><i
 																			class="icon-user-unfollow"></i></a></td>

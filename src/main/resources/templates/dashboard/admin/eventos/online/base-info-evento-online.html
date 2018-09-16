@@ -46,7 +46,7 @@
 							<!-- row -->
 							<div class="row flex-grow">
 
-								<div class="col-2 grid-margin">
+								<div  th:if="${usuario.podeCriar('eventosOnline') or usuario.podeCriar('tudo')}" class="col-2 grid-margin">
 									<a class="btn btn-outline-success"
 										th:href="@{/dashboard/admin/eventos/online/novo}">+
 										Novo</a>
@@ -151,29 +151,29 @@
 																th:href="@{/dashboard/admin/eventos/online/logs/{id}(id=${evento.id})}">Logs</a>
 														</div>
 
-														<div class="col-lg-3" th:unless="${evento.isPublicado()}">
+														<div class="col-lg-3" th:if="${!evento.isPublicado() and (usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo'))}">
 															<a class="btn btn-outline-dark"
 																th:href="@{/dashboard/admin/eventos/online/publicacao/ativar/{id}(id=${evento.id})}">Publicar</a>
 														</div>
 
-														<div class="col-lg-3" th:if="${evento.isPublicado()}">
+														<div class="col-lg-3" th:if="${evento.isPublicado() and (usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo'))}">
 															
 															<a class="btn btn-outline-dark" th:href="@{/dashboard/admin/eventos/online/publicacao/desativar/{id}(id=${evento.id})}">Cancelar
 																publicação</a>
 														</div>
 
-														<div class="col-lg-3" th:if="${evento.isAtivo()}">
+														<div class="col-lg-3" th:if="${evento.isAtivo() and (usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo'))}">
 															<a class="btn btn-outline-dark" th:onclick="'showSwal(' + ${evento.id} + ')'">Cancelar
 																evento</a>
 														</div>
 
-														<div class="col-lg-3" th:unless="${evento.isAtivo()}">
+														<div class="col-lg-3" th:if="${!evento.isAtivo() and (usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo'))}">
 															<a class="btn btn-outline-dark"
 																th:href="@{/dashboard/admin/eventos/online/ativar/{id}(id=${evento.id})}">Ativar
 																evento</a>
 														</div>
 
-														<div class="col-lg-3">
+														<div class="col-lg-3" th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}">
 															<a class="btn btn-outline-dark"
 																th:href="@{/dashboard/admin/eventos/online/permissoes/{id}(id=${evento.id})}">Permissões</a>
 														</div>
@@ -300,7 +300,7 @@
 	              confirmButtonText: 'Continuar'
 	            }).then(function () {
 	              window.location.href = `/dashboard/admin/eventos/online/cancelar/${id}`	
-	          });
+	          }).catch(swal.noop);
 	  }        
 	/*]]>*/
 	</script>

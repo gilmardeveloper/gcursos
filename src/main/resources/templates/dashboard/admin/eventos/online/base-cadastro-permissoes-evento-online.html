@@ -121,7 +121,7 @@
 
 												</div>	
 
-												<button type="submit" class="btn btn-success mr-2">Salvar</button>
+												<button th:if="${usuario.podeAlterar('eventosOnline') or usuario.podeAlterar('tudo')}" type="submit" class="btn btn-success mr-2">Salvar</button>
 												<a class="btn btn-light" th:href="@{/dashboard/admin/eventos/presencial}">Cancelar</a>
 											</form>
 										</div>
