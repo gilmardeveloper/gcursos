@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.HoraFinalMenorException;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.AtividadePresencial;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
-import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
-import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.AtividadePresencialRepository;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.InscricaoPresencialRepository;
 import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
+import com.gilmarcarlos.developer.gcursos.utils.IconeTypeUtils;
+import com.gilmarcarlos.developer.gcursos.utils.StatusTypeUtils;
 
 @Service
 public class AtividadePresencialService {
@@ -57,8 +57,8 @@ public class AtividadePresencialService {
 			
 			if (!old.getInscricoes().isEmpty()) {
 				old.getInscricoes().forEach(i -> {
-					notificacoes.salvar(new Notificacao(i.getUsuario(), "Inscrição cancelada", IconeType.INFORMACAO,
-							StatusType.INFORMACAO,
+					notificacoes.salvar(new Notificacao(i.getUsuario(), "Inscrição cancelada", IconeTypeUtils.INFORMACAO,
+							StatusTypeUtils.INFORMACAO,
 							"sua inscrição foi cancelada porque a atividade teve seu horário alterado, atvidade: "
 									+ old.getTitulo() + " evento: " + i.getEventoPresencial().getTitulo()));
 					inscricoesRepository.deleteById(i.getId());
@@ -76,8 +76,8 @@ public class AtividadePresencialService {
 
 		if (!atividade.getInscricoes().isEmpty()) {
 			atividade.getInscricoes().forEach(i -> {
-				notificacoes.salvar(new Notificacao(i.getUsuario(), "Inscrição cancelada", IconeType.INFORMACAO,
-						StatusType.INFORMACAO,
+				notificacoes.salvar(new Notificacao(i.getUsuario(), "Inscrição cancelada", IconeTypeUtils.INFORMACAO,
+						StatusTypeUtils.INFORMACAO,
 						"sua inscrição foi cancelada porque a atividade foi excluída do evento, atvidade: "
 								+ atividade.getTitulo() + " evento: " + i.getEventoPresencial().getTitulo()));
 				inscricoesRepository.deleteById(i.getId());
@@ -110,8 +110,8 @@ public class AtividadePresencialService {
 			
 			if (!atividade.getInscricoes().isEmpty()) {
 				atividade.getInscricoes().forEach(i -> {
-					notificacoes.salvar(new Notificacao(i.getUsuario(), "Inscrição cancelada", IconeType.INFORMACAO,
-							StatusType.INFORMACAO,
+					notificacoes.salvar(new Notificacao(i.getUsuario(), "Inscrição cancelada", IconeTypeUtils.INFORMACAO,
+							StatusTypeUtils.INFORMACAO,
 							"sua inscrição foi cancelada porque a atividade foi excluída do evento, atvidade: "
 									+ atividade.getTitulo() + " evento: " + i.getEventoPresencial().getTitulo()));
 					inscricoesRepository.deleteById(i.getId());

@@ -186,7 +186,7 @@
 										<div class="modal-footer">
 											<button type="button" class="btn btn-danger"
 												data-dismiss="modal">Cancelar</button>
-											<button th:if="${usuario.podeAlterar('usuarios') or usuario.podeAlterar('tudo')}"  type="submit"
+											<button th:if="${usuario.podeAlterar('usuarios')}"  type="submit"
 												th:attr="form='formulario-usuario-' + ${user.id}"
 												value="submit" class="btn btn-success">Salvar</button>
 										</div>
@@ -231,14 +231,14 @@
 													</div>
 
 													<div class="row align-items-end">
-														<div th:if="${usuario.podeAlterar('usuarios') or usuario.podeAlterar('tudo')}" class="form-group col-lg-6">
+														<div th:if="${usuario.podeAlterar('usuarios')}" class="form-group col-lg-6">
 															<button type="submit" class="btn btn-success">Salvar</button>
 														</div>
 													</div>
 												</div>
 											</form>
 											<form
-												th:if="${usuario.podeCriar('usuarios') or usuario.podeCriar('tudo')}"
+												th:if="${usuario.podeAlterar('usuarios')}"
 												th:action="@{/dashboard/admin/usuarios/telefones/salvar}"
 												method="post">
 												<input type="hidden" name="dadosPessoais"
@@ -263,7 +263,7 @@
 											</form>
 										</div>
 										<div class="modal-footer text-right"
-											th:if="${!#lists.isEmpty(user.dadosPessoais.telefones) and (usuario.podeDeletar('usuarios') or usuario.podeDeletar('tudo'))}">
+											th:if="${!#lists.isEmpty(user.dadosPessoais.telefones) and usuario.podeAlterar('usuarios')}">
 											<form method="post"
 												th:action="@{/dashboard/admin/usuarios/telefones/excluir}">
 												<div class="row">
@@ -332,7 +332,7 @@
 										<div class="modal-footer">
 											<button type="button" class="btn btn-danger"
 												data-dismiss="modal">Cancelar</button>
-											<button th:if="${usuario.podeAlterar('permissoes') or usuario.podeAlterar('tudo')}" type="submit"
+											<button th:if="${usuario.podeAlterar('permissoes')}" type="submit"
 												th:attr="form='formulario-autorizacao-' + ${user.id}"
 												value="submit" class="btn btn-success">Salvar</button>
 										</div>
@@ -429,7 +429,7 @@
 
 						<div class="col-12 grid-margin"
 							th:unless="${#lists.isEmpty(atuais)}">
-							<a th:if="${usuario.podeCriar('usuarios') or usuario.podeCriar('tudo')}"  class="btn btn-outline-success"
+							<a th:if="${usuario.podeCriar('usuarios')}"  class="btn btn-outline-success"
 								th:href="@{/dashboard/admin/usuarios/novo/funcionario}">+
 								Funcionário</a> <a th:if="${usuario.podeCriar('usuarios') or usuario.podeCriar('tudo')}" class="btn btn-outline-success"
 								th:href="@{/dashboard/admin/usuarios/novo/outro}">+ Outro</a>
@@ -486,7 +486,7 @@
 													</p>
 												</div>
 
-												<div th:if="${usuario.podeAlterar('usuarios') or usuario.podeAlterar('tudo')}" class="col-lg-3">
+												<div th:if="${usuario.podeAlterar('usuarios')}" class="col-lg-3">
 													<a  class="btn btn-outline-dark"
 														th:href="@{/dashboard/admin/usuarios/alterar/{id}(id=${user.id})}">Editar</a>
 												</div>
@@ -497,12 +497,12 @@
 														th:attr="data-target='#modalTelefone-' + ${user.id}">Telefones</a>
 												</div>
 
-												<div th:if="${usuario.podeAlterar('permissoes') or usuario.podeAlterar('tudo')}" class="col-lg-3">
+												<div th:if="${usuario.podeAlterar('permissoes')}" class="col-lg-3">
 													<a class="btn btn-outline-dark" href="#" data-toggle="modal"
 													th:attr="data-target='#modalAutorizacao-' + ${user.id}">Autorizações</a>
 												</div>
 
-												<div th:if="${usuario.podeAlterar('permissoes') or usuario.podeAlterar('tudo')}" class="col-lg-3">
+												<div th:if="${usuario.podeAlterar('permissoes')}" class="col-lg-3">
 													<a th:if="${user.isAdmin()}" class="btn btn-outline-dark" th:href="@{/dashboard/admin/usuarios/permissoes/{id}(id=${user.id})}" >Permissões</a>
 												</div>
 
@@ -516,7 +516,7 @@
 						<!-- card table -->
 						<div th:unless="${#lists.isEmpty(escolaridades)}" class="card">
 							<div class="card-header">
-								<a th:if="${usuario.podeCriar('escolaridade') or usuario.podeCriar('tudo')}" class="btn btn-outline-success"
+								<a th:if="${usuario.podeCriar('escolaridade')}" class="btn btn-outline-success"
 									th:href="@{/dashboard/admin/usuarios/escolaridades/novo}">Adicionar
 									novo</a>
 								<div th:if="${alert != null}">
@@ -540,18 +540,18 @@
 													<tr>
 														<th>Id</th>
 														<th>Nome</th>
-														<th th:if="${usuario.podeAlterar('escolaridade') or usuario.podeAlterar('tudo')}">::</th>
-														<th th:if="${usuario.podeDeletar('escolaridade') or usuario.podeDeletar('tudo')}">::</th>
+														<th th:if="${usuario.podeAlterar('escolaridade')}">::</th>
+														<th th:if="${usuario.podeDeletar('escolaridade')}">::</th>
 													</tr>
 												</thead>
 												<tbody>
 													<tr th:each="escolaridade : ${escolaridades}">
 														<td th:text="${escolaridade.id}"></td>
 														<td th:text="${escolaridade.display}"></td>
-														<td th:if="${usuario.podeAlterar('escolaridade') or usuario.podeAlterar('tudo')}"><a class="btn btn-outline-primary pt-1 pb-1"
+														<td th:if="${usuario.podeAlterar('escolaridade')}"><a class="btn btn-outline-primary pt-1 pb-1"
 															th:href="@{/dashboard/admin/usuarios/escolaridades/alterar/{id}(id=${escolaridade.id})}"><i
 																class="icon-pencil"></i></a></td>
-														<td th:if="${usuario.podeDeletar('escolaridade') or usuario.podeDeletar('tudo')}"><button class="btn btn-outline-danger pt-1 pb-1" type="button" th:onclick="'deletarEscolaridade(' + ${escolaridade.id} + ')'"><i class="icon-close"></i></button></td>
+														<td th:if="${usuario.podeDeletar('escolaridade')}"><button class="btn btn-outline-danger pt-1 pb-1" type="button" th:onclick="'deletarEscolaridade(' + ${escolaridade.id} + ')'"><i class="icon-close"></i></button></td>
 													</tr>
 												</tbody>
 											</table>
@@ -565,7 +565,7 @@
 						<!-- card table -->
 						<div th:unless="${#lists.isEmpty(opcoes)}" class="card">
 							<div class="card-header">
-								<a th:if="${usuario.podeCriar('opcoesSexuais') or usuario.podeCriar('tudo')}" class="btn btn-outline-success"
+								<a th:if="${usuario.podeCriar('opcoesSexuais')}" class="btn btn-outline-success"
 									th:href="@{/dashboard/admin/usuarios/opcoes/novo}">Adicionar
 									novo</a>
 								<div th:if="${alert != null}">
@@ -597,10 +597,10 @@
 													<tr th:each="sexo : ${opcoes}">
 														<td class="pr-5 pl-5" th:text="${sexo.id}"></td>
 														<td class="pr-5 pl-5" th:text="${sexo.display}"></td>
-														<td th:if="${usuario.podeAlterar('opcoesSexuais') or usuario.podeAlterar('tudo')}"><a class="btn btn-outline-primary pt-1 pb-1"
+														<td th:if="${usuario.podeAlterar('opcoesSexuais')}"><a class="btn btn-outline-primary pt-1 pb-1"
 															th:href="@{/dashboard/admin/usuarios/opcoes/alterar/{id}(id=${sexo.id})}"><i
 																class="icon-pencil"></i></a></td>
-														<td th:if="${usuario.podeDeletar('opcoesSexuais') or usuario.podeDeletar('tudo')}"><button class="btn btn-outline-danger pt-1 pb-1" type="button" th:onclick="'deletarOpcoes(' + ${sexo.id} + ')'"><i class="icon-close"></i></button></td>
+														<td th:if="${usuario.podeDeletar('opcoesSexuais')}"><button class="btn btn-outline-danger pt-1 pb-1" type="button" th:onclick="'deletarOpcoes(' + ${sexo.id} + ')'"><i class="icon-close"></i></button></td>
 													</tr>
 												</tbody>
 											</table>

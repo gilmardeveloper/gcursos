@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
-import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
-import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.DadosPessoais;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.TelefoneUsuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
@@ -26,6 +24,8 @@ import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.TelefoneUsuarioService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.IconeTypeUtils;
+import com.gilmarcarlos.developer.gcursos.utils.StatusTypeUtils;
 
 @Controller
 @RequestMapping("/")
@@ -175,8 +175,8 @@ public class UsuarioCompleteCadastroControler {
 		dadosService.salvarD(usuario.getDadosPessoais());
 		codigoService.salvar(usuario.getCodigoFuncional());
 		usuarioService.atualizarNome(usuario);
-		notificacaoService.salvar(new Notificacao(usuario, "Completou o cadastro", IconeType.INFORMACAO,
-				StatusType.SUCESSO, "seu cadastro foi concluído com sucesso"));
+		notificacaoService.salvar(new Notificacao(usuario, "Completou o cadastro", IconeTypeUtils.INFORMACAO,
+				StatusTypeUtils.SUCESSO, "seu cadastro foi concluído com sucesso"));
 
 		if (numero.length() >= 8) {
 			TelefoneUsuario telefone = telefoneUsuarioService.buscarPor(numero);

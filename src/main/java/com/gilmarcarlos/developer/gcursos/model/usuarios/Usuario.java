@@ -294,22 +294,22 @@ public class Usuario implements Serializable {
 	
 	@Transient
 	public Boolean podeCriar(String opcao) {
-		return (getPermissoes() == null ? false : getPermissoes().getCriar().contains(opcao));
+		return (getPermissoes() == null ? false : (getPermissoes().getCriar().contains("tudo") ? true : getPermissoes().getCriar().contains(opcao)));
 	}
 	
 	@Transient
 	public Boolean podeVisualizar(String opcao) {
-		return (getPermissoes() == null ? false : getPermissoes().getVisualizar().contains(opcao));
+		return (getPermissoes() == null ? false : (getPermissoes().getVisualizar().contains("tudo") ? true : getPermissoes().getVisualizar().contains(opcao)));
 	}
 	
 	@Transient
 	public Boolean podeAlterar(String opcao) {
-		return (getPermissoes() == null ? false : getPermissoes().getAlterar().contains(opcao));
+		return (getPermissoes() == null ? false : (getPermissoes().getAlterar().contains("tudo") ? true : getPermissoes().getAlterar().contains(opcao)));
 	}
 	
 	@Transient
 	public Boolean podeDeletar(String opcao) {
-		return (getPermissoes() == null ? false : getPermissoes().getDeletar().contains(opcao));
+		return (getPermissoes() == null ? false : (getPermissoes().getDeletar().contains("tudo") ? true : getPermissoes().getDeletar().contains(opcao)));
 	}
 	
 	@Transient

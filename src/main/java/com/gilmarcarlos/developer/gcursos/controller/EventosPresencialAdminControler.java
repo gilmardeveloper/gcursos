@@ -45,8 +45,6 @@ import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialDe
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialTop;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensLogoListaPresenca;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
-import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
-import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.eventos.categorias.CategoriaEventoService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.AtividadePresencialService;
@@ -67,6 +65,8 @@ import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoServic
 import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.IconeTypeUtils;
+import com.gilmarcarlos.developer.gcursos.utils.StatusTypeUtils;
 
 @Controller
 @RequestMapping("/dashboard/admin/eventos/presencial")
@@ -668,11 +668,11 @@ public class EventosPresencialAdminControler {
 				log(usuarioInscrito.getNome() + " teve sua inscrição cancelada da atividade: " + atividade.getTitulo(),
 						atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
 
-		notificacaoService.salvar(new Notificacao(usuarioInscrito, "Inscrição cancelada", IconeType.INFORMACAO,
-				StatusType.SUCESSO, "Sua inscrição foi cancelada para a atividade " + atividade.getTitulo() + " por "
+		notificacaoService.salvar(new Notificacao(usuarioInscrito, "Inscrição cancelada", IconeTypeUtils.INFORMACAO,
+				StatusTypeUtils.SUCESSO, "Sua inscrição foi cancelada para a atividade " + atividade.getTitulo() + " por "
 						+ getUsuario().getNome()));
-		notificacaoService.salvar(new Notificacao(getUsuario(), "Cancelou a inscrição do usuário", IconeType.INFORMACAO,
-				StatusType.SUCESSO, "Cancelou a inscrição do usuário com email: " + usuarioInscrito.getEmail()
+		notificacaoService.salvar(new Notificacao(getUsuario(), "Cancelou a inscrição do usuário", IconeTypeUtils.INFORMACAO,
+				StatusTypeUtils.SUCESSO, "Cancelou a inscrição do usuário com email: " + usuarioInscrito.getEmail()
 						+ ",  da atividade " + atividade.getTitulo()));
 
 		inscricaoPresencialService.deletar(id);
@@ -698,8 +698,8 @@ public class EventosPresencialAdminControler {
 								+ atividade.getTitulo(),
 						atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
 
-				notificacaoService.salvar(new Notificacao(i.getUsuario(), "Presença confirmada", IconeType.INFORMACAO,
-						StatusType.SUCESSO, "Sua presença foi confirmada na atividade " + atividade.getTitulo()));
+				notificacaoService.salvar(new Notificacao(i.getUsuario(), "Presença confirmada", IconeTypeUtils.INFORMACAO,
+						StatusTypeUtils.SUCESSO, "Sua presença foi confirmada na atividade " + atividade.getTitulo()));
 
 			});
 			model.addFlashAttribute("alert", "alert alert-fill-success");
@@ -713,8 +713,8 @@ public class EventosPresencialAdminControler {
 								+ atividade.getTitulo(),
 						atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
 
-				notificacaoService.salvar(new Notificacao(i.getUsuario(), "Ausência confirmada", IconeType.INFORMACAO,
-						StatusType.SUCESSO, "Sua presença não foi confirmada na atividade " + atividade.getTitulo()));
+				notificacaoService.salvar(new Notificacao(i.getUsuario(), "Ausência confirmada", IconeTypeUtils.INFORMACAO,
+						StatusTypeUtils.SUCESSO, "Sua presença não foi confirmada na atividade " + atividade.getTitulo()));
 
 			});
 			model.addFlashAttribute("alert", "alert alert-fill-success");
@@ -737,8 +737,8 @@ public class EventosPresencialAdminControler {
 				log(usuarioInscrito.getNome() + " teve sua ausência confirmada na atividade: " + atividade.getTitulo(),
 						atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
 
-		notificacaoService.salvar(new Notificacao(usuarioInscrito, "Ausência confirmada", IconeType.INFORMACAO,
-				StatusType.SUCESSO, "Sua presença não foi confirmada na atividade " + atividade.getTitulo()));
+		notificacaoService.salvar(new Notificacao(usuarioInscrito, "Ausência confirmada", IconeTypeUtils.INFORMACAO,
+				StatusTypeUtils.SUCESSO, "Sua presença não foi confirmada na atividade " + atividade.getTitulo()));
 
 		inscricaoPresencialService.confirmarPresenca(id, false);
 
@@ -759,8 +759,8 @@ public class EventosPresencialAdminControler {
 				log(usuarioInscrito.getNome() + " teve sua presença confirmada na atividade: " + atividade.getTitulo(),
 						atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
 
-		notificacaoService.salvar(new Notificacao(usuarioInscrito, "Presença confirmada", IconeType.INFORMACAO,
-				StatusType.SUCESSO, "Sua presença foi confirmada na atividade " + atividade.getTitulo()));
+		notificacaoService.salvar(new Notificacao(usuarioInscrito, "Presença confirmada", IconeTypeUtils.INFORMACAO,
+				StatusTypeUtils.SUCESSO, "Sua presença foi confirmada na atividade " + atividade.getTitulo()));
 
 		inscricaoPresencialService.confirmarPresenca(id, true);
 

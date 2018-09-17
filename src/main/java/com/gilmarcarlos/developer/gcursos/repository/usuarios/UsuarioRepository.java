@@ -35,10 +35,14 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
 	@Query("select u from Usuario u where u.id = :pid")
 	Page<Usuario> buscarPor(@Param("pid") Long id, Pageable pageable);
 	
+	@Query("select u from Usuario u where u.codigoFuncional.unidadeTrabalho.departamento.id = :pid")
+	Page<Usuario> buscarPorDepartamento(@Param("pid") Long id, Pageable pageable);
+	
 	@Query("select u from Usuario u where u.codigoFuncional.unidadeTrabalho.id = :pid")
 	Page<Usuario> buscarPorUnidade(@Param("pid") Long id, Pageable pageable);
 	
 	@Query("select u from Usuario u where u.codigoFuncional.cargo.id = :pid")
 	Page<Usuario> buscarPorCargo(@Param("pid") Long id, Pageable pageable);
+
 	
 }

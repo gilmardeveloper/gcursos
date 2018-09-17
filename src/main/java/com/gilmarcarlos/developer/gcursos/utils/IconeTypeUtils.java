@@ -1,6 +1,6 @@
-package com.gilmarcarlos.developer.gcursos.model.type;
+package com.gilmarcarlos.developer.gcursos.utils;
 
-public class IconeType {
+public class IconeTypeUtils {
 	
 	public static final String INFORMACAO = "icon-info mx-0";
 	public static final String CONFIGURACOES = "icon-speech mx-0";

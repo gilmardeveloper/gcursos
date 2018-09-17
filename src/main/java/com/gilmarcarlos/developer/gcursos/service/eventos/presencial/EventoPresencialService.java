@@ -14,11 +14,11 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.DataFinalMeno
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventoCanceladoException;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
-import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
-import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.EventoPresencialRepository;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.InscricaoPresencialRepository;
 import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
+import com.gilmarcarlos.developer.gcursos.utils.IconeTypeUtils;
+import com.gilmarcarlos.developer.gcursos.utils.StatusTypeUtils;
 
 @Service
 public class EventoPresencialService {
@@ -111,7 +111,7 @@ public class EventoPresencialService {
 		
 		if(!evento.getInscricoes().isEmpty()) {
 			evento.getInscricoes().forEach( i -> {
-				notificacoes.salvar(new Notificacao(i.getUsuario(), "Inscrição cancelada", IconeType.INFORMACAO, StatusType.INFORMACAO, "sua inscrição foi cancelada, porque o evento foi cancelado ( " + i.getEventoPresencial().getTitulo() + " )"));
+				notificacoes.salvar(new Notificacao(i.getUsuario(), "Inscrição cancelada", IconeTypeUtils.INFORMACAO, StatusTypeUtils.INFORMACAO, "sua inscrição foi cancelada, porque o evento foi cancelado ( " + i.getEventoPresencial().getTitulo() + " )"));
 				inscricoesRepository.deleteById(i.getId());
 			});
 		}

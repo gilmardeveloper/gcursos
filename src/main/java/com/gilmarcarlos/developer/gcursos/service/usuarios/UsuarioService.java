@@ -171,4 +171,8 @@ public class UsuarioService {
 	public Page<Usuario> buscarPorCargo(Long id, Pageable pageable) {
 		return repository.buscarPorCargo(id, pageable);
 	}
+
+	public Page<Usuario> buscarPorDepartamento(Long id, Pageable pageable) {
+		return repository.buscarPorDepartamento(id, pageable);
+	}
 }

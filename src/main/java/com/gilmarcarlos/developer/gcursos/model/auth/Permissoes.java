@@ -39,8 +39,7 @@ public class Permissoes implements Serializable{
 	@ElementCollection
 	private List<String> restringir;
 	
-	@ElementCollection
-	private List<String> departamentos;
+	private Long departamento;
 	
 	@OneToOne
 	private Usuario usuario;
@@ -93,14 +92,14 @@ public class Permissoes implements Serializable{
 		this.usuario = usuario;
 	}
 	
-	public List<String> getDepartamentos() {
-		return departamentos;
+	public Long getDepartamento() {
+		return departamento;
 	}
 
-	public void setDepartamentos(List<String> departamentos) {
-		this.departamentos = departamentos;
+	public void setDepartamento(Long departamento) {
+		this.departamento = departamento;
 	}
-	
+
 	public List<String> getRestringir() {
 		return restringir;
 	}

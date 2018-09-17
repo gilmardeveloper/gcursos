@@ -40,8 +40,6 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.online.exceptions.Posica
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoOnlineDestaque;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoOnlineTop;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
-import com.gilmarcarlos.developer.gcursos.model.type.IconeType;
-import com.gilmarcarlos.developer.gcursos.model.type.StatusType;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.eventos.categorias.CategoriaEventoService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.AtividadeOnlineService;
@@ -62,6 +60,8 @@ import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoServic
 import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.IconeTypeUtils;
+import com.gilmarcarlos.developer.gcursos.utils.StatusTypeUtils;
 
 @Controller
 @RequestMapping("/dashboard/admin/eventos/online")
@@ -719,11 +719,11 @@ public class EventosOnlineAdminControler {
 		logEventoOnlineService.salvar(log(
 				usuarioInscrito.getNome() + " teve sua inscrição cancelada do evento: " + evento.getTitulo(), evento));
 
-		notificacaoService.salvar(new Notificacao(usuarioInscrito, "Inscrição cancelada", IconeType.INFORMACAO,
-				StatusType.SUCESSO,
+		notificacaoService.salvar(new Notificacao(usuarioInscrito, "Inscrição cancelada", IconeTypeUtils.INFORMACAO,
+				StatusTypeUtils.SUCESSO,
 				"Sua inscrição foi cancelada para o evento " + evento.getTitulo() + " por " + getUsuario().getNome()));
-		notificacaoService.salvar(new Notificacao(getUsuario(), "Cancelou a inscrição do usuário", IconeType.INFORMACAO,
-				StatusType.SUCESSO, "Cancelou a inscrição do usuário com email: " + usuarioInscrito.getEmail()
+		notificacaoService.salvar(new Notificacao(getUsuario(), "Cancelou a inscrição do usuário", IconeTypeUtils.INFORMACAO,
+				StatusTypeUtils.SUCESSO, "Cancelou a inscrição do usuário com email: " + usuarioInscrito.getEmail()
 						+ ",  do evento " + evento.getTitulo()));
 		
 		if(!inscricao.getAtividades().isEmpty()) {

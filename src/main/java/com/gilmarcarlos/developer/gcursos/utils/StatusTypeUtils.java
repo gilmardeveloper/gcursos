@@ -1,6 +1,6 @@
-package com.gilmarcarlos.developer.gcursos.model.type;
+package com.gilmarcarlos.developer.gcursos.utils;
 
-public class StatusType {
+public class StatusTypeUtils {
 	
 	public static final String SUCESSO = "preview-icon bg-success";
 	public static final String ERRO = "preview-icon bg-danger";
