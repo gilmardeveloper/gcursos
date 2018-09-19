@@ -173,4 +173,8 @@ public class EventoPresencialService {
 		return listarTodos().stream().anyMatch( e -> e.getPermissoes().getSexos().contains(nome));
 	}
 
+	public Page<EventoPresencial> buscarPorUsuario(Long id, Pageable pageable) {
+		return repository.buscarPorUsuario(id, pageable);
+	}
+
 }

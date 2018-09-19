@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{})">
+<title>ZEUS | Certificado</title>
+</head>
+
+<body>
+
+	<button type="button" class="btn btn-outline-dark mt-4 ml-5 d-print-none" onclick="window.print()">Imprimir</button>
+
+	<div id="to-print" class="mt-5 ml-5">
+		<div id="box" style="height: 502px; width: 1050px; -webkit-print-color-adjust: exact;">
+			<div th:if="${evento.certificadoPresencial != null}" th:style="'background-image: url(/imagens/evento/presencial/' + ${evento.id} + '/imagem-certificado.png); height: 502px; width: 650px; background-repeat: no-repeat;'">
+				<div id="conteudo" th:if="${evento.certificadoPresencial.conteudo != null}" th:utext="${evento.certificadoPresencial.conteudo}"></div>
+			</div>
+		</div>
+	</div>
+
+	<span th:replace="fragments/base-script :: base"></span>
+	<span th:replace="fragments/base-script :: plugins"></span>
+
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+	    
+
+	    var usuarioNome = /*[[${usuario.nome}]]*/ ;
+	    var usuarioCpf = /*[[${usuario.dadosPessoais.cpf}]]*/ ;
+	    var usuarioCargaHoraria = /*[[${evento.cargaHoraria}]]*/ ;
+	    var usuarioDataInicio = /*[[${#temporals.format(evento.dataInicio, 'dd/MM/yyyy')}]]*/ ; 
+	    var usuarioDataConclusao = /*[[${#temporals.format(evento.dataTermino, 'dd/MM/yyyy')}]]*/ ; 
+	    var tituloEvento = /*[[${evento.titulo}]]*/ ; 
+
+	    
+	/*]]>*/
+	</script>
+
+	<script>
+		$(() => {
+			
+			$('.usuarioNome').text(usuarioNome);
+			$('.usuarioCpf').text(usuarioCpf);
+			$('.usuarioCargaHoraria').text(usuarioCargaHoraria);
+			$('.usuarioDataInicio').text(usuarioDataInicio);
+			$('.usuarioDataConclusao').text(usuarioDataConclusao); 
+			$('.tituloEvento').text(tituloEvento); 
+
+		});
+
+	</script>
+
+
+</body>
+
+</html>

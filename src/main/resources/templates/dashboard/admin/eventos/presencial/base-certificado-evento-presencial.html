@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="fragments/head :: head(~{::title},~{::link})">
+<title>ZEUS | Estilo</title>
+<link rel="stylesheet" th:href="@{~/css/dropify.min.css}" />
+<link rel="stylesheet" th:href="@{~/css/summernote-bs4.css}" />
+</head>
+
+<body>
+	<div class="container-scroller">
+		<!-- partial:../../partials/_navbar.html -->
+
+		<!-- navbar -->
+		<nav th:replace="fragments/navbar :: navbar-principal"></nav>
+		<!-- end navbar -->
+
+		<!-- partial -->
+		<div class="container-fluid page-body-wrapper">
+			<div class="row row-offcanvas row-offcanvas-right">
+				<!-- partial:../../partials/_settings-panel.html -->
+
+				<!-- theme-setting-wrapper -->
+				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
+				<!-- end  theme-setting-wrapper -->
+
+				<!-- right-sidebar -->
+				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
+				<!-- end right-sidebar -->
+
+				<!-- sidebar sidebar-offcanvas -->
+				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
+				<!-- end sidebar sidebar-offcanvas -->
+
+				<!-- content-wrapper -->
+				<div class="content-wrapper">
+
+					<div class="col-12 grid-margin">
+						<nav aria-label="breadcrumb" role="navigation">
+				            <ol class="breadcrumb breadcrumb-custom bg-inverse-primary">
+				            <li class="breadcrumb-item"><a th:href="@{/dashboard/admin/eventos/presencial}">Eventos Presenciais</a></li>
+				            <li class="breadcrumb-item"><a th:href="@{/dashboard/admin/eventos/presencial/detalhes/{id}(id=${evento.id})}">Detalhes</a></li>
+				            <li class="breadcrumb-item active" aria-current="page"><span>Certificado</span></li>
+				            </ol>
+				        </nav>
+			        </div>
+
+			        <div class="col-lg-12" th:if="${alert != null}">
+						<div th:class="${alert}" role="alert">
+							<i class="mdi mdi-alert-circle"></i> <span th:text="${message}"></span>
+							<button type="button" class="close" data-dismiss="alert"
+										aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+					</div>
+
+					<!-- row -->
+					<div class="row">
+
+						<!-- evento -->
+						<div class="col-md-6 col-lg-8 grid-margin">
+							<div class="row">
+								<div class="col-lg-12">
+									<div id="box" style="height: 502px; width: 650px;">
+										<div th:if="${evento.certificadoPresencial != null}" th:style="'background-image: url(/imagens/evento/presencial/' + ${evento.id} + '/imagem-certificado.png); height: 502px; width: 650px; background-repeat: no-repeat;'">
+											<div id="conteudo" th:if="${evento.certificadoPresencial.conteudo != null}" th:utext="${evento.certificadoPresencial.conteudo}"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- end evento -->
+
+						<div class="col-lg-4 grid-margin">
+							<div class="card">
+								<div class="card-body">
+									<div class="wrapper mb-1 mt-1">
+										<span class="badge badge-warning text-white">Nota : </span>
+										<p class="d-inline ml-3 text-muted">máximo 650x502 e 2MB</p>
+									</div>
+									<form
+										th:action="@{/dashboard/admin/eventos/presencial/certificado/fundo/salvar}"
+										method="post" enctype="multipart/form-data">
+										
+										<input type="hidden" name="eventoPresencial" th:value="${evento.id}" />
+										
+										<input th:if="${evento.certificadoPresencial != null}" type="hidden" name="id" th:value="${evento.certificadoPresencial.id}" />	
+											
+										<input type="file"
+											class="dropify" name="imagemFundo" data-max-file-size="2mb"
+											data-default-file="" />
+
+										<div th:if="${usuario.podeAlterar('eventosPresenciais')}" class="form-group mt-5">
+											<button type="submit" class="btn btn-success mr-2">Alterar</button>
+											<a th:href="@{/dashboard/admin/eventos/presencial/certificado/{id}(id=${evento.id})}" class="btn btn-outline-danger">Cancelar</a>
+										</div>
+									</form>
+								</div>
+								<div class="card-footer bg-light" th:if="${evento.certificadoPresencial != null}">
+									<button th:if="${usuario.podeAlterar('eventosPresenciais')}" class="btn btn-lg btn-success" data-toggle="modal" data-target="#modal-editor-extra">Abrir editor</button>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<!-- end row -->
+
+					<!-- modal editor sobre -->
+					<div th:if="${evento.certificadoPresencial != null}" class="modal fade" id="modal-editor-extra" tabindex="-1"
+						role="dialog" aria-labelledby="modal-label-editor-extra"
+						aria-hidden="true">
+						<div class="modal-dialog modal-lg">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modal-label-editor-extra">Adicione conteúdo extra do certificado</h5>
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<form
+										th:action="@{/dashboard/admin/eventos/presencial/certificado/conteudo/salvar}"
+										id="formulario-editor-sobre" method="post">
+										<input type="hidden" name="eventoPresencial"
+											th:value="${evento.id}" />
+										
+										<input th:if="${evento.certificadoPresencial != null}" type="hidden" name="id" th:value="${evento.certificadoPresencial.id}" />		
+											
+										<textarea id="summernote" name="conteudo"
+											th:utext="${evento.certificadoPresencial.conteudo != null} ?  ${evento.certificadoPresencial.conteudo} : ''"></textarea>
+									</form>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary"
+										data-dismiss="modal">Cancelar</button>
+									<button type="submit" form="formulario-editor-sobre"
+										class="btn btn-primary">Salvar</button>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<!-- end content-wrapper -->
+				<!-- footer -->
+				<footer th:replace="fragments/footer :: footer"></footer>
+				<!-- end footer -->
+			</div>
+			<!-- row-offcanvas ends -->
+		</div>
+		<!-- page-body-wrapper ends -->
+	</div>
+	<!-- container-scroller -->
+	<span th:replace="fragments/base-script :: base"></span>
+	<script th:src="@{~/js/dropify.min.js}"></script>
+	<script th:src="@{~/js/summernote-bs4.min.js}"></script>
+	<span th:replace="fragments/base-script :: plugins"></span>
+	<script th:src="@{~/js/dropify.js}"></script>
+
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+	    
+
+	    var usuarioNome = /*[[${usuario.nome}]]*/ ;
+	    var usuarioCpf = '12345678901'; 
+	    var usuarioCargaHoraria = '00'; 
+	    var usuarioDataInicio = '00/00/0000'; 
+	    var usuarioDataConclusao = '00/00/0000';
+	    var tituloEvento = /*[[${evento.titulo}]]*/ ; 
+
+	    
+	/*]]>*/
+	</script>
+
+	<script>
+		$(() => {
+			
+			 $('#summernote').summernote({
+	     	 toolbar: [
+	     	 	['style', ['bold', 'italic', 'underline', 'clear']],
+			    ['font', ['strikethrough', 'superscript', 'subscript']],
+			    ['fontsize', ['fontsize']],
+			    ['fontname', ['fontname']],
+			    ['color', ['color']],
+			    ['para', ['ul', 'ol', 'paragraph']],
+			    ['picture', ['picture']],
+			    ['link', ['link']],
+			    ['video', ['video']],
+			    ['table', ['table']],
+			    ['codeview', ['codeview']],
+			    ['nome-button', ['nomeBtn']],
+			    ['cpf-button', ['cpfBtn']],
+			    ['carga-horaria-button', ['cargaHorariaBtn']],
+			    ['data-inicio-button', ['dataInicioBtn']],
+			    ['data-conclusao-button', ['dataConclusaoBtn']],
+			    ['titulo-evento-button', ['tituloEventoBtn']],
+			    
+	     	],
+	     	fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '30', '36', '48' , '64', '82', '150'],
+	     	dialogsInBody: true,
+			dialogsFade: false,
+	     	height: 502,
+	     	width: 650,
+	     	tabsize: 2,
+	     	buttons: {
+
+			    nomeBtn: nomeButton,
+			    cpfBtn: cpfButton,
+			    cargaHorariaBtn: cargaHorariaButton,
+			    dataInicioBtn: dataInicioButton,
+			    dataConclusaoBtn: dataConclusaoButton,
+			    tituloEventoBtn: tituloEventoButton,
+			   
+			  }
+	     });
+
+		
+		$('.usuarioNome').text(usuarioNome);
+		$('.usuarioCpf').text(usuarioCpf);
+		$('.usuarioCargaHoraria').text(usuarioCargaHoraria);
+		$('.usuarioDataInicio').text(usuarioDataInicio);
+		$('.usuarioDataConclusao').text(usuarioDataConclusao); 
+		$('.tituloEvento').text(tituloEvento); 
+
+		});
+
+		var nomeButton = function (context) {
+  			var ui = $.summernote.ui;
+
+
+		  // create button
+		  var button = ui.button({
+		    contents: '<i class="icon-note"/> NOME',
+		    tooltip: 'nome',
+		    click: function () {
+		      // invoke insertText method with 'hello' on editor module.
+
+		      var usuarioNode = document.createElement('span');
+			  usuarioNode.className = 'usuarioNome';
+			  usuarioNode.innerHTML = '#nome#';
+		      context.invoke('editor.insertNode', usuarioNode);
+		    }
+		  });
+
+		  return button.render();   // return button as jquery object
+		}
+
+		var cpfButton = function (context) {
+  			var ui = $.summernote.ui;
+
+
+		  // create button
+		  var button = ui.button({
+		    contents: '<i class="icon-note"/> CPF',
+		    tooltip: 'cpf',
+		    click: function () {
+		      // invoke insertText method with 'hello' on editor module.
+
+		      var usuarioNode = document.createElement('span');
+			  usuarioNode.className = 'usuarioCpf';
+			  usuarioNode.innerHTML = '#cpf#';
+		      context.invoke('editor.insertNode', usuarioNode);
+		    }
+		  });
+
+		  return button.render();   // return button as jquery object
+		}
+
+		var cargaHorariaButton = function (context) {
+  			var ui = $.summernote.ui;
+
+
+		  // create button
+		  var button = ui.button({
+		    contents: '<i class="icon-note"/> CARGA_HORARIA',
+		    tooltip: 'carga_horaria',
+		    click: function () {
+		      // invoke insertText method with 'hello' on editor module.
+
+		      var usuarioNode = document.createElement('span');
+			  usuarioNode.className = 'usuarioCargaHoraria';
+			  usuarioNode.innerHTML = '#carga-horaria#';
+		      context.invoke('editor.insertNode', usuarioNode);
+		    }
+		  });
+
+		  return button.render();   // return button as jquery object
+		}
+
+		var dataInicioButton = function (context) {
+  			var ui = $.summernote.ui;
+
+
+		  // create button
+		  var button = ui.button({
+		    contents: '<i class="icon-note"/> DATA_INICIO',
+		    tooltip: 'data_inicio',
+		    click: function () {
+		      // invoke insertText method with 'hello' on editor module.
+
+		      var usuarioNode = document.createElement('span');
+			  usuarioNode.className = 'usuarioDataInicio';
+			  usuarioNode.innerHTML = '#data-inicio#';
+		      context.invoke('editor.insertNode', usuarioNode);
+		    }
+		  });
+
+		  return button.render();   // return button as jquery object
+		}
+
+		var dataConclusaoButton = function (context) {
+  			var ui = $.summernote.ui;
+
+
+		  // create button
+		  var button = ui.button({
+		    contents: '<i class="icon-note"/> DATA_CONCLUSAO',
+		    tooltip: 'data_conclusao',
+		    click: function () {
+		      // invoke insertText method with 'hello' on editor module.
+
+		      var usuarioNode = document.createElement('span');
+			  usuarioNode.className = 'usuarioDataConclusao';
+			  usuarioNode.innerHTML = '#data-conclusao#';
+		      context.invoke('editor.insertNode', usuarioNode);
+		    }
+		  });
+
+		  return button.render();   // return button as jquery object
+		}
+
+		var tituloEventoButton = function (context) {
+  			var ui = $.summernote.ui;
+
+
+		  // create button
+		  var button = ui.button({
+		    contents: '<i class="icon-note"/> TITULO_EVENTO',
+		    tooltip: 'titulo_evento',
+		    click: function () {
+		      // invoke insertText method with 'hello' on editor module.
+
+		      var usuarioNode = document.createElement('span');
+			  usuarioNode.className = 'tituloEvento';
+			  usuarioNode.innerHTML = '#titulo-evento#';
+		      context.invoke('editor.insertNode', usuarioNode);
+		    }
+		  });
+
+		  return button.render();   // return button as jquery object
+		}
+		
+	</script>
+
+
+</body>
+
+</html>

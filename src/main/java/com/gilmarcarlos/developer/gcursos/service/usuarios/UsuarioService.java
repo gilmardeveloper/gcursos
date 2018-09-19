@@ -120,7 +120,6 @@ public class UsuarioService {
 		if(dadosService.cpfExiste(usuario.getDadosPessoais()) || check.elementOf(usuario.getDadosPessoais().getCpf().trim(), ParametroTipo.CPF).validate().hasError()) {
 			throw new CpfExisteException("já existe um usuário cadastrado com esse cpf ou cpf inválido");
 		}
-			
 		
 		dadosService.salvar(usuario.getDadosPessoais());
 		

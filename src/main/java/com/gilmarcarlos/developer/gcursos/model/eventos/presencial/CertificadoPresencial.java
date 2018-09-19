@@ -1,4 +1,4 @@
-package com.gilmarcarlos.developer.gcursos.model.images;
+package com.gilmarcarlos.developer.gcursos.model.eventos.presencial;
 
 import java.io.Serializable;
 import java.sql.Blob;
@@ -7,13 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
-import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
-
 @Entity
-public class ImagensLogoListaPresenca implements Serializable{
+public class CertificadoPresencial implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -22,13 +21,10 @@ public class ImagensLogoListaPresenca implements Serializable{
 	private Long id;
 	
 	@NotNull(message = "image.notnull")
-	private Blob imagemDireita;
+	private Blob imagemFundo;
 	
-	@NotNull(message = "image.notnull")
-	private Blob imagemEsquerda;
-	
-	@NotNull
-	private String titulo;
+	@Lob
+	private String conteudo; 
 		
 	@OneToOne
 	private EventoPresencial eventoPresencial;
@@ -41,36 +37,28 @@ public class ImagensLogoListaPresenca implements Serializable{
 		this.id = id;
 	}
 	
-	public Blob getImagemDireita() {
-		return imagemDireita;
+	public Blob getImagemFundo() {
+		return imagemFundo;
 	}
 
-	public void setImagemDireita(Blob imagemDireita) {
-		this.imagemDireita = imagemDireita;
+	public void setImagemFundo(Blob imagemFundo) {
+		this.imagemFundo = imagemFundo;
 	}
 
-	public Blob getImagemEsquerda() {
-		return imagemEsquerda;
+	public String getConteudo() {
+		return conteudo;
 	}
 
-	public void setImagemEsquerda(Blob imagemEsquerda) {
-		this.imagemEsquerda = imagemEsquerda;
+	public void setConteudo(String conteudo) {
+		this.conteudo = conteudo;
 	}
-	
+
 	public EventoPresencial getEventoPresencial() {
 		return eventoPresencial;
 	}
 
 	public void setEventoPresencial(EventoPresencial eventoPresencial) {
 		this.eventoPresencial = eventoPresencial;
-	}
-
-	public String getTitulo() {
-		return titulo;
-	}
-
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
 	}
 
 	@Override
@@ -89,7 +77,7 @@ public class ImagensLogoListaPresenca implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ImagensLogoListaPresenca other = (ImagensLogoListaPresenca) obj;
+		CertificadoPresencial other = (CertificadoPresencial) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -97,6 +85,5 @@ public class ImagensLogoListaPresenca implements Serializable{
 			return false;
 		return true;
 	}
-	
-	
+
 }

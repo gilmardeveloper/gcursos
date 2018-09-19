@@ -2,20 +2,15 @@ package com.gilmarcarlos.developer.gcursos.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Blob;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.validation.Valid;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gilmarcarlos.developer.gcursos.model.eventos.certificados.Certificado;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
@@ -112,9 +106,6 @@ public class UsuarioControler {
 
 	@Autowired
 	private UnidadeTrabalhoService unidadeService;
-
-	@Autowired
-	private Certificado certificado;
 
 	private Authentication autenticado;
 
@@ -373,19 +364,43 @@ public class UsuarioControler {
 	public String eventosPresencialProgresso(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
-		List<EventoPresencial> eventos = eventoService.buscarPorUsuario(usuarioLogado.getId());
+		Page<EventoPresencial> eventos = eventoService.buscarPorUsuario(usuarioLogado.getId(), PageRequest.of(0, MAXIMO_PAGES));
 
 		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("eventos", eventos);
 
 		return TemplateUtils.DASHBOARD_USUARIO_EVENTOS_PRESENCIAIS_PROGRESSO;
 	}
+	
+	@GetMapping("/eventos/presenciais/progresso/pagina/{page}")
+	public String eventosPresencialProgresso(@PathVariable("page") Integer page, Model model) {
 
+		Usuario usuarioLogado = getUsuario();
+		Page<EventoPresencial> eventos = eventoService.buscarPorUsuario(usuarioLogado.getId(), PageRequest.of(page, MAXIMO_PAGES));
+
+		addBaseAttributes(model, usuarioLogado);
+		model.addAttribute("eventos", eventos);
+
+		return TemplateUtils.DASHBOARD_USUARIO_EVENTOS_PRESENCIAIS_PROGRESSO;
+	}
+	
 	@GetMapping("/eventos/online/progresso")
 	public String eventosOnlineProgresso(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
-		List<EventoOnline> eventos = eventoOnlineService.buscarPorUsuario(usuarioLogado.getId());
+		Page<EventoOnline> eventos = eventoOnlineService.buscarPorUsuario(usuarioLogado.getId(), PageRequest.of(0, MAXIMO_PAGES));
+
+		addBaseAttributes(model, usuarioLogado);
+		model.addAttribute("eventos", eventos);
+
+		return TemplateUtils.DASHBOARD_USUARIO_EVENTOS_ONLINE_PROGRESSO;
+	}
+	
+	@GetMapping("/eventos/online/progresso/pagina/{page}")
+	public String eventosOnlineProgresso(@PathVariable("page") Integer page, Model model) {
+
+		Usuario usuarioLogado = getUsuario();
+		Page<EventoOnline> eventos = eventoOnlineService.buscarPorUsuario(usuarioLogado.getId(), PageRequest.of(page, MAXIMO_PAGES));
 
 		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("eventos", eventos);
@@ -394,14 +409,21 @@ public class UsuarioControler {
 	}
 
 	@GetMapping("/eventos/online/certificado/{id}")
-	public String certificadoOnline(@PathVariable("id") Long id, Model model) {
+	public String certificadoOnline(@PathVariable("id") Long id, Model model, RedirectAttributes red) {
 
 		Usuario usuarioLogado = getUsuario();
 
-		addBaseAttributes(model, usuarioLogado);
-		model.addAttribute("evento", eventoOnlineService.buscarPor(id));
+		EventoOnline evento = eventoOnlineService.buscarPor(id);
+		
+		if (evento.progresso(usuarioLogado) < 75) {
+			RedirectUtils.mensagemError(red, "você precisa ter 75% de progresso para imprimir o certificado");
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO + "/eventos/online/progresso";
+		} else {
+			model.addAttribute("evento", evento);
+			addBaseAttributes(model, usuarioLogado);
+			return TemplateUtils.DASHBOARD_USUARIO_EVENTOS_ONLINE_CERTIFICADO;
+		}
 
-		return TemplateUtils.DASHBOARD_USUARIO_EVENTOS_ONLINE_CERTIFICADO;
 	}
 
 	@GetMapping("/eventos/presenciais/verificar/certificado/{id}")
@@ -411,26 +433,28 @@ public class UsuarioControler {
 		Usuario usuarioLogado = getUsuario();
 
 		if (evento.assiduidade(usuarioLogado) < 75) {
-			RedirectUtils.mensagemSucesso(model, "você precisa ter 75% de assiduidade para imprimir o certificado");
-			return "redirect:" + UrlUtils.DASHBOARD_USUARIO + "/eventos/presenciais/concluidos";
+			RedirectUtils.mensagemError(model, "você precisa ter 75% de assiduidade para imprimir o certificado");
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO + "/eventos/presenciais/progresso";
 		} else {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO + "/eventos/presenciais/certificado/" + id;
 		}
 
 	}
 
-	@GetMapping(value = "/eventos/presenciais/certificado/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
-	private @ResponseBody byte[] gerarListaPresenca(@PathVariable("id") Long id, Model model) {
+	@GetMapping(value = "/eventos/presenciais/certificado/{id}")
+	private String gerarListaPresenca(@PathVariable("id") Long id, Model model, RedirectAttributes red) {
+
+		Usuario usuarioLogado = getUsuario();
 
 		EventoPresencial evento = eventoService.buscarPor(id);
-		Usuario usuarioLogado = getUsuario();
-		InputStream pdfCertificado = certificado.gerar(evento, usuarioLogado);
-
-		try {
-			return IOUtils.toByteArray(pdfCertificado);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+		
+		if (evento.assiduidade(usuarioLogado) < 75) {
+			RedirectUtils.mensagemError(red, "você precisa ter 75% de assiduidade para imprimir o certificado");
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO + "/eventos/presenciais/progresso";
+		} else {
+			model.addAttribute("evento", evento);
+			addBaseAttributes(model, usuarioLogado);
+			return TemplateUtils.DASHBOARD_USUARIO_EVENTOS_PRESENCIAIS_CERTIFICADO;
 		}
 
 	}

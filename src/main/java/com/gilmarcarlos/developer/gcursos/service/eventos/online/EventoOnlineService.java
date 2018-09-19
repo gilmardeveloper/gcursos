@@ -132,4 +132,8 @@ public class EventoOnlineService {
 		return listarTodos().stream().anyMatch( e -> e.getPermissoes().getSexos().contains(nome));
 	}
 
+	public Page<EventoOnline> buscarPorUsuario(Long id, Pageable pageable) {
+		return repository.buscarPorUsuario(id, pageable);
+	}
+
 }

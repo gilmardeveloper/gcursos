@@ -27,6 +27,7 @@ import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 import com.gilmarcarlos.developer.gcursos.utils.IconeTypeUtils;
 import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 import com.gilmarcarlos.developer.gcursos.utils.StatusTypeUtils;
+import com.gilmarcarlos.developer.gcursos.utils.UrlUtils;
 
 @Controller
 @RequestMapping("/")
@@ -69,25 +70,12 @@ public class UsuarioCompleteCadastroControler {
 	@GetMapping("dashboard/")
 	public String painel(Model model) {
 		Usuario usuarioLogado = getUsuario();
-		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
-
-		int naoVisualizadas = usuarioLogado.getNotificaoesNaoLidas().size();
-		int visualizadas = usuarioLogado.getNotificaoesLidas().size();
-		if (usuarioLogado.isPerfilCompleto()) {
-			/*
-			 * model.addAttribute("usuario", usuarioLogado); model.addAttribute("sexos",
-			 * sexoService.listarTodos()); model.addAttribute("escolaridades",
-			 * escolaridadeService.listarTodos()); model.addAttribute("cargos",
-			 * cargoService.listarTodos()); model.addAttribute("unidades",
-			 * unidadeService.listarTodos()); model.addAttribute("lidas", visualizadas);
-			 * model.addAttribute("naoLidas", naoVisualizadas); model.addAttribute("todos",
-			 * visualizadas + naoVisualizadas);
-			 */
-
-			return "redirect:/dashboard/usuario/perfil";
-		} else {
-			return "redirect:/dashboard/complete-cadastro";
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
+
+		return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 
 	}
 
@@ -116,7 +104,7 @@ public class UsuarioCompleteCadastroControler {
 			
 			if (dados.getUsuario() != null) {
 				RedirectUtils.mensagemError(model, "já existe um usuário cadastrado com esse cpf");
-				return "redirect:/dashboard/complete-cadastro";
+				return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 			}
 			
 			model.addFlashAttribute("dadosPessoais", dados);
@@ -135,7 +123,7 @@ public class UsuarioCompleteCadastroControler {
 			
 			if (dados.getUsuario() != null) {
 				RedirectUtils.mensagemError(model, "já existe um usuário cadastrado com esse cpf");
-				return "redirect:/dashboard/complete-cadastro";
+				return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 			}
 			
 			model.addFlashAttribute("outrosDadosPessoais", dados);
@@ -143,21 +131,21 @@ public class UsuarioCompleteCadastroControler {
 		} else {
 			model.addFlashAttribute("outroNovoCpf", cpf);
 		}
-		return "redirect:/dashboard/complete-cadastro";
+		return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 	}
 
 	@PostMapping("dashboard/confirmar-dados")
 	public String confirmarDados(Usuario usuario, @RequestParam("numero") String numero, RedirectAttributes model) {
 
 		salvarUsuario(usuario, numero);
-		return "redirect:/dashboard/complete-cadastro";
+		return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 	}
 
 	@PostMapping("dashboard/outros/confirmar-dados")
 	public String confirmarOutrosDados(Usuario usuario, @RequestParam("numero") String numero,
 			RedirectAttributes model) {
 		salvarUsuario(usuario, numero);
-		return "redirect:/dashboard/complete-cadastro";
+		return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 	}
 
 	@PostMapping("dashboard/outros/novo/confirmar-dados")
@@ -165,7 +153,7 @@ public class UsuarioCompleteCadastroControler {
 			RedirectAttributes model) {
 
 		salvarUsuario(usuario, numero);
-		return "redirect:/dashboard/complete-cadastro";
+		return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 	}
 
 	@PostMapping("dashboard/novo/confirmar-dados")
@@ -173,10 +161,8 @@ public class UsuarioCompleteCadastroControler {
 
 		salvarUsuario(usuario, numero);
 
-		return "redirect:/dashboard/complete-cadastro";
+		return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 	}
-
-	// dashboard/redefinir-senha
 
 	private Usuario getUsuario() {
 		autenticado = SecurityContextHolder.getContext().getAuthentication();

@@ -33,4 +33,7 @@ public interface EventoPresencialRepository extends CrudRepository<EventoPresenc
 	@Query("select e from EventoPresencial e where e.dataInicio between :pinicio and :ptermino")
 	Page<EventoPresencial> buscarPor(@Param("pinicio") LocalDate inicio, @Param("ptermino") LocalDate termino, Pageable pageable);
 
+	@Query("select distinct e from EventoPresencial e join e.inscricoes i where i.usuario.id = :pid")
+	Page<EventoPresencial> buscarPorUsuario(@Param("pid") Long id, Pageable pageable);
+
 }

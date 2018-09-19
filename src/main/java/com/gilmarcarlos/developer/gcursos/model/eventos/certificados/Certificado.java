@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -152,11 +151,7 @@ public class Certificado implements  Serializable{
 			certificado.setQtdAtividades("Finalizou " + qtdAtividades + " atividades no evento");
 		}
 		
-		try {
-			certificado.setImagemFundo(evento.getImagemLogo().getImagemFundo().getBinaryStream());
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		certificado.setImagemFundo(null);
 		
 		this.lista.add(certificado);
 	}

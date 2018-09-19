@@ -33,6 +33,7 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.DataFinalMeno
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventosNaoEncontradosException;
 import com.gilmarcarlos.developer.gcursos.model.eventos.listas.ListaPresenca;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.AtividadePresencial;
+import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.CertificadoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.DiaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EstiloPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
@@ -48,6 +49,7 @@ import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.eventos.categorias.CategoriaEventoService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.AtividadePresencialService;
+import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.CertificadoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.DiaEventoPaginacaoService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.DiaEventoService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EstiloPresencialService;
@@ -131,6 +133,9 @@ public class EventosPresencialAdminControler {
 
 	@Autowired
 	private ListaPresenca listaPresenca;
+	
+	@Autowired
+	private CertificadoPresencialService certificadoService;
 
 	private Authentication autenticado;
 
@@ -823,6 +828,44 @@ public class EventosPresencialAdminControler {
 
 		}
 	}
+	
+	@GetMapping("/certificado/{id}")
+	public String certificadoOnline(@PathVariable("id") Long id, Model model) {
+		
+		Usuario usuarioLogado = getUsuario();
+				
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("evento", eventoPresencialService.buscarPor(id));
+		
+		return "dashboard/admin/eventos/presencial/base-certificado-evento-presencial";
+	}
+	
+	@PostMapping("/certificado/fundo/salvar")
+	public String salvarImagensCertificado(@Valid CertificadoPresencial certificado, BindingResult result,
+			RedirectAttributes model) {
+
+		if (!result.hasErrors()) {
+			if (certificado.getId() != null) {
+				certificadoService.atualizarImagemFundo(certificado);
+			}else {
+				certificadoService.salvar(certificado);
+			}
+			return "redirect:/dashboard/admin/eventos/presencial/certificado/" + certificado.getEventoPresencial().getId();
+		} else {
+			
+			model.addFlashAttribute("alert", "alert alert-fill-danger");
+			model.addFlashAttribute("message", "imagem vazia ou arquivo não é uma imagem");
+			return "redirect:/dashboard/admin/eventos/presencial/certificado/" + certificado.getEventoPresencial().getId();
+		}
+	}
+	
+	@PostMapping("/certificado/conteudo/salvar")
+	public String salvarConteudoCertificado(CertificadoPresencial certificado, RedirectAttributes model) {
+			certificadoService.atualizarConteudo(certificado);
+			return "redirect:/dashboard/admin/eventos/presencial/certificado/" + certificado.getEventoPresencial().getId();
+	}
+	
 	
 	@GetMapping(value = "/dto", produces = "application/json;charset=UTF-8")
 	@ResponseBody

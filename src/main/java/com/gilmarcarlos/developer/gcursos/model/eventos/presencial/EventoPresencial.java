@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 import com.gilmarcarlos.developer.gcursos.interfaces.Eventos;
 import com.gilmarcarlos.developer.gcursos.model.eventos.categorias.CategoriaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventoCanceladoException;
+import com.gilmarcarlos.developer.gcursos.model.eventos.online.CertificadoOnline;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialDestaque;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialTop;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensLogoListaPresenca;
@@ -88,6 +89,9 @@ public class EventoPresencial implements Serializable, Eventos {
 	private Boolean publicado;
 
 	private Boolean ativo;
+	
+	@OneToOne(mappedBy = "eventoPresencial")
+	private CertificadoPresencial certificadoPresencial;
 
 	public Long getId() {
 		return id;
@@ -299,6 +303,14 @@ public class EventoPresencial implements Serializable, Eventos {
 
 	public void setImagemLogo(ImagensLogoListaPresenca imagemLogo) {
 		this.imagemLogo = imagemLogo;
+	}
+
+	public CertificadoPresencial getCertificadoPresencial() {
+		return certificadoPresencial;
+	}
+
+	public void setCertificadoPresencial(CertificadoPresencial certificadoPresencial) {
+		this.certificadoPresencial = certificadoPresencial;
 	}
 
 	@Transient
