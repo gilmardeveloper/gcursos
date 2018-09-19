@@ -12,17 +12,13 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.EventoDTO;
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventoCanceladoException;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.EventoOnlineRepository;
-import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
 
 @Service
 public class EventoOnlineService {
 
 	@Autowired
 	private EventoOnlineRepository repository;
-			
-	@Autowired
-	private NotificacaoService notificacoes;
-
+	
 	public EventoOnline salvar(EventoOnline eventoOnline){
 
 		if (eventoOnline.getId() == null) {
@@ -130,6 +126,10 @@ public class EventoOnlineService {
 		List<EventoDTO> lista = new ArrayList<>();
 		listarTodos().forEach( e -> lista.add(new EventoDTO(e)));
 		return lista;
+	}
+
+	public boolean sexoExiste(String nome) {
+		return listarTodos().stream().anyMatch( e -> e.getPermissoes().getSexos().contains(nome));
 	}
 
 }

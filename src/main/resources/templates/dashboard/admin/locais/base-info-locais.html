@@ -60,7 +60,7 @@
 										</div>
 										<div class="modal-body">
 											<form th:id="'formulario-unidade-' + ${unidade.id}"
-												th:action="@{/dashboard/admin/unidades/salvar}"
+												th:action="@{/dashboard/admin/locais/unidades/salvar}"
 												method="post">
 												<input type="hidden" name="id"
 													th:value="${unidade != null} ? ${unidade.id} : ''">
@@ -160,7 +160,7 @@
 										<div class="modal-footer">
 											<button type="button" class="btn btn-danger"
 												data-dismiss="modal">Cancelar</button>
-											<button th:if="${usuario.podeAlterar('unidades') or usuario.podeAlterar('tudo')}" type="submit"
+											<button th:if="${usuario.podeAlterar('unidades')}" type="submit"
 												th:attr="form='formulario-unidade-' + ${unidade.id}"
 												value="submit" class="btn btn-success">Salvar</button>
 										</div>
@@ -187,7 +187,7 @@
 										</div>
 										<div class="modal-body">
 											<form method="post"
-												th:action="@{/dashboard/admin/unidades/telefones/salvar}"
+												th:action="@{/dashboard/admin/locais/unidades/telefones/salvar}"
 												th:each="telefone : ${unidade.telefones}">
 												<input type="hidden" name="id"
 													th:value="${unidade != null} ? ${telefone.id} : ''">
@@ -212,15 +212,15 @@
 													</div>
 													<div class="row align-items-end">
 														<div class="form-group col-lg-4">
-															<button th:if="${usuario.podeAlterar('unidades') or usuario.podeAlterar('tudo')}" type="submit" class="btn btn-success">Salvar</button>
+															<button th:if="${usuario.podeAlterar('unidades')}" type="submit" class="btn btn-success">Salvar</button>
 														</div>
 													</div>
 												</div>
 											</form>
 											<form
 
-												th:if="${usuario.podeCriar('unidades') or usuario.podeCriar('tudo')}"
-												th:action="@{/dashboard/admin/unidades/telefones/salvar}"
+												th:if="${usuario.podeCriar('unidades')}"
+												th:action="@{/dashboard/admin/locais/unidades/telefones/salvar}"
 												method="post">
 												<input type="hidden" name="unidadeTrabalho"
 													th:value="${unidade != null} ? ${unidade.id} : ''">
@@ -248,9 +248,9 @@
 												</div>
 											</form>
 										</div>
-										<div th:if="${usuario.podeDeletar('unidades') or usuario.podeDeletar('tudo')}" class="modal-footer">
+										<div th:if="${usuario.podeAlterar('unidades')}" class="modal-footer">
 											<form method="post"
-												th:action="@{/dashboard/admin/unidades/telefones/excluir}">
+												th:action="@{/dashboard/admin/locais/unidades/telefones/excluir}">
 												<input type="hidden" name="unidadeTrabalho"
 													th:value="${unidade != null} ? ${unidade.id} : ''">
 												<div class="row justify-content-start">
@@ -278,8 +278,8 @@
 						<!-- card table -->
 						<div th:unless="${#lists.isEmpty(unidades)}" class="card">
 							<div class="card-header">
-								<a th:if="${usuario.podeCriar('unidades') or usuario.podeCriar('tudo')}" class="btn btn-outline-success"
-									th:href="@{/dashboard/admin/unidades/novo}">Adicionar novo</a>
+								<a th:if="${usuario.podeCriar('unidades')}" class="btn btn-outline-success"
+									th:href="@{/dashboard/admin/locais/unidades/novo}">Adicionar novo</a>
 								<div th:if="${alert != null}">
 									<div th:class="${alert}" role="alert">
 										<i class="mdi mdi-alert-circle"></i> <span
@@ -303,7 +303,7 @@
 														<th>Nome</th>
 														<th>email</th>
 														<th>Telefones</th>
-														<th th:if="${usuario.podeDeletar('unidades') or usuario.podeDeletar('tudo')}">::</th>
+														<th th:if="${usuario.podeDeletar('unidades')}">::</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -328,7 +328,7 @@
 
 														</td>
 
-														<td th:if="${usuario.podeDeletar('unidades') or usuario.podeDeletar('tudo')}"><button class="btn btn-outline-danger pt-1 pb-1" type="button" th:onclick="'deletarUnidade(' + ${unidade.id} + ')'"><i class="icon-close"></i></button></td>
+														<td th:if="${usuario.podeDeletar('unidades')}"><button class="btn btn-outline-danger pt-1 pb-1" type="button" th:onclick="'deletarUnidade(' + ${unidade.id} + ')'"><i class="icon-close"></i></button></td>
 													</tr>
 												</tbody>
 											</table>
@@ -342,8 +342,8 @@
 						<!-- card table -->
 						<div th:unless="${#lists.isEmpty(departamentos)}" class="card">
 							<div class="card-header">
-								<a th:if="${usuario.podeCriar('departamentos') or usuario.podeCriar('tudo')}" class="btn btn-outline-success"
-									th:href="@{/dashboard/admin/departamentos/novo}">Adicionar
+								<a th:if="${usuario.podeCriar('departamentos')}" class="btn btn-outline-success"
+									th:href="@{/dashboard/admin/locais/departamentos/novo}">Adicionar
 									novo</a>
 								<div th:if="${alert != null}">
 									<div th:class="${alert}" role="alert">
@@ -366,18 +366,18 @@
 													<tr>
 														<th>Nome</th>
 														<th>Identidade</th>
-														<th th:if="${usuario.podeAlterar('departamentos') or usuario.podeAlterar('tudo')}">::</th>
-														<th th:if="${usuario.podeDeletar('departamentos') or usuario.podeDeletar('tudo')}">::</th>
+														<th th:if="${usuario.podeAlterar('departamentos')}">::</th>
+														<th th:if="${usuario.podeDeletar('departamentos')}">::</th>
 													</tr>
 												</thead>
 												<tbody>
 													<tr th:each="departamento : ${departamentos}">
 														<td th:text="${departamento.nome}"></td>
 														<td th:text="${departamento.identidade}"></td>
-														<td th:if="${usuario.podeAlterar('departamentos') or usuario.podeAlterar('tudo')}"><a class="btn btn-outline-primary pt-1 pb-1"
-															th:href="@{/dashboard/admin/departamentos/alterar/{id}(id=${departamento.id})}"><i
+														<td th:if="${usuario.podeAlterar('departamentos')}"><a class="btn btn-outline-primary pt-1 pb-1"
+															th:href="@{/dashboard/admin/locais/departamentos/alterar/{id}(id=${departamento.id})}"><i
 																class="icon-pencil"></i></a></td>
-														<td th:if="${usuario.podeDeletar('departamentos') or usuario.podeDeletar('tudo')}"><button class="btn btn-outline-danger pt-1 pb-1" type="button" th:onclick="'deletarDepartamento(' + ${departamento.id} + ')'"><i class="icon-close"></i></button></td>
+														<td th:if="${usuario.podeDeletar('departamentos')}"><button class="btn btn-outline-danger pt-1 pb-1" type="button" th:onclick="'deletarDepartamento(' + ${departamento.id} + ')'"><i class="icon-close"></i></button></td>
 													</tr>
 												</tbody>
 											</table>
@@ -391,8 +391,8 @@
 
 						<div th:unless="${#lists.isEmpty(cargos)}" class="card">
 							<div class="card-header">
-								<a th:if="${usuario.podeCriar('cargos') or usuario.podeCriar('tudo')}" class="btn btn-outline-success"
-									th:href="@{/dashboard/admin/cargos/novo}">Adicionar novo</a>
+								<a th:if="${usuario.podeCriar('cargos')}" class="btn btn-outline-success"
+									th:href="@{/dashboard/admin/locais/cargos/novo}">Adicionar novo</a>
 								<div th:if="${alert != null}">
 									<div th:class="${alert}" role="alert">
 										<i class="mdi mdi-alert-circle"></i> <span
@@ -413,17 +413,17 @@
 												<thead>
 													<tr>
 														<th>Nome</th>
-														<th th:if="${usuario.podeAlterar('cargos') or usuario.podeAlterar('tudo')}">::</th>
-														<th th:if="${usuario.podeDeletar('cargos') or usuario.podeDeletar('tudo')}">::</th>
+														<th th:if="${usuario.podeAlterar('cargos')}">::</th>
+														<th th:if="${usuario.podeDeletar('cargos')}">::</th>
 													</tr>
 												</thead>
 												<tbody>
 													<tr th:each="cargo : ${cargos}">
 														<td th:text="${cargo.nome}"></td>
-														<td th:if="${usuario.podeAlterar('cargos') or usuario.podeAlterar('tudo')}"><a class="btn btn-outline-primary pt-1 pb-1"
-															th:href="@{/dashboard/admin/cargos/alterar/{id}(id=${cargo.id})}"><i
+														<td th:if="${usuario.podeAlterar('cargos')}"><a class="btn btn-outline-primary pt-1 pb-1"
+															th:href="@{/dashboard/admin/locais/cargos/alterar/{id}(id=${cargo.id})}"><i
 																class="icon-pencil"></i></a></td>
-														<td th:if="${usuario.podeDeletar('cargos') or usuario.podeDeletar('tudo')}"><button class="btn btn-outline-danger pt-1 pb-1" type="button" th:onclick="'deletarCargo(' + ${cargo.id} + ')'"><i class="icon-close"></i></button></td>
+														<td th:if="${usuario.podeDeletar('cargos')}"><button class="btn btn-outline-danger pt-1 pb-1" type="button" th:onclick="'deletarCargo(' + ${cargo.id} + ')'"><i class="icon-close"></i></button></td>
 													</tr>
 												</tbody>
 											</table>
@@ -479,7 +479,7 @@
 	              cancelButtonText: 'Cancelar',
 	              confirmButtonText: 'Continuar'
 	            }).then(function () {
-	              window.location.href = `/dashboard/admin/unidades/deletar/${id}`	
+	              window.location.href = `/dashboard/admin/locais/unidades/deletar/${id}`	
 	          });
 	  }  
 
@@ -527,7 +527,7 @@
 	              cancelButtonText: 'Cancelar',
 	              confirmButtonText: 'Continuar'
 	            }).then(function () {
-	              window.location.href = `/dashboard/admin/departamentos/deletar/${id}`	
+	              window.location.href = `/dashboard/admin/locais/departamentos/deletar/${id}`	
 	          });
 	  }  
 	/*]]>*/
@@ -551,7 +551,7 @@
 	              cancelButtonText: 'Cancelar',
 	              confirmButtonText: 'Continuar'
 	            }).then(function () {
-	              window.location.href = `/dashboard/admin/cargos/deletar/${id}`	
+	              window.location.href = `/dashboard/admin/locais/cargos/deletar/${id}`	
 	          });
 	  }  
 	/*]]>*/

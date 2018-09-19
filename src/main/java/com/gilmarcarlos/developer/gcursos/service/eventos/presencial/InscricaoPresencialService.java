@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.InscricaoPresencialRepository;
 
 @Service
@@ -40,6 +41,12 @@ public class InscricaoPresencialService {
 		InscricaoPresencial inscrito = buscarPor(id);
 		inscrito.setPresenca(presenca);
 		salvar(inscrito);
+	}
+
+	public void deletar(Usuario usuario) {
+		if(!usuario.getInscricoes().isEmpty()) {
+			usuario.getInscricoes().forEach( i -> deletar(i.getId()));
+		}
 	}
 	
 	

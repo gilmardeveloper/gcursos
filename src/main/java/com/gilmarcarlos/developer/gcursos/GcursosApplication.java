@@ -16,8 +16,6 @@ import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
@@ -25,6 +23,8 @@ import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Ticker;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+
+import br.com.safeguard.check.SafeguardCheck;
 
 @SpringBootApplication
 @EnableCaching
@@ -43,6 +43,10 @@ public class GcursosApplication {
 			.setCachePeriod(31556926);
 	}*/
 	
+	@Bean 
+	public SafeguardCheck safeguardCheck() {
+		return new SafeguardCheck();
+	}
 		
 	@Bean
 	public LocaleResolver localeResolver() {
@@ -59,11 +63,6 @@ public class GcursosApplication {
 		messageSource.setDefaultEncoding("UTF-8");
 		messageSource.setCacheSeconds(0);
 		return messageSource;
-	}
-
-	@Bean
-	public Authentication getAuthentication() {
-		return SecurityContextHolder.getContext().getAuthentication();
 	}
 
 	@Bean

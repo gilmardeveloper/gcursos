@@ -21,26 +21,25 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gilmarcarlos.developer.gcursos.model.auth.Permissoes;
-import com.gilmarcarlos.developer.gcursos.model.locais.CodigoFuncional;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Mensagens;
 import com.gilmarcarlos.developer.gcursos.model.type.Escolaridade;
 import com.gilmarcarlos.developer.gcursos.model.type.Sexo;
-import com.gilmarcarlos.developer.gcursos.model.usuarios.DadosPessoais;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.TelefoneUsuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.UsuarioDTO;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.CpfExisteException;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.EscolaridadeExisteException;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.SexoExisteException;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.UsuarioDeleteException;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.UsuarioExisteException;
 import com.gilmarcarlos.developer.gcursos.service.auth.AutorizacaoService;
 import com.gilmarcarlos.developer.gcursos.service.auth.PermissoesService;
 import com.gilmarcarlos.developer.gcursos.service.locais.CargoService;
-import com.gilmarcarlos.developer.gcursos.service.locais.CodigoFuncionalService;
 import com.gilmarcarlos.developer.gcursos.service.locais.DepartamentoService;
 import com.gilmarcarlos.developer.gcursos.service.locais.UnidadeTrabalhoService;
 import com.gilmarcarlos.developer.gcursos.service.notificacoes.MensagensHelper;
 import com.gilmarcarlos.developer.gcursos.service.notificacoes.MensagensService;
 import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
-import com.gilmarcarlos.developer.gcursos.service.usuarios.DadosPessoaisService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.TelefoneUsuarioService;
@@ -79,12 +78,6 @@ public class UsuariosAdminControler {
 	private AutorizacaoService autorizacaoService;
 
 	@Autowired
-	private DadosPessoaisService dadosService;
-
-	@Autowired
-	private CodigoFuncionalService codigoService;
-
-	@Autowired
 	private NotificacaoService notificacaoService;
 
 	@Autowired
@@ -105,30 +98,31 @@ public class UsuariosAdminControler {
 		return usuarioService.buscarPor(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
 	}
 
+	private Page<Usuario> getUsuarioIdPaginacao(Long departamento, Long id) {
+		return usuarioService.buscarPor(departamento, id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
+
 	private Page<Usuario> getUsuarioDepartamentoPaginacao(Long id, Integer page) {
 		return usuarioService.buscarPorDepartamento(id, PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
 	}
-	
+
 	private Page<Usuario> getUsuarioUnidadesPaginacao(Long id) {
 		return usuarioService.buscarPorUnidade(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
+
+	private Page<Usuario> getUsuarioUnidadesPaginacao(Long departamento, Long id) {
+		return usuarioService.buscarPorUnidade(departamento, id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
 	}
 
 	private Page<Usuario> getUsuarioCargosPaginacao(Long id) {
 		return usuarioService.buscarPorCargo(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
 	}
 
-	private void modelAttributes(Usuario usuarioLogado, Page<Usuario> paginacao, Model model) {
-		
-		model.addAttribute("atuais", paginacao);
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("cargos", cargoService.listarTodos());
-		model.addAttribute("unidades", unidadeService.listarTodos());
-		model.addAttribute("formacoes", escolaridadeService.listarTodos());
-		model.addAttribute("sexos", sexoService.listarTodos());
-		model.addAttribute("autorizacoes", autorizacaoService.listarTodos());
-		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
-
+	private Page<Usuario> getUsuarioCargosPaginacao(Long departamento, Long id) {
+		return usuarioService.buscarPorCargo(departamento, id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
 	}
+
+	
 
 	@GetMapping("/atuais")
 	public String cadastrosCompleto(Model model) {
@@ -142,11 +136,12 @@ public class UsuariosAdminControler {
 		if (!usuarioLogado.isPerfilCompleto()) {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
-		
-		if(usuarioLogado.temRestricao("departamento")) {
-			modelAttributes(usuarioLogado, getUsuarioDepartamentoPaginacao(usuarioLogado.getPermissoes().getDepartamento(), 0), model);
-		}else {
-			modelAttributes(usuarioLogado, getUsuarioPaginacao(0), model);
+
+		if (usuarioLogado.temRestricao("departamento")) {
+			modelBaseAttributes(usuarioLogado,
+					getUsuarioDepartamentoPaginacao(usuarioLogado.getPermissoes().getDepartamento(), 0), model);
+		} else {
+			modelBaseAttributes(usuarioLogado, getUsuarioPaginacao(0), model);
 		}
 
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_INFO_USUARIOS;
@@ -165,7 +160,12 @@ public class UsuariosAdminControler {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
 
-		modelAttributes(usuarioLogado, getUsuarioIdPaginacao(id), model);
+		if (usuarioLogado.temRestricao("departamento")) {
+			modelBaseAttributes(usuarioLogado, getUsuarioIdPaginacao(usuarioLogado.getPermissoes().getDepartamento(), id),
+					model);
+		} else {
+			modelBaseAttributes(usuarioLogado, getUsuarioIdPaginacao(id), model);
+		}
 
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_INFO_USUARIOS;
 	}
@@ -183,7 +183,12 @@ public class UsuariosAdminControler {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
 
-		modelAttributes(usuarioLogado, getUsuarioCargosPaginacao(id), model);
+		if (usuarioLogado.temRestricao("departamento")) {
+			modelBaseAttributes(usuarioLogado,
+					getUsuarioCargosPaginacao(usuarioLogado.getPermissoes().getDepartamento(), id), model);
+		} else {
+			modelBaseAttributes(usuarioLogado, getUsuarioCargosPaginacao(id), model);
+		}
 
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_INFO_USUARIOS;
 	}
@@ -201,7 +206,12 @@ public class UsuariosAdminControler {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
 
-		modelAttributes(usuarioLogado, getUsuarioUnidadesPaginacao(id), model);
+		if (usuarioLogado.temRestricao("departamento")) {
+			modelBaseAttributes(usuarioLogado,
+					getUsuarioUnidadesPaginacao(usuarioLogado.getPermissoes().getDepartamento(), id), model);
+		} else {
+			modelBaseAttributes(usuarioLogado, getUsuarioUnidadesPaginacao(id), model);
+		}
 
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_INFO_USUARIOS;
 	}
@@ -218,13 +228,13 @@ public class UsuariosAdminControler {
 		if (!usuarioLogado.isPerfilCompleto()) {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
-		
-		if(usuarioLogado.temRestricao("departamento")) {
-			modelAttributes(usuarioLogado, getUsuarioDepartamentoPaginacao(usuarioLogado.getPermissoes().getDepartamento(), page), model);
-		}else {
-			modelAttributes(usuarioLogado, getUsuarioPaginacao(page), model);
-		}
 
+		if (usuarioLogado.temRestricao("departamento")) {
+			modelBaseAttributes(usuarioLogado,
+					getUsuarioDepartamentoPaginacao(usuarioLogado.getPermissoes().getDepartamento(), page), model);
+		} else {
+			modelBaseAttributes(usuarioLogado, getUsuarioPaginacao(page), model);
+		}
 
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_INFO_USUARIOS;
 	}
@@ -232,9 +242,9 @@ public class UsuariosAdminControler {
 	@PostMapping("/autorizacoes/salvar")
 	public String usuariosAutorizacoesSalvar(@RequestParam("id") Long id,
 			@RequestParam("nomeAutorizacao") String nomeAutorizacao, RedirectAttributes model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
-		
+
 		if (!usuarioLogado.podeAlterar("permissoes")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
@@ -265,12 +275,10 @@ public class UsuariosAdminControler {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
 
-		model.addAttribute("usuario", getUsuario());
-		model.addAttribute("cargos", cargoService.listarTodos());
-		model.addAttribute("unidades", unidadeService.listarTodos());
-		model.addAttribute("formacoes", escolaridadeService.listarTodos());
-		model.addAttribute("sexos", sexoService.listarTodos());
-		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
+		model.addAttribute("usuario", usuarioLogado);
+		addUnidadesAttributes(usuarioLogado, model);
+		addOpcoesAttributes(model);
+		addNotificacoesAttributes(usuarioLogado, model);
 
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_CADASTRO_USUARIOS;
 	}
@@ -288,12 +296,10 @@ public class UsuariosAdminControler {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
 
-		model.addAttribute("usuario", getUsuario());
-		model.addAttribute("cargos", cargoService.listarTodos());
-		model.addAttribute("unidades", unidadeService.listarTodos());
-		model.addAttribute("formacoes", escolaridadeService.listarTodos());
-		model.addAttribute("sexos", sexoService.listarTodos());
-		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
+		model.addAttribute("usuario", usuarioLogado);
+		addUnidadesAttributes(usuarioLogado, model);
+		addOpcoesAttributes(model);
+		addNotificacoesAttributes(usuarioLogado, model);
 
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_CADASTRO_USUARIOS;
 	}
@@ -312,10 +318,15 @@ public class UsuariosAdminControler {
 		}
 
 		model.addAttribute("usuario", getUsuario());
-		model.addAttribute("unidades", unidadeService.listarTodos());
-		model.addAttribute("formacoes", escolaridadeService.listarTodos());
-		model.addAttribute("sexos", sexoService.listarTodos());
-		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
+
+		if (usuarioLogado.temRestricao("departamento")) {
+			model.addAttribute("unidades", unidadeService.listarTodos(usuarioLogado.getPermissoes().getDepartamento()));
+		} else {
+			model.addAttribute("unidades", unidadeService.listarTodos());
+		}
+
+		addOpcoesAttributes(model);
+		addNotificacoesAttributes(usuarioLogado, model);
 
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_CADASTRO_USUARIOS;
 	}
@@ -348,8 +359,6 @@ public class UsuariosAdminControler {
 
 		try {
 
-			dadosService.salvar(usuario.getDadosPessoais());
-			codigoService.salvar(usuario.getCodigoFuncional());
 			usuarioService.atualizarDadosNoEncryptSenha(usuario);
 
 			NotificacaoUtils.sucesso(notificacaoService, usuario, "Administrador alterou seus dados",
@@ -376,16 +385,15 @@ public class UsuariosAdminControler {
 
 		try {
 
-			dadosService.salvar(usuario.getDadosPessoais());
-			codigoService.salvar(usuario.getCodigoFuncional());
+			Usuario usuarioAtualizado = usuarioService.atualizarDadosNoEncryptSenha(usuario);
 
-			NotificacaoUtils.sucesso(notificacaoService, usuario, "Administrador alterou seus dados",
-					"seus foram alterados com sucesso por " + getUsuario().getNome());
+			NotificacaoUtils.sucesso(notificacaoService, usuarioAtualizado, "Administrador alterou seus dados",
+					"seus foram alterados com sucesso por " + usuarioLogado.getNome());
 
-			NotificacaoUtils.sucesso(notificacaoService, getUsuario(), "Alterou os dados de um usuário",
-					"Alterou os dados do usuário com email: " + usuario.getEmail());
-
-			model.addFlashAttribute("user", usuarioService.atualizarDadosNoEncryptSenha(usuario));
+			NotificacaoUtils.sucesso(notificacaoService, usuarioLogado, "Alterou os dados de um usuário",
+					"Alterou os dados do usuário com email: " + usuarioAtualizado.getEmail());
+			
+			model.addFlashAttribute("user", usuarioAtualizado);
 			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
 
 		} catch (UsuarioExisteException | CpfExisteException e) {
@@ -395,6 +403,7 @@ public class UsuariosAdminControler {
 	}
 
 	@PostMapping("/adicionar")
+
 	public String usuariosAdicionar(Usuario usuario, RedirectAttributes model) {
 
 		Usuario usuarioLogado = getUsuario();
@@ -405,15 +414,7 @@ public class UsuariosAdminControler {
 
 		try {
 
-			DadosPessoais dados = dadosService.salvar(usuario.getDadosPessoais());
-			CodigoFuncional codigo = codigoService.salvar(usuario.getCodigoFuncional());
-			Usuario novoUsuario;
-			novoUsuario = usuarioService.criarNovo(usuario);
-			dados.setUsuario(novoUsuario);
-			codigo.setUsuario(novoUsuario);
-
-			dadosService.salvar(dados);
-			codigoService.salvar(codigo);
+			Usuario novoUsuario = usuarioService.criarNovo(usuario);
 
 			NotificacaoUtils.sucesso(notificacaoService, novoUsuario, "Administrador criou sua conta",
 					"favor altere sua senha");
@@ -422,7 +423,8 @@ public class UsuariosAdminControler {
 
 			model.addFlashAttribute("user", novoUsuario);
 			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
-		} catch (UsuarioExisteException | CpfExisteException e) {
+
+		} catch (Exception e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
 
@@ -442,20 +444,17 @@ public class UsuariosAdminControler {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
 
-		Usuario user = usuarioService.buscarPor(id);
-		List<TelefoneUsuario> telefones = user.getDadosPessoais().getTelefones();
-		if (!telefones.isEmpty()) {
-			telefones.forEach(t -> telefoneUsuarioService.deletar(t.getId()));
+		try {
+
+			Usuario user = usuarioService.buscarPor(id);
+			NotificacaoUtils.sucesso(notificacaoService, getUsuario(), "Deletou um usuário",
+					"Usuário com email: " + user.getEmail() + " foi deletado");
+
+			usuarioService.deletar(id);
+			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+		} catch (UsuarioExisteException | UsuarioDeleteException e) {
+			RedirectUtils.mensagemError(model, e.getMessage());
 		}
-
-		NotificacaoUtils.sucesso(notificacaoService, getUsuario(), "Deletou um usuário",
-				"Usuário com email: " + user.getEmail() + " foi deletado");
-
-		dadosService.deletar(user.getDadosPessoais().getId());
-		codigoService.deletar(user.getCodigoFuncional().getId());
-		usuarioService.deletar(id);
-
-		RedirectUtils.mensagemSucesso(model, "removido com sucesso");
 
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_USUARIOS + "/atuais";
 	}
@@ -483,7 +482,7 @@ public class UsuariosAdminControler {
 
 	@PostMapping("/telefones/excluir")
 	public String telefonesExcluir(@RequestParam("id") Long id, RedirectAttributes model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 
 		if (!usuarioLogado.podeAlterar("usuarios")) {
@@ -505,7 +504,7 @@ public class UsuariosAdminControler {
 
 	@GetMapping("/opcoes")
 	public String usuarioOpcoes(Model model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 
 		if (!usuarioLogado.podeVisualizar("opcoesSexuais")) {
@@ -515,16 +514,17 @@ public class UsuariosAdminControler {
 		if (!usuarioLogado.isPerfilCompleto()) {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
-		
-		model.addAttribute("usuario", getUsuario());
+
+		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("opcoes", sexoService.listarTodos());
-		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
+		addNotificacoesAttributes(usuarioLogado, model);
+
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_INFO_USUARIOS;
 	}
 
 	@GetMapping("/opcoes/novo")
 	public String usuarioOpcoesNovo(Model model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 
 		if (!usuarioLogado.podeCriar("opcoesSexuais") && !usuarioLogado.podeAlterar("opcoesSexuais")) {
@@ -534,30 +534,35 @@ public class UsuariosAdminControler {
 		if (!usuarioLogado.isPerfilCompleto()) {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
-		
-		model.addAttribute("usuario", getUsuario());
-		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
+
+		model.addAttribute("usuario", usuarioLogado);
+		addNotificacoesAttributes(usuarioLogado, model);
+
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_CADASTRO_SEXO;
 	}
 
 	@PostMapping("/opcoes/salvar")
 	public String usuariosOpcoesSalvar(Sexo sexo, Model model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 
 		if (!usuarioLogado.podeCriar("opcoesSexuais") && !usuarioLogado.podeAlterar("opcoesSexuais")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
-		
-		model.addAttribute("usuario", getUsuario());
-		model.addAttribute("sexo", sexoService.salvar(sexo));
-		RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		try {
+
+			model.addAttribute("usuario",usuarioLogado);
+			model.addAttribute("sexo", sexoService.salvar(sexo));
+			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		} catch (SexoExisteException e) {
+			RedirectUtils.mensagemError(model, e.getMessage());
+		}
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_CADASTRO_SEXO;
 	}
 
 	@GetMapping("/opcoes/alterar/{id}")
 	public String usuariosOpcoesAlterar(@PathVariable("id") Long id, RedirectAttributes model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 
 		if (!usuarioLogado.podeCriar("opcoesSexuais") && !usuarioLogado.podeAlterar("opcoesSexuais")) {
@@ -567,29 +572,33 @@ public class UsuariosAdminControler {
 		if (!usuarioLogado.isPerfilCompleto()) {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
-		
+
 		model.addFlashAttribute("sexo", sexoService.buscarPor(id));
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_USUARIOS + "/opcoes/novo";
 	}
 
 	@GetMapping("/opcoes/deletar/{id}")
 	public String usuariosOpcoesDeletar(@PathVariable("id") Long id, RedirectAttributes model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 
 		if (!usuarioLogado.podeDeletar("opcoesSexuais")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
-		
-		sexoService.deletar(id);
-		RedirectUtils.mensagemSucesso(model, "removido com sucesso");
-		
+
+		try {
+			sexoService.deletar(id);
+			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+		} catch (SexoExisteException e) {
+			RedirectUtils.mensagemError(model, e.getMessage());
+		}
+
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_USUARIOS + "/opcoes";
 	}
 
 	@GetMapping("/escolaridades")
 	public String usuarioEscolaridades(Model model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 
 		if (!usuarioLogado.podeVisualizar("escolaridade")) {
@@ -599,16 +608,17 @@ public class UsuariosAdminControler {
 		if (!usuarioLogado.isPerfilCompleto()) {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
-		
-		model.addAttribute("usuario", getUsuario());
+
+		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("escolaridades", escolaridadeService.listarTodos());
-		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
+		addNotificacoesAttributes(usuarioLogado, model);
+
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_INFO_USUARIOS;
 	}
 
 	@GetMapping("/escolaridades/novo")
 	public String usuarioEscolaridadesNovo(Model model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 
 		if (!usuarioLogado.podeCriar("escolaridade") && !usuarioLogado.podeAlterar("escolaridade")) {
@@ -618,51 +628,59 @@ public class UsuariosAdminControler {
 		if (!usuarioLogado.isPerfilCompleto()) {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
-		
-		model.addAttribute("usuario", getUsuario());
-		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
+
+		model.addAttribute("usuario", usuarioLogado);
+		addNotificacoesAttributes(usuarioLogado, model);
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_CADASTRO_ESCOLARIDADE;
 	}
 
 	@PostMapping("/escolaridades/salvar")
 	public String usuariosEscolaridadesSalvar(Escolaridade escolaridade, Model model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 
 		if (!usuarioLogado.podeCriar("escolaridade") && !usuarioLogado.podeAlterar("escolaridade")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
 
-		model.addAttribute("usuario", getUsuario());
-		model.addAttribute("escolaridade", escolaridadeService.salvar(escolaridade));
-		RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		try {
+			model.addAttribute("usuario", usuarioLogado);
+			model.addAttribute("escolaridade", escolaridadeService.salvar(escolaridade));
+			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		} catch (EscolaridadeExisteException e) {
+			RedirectUtils.mensagemError(model, e.getMessage());
+		}
 		return TemplateUtils.DASHBOARD_ADMIN_USUARIOS_BASE_CADASTRO_ESCOLARIDADE;
 	}
 
 	@GetMapping("/escolaridades/alterar/{id}")
 	public String usuariosEscolaridadesAlterar(@PathVariable("id") Long id, RedirectAttributes model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 
 		if (!usuarioLogado.podeCriar("escolaridade") && !usuarioLogado.podeAlterar("escolaridade")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
-		
+
 		model.addFlashAttribute("escolaridade", escolaridadeService.buscarPor(id));
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_USUARIOS + "/escolaridades/novo";
 	}
 
 	@GetMapping("/escolaridades/deletar/{id}")
 	public String usuariosEscolaridadesDeletar(@PathVariable("id") Long id, RedirectAttributes model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 
 		if (!usuarioLogado.podeDeletar("escolaridade")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
-		
-		escolaridadeService.deletar(id);
-		RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+
+		try {
+			escolaridadeService.deletar(id);
+			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+		} catch (EscolaridadeExisteException e) {
+			RedirectUtils.mensagemError(model, e.getMessage());
+		}
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_USUARIOS + "/escolaridades";
 	}
 
@@ -700,7 +718,8 @@ public class UsuariosAdminControler {
 		}
 
 		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		addNotificacoesAttributes(usuarioLogado, model);
+
 		model.addAttribute("user", user);
 		model.addAttribute("departamentos", departamentoService.listarTodos());
 
@@ -710,7 +729,7 @@ public class UsuariosAdminControler {
 
 	@PostMapping("/permissoes/salvar")
 	private String permissoesUsuariosSalvar(Permissoes permissoes, RedirectAttributes model) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 
 		if (!usuarioLogado.podeAlterar("permissoes")) {
@@ -726,7 +745,7 @@ public class UsuariosAdminControler {
 	@GetMapping(value = "/dto", produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public List<UsuarioDTO> moduloDTO() {
-		return usuarioService.listarUsuariosDTO();
+		return usuarioService.listarUsuariosDTO(getUsuario());
 	}
 
 	private Usuario getUsuario() {
@@ -734,5 +753,35 @@ public class UsuariosAdminControler {
 		Usuario usuario = usuarioService.buscarPor(autenticado.getName());
 		return usuario;
 	}
+	
+	private void modelBaseAttributes(Usuario usuarioLogado, Page<Usuario> paginacao, Model model) {
 
+		model.addAttribute("atuais", paginacao);
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("autorizacoes", autorizacaoService.listarTodos());
+
+		addUnidadesAttributes(usuarioLogado, model);
+		addOpcoesAttributes(model);
+		addNotificacoesAttributes(usuarioLogado, model);
+
+	}
+
+	private void addOpcoesAttributes(Model model) {
+		model.addAttribute("formacoes", escolaridadeService.listarTodos());
+		model.addAttribute("sexos", sexoService.listarTodos());
+	}
+
+	private void addUnidadesAttributes(Usuario usuarioLogado, Model model) {
+		model.addAttribute("cargos", cargoService.listarTodos());
+		if (usuarioLogado.temRestricao("departamento")) {
+			model.addAttribute("unidades", unidadeService.listarTodos(usuarioLogado.getPermissoes().getDepartamento()));
+		} else {
+			model.addAttribute("unidades", unidadeService.listarTodos());
+		}
+	}
+
+	private void addNotificacoesAttributes(Usuario usuarioLogado, Model model) {
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("mensagens", usuarioLogado.getMensagensNaoLidas());
+	}
 }

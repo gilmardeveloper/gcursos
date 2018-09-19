@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.DadosPessoais;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.CpfExisteException;
 import com.gilmarcarlos.developer.gcursos.repository.usuarios.DadosPessoaisRepository;
 
@@ -46,6 +47,10 @@ public class DadosPessoaisService {
 		}else {
 			return repository.existsByCpf(dados.getCpf());
 		}
+	}
+	
+	public Boolean cpfExiste(String cpf, Usuario usuario) {
+		return repository.existsByCpf(cpf, usuario.getId());
 	}
 
 }

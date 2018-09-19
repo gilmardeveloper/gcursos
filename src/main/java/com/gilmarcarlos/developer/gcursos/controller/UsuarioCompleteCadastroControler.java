@@ -25,6 +25,7 @@ import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.TelefoneUsuarioService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 import com.gilmarcarlos.developer.gcursos.utils.IconeTypeUtils;
+import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 import com.gilmarcarlos.developer.gcursos.utils.StatusTypeUtils;
 
 @Controller
@@ -112,6 +113,12 @@ public class UsuarioCompleteCadastroControler {
 		System.err.println(cpf);
 		DadosPessoais dados = dadosService.buscarPor(cpf);
 		if (dados != null) {
+			
+			if (dados.getUsuario() != null) {
+				RedirectUtils.mensagemError(model, "já existe um usuário cadastrado com esse cpf");
+				return "redirect:/dashboard/complete-cadastro";
+			}
+			
 			model.addFlashAttribute("dadosPessoais", dados);
 			model.addFlashAttribute("codigoFuncional", codigoService.buscarPor(dados));
 		} else {
@@ -125,6 +132,12 @@ public class UsuarioCompleteCadastroControler {
 		System.err.println(cpf);
 		DadosPessoais dados = dadosService.buscarPor(cpf);
 		if (dados != null) {
+			
+			if (dados.getUsuario() != null) {
+				RedirectUtils.mensagemError(model, "já existe um usuário cadastrado com esse cpf");
+				return "redirect:/dashboard/complete-cadastro";
+			}
+			
 			model.addFlashAttribute("outrosDadosPessoais", dados);
 			model.addFlashAttribute("outrosCodigoFuncional", codigoService.buscarPor(dados));
 		} else {

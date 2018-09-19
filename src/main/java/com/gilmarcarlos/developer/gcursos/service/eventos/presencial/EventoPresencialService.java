@@ -169,6 +169,8 @@ public class EventoPresencialService {
 		return lista;
 	}
 
-	
+	public boolean sexoExiste(String nome) {
+		return listarTodos().stream().anyMatch( e -> e.getPermissoes().getSexos().contains(nome));
+	}
 
 }

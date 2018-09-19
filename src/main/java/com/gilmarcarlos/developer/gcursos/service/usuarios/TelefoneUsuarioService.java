@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.TelefoneUsuario;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.usuarios.TelefoneUsuarioRepository;
 
 @Service
@@ -13,16 +14,16 @@ public class TelefoneUsuarioService {
 
 	@Autowired
 	private TelefoneUsuarioRepository repository;
-	
+
 	public TelefoneUsuario salvar(TelefoneUsuario telefoneUsuario) {
 		return repository.save(telefoneUsuario);
 	}
-		
+
 	public void deletar(Long id) {
 		repository.deleteById(id);
 	}
-			
-	public List<TelefoneUsuario> listarTodos(){
+
+	public List<TelefoneUsuario> listarTodos() {
 		return repository.listAll();
 	}
 
@@ -33,6 +34,11 @@ public class TelefoneUsuarioService {
 	public TelefoneUsuario buscarPor(Long id) {
 		return repository.buscarPor(id);
 	}
-	
-	
+
+	public void deletar(Usuario usuario) {
+		if (!usuario.getDadosPessoais().getTelefones().isEmpty()) {
+			usuario.getDadosPessoais().getTelefones().forEach(t -> deletar(t.getId()));
+		}
+	}
+
 }

@@ -92,7 +92,7 @@
 
 													<div class="form-group col-lg-3">
 														<label for="cpf">CPF</label> <input type="text"
-															class="form-control" id="cpf"
+															class="form-control" id="cpf" 
 															th:value="${user.dadosPessoais.cpf}"
 															placeholder="altere seu cpf" name="dadosPessoais.cpf"
 															pattern="[0-9]+" />
@@ -348,6 +348,19 @@
 							<form class="forms-sample">
 
 								<div class="row">
+									<div class="col-lg-12">
+										<div th:if="${alert != null}">
+											<div th:class="${alert}" role="alert">
+												<i class="mdi mdi-alert-circle"></i> <span
+													th:text="${message}"></span>
+												<button type="button" class="close" data-dismiss="alert"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+										</div>
+									</div>
+
 									<div class="col-lg-4">
 										<div class="form-group mb-2">
 											<select id="usuarioNome"
@@ -621,8 +634,7 @@
 
 									<li class="page-item"><a
 										th:href="@{/dashboard/admin/usuarios/atuais/pagina/{page}(page=0)}"
-										th:class="${atuais.first} == true ? 'btn disabled' : 'page-link' "><i
-											class="mdi mdi-chevron-left"></i></a></li>
+										th:class="${atuais.first} == true ? 'btn disabled' : 'page-link' "><i class="mdi mdi-chevron-left"></i></a></li>
 									<li class="page-item" th:if="(${atuais.number} - 1) &gt; -1"><a
 										class="page-link"
 										th:href="@{/dashboard/admin/usuarios/atuais/pagina/{page}(page=${atuais.number} - 1)}"
@@ -636,7 +648,7 @@
 										th:text="${index}">&laquo;</a></li>
 
 									<li class="page-item"><a
-										th:href="@{/dashboard/admin/usuarios/atuais/pagina/{page}(page=${usuarios.totalPages} - 1)}"
+										th:href="@{/dashboard/admin/usuarios/atuais/pagina/{page}(page=${atuais.totalPages} - 1)}"
 										th:class="${atuais.last} == true ? 'btn disabled' : 'page-link' "><i
 											class="mdi mdi-chevron-right"></i></a></li>
 								</ul>

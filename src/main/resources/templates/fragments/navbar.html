@@ -41,17 +41,17 @@
               <span class="btn">+ Locais</span>
             </a>
             <div class="dropdown-menu navbar-dropdown dropdown-left" aria-labelledby="actionDropdown">
-              <a th:if="${usuario.podeVisualizar('unidades') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/unidades}">
+              <a th:if="${usuario.podeVisualizar('unidades') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/locais/unidades}">
                 <i class="icon-briefcase text-primary"></i>
                 Unidades de trabalho
               </a>
               <div class="dropdown-divider"></div>
-              <a th:if="${usuario.podeVisualizar('departamentos') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/departamentos}">
+              <a th:if="${usuario.podeVisualizar('departamentos') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/locais/departamentos}">
                 <i class="icon-briefcase text-warning"></i>
                 Departamentos
               </a>
               <div class="dropdown-divider"></div>
-              <a th:if="${usuario.podeVisualizar('cargos') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/cargos}">
+              <a th:if="${usuario.podeVisualizar('cargos') or usuario.podeVisualizar('tudo')}" class="dropdown-item" th:href="@{/dashboard/admin/locais/cargos}">
                 <i class="icon-briefcase text-info"></i>
                 Cargos
               </a>
@@ -160,9 +160,9 @@
 
             <div  class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown" th:unless="${#lists.isEmpty(mensagens)}">
                 <div class="dropdown-item">
-                   <p class="mb-0 font-weight-normal float-left" th:if="${#lists.size(notificacoes)} &gt; 1">Você tem <span th:text="${#lists.size(mensagens)}"></span> novas mensagens
+                   <p class="mb-0 font-weight-normal float-left" th:if="${#lists.size(mensagens)} &gt; 1">Você tem <span th:text="${#lists.size(mensagens)}"></span> novas mensagens
                 </p>
-                <p class="mb-0 font-weight-normal float-left" th:unless="${#lists.size(notificacoes)} &gt; 1">Você tem <span th:text="${#lists.size(mensagens)}"></span> nova mensagem
+                <p class="mb-0 font-weight-normal float-left" th:unless="${#lists.size(mensagens)} &gt; 1">Você tem <span th:text="${#lists.size(mensagens)}"></span> nova mensagem
                 </p>
                   <span class="badge badge-info badge-pill float-right">veja</span>
                 </div>

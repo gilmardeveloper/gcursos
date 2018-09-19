@@ -280,9 +280,9 @@
               </a>
               <div class="collapse" id="e-commerce">
                 <ul id="sub-menu-locais" class="nav flex-column sub-menu">
-                  <li th:if="${usuario.podeVisualizar('unidades') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/unidades}">Unidades de trabalho</a></li>
-                  <li th:if="${usuario.podeVisualizar('departamentos') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/departamentos}">Departamentos</a></li>
-                  <li th:if="${usuario.podeVisualizar('cargos') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/cargos}">Cargos</a></li>
+                  <li th:if="${usuario.podeVisualizar('unidades') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/locais/unidades}">Unidades de trabalho</a></li>
+                  <li th:if="${usuario.podeVisualizar('departamentos') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/locais/departamentos}">Departamentos</a></li>
+                  <li th:if="${usuario.podeVisualizar('cargos') or usuario.podeVisualizar('tudo')}" class="nav-item"> <a class="nav-link" th:href="@{/dashboard/admin/locais/cargos}">Cargos</a></li>
                 </ul>
               </div>
             </li>

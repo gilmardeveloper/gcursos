@@ -11,5 +11,10 @@ public class NotificacaoUtils {
 		notificacao
 				.salvar(new Notificacao(usuario, titulo, IconeTypeUtils.INFORMACAO, StatusTypeUtils.SUCESSO, mensagem));
 	}
-
+	
+	public static void error(NotificacaoService notificacao, Usuario usuario, String titulo,
+			String mensagem) {
+		notificacao
+				.salvar(new Notificacao(usuario, titulo, IconeTypeUtils.INFORMACAO, StatusTypeUtils.ERRO, mensagem));
+	}
 }

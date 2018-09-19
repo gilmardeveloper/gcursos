@@ -16,7 +16,11 @@ public interface UnidadeTrabalhoRepository extends CrudRepository<UnidadeTrabalh
 	@Query(value = "select u from UnidadeTrabalho u")
 	List<UnidadeTrabalho> listaTodos();
 	
+	@Query(value = "select distinct u from UnidadeTrabalho u join fetch u.telefones where u.departamento.id = :pdepartamento")
+	List<UnidadeTrabalho> listAll(@Param("pdepartamento") Long departamento);
+	
 	@Query("select u from UnidadeTrabalho u where u.id = :pid")
 	UnidadeTrabalho buscarPor(@Param("pid")Long id);
+
 
 }

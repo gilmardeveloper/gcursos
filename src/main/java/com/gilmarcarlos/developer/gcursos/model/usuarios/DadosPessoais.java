@@ -11,8 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
-
 @Entity
 public class DadosPessoais implements Serializable{
 
@@ -24,6 +22,7 @@ public class DadosPessoais implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
 	private String cpf;
 	private LocalDate nascimento;
 	private String sexo;

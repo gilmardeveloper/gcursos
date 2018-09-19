@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.auth.Permissoes;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.auth.PermissoesRepository;
 
 @Service
@@ -28,6 +29,12 @@ public class PermissoesService {
 
 	public Permissoes buscarPor(Long id) {
 		return repository.buscarPor(id);
+	}
+
+	public void deletar(Usuario usuario) {
+		if(usuario.getPermissoes() != null) {
+			deletar(usuario.getPermissoes().getId());
+		}
 	}
 	
 }

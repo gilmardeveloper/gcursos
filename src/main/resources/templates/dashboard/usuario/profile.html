@@ -152,6 +152,7 @@
 																	th:value="${usuario.dadosPessoais.cpf}"
 																	placeholder="altere seu cpf" name="dadosPessoais.cpf"
 																	pattern="[0-9]+" />
+																	<small id="alertCpf" class="text-danger"></small>
 															</div>
 														</div>
 
@@ -204,7 +205,7 @@
 
 													</div>
 													<div class="form-group mt-5">
-														<button type="submit" class="btn btn-success mr-2">Alterar</button>
+														<button id="btn-alterar" type="submit" class="btn btn-success mr-2">Alterar</button>
 														<a th:href="@{/dashboard/}" class="btn btn-outline-danger">Cancelar</a>
 													</div>
 												</form>
@@ -417,40 +418,42 @@
 	<span th:replace="fragments/base-script :: plugins"></span>
 	<script th:src="@{~/js/dropify.js}"></script>
 
-	<script th:unless="${usuario != null}" th:inline="javascript">
+	<script th:inline="javascript">
 	/*<![CDATA[*/
 	$(()=>{
-		 if(typeof(EventSource) !== "undefined") {
-          var source = new EventSource("/notificacoes/[[${usuario.id}]]");
-          source.onmessage = function(event) {
-             console.log(event.data);
-             console.log(event);
-             //alert(event.data);
-             $('#messageDropdown').addClass("count-indicator");
-             $('#mensagem').text(event.data);
-             $('#message-dropdown').addClass('show');
-
-          };
-
-	      } else {
-	          console.log("Sorry, your browser does not support server-sent events...");
-	      }
+		$('#cpf').on( "input", desabilitarBotao);
+		$('#cpf').on( "blur", verificarCpf);
 	});
 
-	function templateMensagem(){
-		return ´<a class="dropdown-item preview-item">
-                  <div class="preview-thumbnail">
-                    <img src="http://via.placeholder.com/100x100/f4f4f4/000000" alt="image" class="profile-pic">
-                  </div>
-                  <div class="preview-item-content flex-grow">
-                    <h6 class="preview-subject ellipsis font-weight-medium">David Grey
-                      <span class="float-right font-weight-light small-text">1 Minutes ago</span>
-                    </h6>
-                    <p class="font-weight-light small-text">
-                      The meeting is cancelled
-                    </p>
-                  </div>
-                </a>´;
+
+	function desabilitarBotao(){
+		$('#alertCpf').text("");
+		$('#btn-alterar').prop("disabled",true);
+	}
+
+	function habilitarBotao(){
+		$('#alertCpf').text("");
+		$('#btn-alterar').prop("disabled", false);
+	}
+
+	function verificarCpf(){
+
+			var cpf = $('#cpf').val();
+
+			$.ajax({
+		        url: `/dashboard/usuario/dados-pessoais/verificar/${cpf}`,
+		        type: "GET", 
+
+		        success: (result,status,xhr) => {
+		                                                  
+		                                          desabilitarBotao();
+		                                          $('#alertCpf').text("cpf inválido ou já existe um usuário cadastrado com esse cpf");
+		                                        }, 
+		        error: () => {
+		             habilitarBotao(); 
+		          	console.log("error");
+                }
+      		});
 	}
 	/*]]>*/
 	</script>

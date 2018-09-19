@@ -191,7 +191,7 @@
 														<div class="form-group">
 															<label for="departamentos">Departamentos</label>
 															<select id="departamentos" class="form-control js-select-single" name="departamento" style="width:100%" >
-																<option th:if="${departamentos != null}" th:each="departamento : ${departamentos}" th:text="${departamento.nome}" th:value="${departamento.id}" th:selected="${user.permissoes} != null and ${user.permissoes.departamento == departamento.id)}"></option>
+																<option th:if="${departamentos != null}" th:each="departamento : ${departamentos}" th:text="${departamento.nome}" th:value="${departamento.id}" th:selected="${user.permissoes} != null and ${user.permissoes.departamento == departamento.id}"></option>
 																
 															</select>
 															<small>essa opção é valida apenas se a opção 'POR DEPARTAMENTO' em restrições estiver selecionada</small>

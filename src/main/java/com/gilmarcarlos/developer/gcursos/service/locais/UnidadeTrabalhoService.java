@@ -29,6 +29,10 @@ public class UnidadeTrabalhoService {
 		return repository.listAll();
 	}
 	
+	public List<UnidadeTrabalho> listarTodos(Long departamento) {
+		return repository.listAll(departamento);
+	}
+	
 	public List<UnidadeTrabalho> listarTodosSemFones(){
 		return repository.listaTodos();
 	}
@@ -36,6 +40,9 @@ public class UnidadeTrabalhoService {
 	public UnidadeTrabalho buscarPor(Long id) {
 		return repository.buscarPor(id);
 	}
+
+
+	
 	
 	
 }
