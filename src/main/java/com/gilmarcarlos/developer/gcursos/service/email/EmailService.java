@@ -14,7 +14,6 @@ public class EmailService {
     private JavaMailSender mailSender;
 	
 	private static final String URL_PRODUCE = "http://35.188.89.234";
-	private static final String URL_LOCAL = "http://localhost:8080";
 	
 	public void enviarConfirmacaoDeCadastro(Usuario usuario, String token) {
 		
@@ -31,6 +30,7 @@ public class EmailService {
 	}
 	
 	public void enviarSolicitacaoDeNovaSenha(Usuario usuario, String token) {
+		
 		String recipientAddress = usuario.getEmail();
         String subject = "Redefinir senha";
         String url = "/redefinir-senha/" + token;
@@ -41,6 +41,16 @@ public class EmailService {
         email.setSubject(subject);
         email.setText("Uma solicitação para redefinir a senha foi realizada, caso tenha sido você, favor clicar no link " + URL_PRODUCE + url);
         mailSender.send(email);
+	}
+	
+	public void enviarNovoEvento(String emails[], String url) {
+		
+		SimpleMailMessage email = new SimpleMailMessage();
+		email.setTo(emails);
+		email.setSubject("Novo evento com seu perfil");
+		email.setText("Um novo evento foi publicado com seu perfil, " + URL_PRODUCE + url);
+		mailSender.send(email);
+		
 	}
 
 }

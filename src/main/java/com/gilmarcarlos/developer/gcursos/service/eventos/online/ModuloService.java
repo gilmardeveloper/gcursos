@@ -15,7 +15,7 @@ public class ModuloService {
 
 	@Autowired
 	private ModuloRepository repository;
-
+		
 	public Modulo salvar(Modulo modulo) throws PosicaoExisteException {
 		
 		for(Modulo m : modulo.getEventoOnline().getModulos()) {
@@ -27,7 +27,7 @@ public class ModuloService {
 		return repository.save(modulo);
 	}
 
-	public void deletar(Long id) {
+	public void deletar(Long id){
 		repository.deleteById(id);
 	}
 

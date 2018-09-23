@@ -193,7 +193,7 @@
 																			
 																		</tr>
 																	</thead>
-																	<tbody>
+																	<tbody th:unless="${usuario.temRestricao('departamento')}">
 																		<tr th:each="inscricao : ${atividade.inscricoes}">
 																			<td th:text="${inscricao.usuario.nome}"></td>
 																			<td th:text="${inscricao.usuario.dadosPessoais.cpf}"></td>
@@ -205,6 +205,21 @@
 																				class="btn btn-outline-info pt-1 pb-1" th:onclick="'enviarMsg(' + ${inscricao.usuario.id} + ')'" type="button"><i
 																					class="icon-bubbles"></i></button></td>
 																		</tr>
+																	 </tbody>
+																	 <tbody th:if="${usuario.temRestricao('departamento')}">	
+																		<tr th:if="${usuario.temMesmoDepartamento(inscricao.usuario)}"
+																		 th:each="inscricao : ${atividade.inscricoes}">
+																			<td th:text="${inscricao.usuario.nome}"></td>
+																			<td th:text="${inscricao.usuario.dadosPessoais.cpf}"></td>
+																			<td th:text="${inscricao.usuario.codigoFuncional.unidadeTrabalho.nome} + ' - ' + ${inscricao.usuario.codigoFuncional.unidadeTrabalho.departamento.identidade}"></td>
+
+																			<td class="text-center" th:text="${inscricao.isPresente()} ? 'P' : 'F'"></td>
+
+																			<td class="text-center"><button
+																				class="btn btn-outline-info pt-1 pb-1" th:onclick="'enviarMsg(' + ${inscricao.usuario.id} + ')'" type="button"><i
+																					class="icon-bubbles"></i></button></td>
+																		</tr>
+
 																	</tbody>
 																</table>
 															</div>
@@ -396,7 +411,7 @@
 		                xhrObj.setRequestHeader(header,token);
        			 },
 
-                  url: "/dashboard/admin/mensagens/nova",
+                  url: "/dashboard/admin/usuarios/mensagens/nova",
                   type: "POST", 
                   data: mensagem,
                   contentType: "application/json",

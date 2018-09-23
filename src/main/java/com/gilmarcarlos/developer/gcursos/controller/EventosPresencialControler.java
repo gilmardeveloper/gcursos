@@ -1,6 +1,5 @@
 package com.gilmarcarlos.developer.gcursos.controller;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,30 +23,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.AtividadePresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.DiaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencialLog;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.PermissoesEventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
-import com.gilmarcarlos.developer.gcursos.service.eventos.categorias.CategoriaEventoService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.AtividadePresencialService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.DiaEventoPaginacaoService;
-import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.DiaEventoService;
-import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPresencialLogService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.InscricaoPresencialService;
-import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.LogEvePresencialPaginacaoService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.PermissoesEventoPresencialService;
-import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.ProgramacaoPresencialService;
-import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.SobreService;
-import com.gilmarcarlos.developer.gcursos.service.imagens.ImagensService;
-import com.gilmarcarlos.developer.gcursos.service.locais.CargoService;
-import com.gilmarcarlos.developer.gcursos.service.locais.UnidadeTrabalhoService;
-import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
-import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
+import com.gilmarcarlos.developer.gcursos.utils.TemplateUtils;
+import com.gilmarcarlos.developer.gcursos.utils.UrlUtils;
 
 @Controller
-@RequestMapping("/dashboard/eventos/presenciais")
+@RequestMapping(UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS)
 public class EventosPresencialControler {
 
 	@Autowired
@@ -57,43 +47,10 @@ public class EventosPresencialControler {
 	private EventoPresencialService eventoPresencialService;
 
 	@Autowired
-	private CategoriaEventoService categoriaEventoService;
-
-	@Autowired
-	private ImagensService imagensService;
-
-	@Autowired
-	private SobreService sobreService;
-
-	@Autowired
-	private ProgramacaoPresencialService programacaoPresencialService;
-
-	@Autowired
 	private AtividadePresencialService atividadePresencialService;
 
 	@Autowired
-	private DiaEventoService diaEventoService;
-
-	@Autowired
-	private EventoPresencialLogService eventoPresencialLogService;
-
-	@Autowired
 	private DiaEventoPaginacaoService diaEventoPaginacaoService;
-
-	@Autowired
-	private LogEvePresencialPaginacaoService logEventoPresencialPaginacaoService;
-
-	@Autowired
-	private UnidadeTrabalhoService unidadeService;
-
-	@Autowired
-	private CargoService cargoService;
-
-	@Autowired
-	private SexoService sexoService;
-
-	@Autowired
-	private EscolaridadeService escolaridadeService;
 
 	@Autowired
 	private PermissoesEventoPresencialService permissoesEvePresencialService;
@@ -104,115 +61,139 @@ public class EventosPresencialControler {
 	private Authentication autenticado;
 
 	private final static Integer MAXIMO_PAGES = 3;
-	private final static Integer MAXIMO_PAGES_LOGS = 20;
+	private final static Integer MAXIMO_PAGES_EVENTOS = 20;
 
 	private Page<DiaEvento> getDiaPaginacao(Long id, Integer page) {
 		return diaEventoPaginacaoService.listarDiasPorProgramacao(id, PageRequest.of(page, MAXIMO_PAGES));
 	}
-
-	private Page<EventoPresencialLog> getLogEvePaginacao(Long id, Integer page) {
-		return logEventoPresencialPaginacaoService.listarLogsPorEvento(id, PageRequest.of(page, MAXIMO_PAGES_LOGS));
+	
+	private Page<EventoPresencial> getEventoPaginacao(Integer page) {
+		return eventoPresencialService.listarTodosPublicados(PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
 	}
 
 	@GetMapping({ "/", "" })
 	public String eventosPresencial(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
-		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
-		if (usuarioLogado.isPerfilCompleto()) {
-			model.addAttribute("usuario", usuarioLogado);
-			model.addAttribute("eventos", eventoPresencialService.listarTodosPublicados());
-			return "dashboard/eventos/eventos-presencial";
-		} else {
-			return "redirect:/dashboard/complete-cadastro";
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
+		
+		addBaseAttributes(model, usuarioLogado);
+		model.addAttribute("eventos", getEventoPaginacao(0));
+		
+		return TemplateUtils.DASHBOARD_EVENTOS_EVENTOS_PRESENCIAL;
 	}
+
 	
+	@GetMapping( "/pagina/{page}")
+	public String eventosPresencial(@PathVariable("page") Integer page, Model model) {
+
+		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		addBaseAttributes(model, usuarioLogado);
+		model.addAttribute("eventos", getEventoPaginacao(page));
+		
+		return TemplateUtils.DASHBOARD_EVENTOS_EVENTOS_PRESENCIAL;
+	}
+
 	@GetMapping("/{id}/verifica/usuario/tem/codigo")
 	@ResponseBody
-	public ResponseEntity inscricoesEventoPresencaPresente(@PathVariable("id") Long id) {
-		
+	public ResponseEntity<?> inscricoesEventoPresencaPresente(@PathVariable("id") Long id) {
+
 		Usuario usuarioLogado = getUsuario();
 		EventoPresencial evento = eventoPresencialService.buscarPor(id);
-		if(evento.getPermissoes().temCodigo(usuarioLogado)) {
+		
+		if (evento.getPermissoes().temCodigo(usuarioLogado)) {
 			return new ResponseEntity<>(HttpStatus.OK);
-		}else {
+		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
-	
+
 	@PostMapping("/detalhes")
-	public String eventoDetalhesComCodigo(@RequestParam("id") Long id, @RequestParam("codigo") String codigo, RedirectAttributes model) {
+	public String eventoDetalhesComCodigo(@RequestParam("id") Long id, @RequestParam("codigo") String codigo,
+			RedirectAttributes model) {
 
 		Usuario usuarioLogado = getUsuario();
 		EventoPresencial evento = eventoPresencialService.buscarPor(id);
-		
-		if(evento.getPermissoes().getCodigo().equalsIgnoreCase(codigo)) {
-			
+
+		if (evento.getPermissoes().getCodigo().equalsIgnoreCase(codigo)) {
+
 			PermissoesEventoPresencial permissoes = evento.getPermissoes();
-			List<String> usuarios = (permissoes.getUsuariosComCodigo().isEmpty() ? new ArrayList<>() : permissoes.getUsuariosComCodigo()); 
+			List<String> usuarios = (permissoes.getUsuariosComCodigo().isEmpty() ? new ArrayList<>()
+					: permissoes.getUsuariosComCodigo());
 			usuarios.add(usuarioLogado.getEmail());
 			permissoes.setUsuariosComCodigo(usuarios);
 			permissoesEvePresencialService.salvar(permissoes);
-			return "redirect:/dashboard/eventos/presenciais/detalhes/" + id;
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS + "/detalhes/" + id;
 
-		}else {
-			model.addFlashAttribute("alert", "alert alert-fill-danger");
-			model.addFlashAttribute("message", "código inválido");
-			return "redirect:/dashboard/eventos/presenciais";
+		} else {
+			RedirectUtils.mensagemError(model, "código inválido");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS;
 		}
 	}
 
 	@GetMapping("/detalhes/{id}")
 	public String eventoDetalhes(@PathVariable("id") Long id, Model model, RedirectAttributes red) {
-		
+
 		Usuario usuarioLogado = getUsuario();
 		EventoPresencial evento = eventoPresencialService.buscarPor(id);
 		
-		if(!evento.getPermissoes().valida(usuarioLogado)) {
-			red.addFlashAttribute("alert", "alert alert-fill-danger");
-			red.addFlashAttribute("message", "você não tem permissão");
-			return "redirect:/dashboard/eventos/online";
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
-		
-		if(evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
-			red.addFlashAttribute("alert", "alert alert-fill-danger");
-			red.addFlashAttribute("message", "você não tem permissão para acessar esse evento");
-			return "redirect:/dashboard/eventos/presenciais";
+
+		if (!evento.getPermissoes().valida(usuarioLogado)) {
+			RedirectUtils.mensagemError(red, "você não tem permissão");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS;
 		}
+
+		if (evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
+			RedirectUtils.mensagemError(red, "você não tem permissão para acessar esse evento");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS;
+		}
+
+		addBaseAttributes(model, usuarioLogado);
 		
-		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("evento", evento);
 		model.addAttribute("dias", getDiaPaginacao(evento.getProgramacao().getId(), 0));
 
-		return "dashboard/eventos/eventos-presencial-detalhes";
+		return TemplateUtils.DASHBOARD_EVENTOS_EVENTOS_PRESENCIAL_DETALHES; 
 	}
 
 	@GetMapping("/detalhes/{id}/pagina/{page}")
-	public String eventoDetalhes(@PathVariable("id") Long id, @PathVariable("page") Integer page, Model model, RedirectAttributes red) {
+	public String eventoDetalhes(@PathVariable("id") Long id, @PathVariable("page") Integer page, Model model,
+			RedirectAttributes red) {
 
 		Usuario usuarioLogado = getUsuario();
 		EventoPresencial evento = eventoPresencialService.buscarPor(id);
 		
-		if(!evento.getPermissoes().valida(usuarioLogado)) {
-			red.addFlashAttribute("alert", "alert alert-fill-danger");
-			red.addFlashAttribute("message", "você não tem permissão");
-			return "redirect:/dashboard/eventos/online";
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
-		
-		if(evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
-			red.addFlashAttribute("alert", "alert alert-fill-danger");
-			red.addFlashAttribute("message", "você não tem permissão para acessar esse evento");
-			return "redirect:/dashboard/eventos/presenciais";
+
+		if (!evento.getPermissoes().valida(usuarioLogado)) {
+			RedirectUtils.mensagemError(red, "você não tem permissão");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS;
 		}
+
+		if (evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
+			RedirectUtils.mensagemError(red, "você não tem permissão para acessar esse evento");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS;
+		}
+
+		addBaseAttributes(model, usuarioLogado);
 		
-		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("usuario", usuarioLogado);
 		model.addAttribute("evento", evento);
 		model.addAttribute("dias", getDiaPaginacao(evento.getProgramacao().getId(), page));
 
-		return "dashboard/eventos/eventos-presencial-detalhes";
+		return TemplateUtils.DASHBOARD_EVENTOS_EVENTOS_PRESENCIAL_DETALHES; 
 	}
 
 	@GetMapping("/atividade/{id}/inscricao")
@@ -220,37 +201,32 @@ public class EventosPresencialControler {
 
 		Usuario usuarioLogado = getUsuario();
 		AtividadePresencial atividade = atividadePresencialService.buscarPor(id);
-		
-		if( atividade.naoTemVagas()) {
-			model.addFlashAttribute("alert", "alert alert-fill-warning");
-			model.addFlashAttribute("message", "Atividade não tem mais vagas");
-			return "redirect:/dashboard/eventos/presenciais/detalhes/"
+
+		if (atividade.naoTemVagas()) {
+			RedirectUtils.mensagemError(model, "Atividade não tem mais vagas");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS + "/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		}
-		
-		
-		if(!atividade.usuarioNaoEhResponsavelDoEvento(usuarioLogado)) {
-			model.addFlashAttribute("alert", "alert alert-fill-danger");
-			model.addFlashAttribute("message", "você é o responsável pelo o evento");
-			return "redirect:/dashboard/eventos/presenciais/detalhes/"
+
+		if (!atividade.usuarioNaoEhResponsavelDoEvento(usuarioLogado)) {
+			RedirectUtils.mensagemError(model, "você é o responsável pelo o evento");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS + "/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		}
-				
+
 		if (atividade.podeSeInscrever(usuarioLogado)) {
-			
+
 			inscricaoPresencialService.salvar(new InscricaoPresencial(usuarioLogado, atividade));
-			model.addFlashAttribute("alert", "alert alert-fill-success");
-			model.addFlashAttribute("message", "inscrição realizada com sucesso");
-			return "redirect:/dashboard/eventos/presenciais/detalhes/"
+			RedirectUtils.mensagemSucesso(model, "inscrição realizada com sucesso");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS + "/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		} else {
-			model.addFlashAttribute("alert", "alert alert-fill-danger");
-			model.addFlashAttribute("message", "você não pode se inscrever em atividades de mesmo horário");
-			return "redirect:/dashboard/eventos/presenciais/detalhes/"
+			RedirectUtils.mensagemError(model, "você não pode se inscrever em atividades de mesmo horário");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS + "/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		}
 	}
-	
+
 	@GetMapping("/atividade/{id}/cancelar/inscricao")
 	public String eventoDetalhesCancelarInscricao(@PathVariable("id") Long id, RedirectAttributes model) {
 
@@ -258,34 +234,28 @@ public class EventosPresencialControler {
 		AtividadePresencial atividade = atividadePresencialService.buscarPor(id);
 
 		if (atividade.isInscrito(usuarioLogado)) {
-			
+
 			inscricaoPresencialService.deletar(atividade.getInscricao(usuarioLogado));
-			model.addFlashAttribute("alert", "alert alert-fill-success");
-			model.addFlashAttribute("message", "inscrição foi cancelada com sucesso");
-			return "redirect:/dashboard/eventos/presenciais/detalhes/"
+			RedirectUtils.mensagemSucesso(model, "inscrição foi cancelada com sucesso");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS + "/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		} else {
-			model.addFlashAttribute("alert", "alert alert-fill-danger");
-			model.addFlashAttribute("message", "um erro ocorreu");
-			return "redirect:/dashboard/eventos/presenciais/detalhes/"
+			RedirectUtils.mensagemError(model, "um erro ocorreu");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS + "/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		}
 	}
-	
-	
-	
+
 	private Usuario getUsuario() {
 		autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.buscarPor(autenticado.getName());
 		return usuario;
 	}
-
-	private EventoPresencialLog log(String mensagem, EventoPresencial evento) {
-		EventoPresencialLog eventoPresencialLog = new EventoPresencialLog();
-		eventoPresencialLog.setData(LocalDate.now());
-		eventoPresencialLog
-				.setMsg(mensagem + " :: usuário: " + getUsuario().getNome() + " :: email: " + getUsuario().getEmail());
-		eventoPresencialLog.setEventoPresencial(evento);
-		return eventoPresencialLog;
+	
+	private void addBaseAttributes(Model model, Usuario usuarioLogado) {
+		
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("mensagens", usuarioLogado.getMensagensNaoLidas());
 	}
 }

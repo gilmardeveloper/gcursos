@@ -100,6 +100,7 @@ public class GcursosApplication {
 		} catch (PropertyVetoException e) {
 			e.printStackTrace();
 		}
+		
 		dataSource.setJdbcUrl("jdbc:mysql://localhost/gcursos?useUnicode=yes&characterEncoding=UTF-8");
 
 		dataSource.setMinPoolSize(1);

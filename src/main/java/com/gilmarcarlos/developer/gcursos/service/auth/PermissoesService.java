@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.auth.Permissoes;
+import com.gilmarcarlos.developer.gcursos.model.locais.Departamento;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.auth.PermissoesRepository;
 
@@ -35,6 +36,13 @@ public class PermissoesService {
 		if(usuario.getPermissoes() != null) {
 			deletar(usuario.getPermissoes().getId());
 		}
+	}
+
+	public boolean temDepartamento(Departamento departamento) {
+		
+		if(departamento.getId() == null) return false;
+		
+		return listarTodos().stream().anyMatch( p -> p.getDepartamento() == departamento.getId());
 	}
 	
 }

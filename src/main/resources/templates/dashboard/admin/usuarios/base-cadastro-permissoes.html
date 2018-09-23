@@ -179,7 +179,6 @@
 														<div class="form-group">
 															<label for="restringir">Restrições</label>
 															<select id="restringir" class="form-control js-select-single" name="restringir" multiple="multiple" style="width:100%" >
-																<option value="nenhuma" th:selected="${user.permissoes} != null and ${#lists.contains(user.permissoes.restringir, 'nenhuma')}">NENHUMA</option>
 																<option value="departamento" th:selected="${user.permissoes} != null and ${#lists.contains(user.permissoes.restringir, 'departamento')}">POR DEPARTAMENTO</option>
 																<option value="responsabilidade" th:selected="${user.permissoes} != null and ${#lists.contains(user.permissoes.restringir, 'responsabilidade')}">POR RESPONSABILIDADE</option>
 																

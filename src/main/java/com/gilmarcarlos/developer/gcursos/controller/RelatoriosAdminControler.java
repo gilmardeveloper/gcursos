@@ -30,20 +30,20 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.listas.RelatorioInscrico
 import com.gilmarcarlos.developer.gcursos.model.eventos.listas.RelatorioInscricoesPresenciais;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.AtividadePresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.DiaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.AtividadePresencialService;
-import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.DiaEventoPaginacaoService;
-import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.DiaEventoService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.locais.CargoService;
 import com.gilmarcarlos.developer.gcursos.service.locais.UnidadeTrabalhoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
+import com.gilmarcarlos.developer.gcursos.utils.TemplateUtils;
+import com.gilmarcarlos.developer.gcursos.utils.UrlUtils;
 
 @Controller
-@RequestMapping("/dashboard/admin/relatorios")
+@RequestMapping(UrlUtils.DASHBOARD_ADMIN_RELATORIOS)
 public class RelatoriosAdminControler {
 
 	@Autowired
@@ -59,12 +59,6 @@ public class RelatoriosAdminControler {
 	private AtividadePresencialService atividadePresencialService;
 
 	@Autowired
-	private DiaEventoService diaEventoService;
-
-	@Autowired
-	private DiaEventoPaginacaoService diaEventoPaginacaoService;
-	
-	@Autowired
 	private RelatorioInscricoesPresenciais relatoriosPresenciais;
 	
 	@Autowired
@@ -78,7 +72,6 @@ public class RelatoriosAdminControler {
 
 	private Authentication autenticado;
 
-	private final static Integer MAXIMO_PAGES = 3;
 	private final static Integer MAXIMO_PAGES_EVENTOS = 20;
 	
 	private Page<Usuario> getUsuarioPaginacao(Integer page) {
@@ -89,24 +82,40 @@ public class RelatoriosAdminControler {
 		return usuarioService.buscarPor(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
 	}
 	
+	private Page<Usuario> getUsuarioIdPaginacao(Long departamento, Long id) {
+		return usuarioService.buscarPor(departamento, id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
+	
 	private Page<Usuario> getUsuarioUnidadesPaginacao(Long id) {
 		return usuarioService.buscarPorUnidade(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
+	
+	private Page<Usuario> getUsuarioUnidadesPaginacao(Long departamento, Long id) {
+		return usuarioService.buscarPorUnidade(departamento, id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
 	}
 	
 	private Page<Usuario> getUsuarioCargosPaginacao(Long id) {
 		return usuarioService.buscarPorCargo(id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
 	}
 	
+	private Page<Usuario> getUsuarioCargosPaginacao(Long departamento, Long id) {
+		return usuarioService.buscarPorCargo(departamento, id, PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+	}
+	
+	private Page<EventoOnline> getEventoOnlinePaginacao(Usuario usuario, Integer page) {
+		return eventoOnlineService.listarTodos(usuario, PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
+	}
+	
 	private Page<EventoOnline> getEventoOnlinePaginacao(Integer page) {
 		return eventoOnlineService.listarTodos(PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
 	}
 
-	private Page<DiaEvento> getDiaPaginacao(Long id, Integer page) {
-		return diaEventoPaginacaoService.listarDiasPorProgramacao(id, PageRequest.of(page, MAXIMO_PAGES));
-	}
-
 	private Page<EventoPresencial> getEventoPresencialPaginacao(Integer page) {
 		return eventoPresencialService.listarTodos(PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
+	}
+	
+	private Page<EventoPresencial> getEventoPresencialPaginacao(Usuario usuario, Integer page) {
+		return eventoPresencialService.listarTodos(usuario, PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
 	}
 	
 	private Page<EventoOnline> getEventoOnlineIdPaginacao(Long id) {
@@ -129,32 +138,71 @@ public class RelatoriosAdminControler {
 		return pages;
 	}
 	
+	private Page<EventoPresencial> getEventoPresencialPeriodoPaginacao(Usuario usuario, LocalDate inicio, LocalDate termino)
+			throws DataFinalMenorException, EventosNaoEncontradosException {
+		Page<EventoPresencial> pages = eventoPresencialService.buscarPor(usuario, inicio, termino,
+				PageRequest.of(0, MAXIMO_PAGES_EVENTOS));
+
+		if (pages.getNumberOfElements() == 0) {
+			throw new EventosNaoEncontradosException();
+		}
+
+		return pages;
+	}
+	
+	private Page<Usuario> getUsuarioDepartamentoPaginacao(Long id, Integer page) {
+		return usuarioService.buscarPorDepartamento(id, PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
+	}
+	
 	@GetMapping("/inscricoes/usuarios")
 	public String inscricaoUsuario(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.podeVisualizar("relatoriosUsuarios")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
 
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("usuarios", getUsuarioPaginacao(0));
-		model.addAttribute("cargos", cargoService.listarTodos());
-		model.addAttribute("unidades", unidadeService.listarTodos());
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		if (usuarioLogado.temRestricao("departamento")) {
+			model.addAttribute("usuarios", getUsuarioDepartamentoPaginacao(usuarioLogado.getPermissoes().getDepartamento(), 0));
+		} else {
+			model.addAttribute("usuarios", getUsuarioPaginacao(0));
+		}
+		
+		addBaseAttributes(model, usuarioLogado);
+		addLocaisAttributes(model);
 
-		return "dashboard/admin/relatorios/consulta_inscricoes_usuario";
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_CONSULTA_INSCRICOES_USUARIO;
 	}
+
 	
 	@GetMapping("/inscricoes/usuarios/pagina/{page}")
 	public String inscricaoUsuario(@PathVariable("page")Integer page, Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.podeVisualizar("relatoriosUsuarios")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
 
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("usuarios", getUsuarioPaginacao(page));
-		model.addAttribute("cargos", cargoService.listarTodos());
-		model.addAttribute("unidades", unidadeService.listarTodos());
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		if (usuarioLogado.temRestricao("departamento")) {
+			model.addAttribute("usuarios", getUsuarioDepartamentoPaginacao(usuarioLogado.getPermissoes().getDepartamento(), page));
+		} else {
+			model.addAttribute("usuarios", getUsuarioPaginacao(page));
+		}
 
-		return "dashboard/admin/relatorios/consulta_inscricoes_usuario";
+		addBaseAttributes(model, usuarioLogado);
+		addLocaisAttributes(model);
+
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_CONSULTA_INSCRICOES_USUARIO;
 	}
 	
 	@GetMapping("/inscricoes/usuarios/{id}")
@@ -162,13 +210,24 @@ public class RelatoriosAdminControler {
 
 		Usuario usuarioLogado = getUsuario();
 
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("usuarios", getUsuarioIdPaginacao(id));
-		model.addAttribute("cargos", cargoService.listarTodos());
-		model.addAttribute("unidades", unidadeService.listarTodos());
+		if (!usuarioLogado.podeVisualizar("relatoriosUsuarios")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
 
-		return "dashboard/admin/relatorios/consulta_inscricoes_usuario";
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		if (usuarioLogado.temRestricao("departamento")) {
+			model.addAttribute("usuarios", getUsuarioIdPaginacao(usuarioLogado.getPermissoes().getDepartamento(), id));
+		} else {
+			model.addAttribute("usuarios", getUsuarioIdPaginacao(id));
+		}
+		
+		addBaseAttributes(model, usuarioLogado);
+		addLocaisAttributes(model);
+
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_CONSULTA_INSCRICOES_USUARIO;
 	}
 	
 	@GetMapping("/inscricoes/usuarios/unidades/{id}")
@@ -176,116 +235,196 @@ public class RelatoriosAdminControler {
 
 		Usuario usuarioLogado = getUsuario();
 
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("usuarios", getUsuarioUnidadesPaginacao(id));
-		model.addAttribute("cargos", cargoService.listarTodos());
-		model.addAttribute("unidades", unidadeService.listarTodos());
+		if (!usuarioLogado.podeVisualizar("relatoriosUsuarios")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
 
-		return "dashboard/admin/relatorios/consulta_inscricoes_usuario";
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		if (usuarioLogado.temRestricao("departamento")) {
+			model.addAttribute("usuarios", getUsuarioUnidadesPaginacao(usuarioLogado.getPermissoes().getDepartamento(), id));
+		} else {
+			model.addAttribute("usuarios", getUsuarioUnidadesPaginacao(id));
+		}
+		
+		
+		addBaseAttributes(model, usuarioLogado);
+		addLocaisAttributes(model);
+
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_CONSULTA_INSCRICOES_USUARIO;
 	}
 	
 	@GetMapping("/inscricoes/usuarios/cargos/{id}")
 	public String inscricaoUsuarioCargos(@PathVariable("id") Long id, Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.podeVisualizar("relatoriosUsuarios")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
 
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("usuarios", getUsuarioCargosPaginacao(id));
-		model.addAttribute("cargos", cargoService.listarTodos());
-		model.addAttribute("unidades", unidadeService.listarTodos());
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		if (usuarioLogado.temRestricao("departamento")) {
+			model.addAttribute("usuarios", getUsuarioCargosPaginacao(usuarioLogado.getPermissoes().getDepartamento(), id));
+		} else {
+			model.addAttribute("usuarios", getUsuarioCargosPaginacao(id));
+		}
 
-		return "dashboard/admin/relatorios/consulta_inscricoes_usuario";
+		addBaseAttributes(model, usuarioLogado);
+		addLocaisAttributes(model);
+
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_CONSULTA_INSCRICOES_USUARIO;
 	}
 	
 	@GetMapping("/inscricoes/usuario/detalhes/{id}")
 	public String inscricoesUsuarioDetalhes(@PathVariable("id") Long id, Model model) {
 
 		Usuario usuarioLogado = getUsuario();
-		Usuario user = usuarioService.buscarPor(id);
 		
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		if (!usuarioLogado.podeVisualizar("relatoriosUsuarios")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		Usuario user = usuarioService.buscarPor(id);
+		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("user", user);
 
-		return "dashboard/admin/relatorios/detalhes_inscricoes_usuario";
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_DETALHES_INSCRICOES_USUARIO; 
 	}
 	
 	@GetMapping("/inscricoes/presenciais")
 	public String inscricaoPresencial(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.podeVisualizar("relatoriosPresenciais")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		if (usuarioLogado.temRestricao("responsabilidade")) {
+			model.addAttribute("eventos", getEventoPresencialPaginacao(usuarioLogado, 0));
+		} else {
+			model.addAttribute("eventos", getEventoPresencialPaginacao(0));
+		}
+		
+		addBaseAttributes(model, usuarioLogado);
 
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("eventos", getEventoPresencialPaginacao(0));
-
-		return "dashboard/admin/relatorios/consulta_inscricoes_presenciais";
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_CONSULTA_INSCRICOES_PRESENCIAIS;
 	}
 	
 	@GetMapping("/inscricoes/presenciais/pagina/{page}")
 	public String inscricaoPresencial(@PathVariable("page") Integer page, Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.podeVisualizar("relatoriosPresenciais")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		if (usuarioLogado.temRestricao("responsabilidade")) {
+			model.addAttribute("eventos", getEventoPresencialPaginacao(usuarioLogado, page));
+		} else {
+			model.addAttribute("eventos", getEventoPresencialPaginacao(page));
+		}
 
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("eventos", getEventoPresencialPaginacao(page));
+		addBaseAttributes(model, usuarioLogado);
 
-		return "dashboard/admin/relatorios/consulta_inscricoes_presenciais";
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_CONSULTA_INSCRICOES_PRESENCIAIS;
 	}
 
 	@GetMapping("/inscricoes/presenciais/{id}")
 	public String inscricaoPresencial(@PathVariable("id") Long id, Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.podeVisualizar("relatoriosPresenciais")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
 
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("eventos", getEventoPresencialIdPaginacao(id));
 
-		return "dashboard/admin/relatorios/consulta_inscricoes_presenciais";
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_CONSULTA_INSCRICOES_PRESENCIAIS;
 	}
 
 	@PostMapping("/inscricoes/presenciais/periodo")
 	public String incricaoPresencial(@RequestParam("dataInicio") LocalDate dataInicio,
 			@RequestParam("dataTermino") LocalDate dataTermino, Model model, RedirectAttributes red) {
 
+		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.podeVisualizar("relatoriosPresenciais")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
 		try {
-
-			Usuario usuarioLogado = getUsuario();
-			model.addAttribute("usuario", usuarioLogado);
-			model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-			model.addAttribute("eventos", getEventoPresencialPeriodoPaginacao(dataInicio, dataTermino));
+			
+			if (usuarioLogado.temRestricao("responsabilidade")) {
+				model.addAttribute("eventos", getEventoPresencialPeriodoPaginacao(usuarioLogado, dataInicio, dataTermino));
+			} else {
+				model.addAttribute("eventos", getEventoPresencialPeriodoPaginacao(dataInicio, dataTermino));
+			}
+			
+			addBaseAttributes(model, usuarioLogado);
 
 		} catch (DataFinalMenorException | EventosNaoEncontradosException e) {
-			red.addFlashAttribute("alert", "alert alert-fill-danger");
-			red.addFlashAttribute("message", e.getMessage());
-			return "redirect:/dashboard/admin/relatorios/inscricoes/presenciais";
+			RedirectUtils.mensagemError(red, e.getMessage());
+			return "redirect:" + UrlUtils.DASHBOARD_ADMIN_RELATORIOS + "/inscricoes/presenciais";
 		}
 
-		return "dashboard/admin/relatorios/consulta_inscricoes_presenciais";
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_CONSULTA_INSCRICOES_PRESENCIAIS;
 	}
 
 	@GetMapping("/inscricoes/presenciais/detalhes/{id}")
 	public String inscricoesDetalhes(@PathVariable("id") Long id, Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.podeVisualizar("relatoriosPresenciais")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
 		EventoPresencial evento = eventoPresencialService.buscarPor(id);
 		List<AtividadePresencial> atividades = atividadePresencialService.buscarPorEvento(id);
 		
 		List<GraficoAtividade> graficoAtividades = new ArrayList<>();
-		
 		atividades.forEach(a -> graficoAtividades.add(new GraficoAtividade(a.getTitulo(), a.getInscricoes())));
 		
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("atividades", atividades);
 		model.addAttribute("evento", evento);
 		model.addAttribute("graficoAtividades", graficoAtividades);
 
-		return "dashboard/admin/relatorios/detalhes_inscricoes_presenciais";
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_DETALHES_INSCRICOES_PRESENCIAIS;
 	}
 
 	@PostMapping(value = "/inscricoes/presenciais/gerar/relatorio")
@@ -295,11 +434,10 @@ public class RelatoriosAdminControler {
 		EventoPresencial evento = atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial();
 
 		if (!atividade.getInscricoes().isEmpty()) {
-			return "redirect:/dashboard/admin/relatorios/inscricoes/presenciais/" + id + "/gerar/relatorio-inscritos/" + tipo;
+			return "redirect:" + UrlUtils.DASHBOARD_ADMIN_RELATORIOS + "/inscricoes/presenciais/" + id + "/gerar/relatorio-inscritos/" + tipo;
 		} else {
-			model.addFlashAttribute("alert", "alert alert-fill-warning");
-			model.addFlashAttribute("message", "não existem inscritos para essa atividade");
-			return "redirect:/dashboard/admin/eventos/presencial/inscricoes/" + evento.getId();
+			RedirectUtils.mensagemError(model, "não existem inscritos para essa atividade");
+			return "redirect:" + UrlUtils.DASHBOARD_ADMIN_EVENTOS_PRESENCIAL + "/inscricoes/" + evento.getId();
 		}
 	}
 
@@ -308,7 +446,7 @@ public class RelatoriosAdminControler {
 
 		AtividadePresencial atividade = atividadePresencialService.buscarPor(id);
 
-		InputStream pdfLista = relatoriosPresenciais.gerar(atividade, tipo);
+		InputStream pdfLista = relatoriosPresenciais.gerar(getUsuario(), atividade, tipo);
 
 		try {
 			return IOUtils.toByteArray(pdfLista);
@@ -323,49 +461,87 @@ public class RelatoriosAdminControler {
 	public String inscricaoOnline(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.podeVisualizar("relatoriosOnline")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		if (usuarioLogado.temRestricao("responsabilidade")) {
+			model.addAttribute("eventos", getEventoOnlinePaginacao(usuarioLogado, 0));
+		} else {
+			model.addAttribute("eventos", getEventoOnlinePaginacao(0));
+		}
 
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("eventos", getEventoOnlinePaginacao(0));
+		addBaseAttributes(model, usuarioLogado);
 
-		return "dashboard/admin/relatorios/consulta_inscricoes_online";
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_CONSULTA_INSCRICOES_ONLINE;
 	}
 	
 	@GetMapping("/inscricoes/online/pagina/{page}")
 	public String inscricaoOnline(@PathVariable("page") Integer page, Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.podeVisualizar("relatoriosOnline")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		if (usuarioLogado.temRestricao("responsabilidade")) {
+			model.addAttribute("eventos", getEventoOnlinePaginacao(usuarioLogado, page));
+		} else {
+			model.addAttribute("eventos", getEventoOnlinePaginacao(page));
+		}
 
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("eventos", getEventoOnlinePaginacao(page));
+		addBaseAttributes(model, usuarioLogado);
 
-		return "dashboard/admin/relatorios/consulta_inscricoes_online";
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_CONSULTA_INSCRICOES_ONLINE;
 	}
 	
 	@GetMapping("/inscricoes/online/{id}")
 	public String inscricaoOnline(@PathVariable("id") Long id, Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.podeVisualizar("relatoriosOnline")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
 
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("eventos", getEventoOnlineIdPaginacao(id));
 
-		return "dashboard/admin/relatorios/consulta_inscricoes_online";
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_CONSULTA_INSCRICOES_ONLINE;
 	}
 	
 	@GetMapping("/inscricoes/online/detalhes/{id}")
 	public String inscricoesOnlineDetalhes(@PathVariable("id") Long id, Model model) {
 
 		Usuario usuarioLogado = getUsuario();
-		EventoOnline evento = eventoOnlineService.buscarPor(id);
 		
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		if (!usuarioLogado.podeVisualizar("relatoriosOnline")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		EventoOnline evento = eventoOnlineService.buscarPor(id);
+		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("evento", evento);
 
-		return "dashboard/admin/relatorios/detalhes_inscricoes_online";
+		return TemplateUtils.DASHBOARD_ADMIN_RELATORIOS_DETALHES_INSCRICOES_ONLINE;
 	}
 	
 	@PostMapping(value = "/inscricoes/online/gerar/relatorio")
@@ -374,11 +550,10 @@ public class RelatoriosAdminControler {
 		EventoOnline evento = eventoOnlineService.buscarPor(id);
 
 		if (!evento.getInscricoes().isEmpty()) {
-			return "redirect:/dashboard/admin/relatorios/inscricoes/online/" + id + "/gerar/relatorio-inscritos/" + tipo;
+			return "redirect:" + UrlUtils.DASHBOARD_ADMIN_RELATORIOS + "/inscricoes/online/" + id + "/gerar/relatorio-inscritos/" + tipo;
 		} else {
-			model.addFlashAttribute("alert", "alert alert-fill-warning");
-			model.addFlashAttribute("message", "não existem inscritos para esse evento");
-			return "redirect:/dashboard/admin/eventos/online/inscricoes/" + evento.getId();
+			RedirectUtils.mensagemError(model, "não existem inscritos para esse evento");
+			return "redirect:" + UrlUtils.DASHBOARD_ADMIN_EVENTOS_ONLINE + "/online/inscricoes/" + evento.getId();
 		}
 	}
 
@@ -387,7 +562,7 @@ public class RelatoriosAdminControler {
 
 		EventoOnline evento = eventoOnlineService.buscarPor(id);
 
-		InputStream pdfLista = relatoriosOnline.gerar(evento, tipo);
+		InputStream pdfLista = relatoriosOnline.gerar(getUsuario(), evento, tipo);
 
 		try {
 			return IOUtils.toByteArray(pdfLista);
@@ -403,4 +578,16 @@ public class RelatoriosAdminControler {
 		Usuario usuario = usuarioService.buscarPor(autenticado.getName());
 		return usuario;
 	}
+	
+	private void addLocaisAttributes(Model model) {
+		model.addAttribute("cargos", cargoService.listarTodos());
+		model.addAttribute("unidades", unidadeService.listarTodos());
+	}
+
+	private void addBaseAttributes(Model model, Usuario usuarioLogado) {
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacaoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("mensagens", usuarioLogado.getMensagensNaoLidas());
+	}
+	
 }

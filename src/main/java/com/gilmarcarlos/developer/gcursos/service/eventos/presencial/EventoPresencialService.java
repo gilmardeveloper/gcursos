@@ -3,6 +3,7 @@ package com.gilmarcarlos.developer.gcursos.service.eventos.presencial;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,9 +15,12 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.DataFinalMeno
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventoCanceladoException;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.EventoPresencialRepository;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.InscricaoPresencialRepository;
+import com.gilmarcarlos.developer.gcursos.service.email.EmailService;
 import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
+import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 import com.gilmarcarlos.developer.gcursos.utils.IconeTypeUtils;
 import com.gilmarcarlos.developer.gcursos.utils.StatusTypeUtils;
 
@@ -31,6 +35,12 @@ public class EventoPresencialService {
 	
 	@Autowired
 	private NotificacaoService notificacoes;
+	
+	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
+	private EmailService emailService;
 
 	public EventoPresencial salvar(EventoPresencial eventoPresencial) throws DataFinalMenorException {
 
@@ -81,6 +91,13 @@ public class EventoPresencialService {
 		}
 		return repository.buscarPor(inicio, termino, pageable);
 	}
+	
+	public Page<EventoPresencial> buscarPor(Usuario usuario, LocalDate inicio, LocalDate termino, Pageable pageable) throws DataFinalMenorException {
+		if(termino.isBefore(inicio)) {
+			throw new DataFinalMenorException();
+		}
+		return repository.buscarPor(usuario.getId(), inicio, termino, pageable);
+	}
 
 	private void removerPublicaoSeEstiverFechado() {
 		for (EventoPresencial evento : repository.listAll()) {
@@ -93,6 +110,10 @@ public class EventoPresencialService {
 
 	public List<EventoPresencial> listarTodosPublicados() {
 		return repository.findByPublicadoTrue();
+	}
+	
+	public Page<EventoPresencial> listarTodosPublicados(Pageable pageable) {
+		return repository.findByPublicadoTrue(pageable);
 	}
 
 	public EventoPresencial buscarPor(Long id) {
@@ -136,9 +157,26 @@ public class EventoPresencialService {
 		if (evento.getPermissoes() == null) {
 			throw new NullPointerException("O evento não tem permissões configuradas");
 		}
+		
+		if(evento.isCertificado() && evento.getCertificadoPresencial() == null) {
+			throw new NullPointerException("O evento não tem um certificado configurado");
+		}
+		
+		if(evento.getProgramacao().getDias().stream().anyMatch(d -> d.getAtividades().isEmpty())) {
+			throw new NullPointerException("O evento não tem atividades cadastradas");
+		}
 
 		evento.ativarPublicacao();
-		repository.save(evento);
+		EventoPresencial novoEvento = repository.save(evento);
+		
+		List<Usuario> usuarios = usuarioService.listarCadastrosCompletos().stream().filter( u -> evento.getPermissoes().valida(u)).collect(Collectors.toList());
+		List<String> emails = new ArrayList<>();
+		usuarios.forEach( u -> emails.add(u.getEmail()));
+		
+		String[] array = emails.stream().toArray(String[]::new );
+		
+		emailService.enviarNovoEvento(array, "/dashboard/eventos/presenciais/detalhes/" + novoEvento.getId());
+
 	}
 
 	private void validarStatusPublicacao(EventoPresencial eventoPresencial, EventoPresencial evento) {
@@ -168,6 +206,12 @@ public class EventoPresencialService {
 		listarTodos().forEach( e -> lista.add(new EventoDTO(e)));
 		return lista;
 	}
+	
+	public List<EventoDTO> listarTodosDTO(Usuario usuario) {
+		List<EventoDTO> lista = new ArrayList<>();
+		usuario.getEventoPresencial().forEach( e -> lista.add(new EventoDTO(e)));
+		return lista;
+	}
 
 	public boolean sexoExiste(String nome) {
 		return listarTodos().stream().anyMatch( e -> e.getPermissoes().getSexos().contains(nome));
@@ -176,5 +220,11 @@ public class EventoPresencialService {
 	public Page<EventoPresencial> buscarPorUsuario(Long id, Pageable pageable) {
 		return repository.buscarPorUsuario(id, pageable);
 	}
+
+	public Page<EventoPresencial> listarTodos(Usuario usuario, Pageable pageable) {
+		return repository.buscarPorResponsavel(usuario.getId(), pageable);
+	}
+
+	
 
 }

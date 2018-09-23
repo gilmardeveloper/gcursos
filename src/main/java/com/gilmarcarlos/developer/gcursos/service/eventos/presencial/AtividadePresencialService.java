@@ -28,14 +28,10 @@ public class AtividadePresencialService {
 	private NotificacaoService notificacoes;
 
 	public AtividadePresencial salvar(AtividadePresencial atividade) throws HoraFinalMenorException {
-		AtividadePresencial old = buscarPor(atividade.getId());
-
-		LocalTime oldHoraInicio = old.getTimeInicio();
-		LocalTime oldHoraFim = old.getTimeFim();
 
 		LocalTime horaInicio = atividade.getTimeInicio();
 		LocalTime horaFim = atividade.getTimeFim();
-		
+
 		LocalTime horaIncioEvento = atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()
 				.getTimeAbertura();
 		LocalTime horaFimEvento = atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()
@@ -48,26 +44,32 @@ public class AtividadePresencialService {
 		if (horaInicio.isBefore(horaIncioEvento) || horaFim.isAfter(horaFimEvento)) {
 			throw new HoraFinalMenorException("a hora inicial ou final da atividade excede o horário do evento");
 		}
-		
 
-		if (!oldHoraInicio.equals(horaInicio) || !oldHoraFim.equals(horaFim)
-				|| !old.getDiaEvento().equals(atividade.getDiaEvento())){
+		AtividadePresencial old = buscarPor(atividade.getId());
 
-			System.err.println(oldHoraInicio + " " + horaInicio);
-			
-			if (!old.getInscricoes().isEmpty()) {
-				old.getInscricoes().forEach(i -> {
-					notificacoes.salvar(new Notificacao(i.getUsuario(), "Inscrição cancelada", IconeTypeUtils.INFORMACAO,
-							StatusTypeUtils.INFORMACAO,
-							"sua inscrição foi cancelada porque a atividade teve seu horário alterado, atvidade: "
-									+ old.getTitulo() + " evento: " + i.getEventoPresencial().getTitulo()));
-					inscricoesRepository.deleteById(i.getId());
+		if (old != null) {
 
-				});
+			LocalTime oldHoraInicio = old.getTimeInicio();
+			LocalTime oldHoraFim = old.getTimeFim();
+
+			if (!oldHoraInicio.equals(horaInicio) || !oldHoraFim.equals(horaFim)
+					|| !old.getDiaEvento().equals(atividade.getDiaEvento())) {
+
+				if (!old.getInscricoes().isEmpty()) {
+					old.getInscricoes().forEach(i -> {
+						notificacoes.salvar(new Notificacao(i.getUsuario(), "Inscrição cancelada",
+								IconeTypeUtils.INFORMACAO, StatusTypeUtils.INFORMACAO,
+								"sua inscrição foi cancelada porque a atividade teve seu horário alterado, atvidade: "
+										+ old.getTitulo() + " evento: " + i.getEventoPresencial().getTitulo()));
+						inscricoesRepository.deleteById(i.getId());
+
+					});
+				}
+
 			}
 
 		}
-		
+
 		return repository.save(atividade);
 	}
 
@@ -99,26 +101,26 @@ public class AtividadePresencialService {
 	public List<AtividadePresencial> buscarPorEvento(Long id) {
 		return repository.buscarPorEvento(id);
 	}
-	
+
 	public List<AtividadePresencial> buscarPorDia(Long id) {
 		return repository.buscarPorDia(id);
 	}
 
 	public void deletePorDia(Long id) {
-		
-		for(AtividadePresencial atividade : buscarPorDia(id)) {
-			
+
+		for (AtividadePresencial atividade : buscarPorDia(id)) {
+
 			if (!atividade.getInscricoes().isEmpty()) {
 				atividade.getInscricoes().forEach(i -> {
-					notificacoes.salvar(new Notificacao(i.getUsuario(), "Inscrição cancelada", IconeTypeUtils.INFORMACAO,
-							StatusTypeUtils.INFORMACAO,
+					notificacoes.salvar(new Notificacao(i.getUsuario(), "Inscrição cancelada",
+							IconeTypeUtils.INFORMACAO, StatusTypeUtils.INFORMACAO,
 							"sua inscrição foi cancelada porque a atividade foi excluída do evento, atvidade: "
 									+ atividade.getTitulo() + " evento: " + i.getEventoPresencial().getTitulo()));
 					inscricoesRepository.deleteById(i.getId());
 
 				});
 			}
-			
+
 		}
 
 		repository.deletePorDia(id);

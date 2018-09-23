@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnline;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -62,9 +63,9 @@ public class RelatorioInscricoesOnline implements Serializable {
 	private List<RelatorioInscricoesOnline> lista;
 
 	/* metodo publico para realizar o parse e gerar o contrato */
-	public InputStream gerar(EventoOnline evento, String tipo) {
+	public InputStream gerar(Usuario usuario, EventoOnline evento, String tipo) {
 		this.lista = new ArrayList<>();
-		parse(evento, tipo);
+		parse(usuario, evento, tipo);
 		return gerarPdf();
 	}
 
@@ -87,16 +88,21 @@ public class RelatorioInscricoesOnline implements Serializable {
 
 		try {
 
-			print = JasperFillManager.fillReport("relatorio_inscricoes_evento_online.jasper", parametros,
-					dataSource); // em produção alterar para "/caminho_da_pasta/" + "arquivo.jasper"
+			print = JasperFillManager.fillReport("/home/narclk123/relatorio_inscricoes_evento_online.jasper", parametros, dataSource); // em
+																														// produção
+																														// alterar
+																														// para
+																														// "/caminho_da_pasta/"
+																														// +
+																														// "arquivo.jasper"
 			JRPdfExporter exporter = new JRPdfExporter();
 
 			exporter.setExporterInput(new SimpleExporterInput(print));
-			exporter.setExporterOutput(
-					new SimpleOutputStreamExporterOutput("relatorio_inscricoes_evento_online.pdf")); // em produção
-																											// alterar
-																											// para
-																											// "/caminho_da_pasta/arquivo.pdf"
+			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput("/home/narclk123/relatorio_inscricoes_evento_online.pdf")); // em
+																														// produção
+																														// alterar
+																														// para
+																														// "/caminho_da_pasta/arquivo.pdf"
 
 			SimplePdfReportConfiguration reportConfig = new SimplePdfReportConfiguration();
 			reportConfig.setSizePageToContent(true);
@@ -113,10 +119,10 @@ public class RelatorioInscricoesOnline implements Serializable {
 			exporter.exportReport();
 			System.out.println("retornando o arquivo");
 
-			return new FileInputStream(new File("relatorio_inscricoes_evento_online.pdf")); // em produção alterar
-																								// para
-																								// "/caminho_da_pasta/"
-																								// + "arquivo.pdf"
+			return new FileInputStream(new File("/home/narclk123/relatorio_inscricoes_evento_online.pdf")); // em produção alterar
+																							// para
+																							// "/caminho_da_pasta/"
+																							// + "arquivo.pdf"
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -129,32 +135,57 @@ public class RelatorioInscricoesOnline implements Serializable {
 	 * Transforma todos os campos necessários para gerar o pdf, em campos de string
 	 * 
 	 */
-	private void parse(EventoOnline evento, String tipo) {
-		evento.getInscricoes().forEach(i -> {
+	private void parse(Usuario usuario, EventoOnline evento, String tipo) {
 
-			if (tipo.equalsIgnoreCase("todos")) {
+		if (usuario.temRestricao("departamento")) {
 
-				preencherDados(evento, i);
+			evento.getInscricoes().forEach(i -> {
+				if (usuario.temMesmoDepartamento(i.getUsuario())) {
+					if (tipo.equalsIgnoreCase("todos")) {
 
-			} else if (tipo.equalsIgnoreCase("andamento")) {
-				
-				if(!i.isFinalizado()) {
-					preencherDados(evento, i);
+						preencherDados(evento, i);
+
+					} else if (tipo.equalsIgnoreCase("andamento")) {
+
+						if (!i.isFinalizado()) {
+							preencherDados(evento, i);
+						}
+
+					} else {
+						if (i.isFinalizado()) {
+							preencherDados(evento, i);
+						}
+					}
 				}
-				
-			} else {
-				if(i.isFinalizado()) {
+			});
+
+		} else {
+
+			evento.getInscricoes().forEach(i -> {
+
+				if (tipo.equalsIgnoreCase("todos")) {
+
 					preencherDados(evento, i);
+
+				} else if (tipo.equalsIgnoreCase("andamento")) {
+
+					if (!i.isFinalizado()) {
+						preencherDados(evento, i);
+					}
+
+				} else {
+					if (i.isFinalizado()) {
+						preencherDados(evento, i);
+					}
 				}
-			}
 
-		});
-
+			});
+		}
 	}
 
 	private void preencherDados(EventoOnline evento, InscricaoOnline i) {
 		RelatorioInscricoesOnline presenca = new RelatorioInscricoesOnline();
-		
+
 		presenca.setTitulo(evento.getTitulo());
 		presenca.setResponsavel(evento.getResponsavel().getNome());
 

@@ -154,11 +154,13 @@
 																</div>
 															</div>
 
+															<input type="hidden" name="dadosPessoais.cpf" th:value="${dadosPessoais.cpf}" />
+
 															<!-- form item -->
 															<div class="col-lg-6">
 																<div class="form-group">
 																	<label for="cpf">CPF</label>
-																	<input id="cpf" type="text" class="form-control" aria-describedby="cpfHelp" placeholder="digite apenas números" name="dadosPessoais.cpf" pattern="[0-9]+" required="true"  maxlength="11" th:value="${dadosPessoais.cpf}"/>
+																	<input id="cpf" type="text" class="form-control" aria-describedby="cpfHelp" placeholder="digite apenas números" pattern="[0-9]+" required="true"  maxlength="11" th:value="${dadosPessoais.cpf}" disabled="true" />
 																	<small id="cpfHelp" class="form-text text-muted"></small>
 																</div>
 															</div>
@@ -291,11 +293,13 @@
 																</div>
 															</div>
 
+															<input type="hidden" name="dadosPessoais.cpf" th:value="${novoCpf}" />
+
 															<!-- form item -->
 															<div class="col-lg-6">
 																<div class="form-group">
 																	<label for="cpf">CPF</label>
-																	<input id="cpf" type="text" class="form-control" aria-describedby="cpfHelp" placeholder="digite apenas números" name="dadosPessoais.cpf" pattern="[0-9]+" required="true"  maxlength="11" th:value="${novoCpf}"/>
+																	<input id="cpf" type="text" class="form-control" aria-describedby="cpfHelp" placeholder="digite apenas números" pattern="[0-9]+" required="true"  maxlength="11" th:value="${novoCpf}" disabled="true"/>
 																	<small id="cpfHelp" class="form-text text-muted"></small>
 																</div>
 															</div>
@@ -466,11 +470,13 @@
 												</div>
 											</div>
 
+											<input type="hidden" name="dadosPessoais.cpf" th:value="${outrosDadosPessoais.cpf}" />
+
 											<!-- form item -->
 											<div class="col-lg-6">
 												<div class="form-group">
 													<label for="outroCpf">CPF</label>
-													<input id="outroCpf" type="text" class="form-control" aria-describedby="outroCpfHelp" placeholder="digite apenas números" name="dadosPessoais.cpf" pattern="[0-9]+" required="true"  maxlength="11" th:value="${outrosDadosPessoais.cpf}"/>
+													<input id="outroCpf" type="text" class="form-control" aria-describedby="outroCpfHelp" placeholder="digite apenas números" pattern="[0-9]+" required="true"  maxlength="11" th:value="${outrosDadosPessoais.cpf}" disabled="true"/>
 													<small id="outroCpfHelp" class="form-text text-muted"></small>
 												</div>
 											</div>
@@ -581,11 +587,13 @@
 																</div>
 															</div>
 
+															<input type="hidden" name="dadosPessoais.cpf" th:value="${outroNovoCpf}" />
+
 															<!-- form item -->
 															<div class="col-lg-6">
 																<div class="form-group">
 																	<label for="outroNovoCpf">CPF</label>
-																	<input id="outroNovoCpf" type="text" class="form-control" aria-describedby="outroNovoCpfHelp" placeholder="digite apenas números" name="dadosPessoais.cpf" pattern="[0-9]+" required="true"  maxlength="11" th:value="${outroNovoCpf}"/>
+																	<input id="outroNovoCpf" type="text" class="form-control" aria-describedby="outroNovoCpfHelp" placeholder="digite apenas números" pattern="[0-9]+" required="true"  maxlength="11" th:value="${outroNovoCpf}" disabled="true"/>
 																	<small id="outroNovoCpfHelp" class="form-text text-muted"></small>
 																</div>
 															</div>

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
 import com.gilmarcarlos.developer.gcursos.model.auth.Privilegio;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
-import com.gilmarcarlos.developer.gcursos.repository.auth.AutorizacaoRepository;
 import com.gilmarcarlos.developer.gcursos.repository.usuarios.UsuarioRepository;
 import com.gilmarcarlos.developer.gcursos.security.brute.force.AutenticacaoBlockForcaBruta;
 import com.gilmarcarlos.developer.gcursos.security.exception.BruteForceException;
@@ -38,9 +37,6 @@ public class UsuarioService implements UserDetailsService {
     @Autowired
     private MessageSource messages;
   
-    @Autowired
-    private AutorizacaoRepository autorizacaoRepository;
- 
     @Autowired
 	private AutenticacaoBlockForcaBruta blockForcaBruta;
     

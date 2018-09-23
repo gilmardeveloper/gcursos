@@ -251,7 +251,7 @@ public class UsuarioControler {
 		return "redirect:" + UrlUtils.DASHBOARD_USUARIO + "/notificacoes";
 	}
 
-	@GetMapping("mensagens")
+	@GetMapping("/mensagens")
 	public String mensagens(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
@@ -344,6 +344,11 @@ public class UsuarioControler {
 	public String minhaInscricoes(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
 		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("inscricoes", getInscricoesPaginacao(0));
 
@@ -354,6 +359,11 @@ public class UsuarioControler {
 	public String minhaInscricoes(@PathVariable("page") Integer page, Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
 		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("inscricoes", getInscricoesPaginacao(page));
 
@@ -364,6 +374,11 @@ public class UsuarioControler {
 	public String eventosPresencialProgresso(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
 		Page<EventoPresencial> eventos = eventoService.buscarPorUsuario(usuarioLogado.getId(), PageRequest.of(0, MAXIMO_PAGES));
 
 		addBaseAttributes(model, usuarioLogado);
@@ -376,6 +391,11 @@ public class UsuarioControler {
 	public String eventosPresencialProgresso(@PathVariable("page") Integer page, Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
 		Page<EventoPresencial> eventos = eventoService.buscarPorUsuario(usuarioLogado.getId(), PageRequest.of(page, MAXIMO_PAGES));
 
 		addBaseAttributes(model, usuarioLogado);
@@ -388,6 +408,11 @@ public class UsuarioControler {
 	public String eventosOnlineProgresso(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
 		Page<EventoOnline> eventos = eventoOnlineService.buscarPorUsuario(usuarioLogado.getId(), PageRequest.of(0, MAXIMO_PAGES));
 
 		addBaseAttributes(model, usuarioLogado);
@@ -398,8 +423,13 @@ public class UsuarioControler {
 	
 	@GetMapping("/eventos/online/progresso/pagina/{page}")
 	public String eventosOnlineProgresso(@PathVariable("page") Integer page, Model model) {
-
+		
 		Usuario usuarioLogado = getUsuario();
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
 		Page<EventoOnline> eventos = eventoOnlineService.buscarPorUsuario(usuarioLogado.getId(), PageRequest.of(page, MAXIMO_PAGES));
 
 		addBaseAttributes(model, usuarioLogado);

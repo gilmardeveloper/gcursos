@@ -28,21 +28,20 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnlineAt
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnlineModulo;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.Modulo;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.PermissoesEventoOnline;
-import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
-import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencialLog;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
-import com.gilmarcarlos.developer.gcursos.service.eventos.online.AtividadeOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.InscricaoOnlineAtividadeService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.InscricaoOnlineModuloService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.InscricaoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.ModuloService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.PermissoesEventoOnlineService;
-import com.gilmarcarlos.developer.gcursos.service.imagens.ImagensService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
+import com.gilmarcarlos.developer.gcursos.utils.TemplateUtils;
+import com.gilmarcarlos.developer.gcursos.utils.UrlUtils;
 
 @Controller
-@RequestMapping("/dashboard/eventos/online")
+@RequestMapping(UrlUtils.DASHBOARD_EVENTOS_ONLINE)
 public class EventosOnlineControler {
 
 	@Autowired
@@ -58,46 +57,53 @@ public class EventosOnlineControler {
 	private ModuloService moduloService;
 
 	@Autowired
-	private AtividadeOnlineService atividadeService;
-
-	@Autowired
-	private ImagensService imagensService;
-
-	@Autowired
 	private InscricaoOnlineService inscricaoService;
-	
+
 	@Autowired
 	private InscricaoOnlineModuloService inscricaoModuloService;
-	
+
 	@Autowired
 	private InscricaoOnlineAtividadeService inscricaoAtividadeService;
 
 	private Authentication autenticado;
 
-	private final static Integer MAXIMO_PAGES = 3;
 	private final static Integer MAXIMO_PAGES_EVENTOS = 20;
 
 	private Page<EventoOnline> getEventoPaginacao(Integer page) {
-		return eventoOnlineService.listarTodos(PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
+		return eventoOnlineService.listarTodosPublicados(PageRequest.of(page, MAXIMO_PAGES_EVENTOS));
 	}
 
 	@GetMapping({ "/", "" })
 	public String eventosOnline(Model model) {
 
 		Usuario usuarioLogado = getUsuario();
-		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
-		if (usuarioLogado.isPerfilCompleto()) {
-			model.addAttribute("usuario", usuarioLogado);
-			model.addAttribute("eventos", eventoOnlineService.listarTodosPublicados());
-			return "dashboard/eventos/eventos-online";
-		} else {
-			return "redirect:/dashboard/complete-cadastro";
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
+		
+		addBaseAttributes(model, usuarioLogado);
+		model.addAttribute("eventos", getEventoPaginacao(0));
+		
+		return TemplateUtils.DASHBOARD_EVENTOS_EVENTOS_ONLINE;
+	}
+	
+	@GetMapping( "/pagina/{page}")
+	public String eventosOnline(@PathVariable("page") Integer page, Model model) {
+
+		Usuario usuarioLogado = getUsuario();
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		addBaseAttributes(model, usuarioLogado);
+		model.addAttribute("eventos", getEventoPaginacao(page));
+		
+		return TemplateUtils.DASHBOARD_EVENTOS_EVENTOS_ONLINE;
 	}
 
 	@GetMapping("/{id}/verifica/usuario/tem/codigo")
 	@ResponseBody
-	public ResponseEntity inscricoesEventoOnlinePresente(@PathVariable("id") Long id) {
+	public ResponseEntity<?> inscricoesEventoOnlinePresente(@PathVariable("id") Long id) {
 
 		Usuario usuarioLogado = getUsuario();
 		EventoOnline evento = eventoOnlineService.buscarPor(id);
@@ -123,12 +129,11 @@ public class EventosOnlineControler {
 			usuarios.add(usuarioLogado.getEmail());
 			permissoes.setUsuariosComCodigo(usuarios);
 			permissoesEveOnlineService.salvar(permissoes);
-			return "redirect:/dashboard/eventos/online/detalhes/" + id;
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE + "/detalhes/" + id;
 
 		} else {
-			model.addFlashAttribute("alert", "alert alert-fill-danger");
-			model.addFlashAttribute("message", "código inválido");
-			return "redirect:/dashboard/eventos/online";
+			RedirectUtils.mensagemError(model, "código inválido");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE;
 		}
 	}
 
@@ -137,24 +142,25 @@ public class EventosOnlineControler {
 
 		Usuario usuarioLogado = getUsuario();
 		EventoOnline evento = eventoOnlineService.buscarPor(id);
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
 
 		if (!evento.getPermissoes().valida(usuarioLogado)) {
-			red.addFlashAttribute("alert", "alert alert-fill-danger");
-			red.addFlashAttribute("message", "você não tem permissão");
-			return "redirect:/dashboard/eventos/online";
+			RedirectUtils.mensagemError(red, "você não tem permissão");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE;
 		}
 
 		if (evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
-			red.addFlashAttribute("alert", "alert alert-fill-danger");
-			red.addFlashAttribute("message", "você não tem permissão para acessar esse evento");
-			return "redirect:/dashboard/eventos/online";
+			RedirectUtils.mensagemError(red, "você não tem permissão para acessar esse evento");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE;
 		}
 
-		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("usuario", usuarioLogado);
+		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("evento", evento);
 
-		return "dashboard/eventos/eventos-online-detalhes";
+		return TemplateUtils.DASHBOARD_EVENTOS_EVENTOS_ONLINE_DETALHES;
 	}
 
 	@GetMapping("/detalhes/{id}/pagina/{page}")
@@ -163,24 +169,25 @@ public class EventosOnlineControler {
 
 		Usuario usuarioLogado = getUsuario();
 		EventoOnline evento = eventoOnlineService.buscarPor(id);
+		
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
 
 		if (!evento.getPermissoes().valida(usuarioLogado)) {
-			red.addFlashAttribute("alert", "alert alert-fill-danger");
-			red.addFlashAttribute("message", "você não tem permissão");
-			return "redirect:/dashboard/eventos/online";
+			RedirectUtils.mensagemError(red, "você não tem permissão");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE;
 		}
 
 		if (evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
-			red.addFlashAttribute("alert", "alert alert-fill-danger");
-			red.addFlashAttribute("message", "você não tem permissão para acessar esse evento");
-			return "redirect:/dashboard/eventos/online";
+			RedirectUtils.mensagemError(red, "você não tem permissão para acessar esse evento");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE;
 		}
 
-		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
-		model.addAttribute("usuario", usuarioLogado);
+		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("evento", evento);
 
-		return "dashboard/eventos/eventos-online-detalhes";
+		return TemplateUtils.DASHBOARD_EVENTOS_EVENTOS_ONLINE_DETALHES;
 	}
 
 	@GetMapping("/iniciar/{id}")
@@ -190,24 +197,22 @@ public class EventosOnlineControler {
 		Usuario usuarioLogado = getUsuario();
 
 		if (usuarioLogado.ehResponsavel(evento)) {
-			red.addFlashAttribute("alert", "alert alert-fill-danger");
-			red.addFlashAttribute("message", "você é o responsável pelo evento");
-			return "redirect:/dashboard/eventos/online/detalhes/" + id;
+			RedirectUtils.mensagemError(red, "você é o responsável pelo evento");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE + "/detalhes/" + id;
 		}
 
 		if (!evento.getPermissoes().valida(usuarioLogado)) {
-			red.addFlashAttribute("alert", "alert alert-fill-danger");
-			red.addFlashAttribute("message", "você não tem permissão");
-			return "redirect:/dashboard/eventos/online";
+			RedirectUtils.mensagemError(red, "você não tem permissão");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE;
 		}
 
 		if (evento.isInscrito(usuarioLogado)) {
 			InscricaoOnline inscricao = evento.getInscricao(usuarioLogado);
-			return "redirect:/dashboard/eventos/online/modulos/" + inscricao.ultimoModulo().getId() + "/atividade/"
-					+ inscricao.ultimaAtividade().getPosicao();
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE + "/modulos/" + inscricao.ultimoModulo().getId()
+					+ "/atividade/" + inscricao.ultimaAtividade().getPosicao();
 		} else {
 			inscricaoService.salvar(new InscricaoOnline(usuarioLogado, evento));
-			return "redirect:/dashboard/eventos/online/iniciar/" + id;
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE + "/iniciar/" + id;
 		}
 
 	}
@@ -216,18 +221,18 @@ public class EventosOnlineControler {
 	public String eventoDesistir(@PathVariable("id") Long id, RedirectAttributes red) {
 
 		InscricaoOnline inscricao = eventoOnlineService.buscarPor(id).getInscricao(getUsuario());
-		
-		if(!inscricao.getAtividades().isEmpty()) {
+
+		if (!inscricao.getAtividades().isEmpty()) {
 			inscricao.getAtividades().forEach(a -> inscricaoAtividadeService.deletar(a.getId()));
 		}
-		
-		if(!inscricao.getModulos().isEmpty()) {
+
+		if (!inscricao.getModulos().isEmpty()) {
 			inscricao.getModulos().forEach(m -> inscricaoModuloService.deletar(m.getId()));
 		}
-		
+
 		inscricaoService.deletar(inscricao.getId());
 
-		return "redirect:/dashboard/eventos/online/detalhes/" + id;
+		return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE + "/detalhes/" + id;
 	}
 
 	@GetMapping("/modulos/{id}")
@@ -236,12 +241,10 @@ public class EventosOnlineControler {
 		Modulo modulo = moduloService.buscarPor(id);
 
 		if (modulo.getAtividades().isEmpty()) {
-			red.addFlashAttribute("alert", "alert alert-fill-danger");
-			red.addFlashAttribute("message",
-					"este módulo não tem atividades, favor entre em contato com o responsável");
-			return "redirect:/dashboard/admin/eventos/online/detalhes/" + modulo.getEventoOnline().getId();
+			RedirectUtils.mensagemError(red, "este módulo não tem atividades, favor entre em contato com o responsável");
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE + "/detalhes/" + modulo.getEventoOnline().getId();
 		} else {
-			return "redirect:/dashboard/eventos/online/modulos/" + id + "/atividade/"
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE + "/modulos/" + id + "/atividade/"
 					+ modulo.getAtividades().get(0).getPosicao();
 		}
 
@@ -256,13 +259,14 @@ public class EventosOnlineControler {
 				.get();
 
 		Usuario usuarioLogado = getUsuario();
-		model.addAttribute("usuario", usuarioLogado);
-		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		
+		addBaseAttributes(model, usuarioLogado);
+		
 		model.addAttribute("modulo", modulo);
 		model.addAttribute("atividade", atividade);
 		model.addAttribute("evento", modulo.getEventoOnline());
 
-		return "dashboard/eventos/eventos-online-modulos-detalhes";
+		return TemplateUtils.DASHBOARD_EVENTOS_EVENTOS_ONLINE_MODULOS_DETALHES;
 
 	}
 
@@ -288,7 +292,8 @@ public class EventosOnlineControler {
 
 			AtividadeOnline proximaAtividade = modulo.getAtividades().stream().filter(a -> a.getPosicao() > posicao)
 					.findFirst().get();
-			return "redirect:/dashboard/eventos/online/modulos/" + id + "/atividade/" + proximaAtividade.getPosicao();
+			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE + "/modulos/" + id + "/atividade/"
+					+ proximaAtividade.getPosicao();
 
 		} else {
 
@@ -296,23 +301,22 @@ public class EventosOnlineControler {
 
 				Modulo proximoModulo = evento.getModulos().stream().filter(m -> m.getPosicao() > modulo.getPosicao())
 						.findFirst().get();
-				
+
 				if (!inscricao.realizou(proximoModulo)) {
 					inscricaoModuloService.salvar(new InscricaoOnlineModulo(inscricao, proximoModulo));
 				}
 
-				return "redirect:/dashboard/eventos/online/modulos/" + proximoModulo.getId();
+				return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE + "/modulos/" + proximoModulo.getId();
 			} else {
-				
-				if(!inscricao.isFinalizado()) {
+
+				if (!inscricao.isFinalizado()) {
 					inscricao.setFinalizado(true);
 					inscricao.setDataConclusao(LocalDate.now());
 					inscricaoService.salvar(inscricao);
-					red.addFlashAttribute("alert", "alert alert-fill-success");
-					red.addFlashAttribute("message", "você finalizou esse evento");
+					RedirectUtils.mensagemSucesso(red, "você finalizou esse evento");
 				}
-				
-				return "redirect:/dashboard/eventos/online";
+
+				return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE;
 			}
 
 		}
@@ -324,13 +328,11 @@ public class EventosOnlineControler {
 		Usuario usuario = usuarioService.buscarPor(autenticado.getName());
 		return usuario;
 	}
-
-	private EventoPresencialLog log(String mensagem, EventoPresencial evento) {
-		EventoPresencialLog eventoPresencialLog = new EventoPresencialLog();
-		eventoPresencialLog.setData(LocalDate.now());
-		eventoPresencialLog
-				.setMsg(mensagem + " :: usuário: " + getUsuario().getNome() + " :: email: " + getUsuario().getEmail());
-		eventoPresencialLog.setEventoPresencial(evento);
-		return eventoPresencialLog;
+	
+	private void addBaseAttributes(Model model, Usuario usuarioLogado) {
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("mensagens", usuarioLogado.getMensagensNaoLidas());
 	}
+
 }

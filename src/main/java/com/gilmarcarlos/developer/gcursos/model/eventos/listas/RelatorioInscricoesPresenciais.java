@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.AtividadePresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -70,9 +71,9 @@ public class RelatorioInscricoesPresenciais implements Serializable {
 	private List<RelatorioInscricoesPresenciais> lista;
 
 	/* metodo publico para realizar o parse e gerar o contrato */
-	public InputStream gerar(AtividadePresencial atividade, String tipo) {
+	public InputStream gerar(Usuario usuario, AtividadePresencial atividade, String tipo) {
 		this.lista = new ArrayList<>();
-		parse(atividade, tipo);
+		parse(usuario, atividade, tipo);
 		return gerarPdf();
 	}
 
@@ -95,13 +96,13 @@ public class RelatorioInscricoesPresenciais implements Serializable {
 
 		try {
 
-			print = JasperFillManager.fillReport("relatorio_inscricoes_evento_presencial.jasper", parametros,
+			print = JasperFillManager.fillReport("/home/narclk123/relatorio_inscricoes_evento_presencial.jasper", parametros,
 					dataSource); // em produção alterar para "/caminho_da_pasta/" + "arquivo.jasper"
 			JRPdfExporter exporter = new JRPdfExporter();
 
 			exporter.setExporterInput(new SimpleExporterInput(print));
 			exporter.setExporterOutput(
-					new SimpleOutputStreamExporterOutput("relatorio_inscricoes_evento_presencial.pdf")); // em produção
+					new SimpleOutputStreamExporterOutput("/home/narclk123/relatorio_inscricoes_evento_presencial.pdf")); // em produção
 																											// alterar
 																											// para
 																											// "/caminho_da_pasta/arquivo.pdf"
@@ -121,7 +122,7 @@ public class RelatorioInscricoesPresenciais implements Serializable {
 			exporter.exportReport();
 			System.out.println("retornando o arquivo");
 
-			return new FileInputStream(new File("relatorio_inscricoes_evento_presencial.pdf")); // em produção alterar
+			return new FileInputStream(new File("/home/narclk123/relatorio_inscricoes_evento_presencial.pdf")); // em produção alterar
 																								// para
 																								// "/caminho_da_pasta/"
 																								// + "arquivo.pdf"
@@ -137,33 +138,58 @@ public class RelatorioInscricoesPresenciais implements Serializable {
 	 * Transforma todos os campos necessários para gerar o pdf, em campos de string
 	 * 
 	 */
-	private void parse(AtividadePresencial atividade, String tipo) {
-		atividade.getInscricoes().forEach(i -> {
+	private void parse(Usuario usuario, AtividadePresencial atividade, String tipo) {
 
-			if (tipo.equalsIgnoreCase("todos")) {
+		if (usuario.temRestricao("departamento")) {
 
-				preencherDados(atividade, i);
+			atividade.getInscricoes().forEach(i -> {
+				if (usuario.temMesmoDepartamento(i.getUsuario())) {
+					if (tipo.equalsIgnoreCase("todos")) {
 
-			} else if (tipo.equalsIgnoreCase("ausentes")) {
-				
-				if(!i.isPresente()) {
-					preencherDados(atividade, i);
+						preencherDados(atividade, i);
+
+					} else if (tipo.equalsIgnoreCase("ausentes")) {
+
+						if (!i.isPresente()) {
+							preencherDados(atividade, i);
+						}
+
+					} else {
+						if (i.isPresente()) {
+							preencherDados(atividade, i);
+						}
+					}
 				}
-				
-			} else {
-				if(i.isPresente()) {
-					preencherDados(atividade, i);
-				}
-			}
+			});
 
-		});
+		} else {
+
+			atividade.getInscricoes().forEach(i -> {
+
+				if (tipo.equalsIgnoreCase("todos")) {
+
+					preencherDados(atividade, i);
+
+				} else if (tipo.equalsIgnoreCase("ausentes")) {
+
+					if (!i.isPresente()) {
+						preencherDados(atividade, i);
+					}
+
+				} else {
+					if (i.isPresente()) {
+						preencherDados(atividade, i);
+					}
+				}
+
+			});
+		}
 
 	}
 
 	private void preencherDados(AtividadePresencial atividade, InscricaoPresencial i) {
 		RelatorioInscricoesPresenciais presenca = new RelatorioInscricoesPresenciais();
-		EventoPresencial eventoPresencial = atividade.getDiaEvento().getProgramacaoPresencial()
-				.getEventoPresencial();
+		EventoPresencial eventoPresencial = atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial();
 
 		presenca.setTitulo(eventoPresencial.getTitulo());
 		presenca.setAtividade(atividade.getTitulo());

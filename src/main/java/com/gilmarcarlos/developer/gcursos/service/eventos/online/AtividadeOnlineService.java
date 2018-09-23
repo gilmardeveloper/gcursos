@@ -9,16 +9,12 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.online.AtividadeOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.OrdenarHelper;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.exceptions.PosicaoExisteException;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.AtividadeOnlineRepository;
-import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
 
 @Service
 public class AtividadeOnlineService {
 
 	@Autowired
 	private AtividadeOnlineRepository repository;
-
-	@Autowired
-	private NotificacaoService notificacoes;
 
 	public AtividadeOnline salvar(AtividadeOnline atividade) throws PosicaoExisteException{
 		

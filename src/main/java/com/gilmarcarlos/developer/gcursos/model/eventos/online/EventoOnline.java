@@ -332,6 +332,7 @@ public class EventoOnline implements Serializable, Eventos {
 
 	@Transient
 	public Long progressoTotal() {
+		if(qtdInscricoes() == 0) return 0l;
 		return (qtdFinalizado() * 100) / qtdInscricoes();
 	}
 

@@ -38,7 +38,7 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
 	@Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM Usuario u WHERE u.email = :pemail and u.id != :pid")
 	boolean existsByEmail(@Param("pemail") String email, @Param("pid") Long id);
 	
-	@Query("select u from Usuario u")
+	@Query("select u from Usuario u join u.dadosPessoais d where d.usuario.id = u.id")
 	Page<Usuario> listarTodos(Pageable pageable);
 	
 	@Query("select u from Usuario u where u.id = :pid")

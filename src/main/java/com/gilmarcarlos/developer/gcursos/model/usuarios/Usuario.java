@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,7 +25,6 @@ import com.gilmarcarlos.developer.gcursos.model.images.Imagens;
 import com.gilmarcarlos.developer.gcursos.model.locais.CodigoFuncional;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Mensagens;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
-import com.gilmarcarlos.developer.gcursos.utils.UrlUtils;
 
 @Entity
 public class Usuario implements Serializable {
@@ -46,7 +44,7 @@ public class Usuario implements Serializable {
 	private boolean habilitado;
 	private boolean tokenExpired;
 
-	@ManyToMany(cascade = CascadeType.REMOVE)
+	@ManyToMany
 	@JoinTable(name = "usuarios_autorizacoes", joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "autorizacao_id", referencedColumnName = "id"))
 	private List<Autorizacao> autorizacoes;
 
@@ -214,6 +212,14 @@ public class Usuario implements Serializable {
 		this.permissoes = permissoes;
 	}
 	
+	public boolean isTokenExpired() {
+		return tokenExpired;
+	}
+
+	public void setTokenExpired(boolean tokenExpired) {
+		this.tokenExpired = tokenExpired;
+	}
+
 	@Transient
 	public String getStatus() {
 		return autorizacoes.get(0).getNome().split("_")[1];
@@ -317,6 +323,11 @@ public class Usuario implements Serializable {
 	@Transient
 	public Boolean temRestricao(String opcao) {
 		return (getPermissoes() == null ? false : getPermissoes().getRestringir().contains(opcao));
+	}
+	
+	@Transient
+	public Boolean temMesmoDepartamento(Usuario usuario) {
+		return getPermissoes().getDepartamento() == usuario.getCodigoFuncional().getUnidadeTrabalho().getDepartamento().getId();
 	}
 	
 	@Override

@@ -42,119 +42,59 @@ public class ImagensControler {
 	@Autowired
 	private CertificadoPresencialService certificadoPresencialService;
 	
-	
 	@GetMapping("/usuario/{id}/avatar.png")
 	public @ResponseBody byte[] imagemUsuario(@PathVariable("id") Long id) {
 		Blob imagem = usuarioService.buscarPor(id).getImagens().getImagem();
-		try {
-			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
-			bufferedImage = imagensService.verifica(bufferedImage, 100, 100);
-			ImageIO.write(bufferedImage, "png", byteOutStream);
-			return byteOutStream.toByteArray();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return getImagemInputStream(imagem, 100, 100);
 	}
-	
+
 	@GetMapping("/evento/{id}/responsavel.png")
 	public @ResponseBody byte[] imagemResponsavel(@PathVariable("id") Long id) {
 		Blob imagem = usuarioService.buscarPor(id).getImagens().getImagem();
-		try {
-			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
-			bufferedImage = imagensService.verifica(bufferedImage, 100, 100);
-			ImageIO.write(bufferedImage, "png", byteOutStream);
-			return byteOutStream.toByteArray();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return getImagemInputStream(imagem, 100, 100);
 	}
 	
 	@GetMapping("/evento/presencial/{id}/imagem-top.png")
 	public @ResponseBody byte[] imagemTop(@PathVariable("id") Long id) {
 		Blob imagem = eventoPresencialService.buscarPor(id).getImagemTopDetalhes().getImagem();
-		try {
-			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
-			bufferedImage = imagensService.verifica(bufferedImage, 250, 1000);
-			ImageIO.write(bufferedImage, "png", byteOutStream);
-			return byteOutStream.toByteArray();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return getImagemInputStream(imagem, 250, 1000);
 	}
 	
 	@GetMapping("/evento/online/{id}/imagem-top.png")
 	public @ResponseBody byte[] imagemOnlineTop(@PathVariable("id") Long id) {
 		Blob imagem = eventoOnlineService.buscarPor(id).getImagemTopDetalhes().getImagem();
-		try {
-			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
-			bufferedImage = imagensService.verifica(bufferedImage, 250, 1000);
-			ImageIO.write(bufferedImage, "png", byteOutStream);
-			return byteOutStream.toByteArray();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return getImagemInputStream(imagem, 250, 1000);
 	}
 	
 	@GetMapping("/evento/presencial/{id}/imagem-destaque.png")
 	public @ResponseBody byte[] imagemDestaque(@PathVariable("id") Long id) {
 		Blob imagem = eventoPresencialService.buscarPor(id).getImagemDestaque().getImagem();
-		try {
-			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
-			bufferedImage = imagensService.verifica(bufferedImage, 293, 367);
-			ImageIO.write(bufferedImage, "png", byteOutStream);
-			return byteOutStream.toByteArray();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return getImagemInputStream(imagem, 293, 367);
 	}
 	
 	@GetMapping("/evento/online/{id}/imagem-destaque.png")
 	public @ResponseBody byte[] imagemOnlineDestaque(@PathVariable("id") Long id) {
 		Blob imagem = eventoOnlineService.buscarPor(id).getImagemDestaque().getImagem();
-		try {
-			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
-			bufferedImage = imagensService.verifica(bufferedImage, 293, 367);
-			ImageIO.write(bufferedImage, "png", byteOutStream);
-			return byteOutStream.toByteArray();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return getImagemInputStream(imagem, 293, 367);
 	}
 	
 	@GetMapping("/evento/online/{id}/imagem-certificado.png")
 	public @ResponseBody byte[] imagemOnlineCertificado(@PathVariable("id") Long id) {
 		Blob imagem = certificadoOnlineService.buscarPor(id).getImagemFundo();
-		try {
-			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
-			bufferedImage = certificadoOnlineService.verifica(bufferedImage, 502, 650);
-			ImageIO.write(bufferedImage, "png", byteOutStream);
-			return byteOutStream.toByteArray();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return getImagemInputStream(imagem, 502, 650);
 	}
 	
 	@GetMapping("/evento/presencial/{id}/imagem-certificado.png")
 	public @ResponseBody byte[] imagemPresencialCertificado(@PathVariable("id") Long id) {
 		Blob imagem = certificadoPresencialService.buscarPor(id).getImagemFundo();
+		return getImagemInputStream(imagem, 502, 650);
+	}
+	
+	private byte[] getImagemInputStream(Blob imagem, Integer altura, Integer largura) {
 		try {
 			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 			BufferedImage bufferedImage = ImageIO.read(imagem.getBinaryStream());
-			bufferedImage = certificadoPresencialService.verifica(bufferedImage, 502, 650);
+			bufferedImage = imagensService.verifica(bufferedImage, altura, largura);
 			ImageIO.write(bufferedImage, "png", byteOutStream);
 			return byteOutStream.toByteArray();
 		} catch (Exception e) {
@@ -162,5 +102,4 @@ public class ImagensControler {
 			return null;
 		}
 	}
-	
 }

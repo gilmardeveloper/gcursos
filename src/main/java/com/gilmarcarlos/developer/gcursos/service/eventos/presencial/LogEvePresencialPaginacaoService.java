@@ -11,9 +11,6 @@ import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.LogEvePr
 @Service
 public class LogEvePresencialPaginacaoService {
 	
-	private final static Integer MINIMO_PAGES = 0;
-	private final static Integer MAXIMO_PAGES = 50;
-
 	@Autowired
 	private LogEvePresencialPaginacaoRepository repository;
 	

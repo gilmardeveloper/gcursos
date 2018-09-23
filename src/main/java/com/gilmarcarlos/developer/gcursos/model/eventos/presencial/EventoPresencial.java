@@ -17,7 +17,6 @@ import javax.persistence.OneToOne;
 import com.gilmarcarlos.developer.gcursos.interfaces.Eventos;
 import com.gilmarcarlos.developer.gcursos.model.eventos.categorias.CategoriaEvento;
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventoCanceladoException;
-import com.gilmarcarlos.developer.gcursos.model.eventos.online.CertificadoOnline;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialDestaque;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialTop;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensLogoListaPresenca;
@@ -408,7 +407,9 @@ public class EventoPresencial implements Serializable, Eventos {
 		}
 
 		presenca = numerador / denominador;
-
+		
+		if(denominador == 0.0) return 0l;
+		
 		return Math.round(presenca);
 	}
 

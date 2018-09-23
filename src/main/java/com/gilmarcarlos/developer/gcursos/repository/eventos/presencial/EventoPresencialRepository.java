@@ -23,6 +23,8 @@ public interface EventoPresencialRepository extends CrudRepository<EventoPresenc
 	EventoPresencial buscarPor(@Param("pid")Long id);
 
 	List<EventoPresencial> findByPublicadoTrue();
+	
+	Page<EventoPresencial> findByPublicadoTrue(Pageable pageable);
 
 	@Query("select e from EventoPresencial e")
 	Page<EventoPresencial> listarTodos(Pageable pageable);
@@ -33,7 +35,13 @@ public interface EventoPresencialRepository extends CrudRepository<EventoPresenc
 	@Query("select e from EventoPresencial e where e.dataInicio between :pinicio and :ptermino")
 	Page<EventoPresencial> buscarPor(@Param("pinicio") LocalDate inicio, @Param("ptermino") LocalDate termino, Pageable pageable);
 
+	@Query("select e from EventoPresencial e where e.dataInicio between :pinicio and :ptermino and e.responsavel.id = :pid")
+	Page<EventoPresencial> buscarPor(@Param("pid") Long id, @Param("pinicio") LocalDate inicio, @Param("ptermino") LocalDate termino, Pageable pageable);
+	
 	@Query("select distinct e from EventoPresencial e join e.inscricoes i where i.usuario.id = :pid")
 	Page<EventoPresencial> buscarPorUsuario(@Param("pid") Long id, Pageable pageable);
+
+	@Query("select e from EventoPresencial e where e.responsavel.id = :pid")
+	Page<EventoPresencial> buscarPorResponsavel(@Param("pid") Long id, Pageable pageable);
 
 }

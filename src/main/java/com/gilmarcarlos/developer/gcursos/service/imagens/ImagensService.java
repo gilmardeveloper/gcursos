@@ -13,6 +13,7 @@ import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoOnlineTop;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialDestaque;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialTop;
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensLogoListaPresenca;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.ImagensEventoOnlineDestaqueRepository;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.ImagensEventoOnlineTopRepository;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.ImagensEventoPresencialDestaqueRepository;
@@ -114,6 +115,12 @@ public class ImagensService {
 	
 	public ImagensEventoOnlineDestaque salvarImagemEveOnlineDestaque(ImagensEventoOnlineDestaque imagens) {
 		return repositoryImagensEveOnlineDestaque.save(imagens);
+	}
+
+	public void deletar(Usuario usuario) {
+		if(usuario.getImagens() != null) {
+			deletar(usuario.getImagens().getId());
+		}				
 	}
 }	
 

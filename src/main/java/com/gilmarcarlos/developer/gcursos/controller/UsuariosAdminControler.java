@@ -267,7 +267,7 @@ public class UsuariosAdminControler {
 
 		Usuario usuarioLogado = getUsuario();
 
-		if (!usuarioLogado.podeVisualizar("usuarios") && !usuarioLogado.podeAlterar("usuarios")) {
+		if (!usuarioLogado.podeVisualizar("usuarios") || !usuarioLogado.podeAlterar("usuarios")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
 
@@ -288,7 +288,7 @@ public class UsuariosAdminControler {
 
 		Usuario usuarioLogado = getUsuario();
 
-		if (!usuarioLogado.podeVisualizar("usuarios") && !usuarioLogado.podeCriar("usuarios")) {
+		if (!usuarioLogado.podeVisualizar("usuarios") || !usuarioLogado.podeCriar("usuarios")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
 
@@ -309,7 +309,7 @@ public class UsuariosAdminControler {
 
 		Usuario usuarioLogado = getUsuario();
 
-		if (!usuarioLogado.podeVisualizar("usuarios") && !usuarioLogado.podeCriar("usuarios")) {
+		if (!usuarioLogado.podeVisualizar("usuarios") || !usuarioLogado.podeCriar("usuarios")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
 
@@ -447,10 +447,11 @@ public class UsuariosAdminControler {
 		try {
 
 			Usuario user = usuarioService.buscarPor(id);
-			NotificacaoUtils.sucesso(notificacaoService, getUsuario(), "Deletou um usuário",
+			NotificacaoUtils.sucesso(notificacaoService, usuarioLogado, "Deletou um usuário",
 					"Usuário com email: " + user.getEmail() + " foi deletado");
 
 			usuarioService.deletar(id);
+			
 			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
 		} catch (UsuarioExisteException | UsuarioDeleteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
@@ -527,7 +528,7 @@ public class UsuariosAdminControler {
 
 		Usuario usuarioLogado = getUsuario();
 
-		if (!usuarioLogado.podeCriar("opcoesSexuais") && !usuarioLogado.podeAlterar("opcoesSexuais")) {
+		if (!usuarioLogado.podeCriar("opcoesSexuais") || !usuarioLogado.podeAlterar("opcoesSexuais")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
 
@@ -546,7 +547,7 @@ public class UsuariosAdminControler {
 
 		Usuario usuarioLogado = getUsuario();
 
-		if (!usuarioLogado.podeCriar("opcoesSexuais") && !usuarioLogado.podeAlterar("opcoesSexuais")) {
+		if (!usuarioLogado.podeCriar("opcoesSexuais") || !usuarioLogado.podeAlterar("opcoesSexuais")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
 		try {
@@ -565,7 +566,7 @@ public class UsuariosAdminControler {
 
 		Usuario usuarioLogado = getUsuario();
 
-		if (!usuarioLogado.podeCriar("opcoesSexuais") && !usuarioLogado.podeAlterar("opcoesSexuais")) {
+		if (!usuarioLogado.podeCriar("opcoesSexuais") || !usuarioLogado.podeAlterar("opcoesSexuais")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
 
@@ -621,7 +622,7 @@ public class UsuariosAdminControler {
 
 		Usuario usuarioLogado = getUsuario();
 
-		if (!usuarioLogado.podeCriar("escolaridade") && !usuarioLogado.podeAlterar("escolaridade")) {
+		if (!usuarioLogado.podeCriar("escolaridade") || !usuarioLogado.podeAlterar("escolaridade")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
 
@@ -639,7 +640,7 @@ public class UsuariosAdminControler {
 
 		Usuario usuarioLogado = getUsuario();
 
-		if (!usuarioLogado.podeCriar("escolaridade") && !usuarioLogado.podeAlterar("escolaridade")) {
+		if (!usuarioLogado.podeCriar("escolaridade") || !usuarioLogado.podeAlterar("escolaridade")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
 
@@ -658,7 +659,7 @@ public class UsuariosAdminControler {
 
 		Usuario usuarioLogado = getUsuario();
 
-		if (!usuarioLogado.podeCriar("escolaridade") && !usuarioLogado.podeAlterar("escolaridade")) {
+		if (!usuarioLogado.podeCriar("escolaridade") || !usuarioLogado.podeAlterar("escolaridade")) {
 			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
 

@@ -152,8 +152,8 @@
 																		<tr>
 																			<th>Nome</th>
 																			<th>CPF</th>
-																			<th th:if="${usuario.podeAlterar('presenca') or usuario.podeAlterar('tudo')}" class="text-center">Presença</th>
-																			<th th:if="${usuario.podeAlterar('inscricoes') or usuario.podeAlterar('tudo')}" class="text-center">Cancelar a inscrição</th>
+																			<th th:if="${usuario.podeAlterar('presenca')}" class="text-center">Presença</th>
+																			<th th:if="${usuario.podeAlterar('inscricoes')}" class="text-center">Cancelar a inscrição</th>
 																		</tr>
 																	</thead>
 																	<tbody>
@@ -161,13 +161,13 @@
 																			<td th:text="${inscricao.usuario.nome}"></td>
 																			<td th:text="${inscricao.usuario.dadosPessoais.cpf}"></td>
 
-																			<td th:if="${usuario.podeAlterar('presenca') or usuario.podeAlterar('tudo')}" class="text-center"><div class="icheck">
+																			<td th:if="${usuario.podeAlterar('presenca')}" class="text-center"><div class="icheck">
 																					<input class="presenca" type="checkbox"
 																						th:value="${inscricao.id}"
 																						th:checked="${inscricao.isPresente()}" />
 																				</div></td>
 
-																			<td th:if="${usuario.podeAlterar('inscricoes') or usuario.podeAlterar('tudo')}" class="text-center"><a
+																			<td th:if="${usuario.podeAlterar('inscricoes')}" class="text-center"><a
 																				class="btn btn-outline-danger pt-1 pb-1"
 																				th:href="@{/dashboard/admin/eventos/presencial/inscricoes/{id}/cancelar/inscricao(id=${inscricao.id})}"><i
 																					class="icon-user-unfollow"></i></a></td>

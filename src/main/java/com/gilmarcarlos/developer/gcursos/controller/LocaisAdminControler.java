@@ -17,6 +17,12 @@ import com.gilmarcarlos.developer.gcursos.model.locais.Departamento;
 import com.gilmarcarlos.developer.gcursos.model.locais.EnderecoUnidade;
 import com.gilmarcarlos.developer.gcursos.model.locais.TelefoneUnidade;
 import com.gilmarcarlos.developer.gcursos.model.locais.UnidadeTrabalho;
+import com.gilmarcarlos.developer.gcursos.model.locais.exceptions.CargoExisteException;
+import com.gilmarcarlos.developer.gcursos.model.locais.exceptions.CargoNotFoundException;
+import com.gilmarcarlos.developer.gcursos.model.locais.exceptions.DepartamentoExisteException;
+import com.gilmarcarlos.developer.gcursos.model.locais.exceptions.DepartamentoNotFoundException;
+import com.gilmarcarlos.developer.gcursos.model.locais.exceptions.UnidadeExisteException;
+import com.gilmarcarlos.developer.gcursos.model.locais.exceptions.UnidadeNotFoundException;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.service.locais.CargoService;
 import com.gilmarcarlos.developer.gcursos.service.locais.DepartamentoService;
@@ -24,6 +30,8 @@ import com.gilmarcarlos.developer.gcursos.service.locais.EnderecoUnidadeService;
 import com.gilmarcarlos.developer.gcursos.service.locais.TelefoneUnidadeService;
 import com.gilmarcarlos.developer.gcursos.service.locais.UnidadeTrabalhoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
+import com.gilmarcarlos.developer.gcursos.utils.TemplateUtils;
 import com.gilmarcarlos.developer.gcursos.utils.UrlUtils;
 
 @Controller
@@ -47,212 +55,421 @@ public class LocaisAdminControler {
 
 	@Autowired
 	private TelefoneUnidadeService telefoneUnidadeService;
-	
+
 	private Authentication autenticado;
-	
+
 	@GetMapping("/unidades")
 	public String unidades(Model model) {
-		model.addAttribute("usuario", getUsuario());
-		model.addAttribute("unidades", unidadeService.listarTodos());
-		model.addAttribute("deps", departamentoService.listarTodos());
-		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
 
-		for (UnidadeTrabalho u : unidadeService.listarTodosSemFones()) {
+		Usuario usuarioLogado = getUsuario();
 
-			if (u.getTelefones().isEmpty()) {
-				TelefoneUnidade telefone = new TelefoneUnidade();
-				telefone.setNumero("(00)0000-0000");
-				telefone.setSetor("-");
-				telefone.setUnidadeTrabalho(u);
-				telefoneUnidadeService.salvar(telefone);
-
-			}
-
-			if (u.getEndereco() == null) {
-				EnderecoUnidade endereco = new EnderecoUnidade();
-				endereco.setUnidadeTrabalho(u);
-				enderecoUnidadeService.salvar(endereco);
-			}
-
+		if (!usuarioLogado.podeVisualizar("unidades")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
 
-		return "dashboard/admin/locais/base-info-locais";
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+
+		addBaseAttributes(model, usuarioLogado);
+
+		model.addAttribute("unidades", unidadeService.listarTodos());
+		model.addAttribute("deps", departamentoService.listarTodos());
+
+		seUnidadeNaoTemEnderecoOuTelefone();
+
+		return TemplateUtils.DASHBOARD_ADMIN_LOCAIS_BASE_INFO_LOCAIS;
 	}
 
 	@GetMapping("/unidades/novo")
 	public String unidadesNovo(Model model) {
-		model.addAttribute("usuario", getUsuario());
+
+		Usuario usuarioLogado = getUsuario();
+
+		if (!usuarioLogado.podeCriar("unidades")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+
+		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("departamentos", departamentoService.listarTodos());
-		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/locais/base-cadastro-unidades";
+
+		return TemplateUtils.DASHBOARD_ADMIN_LOCAIS_BASE_CADASTRO_UNIDADES;
 	}
 
 	@PostMapping("/unidades/salvar")
 	public String unidadesSalvar(UnidadeTrabalho unidade, RedirectAttributes model) {
 
-		EnderecoUnidade endereco = unidade.getEndereco();
-		enderecoUnidadeService.salvar(endereco);
-		unidadeService.salvar(unidade);
+		Usuario usuarioLogado = getUsuario();
 
-		model.addFlashAttribute("alert", "alert alert-fill-success");
-		model.addFlashAttribute("message", "salvo com sucesso");
+		if (!usuarioLogado.podeCriar("unidades") || !usuarioLogado.podeAlterar("unidades")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
 
-		return "redirect:/dashboard/admin/unidades";
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		try {
+			unidadeService.salvar(unidade);
+			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		} catch (UnidadeExisteException e) {
+			RedirectUtils.mensagemError(model, e.getMessage());
+		}
+
+
+		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_LOCAIS + "/unidades";
 	}
 
 	@PostMapping("/unidades/salvar/novo")
 	public String unidadesSalvarNovo(UnidadeTrabalho unidade, @RequestParam("numero") String numero, Model model) {
+		
+		Usuario usuarioLogado = getUsuario();
 
-		UnidadeTrabalho temp = new UnidadeTrabalho();
-
-		temp.setNome(unidade.getNome());
-		temp.setDepartamento(unidade.getDepartamento());
-		temp.setEmail(unidade.getEmail());
-		temp.setGerente(unidade.getGerente());
-		temp.setQtdFuncionarios(unidade.getQtdFuncionarios());
-		unidadeService.salvar(temp);
-
-		EnderecoUnidade endereco = unidade.getEndereco();
-		endereco.setUnidadeTrabalho(temp);
-		enderecoUnidadeService.salvar(endereco);
-
-		if (numero.length() > 8) {
-			TelefoneUnidade telefone = new TelefoneUnidade();
-			telefone.setNumero(numero);
-			telefone.setSetor("Recepção");
-			telefone.setUnidadeTrabalho(temp);
-			telefoneUnidadeService.salvar(telefone);
+		if (!usuarioLogado.podeCriar("unidades") || !usuarioLogado.podeAlterar("unidades")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
 		}
 
-		model.addAttribute("usuario", getUsuario());
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+				
+		try {
+			
+			UnidadeTrabalho temp = unidadeService.salvar(unidade);
+			
+			if (numero.length() > 8) {
+				TelefoneUnidade telefone = new TelefoneUnidade();
+				telefone.setNumero(numero);
+				telefone.setSetor("Recepção");
+				telefone.setUnidadeTrabalho(temp);
+				telefoneUnidadeService.salvar(telefone);
+			}
+			
+			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		
+		} catch (UnidadeExisteException e) {
+			RedirectUtils.mensagemError(model, e.getMessage());
+		}
+
+		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("unidade", unidade);
-		model.addAttribute("alert", "alert alert-fill-success");
-		model.addAttribute("message", "salvo com sucesso");
-		return "dashboard/admin/locais/base-cadastro-unidades";
+
+		return TemplateUtils.DASHBOARD_ADMIN_LOCAIS_BASE_CADASTRO_UNIDADES;
 	}
 
 	@GetMapping("/unidades/alterar/{id}")
 	public String unidadesAlterar(@PathVariable("id") Long id, RedirectAttributes model) {
 		model.addFlashAttribute("unidade", unidadeService.buscarPor(id));
-		return "redirect:/dashboard/admin/unidades/novo";
+		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_LOCAIS + "/unidades/novo";
 	}
 
 	@GetMapping("/unidades/deletar/{id}")
 	public String unidadesDeletar(@PathVariable("id") Long id, RedirectAttributes model) {
+		
+		Usuario usuarioLogado = getUsuario();
 
-		telefoneUnidadeService.deletarByUnidade(id);
-		enderecoUnidadeService.deletarByUnidade(id);
-		unidadeService.deletar(id);
+		if (!usuarioLogado.podeDeletar("unidades")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
 
-		model.addFlashAttribute("alert", "alert alert-fill-success alert-dismissible fade show");
-		model.addFlashAttribute("message", "removido com sucesso");
-		return "redirect:/dashboard/admin/unidades";
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+				
+		try {
+			unidadeService.deletar(id);
+			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+		} catch (UnidadeNotFoundException | UnidadeExisteException e) {
+			RedirectUtils.mensagemError(model, e.getMessage());
+		}
+
+		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_LOCAIS + "/unidades";
 	}
 
 	@PostMapping("/unidades/telefones/salvar")
 	public String unidadesTelefonesSalvar(TelefoneUnidade telefone, RedirectAttributes model) {
-		telefoneUnidadeService.salvar(telefone);
-		model.addFlashAttribute("alert", "alert alert-fill-success");
-		model.addFlashAttribute("message", "salvo com sucesso");
+		
+		Usuario usuarioLogado = getUsuario();
 
-		return "redirect:/dashboard/admin/unidades";
+		if (!usuarioLogado.podeAlterar("unidades")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		telefoneUnidadeService.salvar(telefone);
+		RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+
+		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_LOCAIS + "/unidades";
 	}
 
 	@PostMapping("/unidades/telefones/excluir")
 	public String unidadesTelefonesExcluir(TelefoneUnidade telefone, RedirectAttributes model) {
+		
+		Usuario usuarioLogado = getUsuario();
+
+		if (!usuarioLogado.podeAlterar("unidades")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		
 		if (telefone.getUnidadeTrabalho().podeExcluirTelefone()) {
 			telefoneUnidadeService.deletar(telefone.getId());
-			model.addFlashAttribute("alert", "alert alert-fill-success");
-			model.addFlashAttribute("message", "excluido com sucesso");
-			return "redirect:/dashboard/admin/unidades";
+			RedirectUtils.mensagemSucesso(model, "excluido com sucesso");
+			return "redirect:" + UrlUtils.DASHBOARD_ADMIN_LOCAIS + "/unidades";
 		} else {
-			model.addFlashAttribute("alert", "alert alert-fill-danger");
-			model.addFlashAttribute("message", "para excluir, a unidade precisa ter no mínimo dois telefones");
-			return "redirect:/dashboard/admin/unidades";
+			RedirectUtils.mensagemError(model, "para excluir, a unidade precisa ter no mínimo dois telefones");
+			return "redirect:" + UrlUtils.DASHBOARD_ADMIN_LOCAIS + "/unidades";
 		}
 
 	}
 
 	@GetMapping("/departamentos")
 	public String departamentos(Model model) {
-		model.addAttribute("usuario", getUsuario());
+		
+		Usuario usuarioLogado = getUsuario();
+
+		if (!usuarioLogado.podeVisualizar("departamentos")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("departamentos", departamentoService.listarTodos());
-		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/locais/base-info-locais";
+		
+		return TemplateUtils.DASHBOARD_ADMIN_LOCAIS_BASE_INFO_LOCAIS;
 	}
 
 	@GetMapping("/departamentos/novo")
 	public String departamentosNovo(Model model) {
-		model.addAttribute("usuario", getUsuario());
-		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/locais/base-cadastro-departamentos";
+		
+		Usuario usuarioLogado = getUsuario();
+
+		if (!usuarioLogado.podeCriar("departamentos")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		addBaseAttributes(model, usuarioLogado);
+		
+		
+		return TemplateUtils.DASHBOARD_ADMIN_LOCAIS_BASE_CADASTRO_DEPARTAMENTOS;
 	}
 
 	@PostMapping("/departamentos/salvar")
 	public String departamentosSalvar(Departamento departamento, Model model) {
-		model.addAttribute("usuario", getUsuario());
-		model.addAttribute("departamento", departamentoService.salvar(departamento));
-		model.addAttribute("alert", "alert alert-fill-success");
-		model.addAttribute("message", "salvo com sucesso");
-		return "dashboard/admin/locais/base-cadastro-departamentos";
+		Usuario usuarioLogado = getUsuario();
+
+		if (!usuarioLogado.podeCriar("departamentos") || !usuarioLogado.podeAlterar("departamentos")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		addBaseAttributes(model, usuarioLogado);
+		
+		try {
+			model.addAttribute("departamento", departamentoService.salvar(departamento));
+			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		} catch (DepartamentoExisteException e) {
+			RedirectUtils.mensagemError(model, e.getMessage());
+		}
+		
+		return TemplateUtils.DASHBOARD_ADMIN_LOCAIS_BASE_CADASTRO_DEPARTAMENTOS;
 	}
 
 	@GetMapping("/departamentos/alterar/{id}")
 	public String departamentosAlterar(@PathVariable("id") Long id, RedirectAttributes model) {
+		
+		Usuario usuarioLogado = getUsuario();
+
+		if (!usuarioLogado.podeCriar("departamentos") || !usuarioLogado.podeAlterar("departamentos")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
 		model.addFlashAttribute("departamento", departamentoService.buscarPor(id));
-		return "redirect:/dashboard/admin/departamentos/novo";
+		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_LOCAIS + "/departamentos/novo";
 	}
 
 	@GetMapping("/departamentos/deletar/{id}")
 	public String departamentosDeletar(@PathVariable("id") Long id, RedirectAttributes model) {
-		departamentoService.deletar(id);
-		model.addFlashAttribute("alert", "alert alert-fill-success alert-dismissible fade show");
-		model.addFlashAttribute("message", "removido com sucesso");
-		return "redirect:/dashboard/admin/departamentos";
+		
+		Usuario usuarioLogado = getUsuario();
+
+		if (!usuarioLogado.podeDeletar("departamentos")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		try {
+			departamentoService.deletar(id);
+			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+		} catch (DepartamentoNotFoundException | DepartamentoExisteException e) {
+			RedirectUtils.mensagemError(model, e.getMessage());
+		}
+		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_LOCAIS + "/departamentos";
 	}
 
 	@GetMapping("/cargos")
 	public String cargos(Model model) {
-		model.addAttribute("usuario", getUsuario());
+		
+		Usuario usuarioLogado = getUsuario();
+
+		if (!usuarioLogado.podeVisualizar("cargos")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("cargos", cargoService.listarTodos());
-		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/locais/base-info-locais";
+		
+		return TemplateUtils.DASHBOARD_ADMIN_LOCAIS_BASE_INFO_LOCAIS;
 	}
 
 	@GetMapping("/cargos/novo")
 	public String cargosNovo(Model model) {
-		model.addAttribute("usuario", getUsuario());
-		model.addAttribute("notificacoes", getUsuario().getNotificaoesNaoLidas());
-		return "dashboard/admin/locais/base-cadastro-cargos";
+		Usuario usuarioLogado = getUsuario();
+
+		if (!usuarioLogado.podeCriar("cargos")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		addBaseAttributes(model, usuarioLogado);
+		
+		return TemplateUtils.DASHBOARD_ADMIN_LOCAIS_BASE_CADASTRO_CARGOS;
 	}
 
 	@PostMapping("/cargos/salvar")
 	public String cargosSalvar(Cargo cargo, Model model) {
-		model.addAttribute("usuario", getUsuario());
-		model.addAttribute("cargo", cargoService.salvar(cargo));
-		model.addAttribute("alert", "alert alert-fill-success");
-		model.addAttribute("message", "salvo com sucesso");
-		return "dashboard/admin/locais/base-cadastro-cargos";
+		
+		Usuario usuarioLogado = getUsuario();
+
+		if (!usuarioLogado.podeCriar("cargos") || !usuarioLogado.podeAlterar("cargos")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		addBaseAttributes(model, usuarioLogado);
+		try {
+			model.addAttribute("cargo", cargoService.salvar(cargo));
+			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		} catch (CargoExisteException e) {
+			RedirectUtils.mensagemError(model, e.getMessage());
+		}
+		
+		return TemplateUtils.DASHBOARD_ADMIN_LOCAIS_BASE_CADASTRO_CARGOS;
 	}
 
 	@GetMapping("/cargos/alterar/{id}")
 	public String cargosAlterar(@PathVariable("id") Long id, RedirectAttributes model) {
+		
+		Usuario usuarioLogado = getUsuario();
+
+		if (!usuarioLogado.podeCriar("cargos") || !usuarioLogado.podeAlterar("cargos")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+				
 		model.addFlashAttribute("cargo", cargoService.buscarPor(id));
-		return "redirect:/dashboard/admin/cargos/novo";
+		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_LOCAIS + "/cargos/novo";
 	}
 
 	@GetMapping("/cargos/deletar/{id}")
 	public String cargosDeletar(@PathVariable("id") Long id, RedirectAttributes model) {
-		cargoService.deletar(id);
-		model.addFlashAttribute("alert", "alert alert-fill-success alert-dismissible fade show");
-		model.addFlashAttribute("message", "removido com sucesso");
-		return "redirect:/dashboard/admin/cargos";
+		
+		Usuario usuarioLogado = getUsuario();
+
+		if (!usuarioLogado.podeDeletar("cargos")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+
+		if (!usuarioLogado.isPerfilCompleto()) {
+			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
+		}
+		
+		try {
+			cargoService.deletar(id);
+			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+		} catch (CargoNotFoundException | CargoExisteException e) {
+			RedirectUtils.mensagemError(model, e.getMessage());
+		}
+		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_LOCAIS + "/cargos";
 	}
-			
+
 	private Usuario getUsuario() {
 		autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.buscarPor(autenticado.getName());
 		return usuario;
 	}
 
+	private void addBaseAttributes(Model model, Usuario usuarioLogado) {
+		model.addAttribute("usuario", usuarioLogado);
+		model.addAttribute("notificacoes", usuarioLogado.getNotificaoesNaoLidas());
+		model.addAttribute("mensagens", usuarioLogado.getMensagensNaoLidas());
+	}
+	
+	private void seUnidadeNaoTemEnderecoOuTelefone() {
+		for (UnidadeTrabalho u : unidadeService.listarTodosSemFones()) {
+			seUnidadeNaoTemTelefone(u);
+			seUnidadeNaoTemEndereco(u);
+		}
+	}
+
+	private void seUnidadeNaoTemTelefone(UnidadeTrabalho u) {
+		
+		if (u.getTelefones().isEmpty()) {
+			TelefoneUnidade telefone = new TelefoneUnidade();
+			telefone.setNumero("(00)0000-0000");
+			telefone.setSetor("-");
+			telefone.setUnidadeTrabalho(u);
+			telefoneUnidadeService.salvar(telefone);
+
+		}
+	}
+
+	private void seUnidadeNaoTemEndereco(UnidadeTrabalho u) {
+		if (u.getEndereco() == null) {
+			EnderecoUnidade endereco = new EnderecoUnidade();
+			endereco.setUnidadeTrabalho(u);
+			enderecoUnidadeService.salvar(endereco);
+		}
+	}
 }

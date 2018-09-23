@@ -24,7 +24,10 @@ import com.gilmarcarlos.developer.gcursos.security.exception.SenhaNotNullExcepti
 import com.gilmarcarlos.developer.gcursos.service.auth.PermissoesService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.InscricaoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.InscricaoPresencialService;
+import com.gilmarcarlos.developer.gcursos.service.imagens.ImagensService;
 import com.gilmarcarlos.developer.gcursos.service.locais.CodigoFuncionalService;
+import com.gilmarcarlos.developer.gcursos.service.notificacoes.MensagensService;
+import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoService;
 
 import br.com.safeguard.check.SafeguardCheck;
 import br.com.safeguard.interfaces.Check;
@@ -59,6 +62,15 @@ public class UsuarioService {
 	
 	@Autowired
 	private TelefoneUsuarioService telefoneService;
+
+	@Autowired
+	private NotificacaoService notificacoesService;
+	
+	@Autowired
+	private MensagensService mensagensService;
+	
+	@Autowired
+	private ImagensService imagensService;
 	
 
 	// @CacheEvict(value="postCache", allEntries=true)
@@ -84,9 +96,9 @@ public class UsuarioService {
 			usuario.setAutorizacoes(Arrays.asList(autorizacaoRespository.findByNome("ROLE_Usuario")));
 			usuario.setSenha(passwordCrypt.encode("zeus_1234@5"));
 			
+			DadosPessoais dados = dadosService.salvar(usuario.getDadosPessoais());
+			CodigoFuncional codigo = codigoService.salvar(usuario.getCodigoFuncional());
 			Usuario novoUsuario = repository.save(usuario);
-			DadosPessoais dados = usuario.getDadosPessoais();
-			CodigoFuncional codigo = usuario.getCodigoFuncional();
 			
 			dados.setUsuario(novoUsuario);
 			codigo.setUsuario(novoUsuario);
@@ -181,12 +193,20 @@ public class UsuarioService {
 			throw new UsuarioDeleteException("usuário é responsável por eventos presenciais, antes de deletar, é necessário alterar a responsabilidade do evento, ou excluir o evento.");
 		}
 		
+		notificacoesService.deletar(usuario);
+		mensagensService.deletar(usuario);
+		
 		inscricaoService.deletar(usuario);
 		inscricaoOnlineService.deletar(usuario);
-		telefoneService.deletar(usuario);
+		
 		permissoesService.deletar(usuario);
+		
+		telefoneService.deletar(usuario);
 		dadosService.deletar(usuario.getDadosPessoais().getId());
 		codigoService.deletar(usuario.getCodigoFuncional().getId());
+		
+		imagensService.deletar(usuario);
+				
 		repository.deleteById(id);
 	}
 

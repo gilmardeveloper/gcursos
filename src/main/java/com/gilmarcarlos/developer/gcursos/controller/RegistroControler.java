@@ -12,6 +12,7 @@ import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.security.exception.RegistroException;
 import com.gilmarcarlos.developer.gcursos.service.auth.AutenticadorService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 
 @Controller
 public class RegistroControler {
@@ -49,12 +50,10 @@ public class RegistroControler {
 		try {
 			Usuario usuario = autenticador.validarRedefinicao(token);
 			usuarioService.redefinirSenha(usuario, senha);
-			model.addFlashAttribute("alert", "alert alert-fill-success");
-			model.addFlashAttribute("message", "sua senha foi redefinida com sucesso");
+			RedirectUtils.mensagemSucesso(model, "sua senha foi redefinida com sucesso");
 			return "redirect:/redefinir-senha";
 		} catch (Exception e) {
-			model.addFlashAttribute("alert", "alert alert-fill-danger");
-			model.addFlashAttribute("message", "um erro ocorreu");
+			RedirectUtils.mensagemError(model, "um erro ocorreu");
 			return "redirect:/redefinir-senha";
 		}
 
@@ -68,12 +67,10 @@ public class RegistroControler {
 		try {
 			Usuario usuario = usuarioService.buscarPor(id);
 			usuarioService.redefinirSenha(usuario, senha);
-			model.addFlashAttribute("alert", "alert alert-fill-success");
-			model.addFlashAttribute("message", "sua senha foi redefinida com sucesso");
+			RedirectUtils.mensagemSucesso(model, "sua senha foi redefinida com sucesso");
 			return "redirect:/redefinir-senha";
 		} catch (Exception e) {
-			model.addFlashAttribute("alert", "alert alert-fill-danger");
-			model.addFlashAttribute("message", "um erro ocorreu");
+			RedirectUtils.mensagemError(model, "um erro ocorreu");
 			return "redirect:/dashboard/";
 		}
 
@@ -81,29 +78,25 @@ public class RegistroControler {
 	
 
 	@PostMapping(value = { "/solicitar-nova-senha", "/solicitar-nova-senha/" })
-	public String esqueceuSenha(@RequestParam("email") String email, RedirectAttributes redirect) {
+	public String esqueceuSenha(@RequestParam("email") String email, RedirectAttributes model) {
 		try {
 			autenticador.registrarRedefinicao(email);
-			redirect.addFlashAttribute("alert", "alert alert-fill-success");
-			redirect.addFlashAttribute("message", "Agora verifique seu email e confirme a solicitação");
+			RedirectUtils.mensagemSucesso(model, "Agora verifique seu email e confirme a solicitação");
 			return "redirect:/esqueceu-senha";
 		} catch (Exception e) {
-			redirect.addFlashAttribute("alert", "alert alert-fill-danger");
-			redirect.addFlashAttribute("message", "Esse email não existe ou você ainda não ativou seu cadastro");
+			RedirectUtils.mensagemError(model, "Esse email não existe ou você ainda não ativou seu cadastro");
 			return "redirect:/esqueceu-senha";
 		}
 	}
 
 	@PostMapping(value = { "/registrar", "/registrar" })
-	public String registrar(Usuario usuario, RedirectAttributes redirect) {
+	public String registrar(Usuario usuario, RedirectAttributes model) {
 		try {
 			autenticador.registrarVerificacao(usuario);
-			redirect.addFlashAttribute("alert", "alert alert-fill-success");
-			redirect.addFlashAttribute("message", "Agora verifique seu email e confirme o cadastro");
+			RedirectUtils.mensagemSucesso(model, "Agora verifique seu email e confirme o cadastro");
 			return "redirect:/registro";
 		} catch (RegistroException e) {
-			redirect.addFlashAttribute("alert", "alert alert-fill-danger");
-			redirect.addFlashAttribute("message", "Você já é cadastrado");
+			RedirectUtils.mensagemError(model, "Você já é cadastrado");
 			return "redirect:/registro";
 		}
 	}
