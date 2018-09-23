@@ -170,6 +170,7 @@
                 
                 <a class="dropdown-item preview-item" th:href="@{/dashboard/usuario/mensagens}" th:each="mensagem : ${mensagens}">
                   <div class="preview-thumbnail">
+                    
                     <img th:if="${mensagem.destinatario.imagens == null}" src="http://via.placeholder.com/100x100/f4f4f4/000000" alt="image" class="profile-pic" />
 
                     <img th:unless="${mensagem.destinatario.imagens == null}" th:src="@{/imagens/usuario/{id}/avatar.png(id=${mensagem.destinatario.id})}" alt="image" class="profile-pic" />

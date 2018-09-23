@@ -21,13 +21,13 @@ public class CertificadoOnlineService {
 	}
 	
 	public CertificadoOnline atualizarConteudo(CertificadoOnline certificado) {
-		CertificadoOnline temp = buscarPor(certificado.getId());
+		CertificadoOnline temp = buscarPor(certificado.getEventoOnline().getId());
 		temp.setConteudo(certificado.getConteudo());
 		return salvar(temp);
 	}
 	
 	public CertificadoOnline atualizarImagemFundo(CertificadoOnline certificado) {
-		CertificadoOnline temp = buscarPor(certificado.getId());
+		CertificadoOnline temp = buscarPor(certificado.getEventoOnline().getId());
 		temp.setImagemFundo(certificado.getImagemFundo());
 		return salvar(temp);
 	}

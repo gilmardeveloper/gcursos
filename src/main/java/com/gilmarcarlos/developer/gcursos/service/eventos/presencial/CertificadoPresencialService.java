@@ -21,13 +21,13 @@ public class CertificadoPresencialService {
 	}
 	
 	public CertificadoPresencial atualizarConteudo(CertificadoPresencial certificado) {
-		CertificadoPresencial temp = buscarPor(certificado.getId());
+		CertificadoPresencial temp = buscarPor(certificado.getEventoPresencial().getId());
 		temp.setConteudo(certificado.getConteudo());
 		return salvar(temp);
 	}
 	
 	public CertificadoPresencial atualizarImagemFundo(CertificadoPresencial certificado) {
-		CertificadoPresencial temp = buscarPor(certificado.getId());
+		CertificadoPresencial temp = buscarPor(certificado.getEventoPresencial().getId());
 		temp.setImagemFundo(certificado.getImagemFundo());
 		return salvar(temp);
 	}
