@@ -8,7 +8,7 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.CertificadoPr
 
 public interface CertificadoPresencialRepository extends CrudRepository<CertificadoPresencial, Long> {
 	
-	@Query("select i from CertificadoPresencial i where i.id = :pid")
+	@Query("select c from CertificadoPresencial c where c.eventoPresencial.id = :pid")
 	CertificadoPresencial buscarPor(@Param("pid") Long id);
 
 }
