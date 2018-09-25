@@ -12,6 +12,12 @@ import javax.validation.constraints.NotNull;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 
+/**
+ * Classe de entidade que representa uma imagem para eventos online
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class ImagensEventoOnlineTop implements Serializable{
 	

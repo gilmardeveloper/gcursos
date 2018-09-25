@@ -20,6 +20,12 @@ import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPrese
 import com.gilmarcarlos.developer.gcursos.service.imagens.ImagensService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 
+/**
+ * Classe de controle para imagens
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Controller
 @RequestMapping("/imagens")
 public class ImagensControler {

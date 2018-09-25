@@ -68,7 +68,12 @@ import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 import com.gilmarcarlos.developer.gcursos.utils.StatusTypeUtils;
 import com.gilmarcarlos.developer.gcursos.utils.TemplateUtils;
 import com.gilmarcarlos.developer.gcursos.utils.UrlUtils;
-
+/**
+ * Classe de controle para gestão de eventos online
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Controller
 @RequestMapping(UrlUtils.DASHBOARD_ADMIN_EVENTOS_ONLINE)
 public class EventosOnlineAdminControler {

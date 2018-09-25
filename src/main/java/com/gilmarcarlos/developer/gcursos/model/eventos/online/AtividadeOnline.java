@@ -9,6 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 
+/**
+ * Classe de entidade que representa uma atividade de um módulo do evento online
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class AtividadeOnline implements Serializable{
 

@@ -2,6 +2,12 @@ package com.gilmarcarlos.developer.gcursos.model.eventos.online;
 
 import java.io.Serializable;
 
+/**
+ * Classe auxiliar para entidade modulo
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 public class ModuloDTO implements Serializable {
 
 	/**

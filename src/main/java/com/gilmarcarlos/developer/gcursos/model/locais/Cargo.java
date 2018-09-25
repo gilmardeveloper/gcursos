@@ -9,6 +9,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+/**
+ * Classe de entidade que representa um cargo
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class Cargo implements Serializable{
 

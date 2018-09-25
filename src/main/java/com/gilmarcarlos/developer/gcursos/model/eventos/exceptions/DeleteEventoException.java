@@ -1,5 +1,11 @@
 package com.gilmarcarlos.developer.gcursos.model.eventos.exceptions;
 
+/**
+ * Classe para lançar excessões na validação de eventos
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class DeleteEventoException extends Exception{
 
 	/**

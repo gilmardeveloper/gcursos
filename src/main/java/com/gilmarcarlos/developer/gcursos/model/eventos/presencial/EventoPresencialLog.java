@@ -9,6 +9,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+/**
+ * Classe de entidade que representa informações de log de um evento presencial
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class EventoPresencialLog implements Serializable{
 

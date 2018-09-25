@@ -12,6 +12,12 @@ import javax.validation.constraints.NotNull;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
 
+/**
+ * Classe de entidade que representa uma imagem para eventos presenciais
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class ImagensEventoPresencialTop implements Serializable{
 	

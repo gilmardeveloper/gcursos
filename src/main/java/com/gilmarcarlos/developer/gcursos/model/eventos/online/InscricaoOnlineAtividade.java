@@ -8,6 +8,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+/**
+ * Classe de entidade que representa que guarda o historico de atividades realizados pelo usuario
+ * em um evento online
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class InscricaoOnlineAtividade implements Serializable{
 

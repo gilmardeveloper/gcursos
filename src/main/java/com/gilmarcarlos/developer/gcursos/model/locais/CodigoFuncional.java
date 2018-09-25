@@ -12,6 +12,12 @@ import javax.persistence.OneToOne;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.NomeColaborador;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Classe de entidade que representa um um codigo funcional ou representação de dados profissionais
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class CodigoFuncional implements Serializable {
 

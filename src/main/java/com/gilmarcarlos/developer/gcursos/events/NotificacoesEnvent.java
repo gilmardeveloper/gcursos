@@ -2,6 +2,12 @@ package com.gilmarcarlos.developer.gcursos.events;
 
 import org.springframework.context.ApplicationEvent;
 
+/**
+ * @deprecated
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 public class NotificacoesEnvent extends ApplicationEvent{
 	
 	/**

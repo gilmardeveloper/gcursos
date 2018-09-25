@@ -28,21 +28,16 @@ import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 import net.sf.jasperreports.export.SimplePdfReportConfiguration;
 
 
-/*
+/**
  * 
- * Classe auxiliar que representa um Contrato dinâmico que sera gerado como um arquivo de PDF
+ * Classe auxiliar que representa uma lista de presença dinâmico que sera gerado como um arquivo de PDF
  * 
- * É manipulado a partir da view contratos-info.html, e a requisição é disparada a partir do botão gerar
- * 
- * As requisições e respostas são tratadas pelo controle @ContratoController
- * 
- * dependências do ireporte são necessárias e dos arquivos novo_contrato.jasper
- * 
- * por medida de compatibilidade existem dois arquivos .jasper, um para windows e outro para linux, sua configuração
- * deve ser realizada de forma manual no metodo gerarPdf()
+ * dependências do ireporte são necessárias e dos arquivos *.jasper
  * 
  * Os arquivos em produção devem ser copiados para fora do projeto, em local onde tenha permissões para serem lidos
  * por aplicação, no caso windows C:\\users ou C:\ e no linux /home/user/
+ * 
+ * A alteração do caminho deve ser realizado em (ConfUtils) na constante BASE_ARQUIVOS_EXTERNOS
  * 
  * */
 
@@ -76,24 +71,12 @@ public class ListaPresenca implements  Serializable{
 	
 	private List<ListaPresenca> lista;
 	
-	/* metodo publico para realizar o parse e gerar o contrato */
 	public InputStream gerar(AtividadePresencial atividade) {
 		this.lista = new ArrayList<>();
 		parse(atividade);
 		return gerarPdf();
 	}
 
-	/* 
-	 * 
-	 * metodo privado para gerar o pdf
-	 * para windows usar o arquivo novo_contrato.jasper para linux usar o arquivo novo_contrato_linux.jasper
-	 * os dois arquivos se encontram na raiz do projeto, em produção esses arquivos devem ser copiados para fora
-	 * da pasta raiz do projeto
-	 * 
-	 * os arquivos em pdf são salvos na pasta raiz, e em produção na pasta que você especificar, o nome do arquivo
-	 * é o numero do cpf do inquilino.pdf
-	 *  
-	 * */
 	private InputStream gerarPdf() {
 				
 		
@@ -135,11 +118,6 @@ public class ListaPresenca implements  Serializable{
 		}
 	}
 
-	/*
-	 * 
-	 * Transforma todos os campos necessários para gerar o pdf, em campos de string
-	 * 
-	 * */
 	private void parse(AtividadePresencial atividade) {
 		atividade.getInscricoes().forEach( i -> {
 			

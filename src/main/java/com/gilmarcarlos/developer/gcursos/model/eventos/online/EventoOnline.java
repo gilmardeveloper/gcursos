@@ -21,6 +21,12 @@ import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoOnlineTop;
 import com.gilmarcarlos.developer.gcursos.model.type.EventoStatus;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Classe de entidade que representa um evento online
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class EventoOnline implements Serializable, Eventos {
 
@@ -265,18 +271,34 @@ public class EventoOnline implements Serializable, Eventos {
 			return EventoStatus.CANCELADO;
 		}
 	}
-
+	
+	/**
+	 * Método que ativa o evento
+	 * 
+	 * 
+	 */
 	@Transient
 	public void ativarEvento() {
 		this.ativo = true;
 	}
-
+	
+	/**
+	 * Método que cancela o evento
+	 * 
+	 * 
+	 */
 	@Transient
 	public void cancelarEvento() {
 		this.publicado = false;
 		this.ativo = false;
 	}
-
+	
+	/**
+	 * Método que ativa uma publicação 
+	 * 
+	 * @throws EventoCanceladoException se o evento estiver cancelado
+	 * 
+	 */
 	@Transient
 	public void ativarPublicacao() throws EventoCanceladoException {
 		if (!isAtivo()) {
@@ -284,27 +306,53 @@ public class EventoOnline implements Serializable, Eventos {
 		}
 		this.publicado = true;
 	}
-
+	
+	/**
+	 * Método que desativa uma publicação do evento
+	 * 
+	 * 
+	 */
 	@Transient
 	public void desativarPublicacao() {
 		this.publicado = false;
 	}
-
+	
+	/**
+	 * Método que retorna se o evento possui certificado
+	 * 
+	 * @return String
+	 */
 	@Transient
 	public String getDisplayCertificado() {
 		return (isCertificado() ? "SIM" : "NÃO");
 	}
-
+	
+	/**
+	 * Método que retorna se o evento foi publicado
+	 * 
+	 * @return String
+	 */
 	@Transient
 	public String getDisplayPublicado() {
 		return (isPublicado() ? "SIM" : "NÃO");
 	}
-
+	
+	/**
+	 * Método que retorna se o evento se encontra ativo
+	 * 
+	 * @return Boolean
+	 */
 	@Transient
 	public Boolean isAtivo() {
 		return ativo;
 	}
-
+	
+	/**
+	 * Método que retorna o progresso de um usuario inscrito no evento
+	 * 
+	 * @param usuario
+	 * @return Long
+	 */
 	@Transient
 	public Long progresso(Usuario usuario) {
 
@@ -324,38 +372,70 @@ public class EventoOnline implements Serializable, Eventos {
 			}
 
 		}
-
+		
+		if(denominador == 0.0) return 0l;
+		
 		presenca = numerador / denominador;
 
 		return Math.round(presenca);
 	}
-
+	
+	/**
+	 * Método que retorna o progresso total de um evento
+	 * 
+	 * @return Long
+	 */
 	@Transient
 	public Long progressoTotal() {
 		if(qtdInscricoes() == 0) return 0l;
 		return (qtdFinalizado() * 100) / qtdInscricoes();
 	}
-
+	
+	/**
+	 * Método que retorna a quantidade de módulos
+	 * 
+	 * @return Integer
+	 */
 	@Transient
 	public Integer qtdModulos() {
 		return getModulos().size();
 	}
-
+	
+	/**
+	 * Método que retorna a quantidade de atividades
+	 * 
+	 * @return Integer
+	 */
 	@Transient
 	public Integer qtdAtividades() {
 		return getModulos().stream().mapToInt(m -> m.getAtividades().size()).sum();
 	}
-
+	
+	/**
+	 * Método que retorna a quantidade de inscrições
+	 * 
+	 * @return Integer
+	 */
 	@Transient
 	public Integer qtdInscricoes() {
 		return getInscricoes().size();
 	}
-
+	
+	/**
+	 * Método que retorna a quantidade de inscrições em andamento
+	 * 
+	 * @return Long
+	 */
 	@Transient
 	public Long qtdAndamento() {
 		return getInscricoes().stream().filter(i -> !i.isFinalizado()).count();
 	}
-
+	
+	/**
+	 * Método que retorna a quantidade inscrições finalizadas
+	 * 
+	 * @return Long
+	 */
 	@Transient
 	public Long qtdFinalizado() {
 		return getInscricoes().stream().filter(i -> i.isFinalizado()).count();

@@ -35,6 +35,12 @@ import br.com.safeguard.check.SafeguardCheck;
 import br.com.safeguard.interfaces.Check;
 import br.com.safeguard.types.ParametroTipo;
 
+/**
+ * Classe de controle para cadastros
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Controller
 @RequestMapping("/")
 public class UsuarioCompleteCadastroControler {

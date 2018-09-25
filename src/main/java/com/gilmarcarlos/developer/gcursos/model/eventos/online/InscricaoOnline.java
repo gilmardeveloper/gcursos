@@ -15,6 +15,13 @@ import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Classe de entidade que representa uma inscrição em um evento
+ * presencial
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class InscricaoOnline implements Serializable {
 
@@ -118,12 +125,24 @@ public class InscricaoOnline implements Serializable {
 	public void setDataConclusao(LocalDate dataConclusao) {
 		this.dataConclusao = dataConclusao;
 	}
-
+	
+	/**
+	 * Método que valida se um evento em andamento foi finalizado
+	 * 
+	 * @return Boolean
+	 * 
+	 */
 	@Transient
 	public Boolean isFinalizado() {
 		return (finalizado != null ? finalizado : false);
 	}
-
+	
+	/**
+	 * Método que retorna o ultimo módulo concluído pelo usuario
+	 * 
+	 * @return Modulo
+	 * 
+	 */
 	@Transient
 	public Modulo ultimoModulo() {
 		if (this.modulos.isEmpty()) {
@@ -133,7 +152,13 @@ public class InscricaoOnline implements Serializable {
 			return this.modulos.get(this.modulos.size() - 1).getModulo();
 		}
 	}
-
+	
+	/**
+	 * Método que retorna a última atividade concluída pelo usuario
+	 * 
+	 * @return Modulo
+	 * 
+	 */
 	@Transient
 	public AtividadeOnline ultimaAtividade() {
 
@@ -147,12 +172,26 @@ public class InscricaoOnline implements Serializable {
 			}
 		}
 	}
-
+	
+	/**
+	 * Método que verifica se um modulo foi realizado
+	 * 
+	 * @param modulo
+	 * @return Boolean
+	 * 
+	 */
 	@Transient
 	public Boolean realizou(Modulo modulo) {
 		return getModulos().stream().anyMatch(m -> m.getModulo().equals(modulo));
 	}
-
+	
+	/**
+	 * Método que verifica se uma atividade foi realizada
+	 * 
+	 * @param atividade
+	 * @return Boolean
+	 * 
+	 */
 	@Transient
 	public Boolean realizou(AtividadeOnline atividade) {
 		return getAtividades().stream().anyMatch(a -> a.getAtividadeOnline().equals(atividade));

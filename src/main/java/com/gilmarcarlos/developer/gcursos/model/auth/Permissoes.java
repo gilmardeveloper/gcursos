@@ -12,6 +12,12 @@ import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Classe de entidade que representa permissões de usuarios
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class Permissoes implements Serializable{
 	

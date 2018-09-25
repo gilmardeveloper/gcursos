@@ -15,6 +15,12 @@ import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
 import com.gilmarcarlos.developer.gcursos.utils.ConfUtils;
 import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 
+/**
+ * Classe de controle para registros
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Controller
 public class RegistroControler {
 

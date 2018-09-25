@@ -9,6 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 
+/**
+ * Classe de entidade que representa um conteudo adicional sobre o evento online
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class SobreOnline implements Serializable{
 

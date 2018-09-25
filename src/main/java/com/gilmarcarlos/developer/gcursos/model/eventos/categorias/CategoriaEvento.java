@@ -12,6 +12,12 @@ import javax.persistence.OneToMany;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
 
+/**
+ * Classe de entidade que representa uma categoria do evento
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class CategoriaEvento implements Serializable{
 

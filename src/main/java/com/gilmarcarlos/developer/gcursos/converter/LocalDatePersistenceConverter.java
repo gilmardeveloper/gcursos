@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-/* 
+/** 
  * 
  * conversor do tipo LocalDate para sql.Date, ou virce-versa, no momento de persistir ou recuperar dados do db
  *

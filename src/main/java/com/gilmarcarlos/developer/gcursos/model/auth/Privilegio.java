@@ -8,6 +8,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+/**
+ * Classe de entidade que representa privilegios do sistema
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class Privilegio {
   

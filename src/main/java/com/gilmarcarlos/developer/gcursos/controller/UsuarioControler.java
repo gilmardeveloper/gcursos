@@ -61,7 +61,12 @@ import com.gilmarcarlos.developer.gcursos.utils.UrlUtils;
 import br.com.safeguard.check.SafeguardCheck;
 import br.com.safeguard.interfaces.Check;
 import br.com.safeguard.types.ParametroTipo;
-
+/**
+ * Classe de controle para gestão de usuarios
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Controller
 @RequestMapping(UrlUtils.DASHBOARD_USUARIO)
 public class UsuarioControler {

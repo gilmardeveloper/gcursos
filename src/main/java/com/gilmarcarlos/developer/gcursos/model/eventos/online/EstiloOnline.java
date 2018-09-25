@@ -8,6 +8,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+/**
+ * Classe de entidade que representa um estilo visual da pagina de destaque de um evento online
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class EstiloOnline implements Serializable{
 

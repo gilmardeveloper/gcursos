@@ -11,6 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+/**
+ * Classe de entidade que representa um dia do evento presencial
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class DiaEvento implements Serializable{
 

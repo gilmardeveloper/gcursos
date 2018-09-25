@@ -4,6 +4,12 @@ import java.io.Serializable;
 
 import com.gilmarcarlos.developer.gcursos.interfaces.Eventos;
 
+/**
+ * Classe auxiliar para eventos
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 public class EventoDTO implements Serializable {
 	
 	/**

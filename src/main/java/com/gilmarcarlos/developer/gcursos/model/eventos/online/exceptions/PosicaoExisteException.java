@@ -1,5 +1,11 @@
 package com.gilmarcarlos.developer.gcursos.model.eventos.online.exceptions;
 
+/**
+ * Classe para lançar excessões na validação de modulos e atividades online
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class PosicaoExisteException extends Exception{
 
 	/**

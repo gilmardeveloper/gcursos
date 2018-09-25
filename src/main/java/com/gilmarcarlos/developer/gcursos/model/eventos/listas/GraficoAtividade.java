@@ -5,6 +5,12 @@ import java.util.List;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
 
+/**
+ * Classe auxiliar para envio de dados para graficos em relatorios
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 public class GraficoAtividade implements Serializable{
 
 	/**

@@ -11,6 +11,12 @@ import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Classe de entidade que representa um certificado presencial
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class CertificadoPresencial implements Serializable{
 	

@@ -7,7 +7,7 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 
-/* 
+/** 
  * 
  * conversor do tipo LocalDateTime para sql.Time, ou virce-versa, no momento de persistir ou recuperar dados do db
  *

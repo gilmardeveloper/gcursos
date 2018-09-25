@@ -13,6 +13,12 @@ import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Classe de entidade que relaciona um usuario a um token de verificação
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class UsuarioToken {
 	

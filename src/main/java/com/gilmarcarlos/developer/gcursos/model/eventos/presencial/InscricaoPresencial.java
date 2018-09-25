@@ -11,6 +11,13 @@ import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Classe de entidade que representa uma inscrição em um evento
+ * presencial
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class InscricaoPresencial implements Serializable{
 
@@ -84,11 +91,24 @@ public class InscricaoPresencial implements Serializable{
 		this.presenca = presenca;
 	}
 	
+	/**
+	 * Método que valida se uma inscrição pertence a um usuário 
+	 * 
+	 * @param usuario
+	 * @return Boolean
+	 * 
+	 */
 	@Transient
 	public Boolean isInscrito(Usuario usuario) {
 		return getUsuario().equals(usuario);
 	}
 	
+	/**
+	 * Método que valida se usuario foi marcado como presente ou ausente em um evento 
+	 * 
+	 * @return Boolean
+	 * 
+	 */
 	@Transient
 	public Boolean isPresente() {
 		return (this.presenca != null ? this.presenca : false);

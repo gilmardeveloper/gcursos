@@ -1,5 +1,11 @@
 package com.gilmarcarlos.developer.gcursos.model.eventos.presencial.exceptions;
 
+/**
+ * Classe para lançar excessões na validação de categorias
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class CategoriaException extends Exception{
 
 	/**

@@ -2,6 +2,12 @@ package com.gilmarcarlos.developer.gcursos.events;
 
 import java.io.Serializable;
 
+/**
+ * @deprecated
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 public class Mensagens implements Serializable{
 
 	/**

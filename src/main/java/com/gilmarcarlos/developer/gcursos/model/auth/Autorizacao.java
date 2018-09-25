@@ -13,6 +13,12 @@ import javax.persistence.ManyToMany;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Classe de entidade que representa uma autorização de um usuario
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class Autorizacao {
   

@@ -14,6 +14,13 @@ import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Classe de entidade que representa um conjunto de permissões para acesso a um evento
+ * online
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class PermissoesEventoOnline implements Serializable {
 
@@ -109,41 +116,95 @@ public class PermissoesEventoOnline implements Serializable {
 		this.eventoOnline = eventoOnline;
 	}
 	
+	/**
+	 * Método que valida se o evento precisa de um código para ser acessado 
+	 * 
+	 * @return Boolean
+	 * 
+	 */
 	@Transient
 	public Boolean precisaDeCodigo() {
 		return (this.codigo != null ? (this.codigo.length() > 0) : false); 
 	}
 	
+	/**
+	 * Método que valida se um usuario tem permissões/perfil para acessar o evento 
+	 * 
+	 * @param usuario
+	 * @return Boolean
+	 * 
+	 */
 	@Transient
 	public Boolean valida(Usuario usuario) {
 		return temCargo(usuario) && temUnidade(usuario) && temSexo(usuario) && alvo(usuario);
 	}
-
+	
+	/**
+	 * Método que gera um token como código para acesso de um evento 
+	 * 
+	 * @return String
+	 * 
+	 */
 	@Transient
 	private String gerarToken() {
 		return UUID.randomUUID().toString().toUpperCase();
 	}
 	
+	/**
+	 * Método que valida se um usuario tem permissões/perfil para acessar o evento por cargo 
+	 * 
+	 * @param usuario
+	 * @return Boolean
+	 * 
+	 */
 	@Transient
 	private Boolean temCargo(Usuario usuario) {
 		return this.cargos.contains(usuario.getCodigoFuncional().getCargo().getNome()) || this.cargos.contains("todos");
 	}
 	
+	/**
+	 * Método que valida se um usuario tem permissões/perfil para acessar o evento por unidade
+	 * 
+	 * @param usuario
+	 * @return Boolean
+	 * 
+	 */
 	@Transient
 	private Boolean temUnidade(Usuario usuario) {
 		return this.unidades.contains(usuario.getCodigoFuncional().getUnidadeTrabalho().getNome()) || this.unidades.contains("todos");
 	}
 	
+	/**
+	 * Método que valida se um usuario tem permissões/perfil para acessar o evento por opção sexual 
+	 * 
+	 * @param usuario
+	 * @return Boolean
+	 * 
+	 */
 	@Transient
 	private Boolean temSexo(Usuario usuario) {
 		return this.sexos.contains(usuario.getDadosPessoais().getSexo()) || this.sexos.contains("todos");
 	}
 	
+	/**
+	 * Método que valida se um usuario tem permissões/perfil para acessar o evento por código 
+	 * 
+	 * @param usuario
+	 * @return Boolean
+	 * 
+	 */
 	@Transient
 	public Boolean temCodigo(Usuario usuario) {
 		return this.usuariosComCodigo.contains(usuario.getEmail());
 	}
 	
+	/**
+	 * Método que valida se um usuario tem permissões/perfil para acessar o evento por código funcional 
+	 * 
+	 * @param usuario
+	 * @return Boolean
+	 * 
+	 */
 	@Transient
 	private Boolean alvo(Usuario usuario) {
 		return this.destinado.equalsIgnoreCase(usuario.getCodigoFuncional().getTipo()) || this.destinado.equalsIgnoreCase("todos");

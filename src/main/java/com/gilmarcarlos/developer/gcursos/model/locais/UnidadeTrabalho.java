@@ -11,6 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+/**
+ * Classe de entidade que representa uma unidade de trabalho
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class UnidadeTrabalho implements Serializable{
 

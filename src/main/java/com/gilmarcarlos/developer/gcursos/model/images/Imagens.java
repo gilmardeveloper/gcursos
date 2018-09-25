@@ -12,6 +12,12 @@ import javax.validation.constraints.NotNull;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Classe de entidade que representa uma imagem para usuários, avatar
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class Imagens implements Serializable{
 	

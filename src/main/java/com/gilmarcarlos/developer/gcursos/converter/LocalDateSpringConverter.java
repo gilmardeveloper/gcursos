@@ -7,7 +7,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 
-/* 
+/** 
  * 
  * conversor do tipo LocalDate para String, ou virce-versa, entre as requisições do spring
  *

@@ -12,6 +12,13 @@ import javax.validation.constraints.NotNull;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencial;
 
+/**
+ * Classe de entidade que representa um cabeçalho para uma lista de presença, contendo logo
+ * e titulo
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class ImagensLogoListaPresenca implements Serializable{
 	

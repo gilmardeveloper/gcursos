@@ -13,6 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.gilmarcarlos.developer.gcursos.converter.exceptions.FileSpringConverterException;
 
+/** 
+ * 
+ * conversor do tipo MultipartFile para Blob, ou virce-versa, no momento de persistir ou recuperar dados do db
+ *
+ *  
+ * */
 @Component
 public class FileSpringConverter implements Converter<MultipartFile, Blob> {
 

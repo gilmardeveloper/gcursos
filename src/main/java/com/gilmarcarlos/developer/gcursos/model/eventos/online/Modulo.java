@@ -10,6 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+/**
+ * Classe de entidade que representa um módulo no evento online
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class Modulo implements Serializable {
 

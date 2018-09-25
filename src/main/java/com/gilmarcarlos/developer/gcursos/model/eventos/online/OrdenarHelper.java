@@ -2,6 +2,12 @@ package com.gilmarcarlos.developer.gcursos.model.eventos.online;
 
 import java.io.Serializable;
 
+/**
+ * Classe auxiliar para ordenação de modulos e atividades
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 public class OrdenarHelper implements Serializable{
 
 	/**

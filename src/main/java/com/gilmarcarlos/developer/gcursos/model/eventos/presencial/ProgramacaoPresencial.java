@@ -10,6 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+/**
+ * Classe de entidade que representa uma programação em dias de um evento presencial
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class ProgramacaoPresencial implements Serializable{
 

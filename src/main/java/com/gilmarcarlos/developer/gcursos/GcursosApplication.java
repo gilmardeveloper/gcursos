@@ -24,6 +24,12 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Ticker;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
+/**
+ * Classe de configuração do spring boot
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @SpringBootApplication
 @EnableCaching
 public class GcursosApplication {

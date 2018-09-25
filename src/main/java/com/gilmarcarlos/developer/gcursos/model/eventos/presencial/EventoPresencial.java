@@ -23,6 +23,12 @@ import com.gilmarcarlos.developer.gcursos.model.images.ImagensLogoListaPresenca;
 import com.gilmarcarlos.developer.gcursos.model.type.EventoStatus;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Classe de entidade que representa um evento presencial
+ *  
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class EventoPresencial implements Serializable, Eventos {
 
@@ -311,17 +317,35 @@ public class EventoPresencial implements Serializable, Eventos {
 	public void setCertificadoPresencial(CertificadoPresencial certificadoPresencial) {
 		this.certificadoPresencial = certificadoPresencial;
 	}
-
+	
+	/**
+	 * Método que retorna a hora da abertura do evento 
+	 * 
+	 * @return LocalTime
+	 * 
+	 */
 	@Transient
 	public LocalTime getTimeAbertura() {
 		return LocalTime.parse(this.horaAbertura, DateTimeFormatter.ofPattern("HH:mm"));
 	}
-
+	
+	/**
+	 * Método que retorna a hora de termino do evento 
+	 * 
+	 * @return LocalTime
+	 * 
+	 */
 	@Transient
 	public LocalTime getTimeTermino() {
 		return LocalTime.parse(this.horaTermino, DateTimeFormatter.ofPattern("HH:mm"));
 	}
-
+	
+	/**
+	 * Método que retorna status de um evento  
+	 * 
+	 * @return EventoStatus
+	 * 
+	 */
 	@Transient
 	public EventoStatus getStatus() {
 		if (isAtivo()) {
@@ -330,18 +354,34 @@ public class EventoPresencial implements Serializable, Eventos {
 			return EventoStatus.CANCELADO;
 		}
 	}
-
+	
+	/**
+	 * Método que ativa o evento
+	 * 
+	 * 
+	 */
 	@Transient
 	public void ativarEvento() {
 		this.ativo = true;
 	}
 
+	/**
+	 * Método que cancela o evento
+	 * 
+	 * 
+	 */
 	@Transient
 	public void cancelarEvento() {
 		this.publicado = false;
 		this.ativo = false;
 	}
-
+	
+	/**
+	 * Método que ativa uma publicação 
+	 * 
+	 * @throws EventoCanceladoException se o evento estiver cancelado
+	 * 
+	 */
 	@Transient
 	public void ativarPublicacao() throws EventoCanceladoException {
 		if (!isAtivo()) {
@@ -349,32 +389,64 @@ public class EventoPresencial implements Serializable, Eventos {
 		}
 		this.publicado = true;
 	}
+	
 
+	/**
+	 * Método que desativa uma publicação do evento
+	 * 
+	 * 
+	 */
 	@Transient
 	public void desativarPublicacao() {
 		this.publicado = false;
 	}
-
+	
+	/**
+	 * Método que retorna se o evento possui certificado
+	 * 
+	 * @return String
+	 */
 	@Transient
 	public String getDisplayCertificado() {
 		return (isCertificado() ? "SIM" : "NÃO");
 	}
-
+	
+	/**
+	 * Método que retorna se o evento foi publicado
+	 * 
+	 * @return String
+	 */
 	@Transient
 	public String getDisplayPublicado() {
 		return (isPublicado() ? "SIM" : "NÃO");
 	}
-
+	
+	/**
+	 * Método que retorna se o evento se encontra fechado
+	 * 
+	 * @return Boolean
+	 */
 	@Transient
 	public Boolean isFechado() {
 		return getDataTermino().isBefore(LocalDate.now());
 	}
-
+	
+	/**
+	 * Método que retorna se o evento se encontra ativo
+	 * 
+	 * @return Boolean
+	 */
 	@Transient
 	public Boolean isAtivo() {
 		return ativo;
 	}
-
+	
+	/**
+	 * Método que retorna a assiduidade de um usuario inscrito no evento
+	 * 
+	 * @param usuario
+	 * @return Long
+	 */
 	@Transient
 	public Long assiduidade(Usuario usuario) {
 
@@ -388,12 +460,19 @@ public class EventoPresencial implements Serializable, Eventos {
 				denominador++;
 			}
 		}
-
+		
+		if(denominador == 0.0) return 0l;
+		
 		presenca = numerador / denominador;
 
 		return Math.round(presenca);
 	}
-
+	
+	/**
+	 * Método que retorna a assiduidade total de um evento
+	 * 
+	 * @return Long
+	 */
 	@Transient
 	public Long assiduidadeTotal() {
 
@@ -412,7 +491,12 @@ public class EventoPresencial implements Serializable, Eventos {
 		
 		return Math.round(presenca);
 	}
-
+	
+	/**
+	 * Método que retorna a quantidade de inscrições marcadas como presente
+	 * 
+	 * @return Long
+	 */
 	@Transient
 	public Long qtdPresentes() {
 
@@ -427,6 +511,11 @@ public class EventoPresencial implements Serializable, Eventos {
 		return numerador;
 	}
 	
+	/**
+	 * Método que retorna a quantidade de inscrições marcadas como ausente
+	 * 
+	 * @return Long
+	 */
 	@Transient
 	public Long qtdAusentes() {
 

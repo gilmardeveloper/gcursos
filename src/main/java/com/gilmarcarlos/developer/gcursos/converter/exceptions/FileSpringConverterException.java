@@ -1,5 +1,11 @@
 package com.gilmarcarlos.developer.gcursos.converter.exceptions;
 
+/**
+ * Classe para lançar excessões na falha de converções de arquivos
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class FileSpringConverterException extends Exception{
 
 	/**
