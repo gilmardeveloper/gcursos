@@ -9,11 +9,23 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnline;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.InscricaoOnlineRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (InscricaoOnline) crud básico
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class InscricaoOnlineService {
 
 	@Autowired
 	private InscricaoOnlineRepository repository;
+	
+	@Autowired
+	private InscricaoOnlineModuloService inscricaoModuloService;
+
+	@Autowired
+	private InscricaoOnlineAtividadeService inscricaoAtividadeService;
 
 	public InscricaoOnline salvar(InscricaoOnline inscricao) {
 		return repository.save(inscricao);
@@ -32,8 +44,21 @@ public class InscricaoOnlineService {
 	}
 
 	public void deletar(Usuario usuario) {
+		
 		if (!usuario.getInscricoesOnline().isEmpty()) {
-			usuario.getInscricoesOnline().forEach(i -> deletar(i.getId()));
+			usuario.getInscricoesOnline().forEach(i -> { 
+				
+				if (!i.getAtividades().isEmpty()) {
+					i.getAtividades().forEach(a -> inscricaoAtividadeService.deletar(a.getId()));
+				}
+
+				if (!i.getModulos().isEmpty()) {
+					i.getModulos().forEach(m -> inscricaoModuloService.deletar(m.getId()));
+				}
+				
+				deletar(i.getId());
+				
+			});
 		}
 	}
 

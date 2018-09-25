@@ -1,5 +1,11 @@
 package com.gilmarcarlos.developer.gcursos.model.locais.exceptions;
 
+/**
+ * Classe para lançar excessões na validação de departamentos
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class DepartamentoExisteException extends Exception{
 
 	/**

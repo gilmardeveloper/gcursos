@@ -1,5 +1,13 @@
 package com.gilmarcarlos.developer.gcursos.utils;
 
+/**
+ * Classe com caminho das urls internas do sistema, diretamente relacionados com os controllers
+ * 
+ * path-package: com.gilmarcarlos.developer.gcursos.controller
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class UrlUtils {
 	
 	public final static String DASHBOARD = "/dashboard/";

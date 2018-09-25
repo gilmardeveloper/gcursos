@@ -10,6 +10,12 @@ import com.gilmarcarlos.developer.gcursos.model.locais.Departamento;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.auth.PermissoesRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (Permissoes) crud básico
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class PermissoesService {
 

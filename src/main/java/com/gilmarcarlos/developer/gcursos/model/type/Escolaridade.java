@@ -8,6 +8,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.transaction.Transactional;
 
+/**
+ * Classe de entidade que representa opções de uma escolaridade
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class Escolaridade implements Serializable{
 

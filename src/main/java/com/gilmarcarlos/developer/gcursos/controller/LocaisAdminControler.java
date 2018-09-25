@@ -30,6 +30,7 @@ import com.gilmarcarlos.developer.gcursos.service.locais.EnderecoUnidadeService;
 import com.gilmarcarlos.developer.gcursos.service.locais.TelefoneUnidadeService;
 import com.gilmarcarlos.developer.gcursos.service.locais.UnidadeTrabalhoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.ConfUtils;
 import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 import com.gilmarcarlos.developer.gcursos.utils.TemplateUtils;
 import com.gilmarcarlos.developer.gcursos.utils.UrlUtils;
@@ -115,7 +116,7 @@ public class LocaisAdminControler {
 		
 		try {
 			unidadeService.salvar(unidade);
-			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 		} catch (UnidadeExisteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
@@ -149,7 +150,7 @@ public class LocaisAdminControler {
 				telefoneUnidadeService.salvar(telefone);
 			}
 			
-			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 		
 		} catch (UnidadeExisteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
@@ -182,7 +183,7 @@ public class LocaisAdminControler {
 				
 		try {
 			unidadeService.deletar(id);
-			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 		} catch (UnidadeNotFoundException | UnidadeExisteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
@@ -204,7 +205,7 @@ public class LocaisAdminControler {
 		}
 		
 		telefoneUnidadeService.salvar(telefone);
-		RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_LOCAIS + "/unidades";
 	}
@@ -225,7 +226,7 @@ public class LocaisAdminControler {
 		
 		if (telefone.getUnidadeTrabalho().podeExcluirTelefone()) {
 			telefoneUnidadeService.deletar(telefone.getId());
-			RedirectUtils.mensagemSucesso(model, "excluido com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 			return "redirect:" + UrlUtils.DASHBOARD_ADMIN_LOCAIS + "/unidades";
 		} else {
 			RedirectUtils.mensagemError(model, "para excluir, a unidade precisa ter no mínimo dois telefones");
@@ -288,7 +289,7 @@ public class LocaisAdminControler {
 		
 		try {
 			model.addAttribute("departamento", departamentoService.salvar(departamento));
-			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 		} catch (DepartamentoExisteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
@@ -328,7 +329,7 @@ public class LocaisAdminControler {
 		
 		try {
 			departamentoService.deletar(id);
-			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 		} catch (DepartamentoNotFoundException | DepartamentoExisteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
@@ -387,7 +388,7 @@ public class LocaisAdminControler {
 		addBaseAttributes(model, usuarioLogado);
 		try {
 			model.addAttribute("cargo", cargoService.salvar(cargo));
-			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 		} catch (CargoExisteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
@@ -427,7 +428,7 @@ public class LocaisAdminControler {
 		
 		try {
 			cargoService.deletar(id);
-			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 		} catch (CargoNotFoundException | CargoExisteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}

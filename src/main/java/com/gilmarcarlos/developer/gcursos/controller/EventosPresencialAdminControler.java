@@ -67,6 +67,7 @@ import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoServic
 import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.ConfUtils;
 import com.gilmarcarlos.developer.gcursos.utils.NotificacaoUtils;
 import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 import com.gilmarcarlos.developer.gcursos.utils.TemplateUtils;
@@ -334,7 +335,7 @@ public class EventosPresencialAdminControler {
 				diaEventoService.alterarDiasDeEvento(novoEvento, novoEvento.getProgramacao());
 			}
 
-			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 
 		} catch (Exception e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
@@ -361,6 +362,26 @@ public class EventosPresencialAdminControler {
 		model.addAttribute("evento", eventoPresencialService.buscarPor(id));
 
 		return TemplateUtils.DASHBOARD_ADMIN_EVENTOS_PRESENCIAL_BASE_CADASTRO_EVENTO_PRESENCIAL;
+	}
+	
+	@GetMapping("/deletar/{id}")
+	public String deletar(@PathVariable("id") Long id, RedirectAttributes red) {
+		
+		Usuario usuarioLogado = getUsuario();
+		
+		if(!usuarioLogado.podeDeletar("eventosPresenciais")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+		
+		
+		try {
+			eventoPresencialService.deletar(id);
+			RedirectUtils.mensagemSucesso(red, ConfUtils.ALERTA_SUCESSO_REMOVER);
+		} catch (EventosNaoEncontradosException e) {
+			RedirectUtils.mensagemError(red, e.getMessage());
+		}
+		
+		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_EVENTOS_PRESENCIAL;
 	}
 
 	@GetMapping("/cancelar/{id}")
@@ -704,7 +725,7 @@ public class EventosPresencialAdminControler {
 			eventoPresencialLogService.salvar(log("Atividade: " + atividade.getTitulo() + " foi alterada",
 					atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial()));
 
-			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 
 			return "redirect:" + UrlUtils.DASHBOARD_ADMIN_EVENTOS_PRESENCIAL + "/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
@@ -757,7 +778,7 @@ public class EventosPresencialAdminControler {
 		ProgramacaoPresencial programacao = atividade.getDiaEvento().getProgramacaoPresencial();
 		atividadePresencialService.deletar(id);
 
-		RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 		model.addFlashAttribute("atividade", atividade);
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_EVENTOS_PRESENCIAL + "/detalhes/programacao/"
 				+ programacao.getId();
@@ -889,7 +910,7 @@ public class EventosPresencialAdminControler {
 		addBaseAttributes(model, usuarioLogado);
 		model.addAttribute("categoria", categoriaEventoService.salvar(categorias));
 
-		RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 
 		return TemplateUtils.DASHBOARD_ADMIN_EVENTOS_PRESENCIAL_BASE_CADASTRO_CATEGORIAS_EVENTO_PRESENCIAL;
 	}
@@ -918,7 +939,7 @@ public class EventosPresencialAdminControler {
 
 		try {
 			categoriaEventoService.deletar(id);
-			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 		} catch (CategoriaException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
@@ -958,7 +979,7 @@ public class EventosPresencialAdminControler {
 		}
 
 		permissoesEvePresencialService.salvar(permissoes);
-		RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_EVENTOS_PRESENCIAL;
 	}

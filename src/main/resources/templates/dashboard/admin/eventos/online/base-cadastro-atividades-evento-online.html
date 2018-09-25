@@ -25,14 +25,6 @@
 			<!-- row-offcanvas -->
 			<div class="row row-offcanvas row-offcanvas-right">
 
-				<!-- theme-setting-wrapper -->
-				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
-				<!-- end  theme-setting-wrapper -->
-
-				<!-- right-sidebar -->
-				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
-				<!-- end right-sidebar -->
-
 				<!-- sidebar sidebar-offcanvas -->
 				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
 				<!-- end sidebar sidebar-offcanvas -->
@@ -322,7 +314,7 @@
 	          
 	            swal({
 	              title: 'Alterar a atividade',
-	              text: "Todas as inscrições serão afetadas caso a atividade seja alterada, se ainda não existem inscrições realizadas, favor desconsidere esse alerta!",
+	              text: "Alterações na ordem da ativide ou em seu módulo pode afetar o progresso de uma inscrição em andamento!",
 	              type: 'warning',
 	              showCancelButton: true,
 	              confirmButtonColor: '#3085d6',
@@ -338,7 +330,7 @@
 	          
 	            swal({
 	              title: 'Deletar a atividade',
-	              text: "Todas as inscrições em andamento ou finalizadas terá a exclusão desta atividade, se ainda não existem inscrições realizadas, favor desconsidere esse alerta!",
+	              text: "Se houver inscrições no evento essa ação não será realizada!",
 	              type: 'warning',
 	              showCancelButton: true,
 	              confirmButtonColor: '#3085d6',

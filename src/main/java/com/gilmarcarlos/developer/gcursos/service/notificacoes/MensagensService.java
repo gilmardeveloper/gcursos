@@ -9,6 +9,12 @@ import com.gilmarcarlos.developer.gcursos.model.notifications.Mensagens;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.notifcacoes.MensagensRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (Mensagens) 
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class MensagensService {
 

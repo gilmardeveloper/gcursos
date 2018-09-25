@@ -11,6 +11,12 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPres
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.InscricaoPresencialRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (InscricaoPresencial)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class InscricaoPresencialService {
 
@@ -36,13 +42,26 @@ public class InscricaoPresencialService {
 	public InscricaoPresencial buscarPor(Long id) {
 		return repository.buscarPor(id);
 	}
-
+	
+	/**
+	 * Método que altera a presença de uma inscrição  
+	 * 
+	 * @param presenca true para presente
+	 * @param id id da inscricao
+	 * 
+	 */
 	public void confirmarPresenca(Long id, boolean presenca) {
 		InscricaoPresencial inscrito = buscarPor(id);
 		inscrito.setPresenca(presenca);
 		salvar(inscrito);
 	}
-
+	
+	/**
+	 * Método que deleta todas as inscrições por usuario  
+	 * 
+	 * @param usuario representa um usuario
+	 * 
+	 */
 	public void deletar(Usuario usuario) {
 		if(!usuario.getInscricoes().isEmpty()) {
 			usuario.getInscricoes().forEach( i -> deletar(i.getId()));

@@ -8,6 +8,12 @@ import org.springframework.stereotype.Service;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EstiloOnline;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.EstiloOnlineRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (EstiloOnline) crud básico
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class EstiloOnlineService {
 

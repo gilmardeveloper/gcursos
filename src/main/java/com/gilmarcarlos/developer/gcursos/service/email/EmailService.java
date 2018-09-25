@@ -6,49 +6,75 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
+import com.gilmarcarlos.developer.gcursos.utils.ConfUtils;
 
+/**
+ * Classe com serviços para envio de emails
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class EmailService {
 	
 	@Autowired
     private JavaMailSender mailSender;
 	
-	private static final String URL_PRODUCE = "http://35.188.89.234";
-	
+	/**
+	 * Método que envia uma confirmação de registro por email
+	 * 
+	 * @param usuario  
+	 * @param token token de confirmação 
+	 * 
+	 */
 	public void enviarConfirmacaoDeCadastro(Usuario usuario, String token) {
 		
 		String recipientAddress = usuario.getEmail();
-        String subject = "Confirmação de registro";
+        String subject = ConfUtils.EMAIL_EVIAR_TITULO_FINALIZAR_REGISTRO;
         String url = "/confirmar-registro/" + token;
                 
         SimpleMailMessage email = new SimpleMailMessage();
                 
         email.setTo(recipientAddress);
         email.setSubject(subject);
-        email.setText("Você se cadastrou na plataforma de ensino, para finalizar o registro, favor clicar no link ao lado " + URL_PRODUCE + url);
+        email.setText(ConfUtils.EMAIL_EVIAR_MSG_FINALIZAR_REGISTRO + ConfUtils.BASE_DOMINIO + url);
         mailSender.send(email);
 	}
 	
+	/**
+	 * Método que envia uma solicitação para redefinir a senha
+	 * 
+	 * @param usuario  
+	 * @param token token de confirmação 
+	 * 
+	 */
 	public void enviarSolicitacaoDeNovaSenha(Usuario usuario, String token) {
 		
 		String recipientAddress = usuario.getEmail();
-        String subject = "Redefinir senha";
+        String subject = ConfUtils.EMAIL_EVIAR_TITULO_REDEFINIR_SENHA;
         String url = "/redefinir-senha/" + token;
                 
         SimpleMailMessage email = new SimpleMailMessage();
                 
         email.setTo(recipientAddress);
         email.setSubject(subject);
-        email.setText("Uma solicitação para redefinir a senha foi realizada, caso tenha sido você, favor clicar no link " + URL_PRODUCE + url);
+        email.setText(ConfUtils.EMAIL_EVIAR_MSG_REDEFINIR_SENHA + ConfUtils.BASE_DOMINIO + url);
         mailSender.send(email);
 	}
 	
+	/**
+	 * Método que envia um aviso que um novo evento foi publicado com o perfil do usuário
+	 * 
+	 * @param emails[] array de emails 
+	 * @param url uri do evento  
+	 * 
+	 */
 	public void enviarNovoEvento(String emails[], String url) {
 		
 		SimpleMailMessage email = new SimpleMailMessage();
 		email.setTo(emails);
-		email.setSubject("Novo evento com seu perfil");
-		email.setText("Um novo evento foi publicado com seu perfil, " + URL_PRODUCE + url);
+		email.setSubject(ConfUtils.EMAIL_EVIAR_TITULO_NOVO_EVENTO_PUBLICADO);
+		email.setText(ConfUtils.EMAIL_EVIAR_MSG_NOVO_EVENTO_PUBLICADO + ConfUtils.BASE_DOMINIO + url);
 		mailSender.send(email);
 		
 	}

@@ -14,6 +14,13 @@ import com.gilmarcarlos.developer.gcursos.repository.locais.UnidadeTrabalhoRepos
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.PermissoesEventoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.PermissoesEventoPresencialService;
 
+
+/**
+ * Classe com serviços de persistência para entidade (UnidadeTrabalho)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class UnidadeTrabalhoService {
 
@@ -34,7 +41,15 @@ public class UnidadeTrabalhoService {
 
 	@Autowired
 	private PermissoesEventoOnlineService permissoesEventoOnlineService;
-
+	
+	/**
+	 * Método que salva uma unidade na base 
+	 * 
+	 * @param unidade entidade que representa uma unidade 
+	 * @return UnidadeTrabalho retorna um usuario
+	 * @throws UnidadeExisteException se existem eventos selecionados com essa unidade
+	 * 
+	 */
 	public UnidadeTrabalho salvar(UnidadeTrabalho unidade) throws UnidadeExisteException {
 		
 		if (permissoesEventoPresencialService.temUnidade(buscarPor(unidade.getId()))) {
@@ -60,7 +75,15 @@ public class UnidadeTrabalhoService {
 
 		return novaUnidade;
 	}
-
+	
+	/**
+	 * Método que deleta uma unidade na base por id
+	 * 
+	 * @param id id de uma unidade 
+	 * @throws UnidadeNotFoundException se a unidade não existir
+	 * @throws UnidadeExisteException se existem eventos selecionados com essa unidade
+	 * 
+	 */
 	public void deletar(Long id) throws UnidadeNotFoundException, UnidadeExisteException {
 		
 		UnidadeTrabalho unidade = buscarPor(id);
@@ -85,23 +108,57 @@ public class UnidadeTrabalhoService {
 		enderecoService.deletarByUnidade(id);
 		repository.deleteById(id);
 	}
-
+	
+	/**
+	 * Método que lista todas as unidades na base
+	 * 
+	 * @return List
+	 * 
+	 */
 	public List<UnidadeTrabalho> listarTodos() {
 		return repository.listAll();
 	}
-
+	
+	
+	/**
+	 * Método que lista todas as unidades na base por departamento
+	 * 
+	 * @param departamento id de uma departamento
+	 * @return List
+	 * 
+	 */
 	public List<UnidadeTrabalho> listarTodos(Long departamento) {
 		return repository.listAll(departamento);
 	}
-
+	
+	/**
+	 * Método que lista todas as unidades na base sem telefones
+	 * 
+	 * @return List
+	 * 
+	 */
 	public List<UnidadeTrabalho> listarTodosSemFones() {
 		return repository.listaTodos();
 	}
-
+	
+	/**
+	 * Método que busca uma unidade na base por id
+	 * 
+	 * @param id 
+	 * @return UnidadeTrabalho 
+	 * 
+	 */
 	public UnidadeTrabalho buscarPor(Long id) {
 		return repository.buscarPor(id);
 	}
-
+	
+	/**
+	 * Método que valida uma unidade na base por departamento
+	 * 
+	 * @param deparatamento id de uma departamento 
+	 * @return boolean 
+	 * 
+	 */
 	public boolean temDepartamento(Departamento departamento) {
 		return listarTodos().stream().anyMatch( u -> u.getDepartamento().equals(departamento));
 	}

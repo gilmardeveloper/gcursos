@@ -14,7 +14,12 @@ import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
-
+/**
+ * Classe para handler de excessões que são lançadas nas validações das credenciais do usuário 
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Component
 public class AutenticacaoErro extends SimpleUrlAuthenticationFailureHandler{
 

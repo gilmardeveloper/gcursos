@@ -8,6 +8,12 @@ import org.springframework.stereotype.Service;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencialLog;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.LogEvePresencialPaginacaoRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (LogEvePresencial) 
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class LogEvePresencialPaginacaoService {
 	

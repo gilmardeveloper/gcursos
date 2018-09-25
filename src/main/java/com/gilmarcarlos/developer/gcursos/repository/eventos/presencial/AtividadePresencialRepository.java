@@ -10,6 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.AtividadePresencial;
 
+/**
+ * Interface para crud da entidade (AtividadePresencial)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface AtividadePresencialRepository extends CrudRepository<AtividadePresencial, Long> {
 	
 	@Query("select a from AtividadePresencial a")

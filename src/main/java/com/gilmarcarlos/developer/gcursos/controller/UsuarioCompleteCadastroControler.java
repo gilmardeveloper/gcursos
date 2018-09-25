@@ -24,6 +24,7 @@ import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.TelefoneUsuarioService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.ConfUtils;
 import com.gilmarcarlos.developer.gcursos.utils.IconeTypeUtils;
 import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 import com.gilmarcarlos.developer.gcursos.utils.StatusTypeUtils;
@@ -109,7 +110,7 @@ public class UsuarioCompleteCadastroControler {
 		Check check = new SafeguardCheck();
 
 		if (check.elementOf(cpf.trim(), ParametroTipo.CPF).validate().hasError()) {
-			RedirectUtils.mensagemError(model, "cpf inválido");
+			RedirectUtils.mensagemError(model, ConfUtils.ALERTA_ERROR_CPF_INVALIDO);
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
 
@@ -117,7 +118,7 @@ public class UsuarioCompleteCadastroControler {
 		if (dados != null) {
 
 			if (dados.getUsuario() != null) {
-				RedirectUtils.mensagemError(model, "já existe um usuário cadastrado com esse cpf");
+				RedirectUtils.mensagemError(model, ConfUtils.ALERTA_ERROR_CPF_DUPLICADO);
 				return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 			}
 
@@ -136,7 +137,7 @@ public class UsuarioCompleteCadastroControler {
 		Check check = new SafeguardCheck();
 
 		if (check.elementOf(cpf.trim(), ParametroTipo.CPF).validate().hasError()) {
-			RedirectUtils.mensagemError(model, "cpf inválido");
+			RedirectUtils.mensagemError(model, ConfUtils.ALERTA_ERROR_CPF_INVALIDO);
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
 
@@ -144,7 +145,7 @@ public class UsuarioCompleteCadastroControler {
 		if (dados != null) {
 
 			if (dados.getUsuario() != null) {
-				RedirectUtils.mensagemError(model, "já existe um usuário cadastrado com esse cpf");
+				RedirectUtils.mensagemError(model, ConfUtils.ALERTA_ERROR_CPF_DUPLICADO);
 				return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 			}
 

@@ -8,6 +8,13 @@ import org.springframework.stereotype.Service;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnlineAtividade;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.InscricaoOnlineAtividadeRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (InscricaoOnlineAtividade) crud básico
+ * 
+ * @author Gilmar Carlos
+ *
+ */
+
 @Service
 public class InscricaoOnlineAtividadeService {
 

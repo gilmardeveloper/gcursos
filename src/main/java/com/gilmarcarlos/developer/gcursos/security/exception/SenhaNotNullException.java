@@ -1,5 +1,12 @@
 package com.gilmarcarlos.developer.gcursos.security.exception;
 
+
+/**
+ * Classe para lançar excessões na validação de senhas
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class SenhaNotNullException extends Exception{
 
 	private static final long serialVersionUID = 1L;

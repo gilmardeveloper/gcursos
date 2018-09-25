@@ -8,6 +8,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.transaction.Transactional;
 
+/**
+ * Classe de entidade que representa opções sexuais
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class Sexo implements Serializable{
 

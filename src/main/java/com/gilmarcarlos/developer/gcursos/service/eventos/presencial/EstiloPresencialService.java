@@ -8,6 +8,12 @@ import org.springframework.stereotype.Service;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EstiloPresencial;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.EstiloPresencialRepository;
 
+/**
+* Classe com serviços de persistência para entidade (EstiloPresencial) CRUD básico
+* 
+* @author Gilmar Carlos
+*
+*/
 @Service
 public class EstiloPresencialService {
 

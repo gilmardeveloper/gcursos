@@ -44,6 +44,7 @@ import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.TelefoneUsuarioService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.ConfUtils;
 import com.gilmarcarlos.developer.gcursos.utils.NotificacaoUtils;
 import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 import com.gilmarcarlos.developer.gcursos.utils.TemplateUtils;
@@ -422,7 +423,7 @@ public class UsuariosAdminControler {
 					"Novo usuário foi criado com email: " + usuario.getEmail() + " senha: zeus_1234@5");
 
 			model.addFlashAttribute("user", novoUsuario);
-			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 
 		} catch (Exception e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
@@ -452,7 +453,7 @@ public class UsuariosAdminControler {
 
 			usuarioService.deletar(id);
 			
-			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 		} catch (UsuarioExisteException | UsuarioDeleteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
@@ -476,7 +477,7 @@ public class UsuariosAdminControler {
 		NotificacaoUtils.sucesso(notificacaoService, getUsuario(), "Alterou os dados do usuário",
 				"Novo telefone para o usuário com email: " + telefone.getDadosPessoais().getUsuario());
 
-		RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_USUARIOS + "/atuais";
 	}
@@ -498,7 +499,7 @@ public class UsuariosAdminControler {
 				"Excluido telefone do usuário com email: " + telefone.getDadosPessoais().getUsuario());
 
 		telefoneUsuarioService.deletar(id);
-		RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_USUARIOS + "/atuais";
 	}
@@ -554,7 +555,7 @@ public class UsuariosAdminControler {
 
 			model.addAttribute("usuario",usuarioLogado);
 			model.addAttribute("sexo", sexoService.salvar(sexo));
-			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 		} catch (SexoExisteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
@@ -589,7 +590,7 @@ public class UsuariosAdminControler {
 
 		try {
 			sexoService.deletar(id);
-			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 		} catch (SexoExisteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
@@ -647,7 +648,7 @@ public class UsuariosAdminControler {
 		try {
 			model.addAttribute("usuario", usuarioLogado);
 			model.addAttribute("escolaridade", escolaridadeService.salvar(escolaridade));
-			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 		} catch (EscolaridadeExisteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
@@ -678,7 +679,7 @@ public class UsuariosAdminControler {
 
 		try {
 			escolaridadeService.deletar(id);
-			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 		} catch (EscolaridadeExisteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
@@ -738,7 +739,7 @@ public class UsuariosAdminControler {
 		}
 
 		permissoesService.salvar(permissoes);
-		RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_USUARIOS + "/atuais";
 	}

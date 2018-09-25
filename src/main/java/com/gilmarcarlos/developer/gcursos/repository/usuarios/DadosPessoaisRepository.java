@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.DadosPessoais;
 
+/**
+ * Interface para crud da entidade (DadosPessoais)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface DadosPessoaisRepository extends CrudRepository<DadosPessoais, Long> {
 	
 	@Query("select d from DadosPessoais d join fetch d.telefones")

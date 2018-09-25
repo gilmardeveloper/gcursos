@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EstiloPresencial;
 
+/**
+ * Interface para crud da entidade (EstiloPresencial)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface EstiloPresencialRepository extends CrudRepository<EstiloPresencial, Long> {
 	
 	@Query("select e from EstiloPresencial e")

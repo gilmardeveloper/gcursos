@@ -36,6 +36,7 @@ import com.gilmarcarlos.developer.gcursos.service.eventos.online.InscricaoOnline
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.ModuloService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.PermissoesEventoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.ConfUtils;
 import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 import com.gilmarcarlos.developer.gcursos.utils.TemplateUtils;
 import com.gilmarcarlos.developer.gcursos.utils.UrlUtils;
@@ -148,12 +149,12 @@ public class EventosOnlineControler {
 		}
 
 		if (!evento.getPermissoes().valida(usuarioLogado)) {
-			RedirectUtils.mensagemError(red, "você não tem permissão");
+			RedirectUtils.mensagemError(red, ConfUtils.ALERTA_ERROR_PERMISSAO);
 			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE;
 		}
 
 		if (evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
-			RedirectUtils.mensagemError(red, "você não tem permissão para acessar esse evento");
+			RedirectUtils.mensagemError(red, ConfUtils.ALERTA_ERROR_PERMISSAO);
 			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE;
 		}
 
@@ -175,12 +176,12 @@ public class EventosOnlineControler {
 		}
 
 		if (!evento.getPermissoes().valida(usuarioLogado)) {
-			RedirectUtils.mensagemError(red, "você não tem permissão");
+			RedirectUtils.mensagemError(red, ConfUtils.ALERTA_ERROR_PERMISSAO);
 			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE;
 		}
 
 		if (evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
-			RedirectUtils.mensagemError(red, "você não tem permissão para acessar esse evento");
+			RedirectUtils.mensagemError(red, ConfUtils.ALERTA_ERROR_PERMISSAO);
 			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE;
 		}
 
@@ -202,7 +203,7 @@ public class EventosOnlineControler {
 		}
 
 		if (!evento.getPermissoes().valida(usuarioLogado)) {
-			RedirectUtils.mensagemError(red, "você não tem permissão");
+			RedirectUtils.mensagemError(red, ConfUtils.ALERTA_ERROR_PERMISSAO);
 			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_ONLINE;
 		}
 

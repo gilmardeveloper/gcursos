@@ -4,6 +4,12 @@ import org.springframework.context.ApplicationEvent;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Classe auxiliar para disparar eventos de autenticação de registros
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class AutenticaUsuario extends ApplicationEvent{
 
 	private static final long serialVersionUID = 1L;

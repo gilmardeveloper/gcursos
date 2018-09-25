@@ -9,6 +9,12 @@ import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.repository.notifcacoes.NotificacaoRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (Notificacao) 
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class NotificacaoService {
 

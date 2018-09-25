@@ -15,6 +15,12 @@ import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoServic
 import com.gilmarcarlos.developer.gcursos.utils.IconeTypeUtils;
 import com.gilmarcarlos.developer.gcursos.utils.StatusTypeUtils;
 
+/**
+ * Classe com serviços de persistência para entidade (AtividadePresencial)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class AtividadePresencialService {
 
@@ -26,7 +32,15 @@ public class AtividadePresencialService {
 
 	@Autowired
 	private NotificacaoService notificacoes;
-
+	
+	/**
+	 * Método que salva uma atividade na base, alterações no horário da atividade excluirão todas as inscrições se houver 
+	 * 
+	 * @param atividade representa uma atividade
+	 * @return AtividadePresencial
+	 * @throws HoraFinalMenorException se a hora final for menor que a inicial
+	 * 
+	 */
 	public AtividadePresencial salvar(AtividadePresencial atividade) throws HoraFinalMenorException {
 
 		LocalTime horaInicio = atividade.getTimeInicio();
@@ -72,7 +86,13 @@ public class AtividadePresencialService {
 
 		return repository.save(atividade);
 	}
-
+	
+	/**
+	 * Método que deleta uma atividade na base por id, todas as inscrições serão excluidas se houver 
+	 * 
+	 * @param id 
+	 * 
+	 */
 	public void deletar(Long id) {
 		AtividadePresencial atividade = buscarPor(id);
 
@@ -80,7 +100,7 @@ public class AtividadePresencialService {
 			atividade.getInscricoes().forEach(i -> {
 				notificacoes.salvar(new Notificacao(i.getUsuario(), "Inscrição cancelada", IconeTypeUtils.INFORMACAO,
 						StatusTypeUtils.INFORMACAO,
-						"sua inscrição foi cancelada porque a atividade foi excluída do evento, atvidade: "
+						"sua inscrição foi cancelada porque o evento foi alterado ou excluído, atvidade: "
 								+ atividade.getTitulo() + " evento: " + i.getEventoPresencial().getTitulo()));
 				inscricoesRepository.deleteById(i.getId());
 
@@ -105,7 +125,13 @@ public class AtividadePresencialService {
 	public List<AtividadePresencial> buscarPorDia(Long id) {
 		return repository.buscarPorDia(id);
 	}
-
+	
+	/**
+	 * Método que deleta todas as atividades na base por dia, todas as inscrições serão excluidas se houver 
+	 * 
+	 * @param id id do dia do evento
+	 * 
+	 */
 	public void deletePorDia(Long id) {
 
 		for (AtividadePresencial atividade : buscarPorDia(id)) {

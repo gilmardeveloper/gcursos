@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.categorias.CategoriaEvento;
 
+/**
+ * Interface para crud da entidade (CategoriaEvento)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface CategoriaEventoRepository extends CrudRepository<CategoriaEvento, Long> {
 	
 	@Query("select c from CategoriaEvento c")

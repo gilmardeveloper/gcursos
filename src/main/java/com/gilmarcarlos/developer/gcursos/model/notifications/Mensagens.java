@@ -13,6 +13,12 @@ import javax.persistence.OneToOne;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Classe de entidade que representa uma mensagem
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class Mensagens implements Serializable {
 

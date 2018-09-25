@@ -10,6 +10,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Interface para crud da entidade (Usuario)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
 
 	Usuario findByEmail(String email);

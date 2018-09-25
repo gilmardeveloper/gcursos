@@ -11,6 +11,12 @@ import com.gilmarcarlos.developer.gcursos.repository.auth.VerificacaoTokenReposi
 import com.gilmarcarlos.developer.gcursos.repository.usuarios.UsuarioRepository;
 import com.gilmarcarlos.developer.gcursos.service.email.EmailService;
 
+/**
+ * Classe com serviços de autenticação de usuários que implementa a interface (AutenticaToken)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Component
 public class AutenticaRegistroUsuario implements AutenticaToken {
 
@@ -29,7 +35,13 @@ public class AutenticaRegistroUsuario implements AutenticaToken {
 		tokenRepository.save(new UsuarioToken(usuario, token));
 		emailService.enviarConfirmacaoDeCadastro(usuario, token);
 	}
-
+	
+	/**
+	 * Método que gera um token aleatório
+	 * 
+	 * @param usuario
+	 * 
+	 */
 	public String gerarToken() {
 		return UUID.randomUUID().toString();
 	}
@@ -39,7 +51,13 @@ public class AutenticaRegistroUsuario implements AutenticaToken {
 		usuario.setHabilitado(true);
 		usuarioRepository.save(usuario);		
 	}
-
+	
+	/**
+	 * Método que cria uma nova solicitação para redefinição de senha
+	 * 
+	 * @param usuario
+	 * 
+	 */
 	public void resetPassword(Usuario usuario) {
 		String token = gerarToken();
 		tokenRepository.save(new UsuarioToken(usuario, token));

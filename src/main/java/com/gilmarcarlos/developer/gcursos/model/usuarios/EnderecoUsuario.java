@@ -8,6 +8,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+/**
+ * Classe de entidade que representa um EnderecoUsuario
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class EnderecoUsuario implements Serializable{
 

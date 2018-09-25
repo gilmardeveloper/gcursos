@@ -33,6 +33,12 @@ import br.com.safeguard.check.SafeguardCheck;
 import br.com.safeguard.interfaces.Check;
 import br.com.safeguard.types.ParametroTipo;
 
+/**
+ * Classe com serviços de persistência para entidade (Usuario)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class UsuarioService {
 
@@ -72,8 +78,13 @@ public class UsuarioService {
 	@Autowired
 	private ImagensService imagensService;
 	
-
-	// @CacheEvict(value="postCache", allEntries=true)
+	/**
+	 * Método que salva um usuario na base 
+	 * 
+	 * @param usuario entidade que representa o usuário 
+	 * @return Usuario retorna um usuario
+	 * @throws UsuarioExisteException se o usuario com mesmo email já existe
+	 */
 	public Usuario salvar(Usuario usuario) throws UsuarioExisteException {
 		if (emailExiste(usuario)) {
 			throw new UsuarioExisteException("já existe um usuário cadastrado com esse email");
@@ -81,6 +92,15 @@ public class UsuarioService {
 		return repository.save(usuario);
 	}
 	
+	/**
+	 * Método que salva um usuario na base 
+	 * 
+	 * @param usuario entidade que representa o usuário 
+	 * @return Usuario retorna um usuario
+	 * @throws UsuarioExisteException se o usuario com mesmo email já existe
+	 * @throws CpfExisteException se o usuario com mesmo cpf já existe
+	 * 
+	 */
 	public Usuario criarNovo(Usuario usuario) throws UsuarioExisteException, CpfExisteException {
 
 			
@@ -108,7 +128,15 @@ public class UsuarioService {
 		
 			return novoUsuario;
 	}
-
+	
+	/**
+	 * Método que atualiza dados de um usuario na base 
+	 * 
+	 * @param usuario entidade que representa o usuário 
+	 * @return Usuario retorna um usuario
+	 * @throws UsuarioExisteException se o usuario com mesmo email já existe
+	 * 
+	 */
 	public Usuario atualizarDados(Usuario usuario) throws UsuarioExisteException {
 
 		if (emailExiste(usuario)) {
@@ -120,7 +148,16 @@ public class UsuarioService {
 		usuario.setSenha(passwordCrypt.encode(buscarPor(usuario.getId()).getSenha()));
 		return repository.save(usuario);
 	}
-
+	
+	/**
+	 * Método que atualiza dados de um usuario na base 
+	 * 
+	 * @param usuario entidade que representa o usuário 
+	 * @return Usuario retorna um usuario
+	 * @throws UsuarioExisteException se o usuario com mesmo email já existe
+	 * @throws CpfExisteException se o usuario com mesmo cpf já existe
+	 * 
+	 */
 	public Usuario atualizarDadosNoEncryptSenha(Usuario usuario) throws UsuarioExisteException, CpfExisteException{
 
 		Check check = new SafeguardCheck();
@@ -146,15 +183,27 @@ public class UsuarioService {
 		return repository.save(usuario);
 	}
 
-	// @CacheEvict(value="postCache", allEntries=true)
+	/**
+	 * Método que atualiza o nome de um usuario na base 
+	 * 
+	 * @param usuario entidade que representa o usuário 
+	 * @return Usuario retorna um usuario
+	 * 
+	 */
 	public Usuario atualizarNome(Usuario usuario) {
 
 		Usuario temp = repository.findOne(usuario.getId());
 		temp.setNome(usuario.getNome());
 		return repository.save(temp);
 	}
-
-	// @CacheEvict(value="postCache", allEntries=true)
+	
+	/**
+	 * Método que atualiza a senha de um usuario na base 
+	 * 
+	 * @param usuario entidade que representa o usuário 
+	 * @return Usuario retorna um usuario
+	 * 
+	 */
 	public Usuario redefinirSenha(Usuario usuario) {
 
 		Usuario temp = repository.findOne(usuario.getId());
@@ -164,8 +213,15 @@ public class UsuarioService {
 
 		return repository.save(temp);
 	}
-
-	// @CacheEvict(value="postCache", allEntries=true)
+	
+	/**
+	 * Método que atualiza a senha de um usuario na base 
+	 * 
+	 * @param usuario entidade que representa o usuário 
+	 * @return Usuario retorna um usuario
+	 * @throws SenhaNotNullException se a senha for null ou vazio
+	 * 
+	 */
 	public Usuario redefinirSenha(Usuario usuario, String senha) throws SenhaNotNullException {
 		
 		if (senha.equals("") || senha == null) {
@@ -175,8 +231,15 @@ public class UsuarioService {
 		usuario.setSenha(passwordCrypt.encode(senha));
 		return repository.save(usuario);
 	}
-
-	// @CacheEvict(value="postCache", allEntries=true)
+	
+	/**
+	 * Método que deleta um usuario na base pela id
+	 * 
+	 * @param id id de um usuário 
+	 * @throws UsuarioExisteException se o usuario não existir
+	 * @throws UsuarioDeleteException se o usuário for responsável por algum evento
+	 * 
+	 */
 	public void deletar(Long id) throws UsuarioExisteException, UsuarioDeleteException {
 		
 		Usuario usuario = buscarPor(id);
@@ -209,29 +272,66 @@ public class UsuarioService {
 				
 		repository.deleteById(id);
 	}
-
+	
+	/**
+	 * Método para buscar um usuario na base por id 
+	 * 
+	 * @param id id de um usuário 
+	 * @return Usuario retorna um usuario
+	 * 
+	 */
 	public Usuario buscarPor(Long id) {
 		return repository.findOne(id);
 	}
-
+	
+	/**
+	 * Método para buscar um usuario na base por email 
+	 * 
+	 * @param email email de um usuário 
+	 * @return Usuario retorna um usuario
+	 * 
+	 */
 	public Usuario buscarPor(String email) {
 		return repository.findByEmail(email);
 	}
 
-	// @Cacheable("postCache")
+	/**
+	 * Método para listar todos os usuarios na base 
+	 * 
+	 * @return List retorna uma lista de usuarios
+	 * 
+	 */
 	public List<Usuario> listarTodos() {
 		return repository.listAll();
 	}
 
-	// @Cacheable("postCache")
+	/**
+	 * Método para listar todos os usuarios com cadastro completo na base 
+	 * 
+	 * @return List retorna uma lista de usuarios
+	 * 
+	 */
 	public List<Usuario> listarCadastrosCompletos() {
 		return repository.listCadastrosCompleto();
 	}
 	
+	/**
+	 * Método para listar todos os usuarios com cadastro completo na base por departamento
+	 * 
+	 * @return List retorna uma lista de usuarios
+	 * 
+	 */
 	public List<Usuario> listarCadastrosCompletos(Long departamento) {
 		return repository.listCadastrosCompleto(departamento);
 	}
-
+	
+	/**
+	 * Método para alterar a autorização do usuario
+	 * 
+	 * @param usuario representa um usuario
+	 * @param autorizacaoNome representa uma autorização
+	 * 
+	 */
 	public void atualizarDados(Usuario usuario, String autorizacaoNome) {
 
 		Usuario temp = repository.findOne(usuario.getId());
@@ -242,18 +342,38 @@ public class UsuarioService {
 		repository.save(usuario);
 
 	}
-
+	
+	/**
+	 * Método para alterar a autorização do usuario
+	 * 
+	 * @param usuario representa um usuario
+	 * @param autorizacaoNome representa uma autorização
+	 * @return Usuario retorna um usuario
+	 */
 	public Usuario atualizarAutorizacoes(Usuario usuario, String nomeAutorizacao) {
 		List<Autorizacao> autorizacoes = new ArrayList<>();
 		autorizacoes.add(autorizacaoRespository.findByNome(nomeAutorizacao));
 		usuario.setAutorizacoes(autorizacoes);
 		return repository.save(usuario);
 	}
-
+	
+	/**
+	 * Método para validar um usuario por email e a id
+	 * 
+	 * @param email email de um usuario
+	 * @param id id de um usuario
+	 * @return Boolean retorna <code>true</code> se verdadeiro 
+	 */
 	public Boolean emailExiste(String email, Long id) {
 		return repository.existsByEmail(email, id);
 	}
-
+	
+	/**
+	 * Método para validar um usuario por email
+	 * 
+	 * @param usuario representa um usuario
+	 * @return Boolean retorna <code>true</code> se verdadeiro 
+	 */
 	public Boolean emailExiste(Usuario usuario) {
 		if(usuario.getId() != null) {
 			return emailExiste(usuario.getEmail(), usuario.getId());
@@ -261,11 +381,25 @@ public class UsuarioService {
 			return repository.existsByEmail(usuario.getEmail());
 		}
 	}
-
+	
+	/**
+	 * Método para listar todos os usuarios com cadastro completo na base
+	 * 
+	 * @param pageable recurso de paginação
+	 * @return Page retorna uma lista de usuarios paginada
+	 * 
+	 */
 	public Page<Usuario> listarTodos(Pageable pageable) {
 		return repository.listarTodos(pageable);
 	}
-
+	
+	/**
+	 * Método para listar todos os usuarios com cadastro completo na base em uma classe auxiliar
+	 * 
+	 * @param usuario representa um usuario
+	 * @return List retorna uma lista de usuarios 
+	 * 
+	 */
 	public List<UsuarioDTO> listarUsuariosDTO(Usuario usuario) {
 
 		List<UsuarioDTO> usuarios = new ArrayList<>();
@@ -277,39 +411,112 @@ public class UsuarioService {
 
 		return usuarios;
 	}
-
+	
+	/**
+	 * Método para buscar um usuario na base por id 
+	 * 
+	 * @param id id de um usuário 
+	 * @param pageable recursos de paginação
+	 * @return Page retorna uma lista paginada
+	 * 
+	 */
 	public Page<Usuario> buscarPor(Long id, Pageable pageable) {
 		return repository.buscarPor(id, pageable);
 	}
 	
+	/**
+	 * Método para buscar um usuario na base por departamento
+	 * 
+	 * @param id id de um usuário 
+	 * @param departamento representa o id de um departamento
+	 * @param pageable recursos de paginação
+	 * @return Page retorna uma lista paginada
+	 * 
+	 */
 	public Page<Usuario> buscarPor(Long departamento, Long id, Pageable pageable) {
 		return repository.buscarPor(departamento, id, pageable);
 	}
-
+	
+	/**
+	 * Método para buscar um usuario na base por unidade
+	 * 
+	 * @param id id de uma unidade 
+	 * @param pageable recursos de paginação
+	 * @return Page retorna uma lista paginada
+	 * 
+	 */
 	public Page<Usuario> buscarPorUnidade(Long id, Pageable pageable) {
 		return repository.buscarPorUnidade(id, pageable);
 	}
-
+	
+	/**
+	 * Método para buscar um usuario na base por unidade e por departamento
+	 * 
+	 * @param id id de uma unidade 
+	 * @param departamento id de um departamento
+	 * @param pageable recursos de paginação
+	 * @return Page retorna uma lista paginada
+	 * 
+	 */
 	public Page<Usuario> buscarPorUnidade(Long departamento, Long id, Pageable pageable) {
 		return repository.buscarPorUnidade(departamento, id, pageable);
 	}
 	
+	/**
+	 * Método para buscar um usuario na base por cargo
+	 * 
+	 * @param id id de um cargo 
+	 * @param pageable recursos de paginação
+	 * @return Page retorna uma lista paginada
+	 * 
+	 */
 	public Page<Usuario> buscarPorCargo(Long id, Pageable pageable) {
 		return repository.buscarPorCargo(id, pageable);
 	}
 	
+	/**
+	 * Método para buscar um usuario na base por cargo e por departamento
+	 * 
+	 * @param id id de um cargo 
+	 * @param departamento id de um departamento 
+	 * @param pageable recursos de paginação
+	 * @return Page retorna uma lista paginada
+	 * 
+	 */
 	public Page<Usuario> buscarPorCargo(Long departamento, Long id, Pageable pageable) {
 		return repository.buscarPorCargo(departamento, id, pageable);
 	}
-
+	
+	/**
+	 * Método para buscar um usuario na base por por departamento
+	 * 
+	 * @param id id de um departamento 
+	 * @param pageable recursos de paginação
+	 * @return Page retorna uma lista paginada
+	 * 
+	 */
 	public Page<Usuario> buscarPorDepartamento(Long id, Pageable pageable) {
 		return repository.buscarPorDepartamento(id, pageable);
 	}
-
+	
+	/**
+	 * Método para validar um usuario por sexo
+	 * 
+	 * @param nome representa uma opção sexual
+	 * @return boolean retorna <code>true</code> se verdadeiro 
+	 * 
+	 */
 	public boolean sexoExiste(String nome) {
 		return repository.existsBySexo(nome);
 	}
-
+	
+	/**
+	 * Método para validar um usuario por escolaridade
+	 * 
+	 * @param nome representa uma escolaridade
+	 * @return boolean retorna <code>true</code> se verdadeiro 
+	 * 
+	 */
 	public boolean escolaridadeExiste(String nome) {
 		return repository.existsByEscolaridade(nome);
 	}

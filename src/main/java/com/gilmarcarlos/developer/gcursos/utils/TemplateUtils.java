@@ -1,5 +1,13 @@
 package com.gilmarcarlos.developer.gcursos.utils;
 
+/**
+ * Classe com o caminho dos templates do sistema diretamente relacionados com os arquivos html
+ * 
+ * base-path-html-templates: src/main/resources/templates
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class TemplateUtils {
 	
 	public final static String DASHBOARD_USUARIO_PROFILE = "dashboard/usuario/profile";

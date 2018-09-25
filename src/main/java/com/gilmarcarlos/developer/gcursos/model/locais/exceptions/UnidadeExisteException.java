@@ -1,5 +1,11 @@
 package com.gilmarcarlos.developer.gcursos.model.locais.exceptions;
 
+/**
+ * Classe para lançar excessões na validação de unidades de trabalho
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class UnidadeExisteException extends Exception{
 
 	/**

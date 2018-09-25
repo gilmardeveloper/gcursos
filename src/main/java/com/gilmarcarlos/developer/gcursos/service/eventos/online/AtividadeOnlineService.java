@@ -10,12 +10,26 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.online.OrdenarHelper;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.exceptions.PosicaoExisteException;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.AtividadeOnlineRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (AtividadeOnline)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class AtividadeOnlineService {
 
 	@Autowired
 	private AtividadeOnlineRepository repository;
-
+	
+	/**
+	 * Método que salva uma atividade na base 
+	 * 
+	 * @param atividade representa uma atividade
+	 * @return AtividadeOnline
+	 * @throws PosicaoExisteException se a posição já existir
+	 * 
+	 */
 	public AtividadeOnline salvar(AtividadeOnline atividade) throws PosicaoExisteException{
 		
 		for(AtividadeOnline a : atividade.getModulo().getAtividades()) {
@@ -42,7 +56,13 @@ public class AtividadeOnlineService {
 	public List<AtividadeOnline> buscarPorEvento(Long id) {
 		return repository.buscarPorEvento(id);
 	}
-
+	
+	/**
+	 * Método que altera a ordem de uma lista de atividades 
+	 * 
+	 * @param lista lista de atividades
+	 * 
+	 */
 	public void ordenar(List<OrdenarHelper> lista) {
 		Integer posicao = 1;
 		for(OrdenarHelper helper : lista) {

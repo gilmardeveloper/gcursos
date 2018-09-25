@@ -1,5 +1,11 @@
 package com.gilmarcarlos.developer.gcursos.security.exception;
 
+/**
+ * Classe para lançar excessões na validação de permissões de usuários
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class PermissoesNotFoundException extends Exception{
 
 	/**

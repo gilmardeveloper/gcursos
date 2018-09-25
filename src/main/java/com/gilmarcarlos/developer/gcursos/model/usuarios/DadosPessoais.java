@@ -11,6 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+/**
+ * Classe de entidade que representa dados pessoais de um Usuario
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class DadosPessoais implements Serializable{
 

@@ -9,6 +9,12 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.categorias.CategoriaEven
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.exceptions.CategoriaException;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.categorias.CategoriaEventoRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (CategoriaEvento)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class CategoriaEventoService {
 
@@ -18,7 +24,14 @@ public class CategoriaEventoService {
 	public CategoriaEvento salvar(CategoriaEvento categoria) {
 		return repository.save(categoria);
 	}
-		
+	
+	/**
+	 * Método que deleta uma categoria por id
+	 * 
+	 * @param id 
+	 * @throws CategoriaException se existem eventos com essa categoria
+	 * 
+	 */
 	public void deletar(Long id) throws CategoriaException {
 		
 		CategoriaEvento categoria = buscarPor(id);

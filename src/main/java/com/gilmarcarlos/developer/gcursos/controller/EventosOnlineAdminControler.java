@@ -26,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.EventoDTO;
 import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.DeleteEventoException;
+import com.gilmarcarlos.developer.gcursos.model.eventos.exceptions.EventosNaoEncontradosException;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.AtividadeOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.CertificadoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EstiloOnline;
@@ -61,6 +62,7 @@ import com.gilmarcarlos.developer.gcursos.service.notificacoes.NotificacaoServic
 import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.ConfUtils;
 import com.gilmarcarlos.developer.gcursos.utils.IconeTypeUtils;
 import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 import com.gilmarcarlos.developer.gcursos.utils.StatusTypeUtils;
@@ -266,10 +268,29 @@ public class EventosOnlineAdminControler {
 		EventoOnline novoEvento = eventoOnlineService.salvar(evento);
 		logEventoOnlineService.salvar(log("Evento online criado", novoEvento));
 
-		RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_EVENTOS_ONLINE;
 
+	}
+	
+	@GetMapping("/deletar/{id}")
+	public String eventoDeletar(@PathVariable("id") Long id, RedirectAttributes red) {
+		
+		Usuario usuarioLogado = getUsuario();
+		
+		if(!usuarioLogado.podeDeletar("eventosOnline")) {
+			return "redirect:" + UrlUtils.DASHBOARD_USUARIO_DASHBOARD;
+		}
+		
+		try {
+			eventoOnlineService.deletar(id);
+			RedirectUtils.mensagemSucesso(red, ConfUtils.ALERTA_SUCESSO_REMOVER);
+		} catch (EventosNaoEncontradosException | DeleteEventoException e) {
+			RedirectUtils.mensagemError(red, e.getMessage());
+		}
+		
+		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_EVENTOS_ONLINE;
 	}
 
 	@GetMapping("/estilo/{id}")
@@ -558,7 +579,7 @@ public class EventosOnlineAdminControler {
 		}
 
 		permissoesEveOnlineService.salvar(permissoes);
-		RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_EVENTOS_ONLINE;
 	}
@@ -827,7 +848,7 @@ public class EventosOnlineAdminControler {
 			atividadeService.salvar(atividade);
 			logEventoOnlineService.salvar(log("Atividade: " + atividade.getTitulo() + " foi alterada",
 					atividade.getModulo().getEventoOnline()));
-			RedirectUtils.mensagemSucesso(model, "salvo com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 		} catch (PosicaoExisteException e) {
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
@@ -881,8 +902,11 @@ public class EventosOnlineAdminControler {
 		
 		try {
 			eventoOnlineService.deletarAtividade(id);
-			RedirectUtils.mensagemSucesso(model, "removido com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 		} catch (DeleteEventoException e) {
+			logEventoOnlineService.salvar(
+					log("Falha ao tentar deletar a atividade: " + atividade.getTitulo(), atividade.getModulo().getEventoOnline()));
+
 			RedirectUtils.mensagemError(model, e.getMessage());
 		}
 

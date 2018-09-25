@@ -10,6 +10,12 @@ import org.springframework.stereotype.Service;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnlineLog;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.EventoOnlineLogRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (EventoOnlineLog) crud básico
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class EventoOnlineLogService {
 

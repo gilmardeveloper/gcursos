@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.TelefoneUsuario;
 
+/**
+ * Interface para crud da entidade (TelefoneUsuario)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface TelefoneUsuarioRepository extends CrudRepository<TelefoneUsuario , Long> {
 	
 	@Query("select t from TelefoneUsuario t")

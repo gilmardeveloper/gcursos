@@ -7,6 +7,12 @@ import org.springframework.stereotype.Component;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.security.token.AutenticaRegistroUsuario;
 
+/**
+ * Classe listenner que dispara um evento de callback da classe (AutenticaResetPasswordUsuario)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Component
 public class ResetPasswordListener implements ApplicationListener<AutenticaResetPasswordUsuario>{
 

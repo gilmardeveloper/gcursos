@@ -52,6 +52,7 @@ import com.gilmarcarlos.developer.gcursos.service.usuarios.EscolaridadeService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.SexoService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.TelefoneUsuarioService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.ConfUtils;
 import com.gilmarcarlos.developer.gcursos.utils.NotificacaoUtils;
 import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 import com.gilmarcarlos.developer.gcursos.utils.TemplateUtils;
@@ -122,7 +123,7 @@ public class UsuarioControler {
 		if (!usuarioLogado.isPerfilCompleto()) {
 			return "redirect:" + UrlUtils.DASHBOARD_COMPLETE_CADASTRO;
 		}
-
+		
 		addBaseAttributes(model, usuarioLogado);
 
 		addBaseCadastroUsaurioAttributes(model);
@@ -238,7 +239,7 @@ public class UsuarioControler {
 	public String ndeletarTodas(RedirectAttributes model) {
 
 		getUsuario().getNotificacoes().forEach(n -> notificacaoService.deletar(n.getId()));
-		RedirectUtils.mensagemSucesso(model, "removidos com sucesso");
+		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 
 		return "redirect:" + UrlUtils.DASHBOARD_USUARIO + "/notificacoes";
 	}
@@ -247,7 +248,7 @@ public class UsuarioControler {
 	public String deletar(@PathVariable("id") Long id, RedirectAttributes model) {
 
 		notificacaoService.deletar(id);
-		RedirectUtils.mensagemSucesso(model, "removidos com sucesso");
+		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 		return "redirect:" + UrlUtils.DASHBOARD_USUARIO + "/notificacoes";
 	}
 
@@ -292,7 +293,7 @@ public class UsuarioControler {
 	@GetMapping("/mensagens/deletar")
 	public String mensDeletarTodas(RedirectAttributes model) {
 		getUsuario().getMensagens().forEach(m -> mensagensService.deletar(m.getId()));
-		RedirectUtils.mensagemSucesso(model, "removidos com sucesso");
+		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 		return "redirect:" + UrlUtils.DASHBOARD_USUARIO + "/mensagens";
 	}
 
@@ -300,7 +301,7 @@ public class UsuarioControler {
 	public String msgDeletar(@PathVariable("id") Long id, RedirectAttributes model) {
 
 		mensagensService.deletar(id);
-		RedirectUtils.mensagemSucesso(model, "removidos com sucesso");
+		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
 		return "redirect:" + UrlUtils.DASHBOARD_USUARIO + "/mensagens";
 	}
 

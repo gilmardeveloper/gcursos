@@ -10,12 +10,26 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.online.OrdenarHelper;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.exceptions.PosicaoExisteException;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.ModuloRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (Modulo)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class ModuloService {
 
 	@Autowired
 	private ModuloRepository repository;
-		
+	
+	/**
+	 * Método que salva um modulo na base 
+	 * 
+	 * @param modulo representa um modulo
+	 * @return Modulo
+	 * @throws PosicaoExisteException se a posição já existir
+	 * 
+	 */
 	public Modulo salvar(Modulo modulo) throws PosicaoExisteException {
 		
 		for(Modulo m : modulo.getEventoOnline().getModulos()) {
@@ -38,7 +52,13 @@ public class ModuloService {
 	public Modulo buscarPor(Long id) {
 		return repository.buscarPor(id);
 	}
-
+	
+	/**
+	 * Método que altera a ordem uma lista de modulos 
+	 * 
+	 * @param lista lista de modulos
+	 * 
+	 */
 	public void ordenar(List<OrdenarHelper> lista) {
 		Integer posicao = 1;
 		for (OrdenarHelper helper : lista) {

@@ -12,6 +12,7 @@ import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.security.exception.RegistroException;
 import com.gilmarcarlos.developer.gcursos.service.auth.AutenticadorService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.ConfUtils;
 import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 
 @Controller
@@ -50,10 +51,10 @@ public class RegistroControler {
 		try {
 			Usuario usuario = autenticador.validarRedefinicao(token);
 			usuarioService.redefinirSenha(usuario, senha);
-			RedirectUtils.mensagemSucesso(model, "sua senha foi redefinida com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 			return "redirect:/redefinir-senha";
 		} catch (Exception e) {
-			RedirectUtils.mensagemError(model, "um erro ocorreu");
+			RedirectUtils.mensagemError(model, ConfUtils.ALERTA_ERROR_SALVAR);
 			return "redirect:/redefinir-senha";
 		}
 
@@ -67,10 +68,10 @@ public class RegistroControler {
 		try {
 			Usuario usuario = usuarioService.buscarPor(id);
 			usuarioService.redefinirSenha(usuario, senha);
-			RedirectUtils.mensagemSucesso(model, "sua senha foi redefinida com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 			return "redirect:/redefinir-senha";
 		} catch (Exception e) {
-			RedirectUtils.mensagemError(model, "um erro ocorreu");
+			RedirectUtils.mensagemError(model, ConfUtils.ALERTA_ERROR_SALVAR);
 			return "redirect:/dashboard/";
 		}
 
@@ -81,10 +82,10 @@ public class RegistroControler {
 	public String esqueceuSenha(@RequestParam("email") String email, RedirectAttributes model) {
 		try {
 			autenticador.registrarRedefinicao(email);
-			RedirectUtils.mensagemSucesso(model, "Agora verifique seu email e confirme a solicitação");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.CADASTRO_ALERTA_SOLICITACAO);
 			return "redirect:/esqueceu-senha";
 		} catch (Exception e) {
-			RedirectUtils.mensagemError(model, "Esse email não existe ou você ainda não ativou seu cadastro");
+			RedirectUtils.mensagemError(model, ConfUtils.CADASTRO_ALERTA_ERROR_REDEFINIR_SENHA);
 			return "redirect:/esqueceu-senha";
 		}
 	}
@@ -93,10 +94,10 @@ public class RegistroControler {
 	public String registrar(Usuario usuario, RedirectAttributes model) {
 		try {
 			autenticador.registrarVerificacao(usuario);
-			RedirectUtils.mensagemSucesso(model, "Agora verifique seu email e confirme o cadastro");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.CADASTRO_ALERTA_SOLICITACAO);
 			return "redirect:/registro";
 		} catch (RegistroException e) {
-			RedirectUtils.mensagemError(model, "Você já é cadastrado");
+			RedirectUtils.mensagemError(model, ConfUtils.CADASTRO_ALERTA_ERROR_EMAIL_CADASTRADO);
 			return "redirect:/registro";
 		}
 	}
@@ -112,14 +113,14 @@ public class RegistroControler {
 			} else {
 
 				autenticador.registrarNovaVerificacao(token);
-				redirect.addFlashAttribute("alerta", "um erro ocorreu.");
+				redirect.addFlashAttribute("alerta", ConfUtils.ALERTA_ERROR_GENERICO);
 				return "redirect:/";
 			}
 
 		} catch (Exception e) {
 
 			e.printStackTrace();
-			redirect.addFlashAttribute("alerta", "um erro ocorreu.");
+			redirect.addFlashAttribute("alerta", ConfUtils.ALERTA_ERROR_GENERICO);
 			return "redirect:/";
 		}
 

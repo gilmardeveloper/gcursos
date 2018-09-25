@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.PermissoesEventoOnline;
 
+/**
+ * Interface para crud da entidade (PermissoesEventoOnline)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface PermissoesEventoOnlineRepository extends CrudRepository<PermissoesEventoOnline, Long> {
 	
 	@Query("select p from PermissoesEventoOnline p")

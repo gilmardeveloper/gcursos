@@ -26,6 +26,12 @@ import com.gilmarcarlos.developer.gcursos.model.locais.CodigoFuncional;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Mensagens;
 import com.gilmarcarlos.developer.gcursos.model.notifications.Notificacao;
 
+/**
+ * Classe de entidade que representa um Usuario
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Entity
 public class Usuario implements Serializable {
 
@@ -219,112 +225,254 @@ public class Usuario implements Serializable {
 	public void setTokenExpired(boolean tokenExpired) {
 		this.tokenExpired = tokenExpired;
 	}
-
+	
+	/**
+	 * Método que retorna o status da autorização 
+	 * 
+	 * @return String 
+	 * 
+	 */
 	@Transient
 	public String getStatus() {
 		return autorizacoes.get(0).getNome().split("_")[1];
 	}
-
+	
+	/**
+	 * Método que retorna se o perfil esta completo
+	 * 
+	 * @return Boolean <code>true</code> se verdadeiro 
+	 * 
+	 */
 	@Transient
 	public Boolean isPerfilCompleto() {
 		return (this.codigoFuncional != null && this.dadosPessoais != null);
 	}
 	
+	/**
+	 * Método que retorna uma lista com as notificações não lidas
+	 * 
+	 * @return List 
+	 * 
+	 */
 	@Transient
 	public List<Notificacao> getNotificaoesNaoLidas() {
 		return this.notificacoes.stream().filter(n -> !n.getFoiLido()).collect(Collectors.toList());
 	}
 	
+	/**
+	 * Método que retorna uma lista com as notificações lidas
+	 * 
+	 * @return List 
+	 * 
+	 */
 	@Transient
 	public List<Notificacao> getNotificaoesLidas() {
 		return this.notificacoes.stream().filter(n -> n.getFoiLido()).collect(Collectors.toList());
 	}
 	
+	/**
+	 * Método que retorna uma lista com as mensagens não lidas
+	 * 
+	 * @return List 
+	 * 
+	 */
 	@Transient
 	public List<Mensagens> getMensagensNaoLidas() {
 		return this.mensagens.stream().filter(m -> !m.getFoiLido()).collect(Collectors.toList());
 	}
 	
+	/**
+	 * Método que retorna uma lista com as mensagens lidas
+	 * 
+	 * @return List 
+	 * 
+	 */
 	@Transient
 	public List<Mensagens> getMensagensLidas() {
 		return this.mensagens.stream().filter(m -> m.getFoiLido()).collect(Collectors.toList());
 	}
-
+	
+	/**
+	 * Método que valida se o usuario é responsavel por um evento online
+	 * 
+	 * @param evento
+	 * @return boolean <code>true</code> se for verdadeiro
+	 * 
+	 */
 	@Transient
 	public boolean ehResponsavel(EventoOnline evento) {
 		return getEventoOnline().stream().anyMatch( e-> e.equals(evento));
 	}
 	
+
+	/**
+	 * Método que valida se o usuario é responsavel por um evento presencial
+	 * 
+	 * @param evento
+	 * @return boolean <code>true</code> se for verdadeiro
+	 * 
+	 */
 	@Transient
 	public boolean ehResponsavel(EventoPresencial evento) {
 		return getEventoPresencial().stream().anyMatch( e-> e.equals(evento));
 	}
+	
 
+	/**
+	 * Método que retorna a quantidade de inscrições presenciais
+	 * 
+	 * @return Integer
+	 * 
+	 */
 	@Transient
 	public Integer qtdInscricoesPresenciais() {
 		return getInscricoes().size();
 	}
 	
+	/**
+	 * Método que retorna a quantidade de inscrições online
+	 * 
+	 * @return Integer
+	 * 
+	 */
 	@Transient
 	public Integer qtdInscricoesOnline() {
 		return getInscricoesOnline().size();
 	}
 	
+	/**
+	 * Método que retorna a quantidade de inscrições total
+	 * 
+	 * @return Integer
+	 * 
+	 */
 	@Transient
 	public Integer qtdInscricoesTotal() {
 		return qtdInscricoesOnline() + qtdInscricoesPresenciais();
 	}
 	
+	/**
+	 * Método que retorna a assiduidade total de todos os evento presenciais
+	 * 
+	 * @return Long
+	 * 
+	 */
 	@Transient
 	public Long assiduidadeTotal() {
 		return getInscricoes().stream().filter(i -> i.isPresente()).count();
 	}
 	
+	/**
+	 * Método que retorna o absenteismo total de todos os evento presenciais
+	 * 
+	 * @return Long
+	 * 
+	 */
 	@Transient
 	public Long absenteismoTotal() {
 		return getInscricoes().stream().filter(i -> !i.isPresente()).count();
 	}
 	
+	/**
+	 * Método que retorna o progresso total de todos os eventos online
+	 * 
+	 * @return Long
+	 * 
+	 */
 	@Transient
 	public Long progressoTotal() {
 		return getInscricoesOnline().stream().filter(i -> i.isFinalizado()).count();
 	}
 	
+	/**
+	 * Método que retorna o andamento total de todos os eventos online
+	 * 
+	 * @return Long
+	 * 
+	 */
 	@Transient
 	public Long andamentoTotal() {
 		return getInscricoesOnline().stream().filter(i -> !i.isFinalizado()).count();
 	}
 	
+	/**
+	 * Método que valida se o usuario é administrador
+	 * 
+	 * @return Boolean <code>true</code> se for verdadeiro
+	 * 
+	 */
 	@Transient
 	public Boolean isAdmin() {
 		return getAutorizacoes().get(0).getNome().equals("ROLE_Administrador");
 	}
 	
+	/**
+	 * Método que valida se o usuario é administrador com permissões para criar
+	 * 
+	 * @param opcao
+	 * @return Boolean <code>true</code> se for verdadeiro
+	 * 
+	 */
 	@Transient
 	public Boolean podeCriar(String opcao) {
 		return (getPermissoes() == null ? false : (getPermissoes().getCriar().contains("tudo") ? true : getPermissoes().getCriar().contains(opcao)));
 	}
 	
+	/**
+	 * Método que valida se o usuario é administrador com permissões para visualizar
+	 * 
+	 * @param opcao
+	 * @return Boolean <code>true</code> se for verdadeiro
+	 * 
+	 */
 	@Transient
 	public Boolean podeVisualizar(String opcao) {
 		return (getPermissoes() == null ? false : (getPermissoes().getVisualizar().contains("tudo") ? true : getPermissoes().getVisualizar().contains(opcao)));
 	}
 	
+	/**
+	 * Método que valida se o usuario é administrador com permissões para alterar
+	 * 
+	 * @param opcao
+	 * @return Boolean <code>true</code> se for verdadeiro
+	 * 
+	 */
 	@Transient
 	public Boolean podeAlterar(String opcao) {
 		return (getPermissoes() == null ? false : (getPermissoes().getAlterar().contains("tudo") ? true : getPermissoes().getAlterar().contains(opcao)));
 	}
 	
+	/**
+	 * Método que valida se o usuario é administrador com permissões para deletar
+	 * 
+	 * @param opcao
+	 * @return Boolean <code>true</code> se for verdadeiro
+	 * 
+	 */
 	@Transient
 	public Boolean podeDeletar(String opcao) {
 		return (getPermissoes() == null ? false : (getPermissoes().getDeletar().contains("tudo") ? true : getPermissoes().getDeletar().contains(opcao)));
 	}
 	
+	/**
+	 * Método que valida se o usuario é administrador com restrições
+	 * 
+	 * @param opcao
+	 * @return Boolean <code>true</code> se for verdadeiro
+	 * 
+	 */
 	@Transient
 	public Boolean temRestricao(String opcao) {
 		return (getPermissoes() == null ? false : getPermissoes().getRestringir().contains(opcao));
 	}
 	
+	/**
+	 * Método que valida se o usuario é administrador especifico de um departamento
+	 * 
+	 * @param opcao
+	 * @return Boolean <code>true</code> se for verdadeiro
+	 * 
+	 */
 	@Transient
 	public Boolean temMesmoDepartamento(Usuario usuario) {
 		return getPermissoes().getDepartamento() == usuario.getCodigoFuncional().getUnidadeTrabalho().getDepartamento().getId();

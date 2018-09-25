@@ -12,6 +12,12 @@ import com.gilmarcarlos.developer.gcursos.repository.locais.CargoRepository;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.PermissoesEventoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.PermissoesEventoPresencialService;
 
+/**
+ * Classe com serviços de persistência para entidade (Cargo)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class CargoService {
 
@@ -27,6 +33,14 @@ public class CargoService {
 	@Autowired
 	private CodigoFuncionalService codigoService;
 	
+	/**
+	 * Método que salva um cargo na base 
+	 * 
+	 * @param cargo representa um cargo
+	 * @return Cargo
+	 * @throws CargoExisteException se o cargo estiver selecionado nas permissões dos eventos 
+	 * 
+	 */
 	public Cargo salvar(Cargo cargo) throws CargoExisteException {
 		
 		if (permissoesEventoPresencialService.temCargo(buscarPor(cargo.getId()))) {
@@ -39,7 +53,15 @@ public class CargoService {
 		
 		return repository.save(cargo);
 	}
-		
+	
+	/**
+	 * Método que deleta um cargo na base por id
+	 * 
+	 * @param id id de um cargo
+	 * @throws CargoNotFoundExceptio se o cargo não existir
+	 * @throws CargoExisteException se o cargo estiver selecionado nas permissões dos eventos 
+	 * 
+	 */
 	public void deletar(Long id) throws CargoNotFoundException, CargoExisteException {
 		
 		Cargo cargo = buscarPor(id);
@@ -62,11 +84,24 @@ public class CargoService {
 		
 		repository.deleteById(id);
 	}
-			
+	
+	/**
+	 * Método que lista todos os cargos na base
+	 * 
+	 * @return List
+	 * 
+	 */
 	public List<Cargo> listarTodos(){
 		return repository.listAll();
 	}
-
+	
+	/**
+	 * Método que busca um cargo na base por id
+	 * 
+	 * @param id id de um cargo
+	 * @return Cargo
+	 * 
+	 */
 	public Cargo buscarPor(Long id) {
 		return repository.buscarPor(id);
 	}

@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.SobreOnline;
 
+/**
+ * Interface para crud da entidade (SobreOnline)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface SobreOnlineRepository extends CrudRepository<SobreOnline, Long> {
 	
 	@Query("select c from SobreOnline c")

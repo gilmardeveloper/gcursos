@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EventoOnline;
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnline;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
+import com.gilmarcarlos.developer.gcursos.utils.ConfUtils;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -88,28 +89,20 @@ public class RelatorioInscricoesOnline implements Serializable {
 
 		try {
 
-			print = JasperFillManager.fillReport("/home/narclk123/relatorio_inscricoes_evento_online.jasper", parametros, dataSource); // em
-																														// produção
-																														// alterar
-																														// para
-																														// "/caminho_da_pasta/"
-																														// +
-																														// "arquivo.jasper"
+			print = JasperFillManager.fillReport(ConfUtils.BASE_ARQUIVOS_EXTERNOS + "relatorio_inscricoes_evento_online.jasper", parametros, dataSource); 
+																														
 			JRPdfExporter exporter = new JRPdfExporter();
 
 			exporter.setExporterInput(new SimpleExporterInput(print));
-			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput("/home/narclk123/relatorio_inscricoes_evento_online.pdf")); // em
-																														// produção
-																														// alterar
-																														// para
-																														// "/caminho_da_pasta/arquivo.pdf"
+			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(ConfUtils.BASE_ARQUIVOS_EXTERNOS + "relatorio_inscricoes_evento_online.pdf")); 																				
+																														
 
 			SimplePdfReportConfiguration reportConfig = new SimplePdfReportConfiguration();
 			reportConfig.setSizePageToContent(true);
 			reportConfig.setForceLineBreakPolicy(false);
 
 			SimplePdfExporterConfiguration exportConfig = new SimplePdfExporterConfiguration();
-			exportConfig.setMetadataAuthor("Gilmar Carlos");
+			exportConfig.setMetadataAuthor("Desconhecido");
 			exportConfig.setEncrypted(true);
 			exportConfig.setAllowedPermissionsHint("PRINTING");
 
@@ -119,10 +112,10 @@ public class RelatorioInscricoesOnline implements Serializable {
 			exporter.exportReport();
 			System.out.println("retornando o arquivo");
 
-			return new FileInputStream(new File("/home/narclk123/relatorio_inscricoes_evento_online.pdf")); // em produção alterar
-																							// para
-																							// "/caminho_da_pasta/"
-																							// + "arquivo.pdf"
+			return new FileInputStream(new File(ConfUtils.BASE_ARQUIVOS_EXTERNOS + "relatorio_inscricoes_evento_online.pdf")); 
+																							
+																							
+																							
 
 		} catch (Exception e) {
 			e.printStackTrace();

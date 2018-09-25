@@ -4,6 +4,13 @@ import org.springframework.context.ApplicationEvent;
 
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 
+/**
+ * Classe auxiliar para disparo de eventos de callback para criar solicitações para redefinição
+ * de senhas
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class AutenticaResetPasswordUsuario extends ApplicationEvent{
 	/**
 	 * 

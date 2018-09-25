@@ -4,6 +4,12 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 
+/**
+ * Classe auxiliar da entidade (Mensagens) 
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class MensagensHelper implements Serializable {
 
 	private String titulo;

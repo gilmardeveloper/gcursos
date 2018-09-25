@@ -8,6 +8,12 @@ import org.springframework.stereotype.Service;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.Sobre;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.SobreRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (Sobre) crud básico
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class SobreService {
 
@@ -17,7 +23,7 @@ public class SobreService {
 	public Sobre salvar(Sobre sobre) {
 		return repository.save(sobre);
 	}
-		
+	
 	public void deletar(Long id) {
 		repository.deleteById(id);
 	}

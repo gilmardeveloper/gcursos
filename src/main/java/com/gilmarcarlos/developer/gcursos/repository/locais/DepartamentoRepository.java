@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.locais.Departamento;
 
+/**
+ * Interface para crud da entidade (Departamento)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface DepartamentoRepository extends CrudRepository<Departamento, Long> {
 	
 	@Query("select d from Departamento d")

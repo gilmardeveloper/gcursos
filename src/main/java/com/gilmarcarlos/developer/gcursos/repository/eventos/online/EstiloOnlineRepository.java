@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.EstiloOnline;
 
+/**
+ * Interface para crud da entidade (EstiloOnline)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface EstiloOnlineRepository extends CrudRepository<EstiloOnline, Long> {
 	
 	@Query("select e from EstiloOnline e")

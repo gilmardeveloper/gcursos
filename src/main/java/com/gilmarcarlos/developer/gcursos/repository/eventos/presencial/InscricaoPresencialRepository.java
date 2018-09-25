@@ -10,6 +10,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.InscricaoPresencial;
 
+/**
+ * Interface para crud da entidade (InscricaoPresencial)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface InscricaoPresencialRepository extends CrudRepository<InscricaoPresencial, Long> {
 	
 	@Query("select i from InscricaoPresencial i")

@@ -20,6 +20,12 @@ import com.gilmarcarlos.developer.gcursos.repository.auth.PrivilegioRepository;
 import com.gilmarcarlos.developer.gcursos.repository.usuarios.UsuarioRepository;
 import com.gilmarcarlos.developer.gcursos.security.crypt.PasswordCrypt;
 
+/**
+ * Classe para criar uma conta administrativa na primeira vez a plataforma roda
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Component
 public class CredencialDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -50,8 +56,6 @@ public class CredencialDataLoader implements ApplicationListener<ContextRefreshe
 		Privilegio adminPrivilege = createPrivilegeIfNotFound("ROLE_Administrador");
 		Privilegio userPrivilege = createPrivilegeIfNotFound("ROLE_Usuario");
 
-		// List<Privilegio> privilegios = Arrays.asList(adminPrivilege, userPrivilege);
-
 		createRoleIfNotFound("ROLE_Administrador", Arrays.asList(adminPrivilege));
 		createRoleIfNotFound("ROLE_Usuario", Arrays.asList(userPrivilege));
 
@@ -73,7 +77,13 @@ public class CredencialDataLoader implements ApplicationListener<ContextRefreshe
 
 		alreadySetup = true;
 	}
-
+	
+	/**
+	 * Método que cria permissões para o administrador se não existir 
+	 * 
+	 * @param temp representa um usuario temporario 
+	 * 
+	 */
 	private void createIfNotExistPermissoes(Usuario temp) {
 
 		if (temp.getPermissoes() == null) {
@@ -86,7 +96,13 @@ public class CredencialDataLoader implements ApplicationListener<ContextRefreshe
 			permissoesRepository.save(permissoes);
 		}
 	}
-
+	
+	/**
+	 * Método que cria privilegios para o administrador se não existir 
+	 * 
+	 * @param nome representa um privilegio
+	 * 
+	 */
 	@Transactional
 	private Privilegio createPrivilegeIfNotFound(String nome) {
 
@@ -98,6 +114,13 @@ public class CredencialDataLoader implements ApplicationListener<ContextRefreshe
 		return privilegio;
 	}
 
+	/**
+	 * Método que cria autorizações para o administrador se não existir 
+	 * 
+	 * @param name representa uma autorização
+	 * @param privilegios uma lista de privilegios
+	 * 
+	 */
 	@Transactional
 	private Autorizacao createRoleIfNotFound(String name, List<Privilegio> privilegios) {
 

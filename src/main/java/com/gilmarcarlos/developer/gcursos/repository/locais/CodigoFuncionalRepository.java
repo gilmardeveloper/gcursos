@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.locais.CodigoFuncional;
 
+/**
+ * Interface para crud da entidade (CodigoFuncional)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface CodigoFuncionalRepository extends CrudRepository<CodigoFuncional, Long> {
 	
 	@Query("select c from CodigoFuncional c")

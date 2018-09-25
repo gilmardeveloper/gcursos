@@ -12,6 +12,12 @@ import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresenc
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.ProgramacaoPresencial;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.DiaEventoRepository;
 
+/**
+* Classe com serviços de persistência para entidade (DiaEvento)
+* 
+* @author Gilmar Carlos
+*
+*/
 @Service
 public class DiaEventoService {
 
@@ -36,7 +42,14 @@ public class DiaEventoService {
 	public DiaEvento buscarPor(Long id) {
 		return repository.buscarPor(id);
 	}
-
+	
+	/**
+	 * Método que gera dias do evento baseado na data de inicio e termino  
+	 * 
+	 * @param evento representa um evento 
+	 * @param programacao representa uma programacao
+	 * 
+	 */
 	public void gerarDiasDeEvento(EventoPresencial evento, ProgramacaoPresencial programacao) {
 
 		LocalDate primeiroDia = evento.getDataInicio();
@@ -57,7 +70,14 @@ public class DiaEventoService {
 		}
 
 	}
-
+	
+	/**
+	 * Método que altera dias do evento baseado na data de inicio e termino,  
+	 * 
+	 * @param evento representa um evento 
+	 * @param programacao representa uma programacao
+	 * 
+	 */
 	public void alterarDiasDeEvento(EventoPresencial evento, ProgramacaoPresencial programacao) {
 
 		LocalDate primeiroDia = evento.getDataInicio();
@@ -69,7 +89,15 @@ public class DiaEventoService {
 		
 		gerarDias(primeiroDia, ultimoDia.plusDays(1), evento);
 	}
-
+	
+	/**
+	 * Método que deleta dias do evento baseado na data de inicio e termino,  
+	 * 
+	 * @param primeiroDia data de inicio do primeiro dia
+	 * @param ultimoDia data de termino referente ao ultimo dia
+	 * @param dia representa um dia
+	 * 
+	 */
 	private void deleteSeForaDoInicioFim(LocalDate primeiroDia, LocalDate ultimoDia, DiaEvento dia) {
 		
 		if (dia.getData().isAfter(ultimoDia) || dia.getData().isBefore(primeiroDia)) {
@@ -81,6 +109,14 @@ public class DiaEventoService {
 		
 	}
 	
+	/**
+	 * Método que gera dias do evento baseado na data de inicio e termino,  
+	 * 
+	 * @param primeiroDia data de inicio do primeiro dia
+	 * @param ultimoDia data de termino referente ao ultimo dia
+	 * @param evento representa um evento
+	 * 
+	 */
 	private void gerarDias(LocalDate proximoDia, LocalDate ultimoDia, EventoPresencial evento) {
 		
 		List<LocalDate> lista = new ArrayList<>();

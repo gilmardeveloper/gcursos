@@ -8,6 +8,12 @@ import org.springframework.stereotype.Service;
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.DiaEvento;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.presencial.DiaEventoPaginacaoRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (Cargo) crud básico
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class DiaEventoPaginacaoService {
 	

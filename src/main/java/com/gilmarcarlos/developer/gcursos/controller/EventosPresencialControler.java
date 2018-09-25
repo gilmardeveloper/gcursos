@@ -32,6 +32,7 @@ import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPrese
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.InscricaoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.PermissoesEventoPresencialService;
 import com.gilmarcarlos.developer.gcursos.service.usuarios.UsuarioService;
+import com.gilmarcarlos.developer.gcursos.utils.ConfUtils;
 import com.gilmarcarlos.developer.gcursos.utils.RedirectUtils;
 import com.gilmarcarlos.developer.gcursos.utils.TemplateUtils;
 import com.gilmarcarlos.developer.gcursos.utils.UrlUtils;
@@ -150,12 +151,12 @@ public class EventosPresencialControler {
 		}
 
 		if (!evento.getPermissoes().valida(usuarioLogado)) {
-			RedirectUtils.mensagemError(red, "você não tem permissão");
+			RedirectUtils.mensagemError(red, ConfUtils.ALERTA_ERROR_PERMISSAO);
 			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS;
 		}
 
 		if (evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
-			RedirectUtils.mensagemError(red, "você não tem permissão para acessar esse evento");
+			RedirectUtils.mensagemError(red, ConfUtils.ALERTA_ERROR_PERMISSAO);
 			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS;
 		}
 
@@ -179,12 +180,12 @@ public class EventosPresencialControler {
 		}
 
 		if (!evento.getPermissoes().valida(usuarioLogado)) {
-			RedirectUtils.mensagemError(red, "você não tem permissão");
+			RedirectUtils.mensagemError(red, ConfUtils.ALERTA_ERROR_PERMISSAO);
 			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS;
 		}
 
 		if (evento.getPermissoes().precisaDeCodigo() && !evento.getPermissoes().temCodigo(usuarioLogado)) {
-			RedirectUtils.mensagemError(red, "você não tem permissão para acessar esse evento");
+			RedirectUtils.mensagemError(red, ConfUtils.ALERTA_ERROR_PERMISSAO);
 			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS;
 		}
 
@@ -217,7 +218,7 @@ public class EventosPresencialControler {
 		if (atividade.podeSeInscrever(usuarioLogado)) {
 
 			inscricaoPresencialService.salvar(new InscricaoPresencial(usuarioLogado, atividade));
-			RedirectUtils.mensagemSucesso(model, "inscrição realizada com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS + "/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		} else {
@@ -236,11 +237,11 @@ public class EventosPresencialControler {
 		if (atividade.isInscrito(usuarioLogado)) {
 
 			inscricaoPresencialService.deletar(atividade.getInscricao(usuarioLogado));
-			RedirectUtils.mensagemSucesso(model, "inscrição foi cancelada com sucesso");
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_SALVAR);
 			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS + "/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		} else {
-			RedirectUtils.mensagemError(model, "um erro ocorreu");
+			RedirectUtils.mensagemError(model, ConfUtils.ALERTA_ERROR_GENERICO);
 			return "redirect:" + UrlUtils.DASHBOARD_EVENTOS_PRESENCIAIS + "/detalhes/"
 					+ atividade.getDiaEvento().getProgramacaoPresencial().getEventoPresencial().getId();
 		}

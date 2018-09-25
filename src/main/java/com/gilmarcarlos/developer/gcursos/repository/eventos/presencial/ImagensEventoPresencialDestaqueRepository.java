@@ -6,6 +6,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.images.ImagensEventoPresencialDestaque;
 
+/**
+ * Interface para crud da entidade (ImagensEventoPresencialDestaque)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface ImagensEventoPresencialDestaqueRepository extends CrudRepository<ImagensEventoPresencialDestaque, Long> {
 	
 	@Query("select i from ImagensEventoPresencialDestaque i where i.id = :pid")

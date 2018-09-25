@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.locais.UnidadeTrabalho;
 
+/**
+ * Interface para crud da entidade (UnidadeTrabalho)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface UnidadeTrabalhoRepository extends CrudRepository<UnidadeTrabalho, Long> {
 	
 	@Query(value = "select distinct u from UnidadeTrabalho u join fetch u.telefones")

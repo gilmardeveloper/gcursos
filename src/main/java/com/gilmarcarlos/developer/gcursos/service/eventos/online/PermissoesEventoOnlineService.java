@@ -10,7 +10,12 @@ import com.gilmarcarlos.developer.gcursos.model.locais.Cargo;
 import com.gilmarcarlos.developer.gcursos.model.locais.Departamento;
 import com.gilmarcarlos.developer.gcursos.model.locais.UnidadeTrabalho;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.PermissoesEventoOnlineRepository;
-
+/**
+ * Classe com serviços de persistência para entidade (PermissoesEventoOnline) 
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class PermissoesEventoOnlineService {
 
@@ -33,18 +38,39 @@ public class PermissoesEventoOnlineService {
 		return repository.buscarPor(id);
 	}
 	
+	/**
+	 * Método de validação por unidade 
+	 * 
+	 * @param unidade representa uma unidade de trabalho
+	 * @return boolean
+	 * 
+	 */
 	public boolean temUnidade(UnidadeTrabalho unidade) {
 		if (unidade == null) return false;
 		
 		return listarTodos().stream().anyMatch( p -> p.getUnidades().contains(unidade.getNome()));
 	}
 	
+	/**
+	 * Método de validação por cargo 
+	 * 
+	 * @param cargo representa um cargo
+	 * @return boolean
+	 * 
+	 */
 	public boolean temCargo(Cargo cargo) {
 		if(cargo ==  null) return false;
 		
 		return listarTodos().stream().anyMatch( p -> p.getCargos().contains(cargo.getNome()));
 	}
-
+	
+	/**
+	 * Método de validação por departamento
+	 * 
+	 * @param departamento representa um cargo
+	 * @return boolean
+	 * 
+	 */
 	public boolean temDepartamento(Departamento departamento) {
 		if(departamento == null) return false;
 		

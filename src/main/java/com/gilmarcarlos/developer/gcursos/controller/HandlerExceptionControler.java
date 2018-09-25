@@ -28,10 +28,9 @@ public class HandlerExceptionControler extends ResponseEntityExceptionHandler{
 		
 	@ExceptionHandler(MultipartException.class)
 	String handleFileException(HttpServletRequest request, Throwable ex) {
-		NotificacaoUtils.error(notificacaoService, getUsuario(), "Erro ao alterar avatar", "uma tentativa de adicionar um novo avatar falhou");
+		NotificacaoUtils.error(notificacaoService, getUsuario(), "Erro ao alterar imagem", "uma tentativa de adicionar um nova imagem falhou");
 		return "redirect:/dashboard/";
 	}
-	
 	
 	private Usuario getUsuario() {
 		autenticado = SecurityContextHolder.getContext().getAuthentication();

@@ -13,6 +13,12 @@ import com.gilmarcarlos.developer.gcursos.service.auth.PermissoesService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.PermissoesEventoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.PermissoesEventoPresencialService;
 
+/**
+ * Classe com serviços de persistência para entidade (Departamento)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class DepartamentoService {
 
@@ -30,7 +36,15 @@ public class DepartamentoService {
 
 	@Autowired
 	private PermissoesEventoOnlineService permissoesEventoOnlineService;
-
+	
+	/**
+	 * Método que salva um departamento na base 
+	 * 
+	 * @param departametno entidade que representa um departametno 
+	 * @return Departamento retorna um departamento
+	 * @throws DepartamentoExisteException se o departamento estiver selecionado nas permissões do administrador
+	 * 
+	 */
 	public Departamento salvar(Departamento departamento) throws DepartamentoExisteException {
 
 		if (permissoesService.temDepartamento(buscarPor(departamento.getId()))) {
@@ -40,7 +54,16 @@ public class DepartamentoService {
 
 		return repository.save(departamento);
 	}
-
+	
+	/**
+	 * Método que deleta um departamento na base por id 
+	 * 
+	 * @param id id de um departamento
+	 * @return Departamento retorna um departametno
+	 * @throws DepartamentoNotFoundException se o departamento não existir
+	 * @throws DepartamentoExisteException se o departamento estiver selecionado nas permissões do administrador
+	 * 
+	 */
 	public void deletar(Long id) throws DepartamentoNotFoundException, DepartamentoExisteException {
 		
 		Departamento departamento = buscarPor(id);
@@ -63,11 +86,24 @@ public class DepartamentoService {
 
 		repository.deleteById(id);
 	}
-
+	
+	/**
+	 * Método que lista todos os departamentos  
+	 * 
+	 * @return List
+	 * 
+	 */
 	public List<Departamento> listarTodos() {
 		return repository.listAll();
 	}
-
+	
+	/**
+	 * Método que busca um departamento por id  
+	 * 
+	 * @param id id do departamento
+	 * @return Departamento
+	 * 
+	 */
 	public Departamento buscarPor(Long id) {
 		return repository.buscaPorId(id);
 	}

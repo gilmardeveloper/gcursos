@@ -12,6 +12,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.gilmarcarlos.developer.gcursos.security.crypt.PasswordCrypt;
 
+/**
+ * Classe de configurações do spring security
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter{

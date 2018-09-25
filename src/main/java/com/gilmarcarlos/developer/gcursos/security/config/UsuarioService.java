@@ -24,6 +24,12 @@ import com.gilmarcarlos.developer.gcursos.security.brute.force.AutenticacaoBlock
 import com.gilmarcarlos.developer.gcursos.security.exception.BruteForceException;
 import com.gilmarcarlos.developer.gcursos.security.exception.RegistroNotFoundException;
 
+/**
+ * Classe com configurações de segurança do spring security para usuário
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service("userDetailsService")
 @Transactional
 public class UsuarioService implements UserDetailsService {
@@ -52,10 +58,6 @@ public class UsuarioService implements UserDetailsService {
         Usuario usuario = usuarioRepository.findByEmail(email);
         if (usuario == null) {
         	throw new RegistroNotFoundException();
-           /* return new org.springframework.security.core.userdetails.User(
-              " ", " ", true, true, true, true, 
-              getAuthorities(Arrays.asList(
-                autorizacaoRepository.findByNome("ROLE_USER"))));*/
         }
         
                             
@@ -73,7 +75,6 @@ public class UsuarioService implements UserDetailsService {
         }
         return xfHeader.split(",")[0];
 	}
-
 
 
 	public MessageSource getMessage() {
@@ -99,7 +100,8 @@ public class UsuarioService implements UserDetailsService {
         }
         return privilegios;
     }
- 
+    
+   
     private List<GrantedAuthority> getGrantedAuthorities(List<String> privileges) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (String privilege : privileges) {

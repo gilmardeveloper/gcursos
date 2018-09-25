@@ -1,5 +1,11 @@
 package com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions;
 
+/**
+ * Classe para lançar excessões na validação de opções sexuais
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class SexoExisteException extends Exception{
 
 	/**

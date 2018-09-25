@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.type.Escolaridade;
 
+/**
+ * Interface para crud da entidade (Escolaridade)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface EscolaridadeRepository extends CrudRepository<Escolaridade, Long> {
 	
 	@Query("select c from Escolaridade c")

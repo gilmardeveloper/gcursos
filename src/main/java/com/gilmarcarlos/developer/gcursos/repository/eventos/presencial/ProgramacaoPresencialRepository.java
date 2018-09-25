@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.ProgramacaoPresencial;
 
+/**
+ * Interface para crud da entidade (ProgramacaoPresencial)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface ProgramacaoPresencialRepository extends CrudRepository<ProgramacaoPresencial, Long> {
 	
 	@Query("select p from ProgramacaoPresencial p join fetch p.dias")

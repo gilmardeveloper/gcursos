@@ -26,14 +26,6 @@
 			<div class="row row-offcanvas row-offcanvas-right">
 				<!-- partial:../../partials/_settings-panel.html -->
 
-				<!-- theme-setting-wrapper -->
-				<div th:replace="fragments/sidebar :: configuracoes-tema"></div>
-				<!-- end  theme-setting-wrapper -->
-
-				<!-- right-sidebar -->
-				<div th:replace="fragments/sidebar :: sidebar-escondido"></div>
-				<!-- end right-sidebar -->
-
 				<!-- sidebar sidebar-offcanvas -->
 				<nav th:replace="fragments/sidebar :: sidebar-principal"></nav>
 				<!-- end sidebar sidebar-offcanvas -->
@@ -158,7 +150,7 @@
 												<button type="submit" class="btn btn-success mr-2">Salvar</button>
 												<a class="btn btn-light mr-2" th:href="@{/dashboard/admin/eventos/online}">Cancelar</a>
 
-												<button th:if="${evento != null and (usuario.podeDeletar('eventosOnline') or usuario.podeDeletar('tudo'))}" class="btn btn-outline-danger" type="button" th:onclick="'deletar(' + ${evento.id} + ')'">Excluir</button>
+												<button th:if="${evento != null and usuario.podeDeletar('eventosOnline')}" class="btn btn-outline-danger" type="button" th:onclick="'deletar(' + ${evento.id} + ')'">Excluir</button>
 											</form>
 										</div>
 									</div>
@@ -204,7 +196,7 @@
 	          
 	            swal({
 	              title: 'Deletar evento',
-	              text: "Todas as inscrições e tudo relacionado ao evento será excluído, como certificado, lista de presença, progresso e histórico dos usuários.",
+	              text: "Se houver inscrições no evento essa ação não será realizada!",
 	              type: 'warning',
 	              showCancelButton: true,
 	              confirmButtonColor: '#3085d6',

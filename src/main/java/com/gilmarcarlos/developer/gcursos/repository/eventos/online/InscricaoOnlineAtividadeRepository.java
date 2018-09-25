@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.InscricaoOnlineAtividade;
 
+/**
+ * Interface para crud da entidade (InscricaoOnlineAtividade)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface InscricaoOnlineAtividadeRepository extends CrudRepository<InscricaoOnlineAtividade, Long> {
 	
 	@Query("select i from InscricaoOnlineAtividade i")

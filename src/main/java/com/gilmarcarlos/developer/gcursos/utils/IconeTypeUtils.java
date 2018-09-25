@@ -1,5 +1,11 @@
 package com.gilmarcarlos.developer.gcursos.utils;
 
+/**
+ * Classe com configurações para recursos visuais dos templates
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class IconeTypeUtils {
 	
 	public static final String INFORMACAO = "icon-info mx-0";

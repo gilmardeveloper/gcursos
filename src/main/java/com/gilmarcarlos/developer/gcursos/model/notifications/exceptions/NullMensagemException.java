@@ -1,5 +1,11 @@
 package com.gilmarcarlos.developer.gcursos.model.notifications.exceptions;
 
+/**
+ * Classe que lança excessões na validações de mensagens
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class NullMensagemException extends Exception{
 
 	/**

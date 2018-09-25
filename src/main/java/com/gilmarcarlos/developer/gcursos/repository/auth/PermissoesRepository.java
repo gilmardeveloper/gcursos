@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.auth.Permissoes;
 
+/**
+ * Interface para crud da entidade (Permissoes)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface PermissoesRepository extends CrudRepository<Permissoes, Long> {
 
 	@Query("select p from Permissoes p")

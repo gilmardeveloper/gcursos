@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.locais.Cargo;
 
+/**
+ * Interface para crud da entidade (Cargo)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface CargoRepository extends CrudRepository<Cargo, Long> {
 	
 	@Query("select c from Cargo c")

@@ -1,5 +1,11 @@
 package com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions;
 
+/**
+ * Classe para lançar excessões na validação de usuarios
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class UsuarioDeleteException extends Exception{
 
 	/**

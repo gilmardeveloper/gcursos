@@ -1,5 +1,11 @@
 package com.gilmarcarlos.developer.gcursos.model.locais.exceptions;
 
+/**
+ * Classe para lançar excessões na validação de cargos
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class CargoExisteException extends Exception{
 
 	/**

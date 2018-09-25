@@ -8,6 +8,12 @@ import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
  
+/**
+ * Classe para bloquear ataques de força bruta
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class AutenticacaoBlockForcaBruta{
 
@@ -23,18 +29,36 @@ public class AutenticacaoBlockForcaBruta{
             }
         });
     }
- 
+    
+    /**
+	 * Método que limpa o cache caso o usuário consiga logar 
+	 * 
+	 * @param key chave da sessão  
+	 * 
+	 */
     public void loginSucceeded(String key) {
         attemptsCache.invalidate(key);
     }
- 
+    
+    /**
+	 * Método que adiciona ao cache a chave da sessão e quantidades de tentivas de login do usuario 
+	 * 
+	 * @param key chave da sessão  
+	 * 
+	 */
     public void loginFailed(String key) {
         int attempts = 0;
         attempts = attemptsCache.get(key);
         attempts++;
         attemptsCache.put(key, attempts);
     }
- 
+    
+    /**
+	 * Método que valida a quantidade de tentativas  
+	 * 
+	 * @param key chave da sessão  
+	 * 
+	 */
     public boolean isBlocked(String key) {
         return attemptsCache.get(key) >= MAX_ATTEMPT;
     }

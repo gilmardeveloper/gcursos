@@ -7,7 +7,12 @@ import org.springframework.stereotype.Service;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.online.SobreOnline;
 import com.gilmarcarlos.developer.gcursos.repository.eventos.online.SobreOnlineRepository;
-
+/**
+ * Classe com serviços de persistência para entidade (SobreOnline) crud básico
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class SobreOnlineService {
 

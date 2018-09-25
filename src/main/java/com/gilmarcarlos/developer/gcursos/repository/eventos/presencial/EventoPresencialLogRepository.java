@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.EventoPresencialLog;
 
+/**
+ * Interface para crud da entidade (EventoPresencialLog)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface EventoPresencialLogRepository extends CrudRepository<EventoPresencialLog, Long> {
 	
 	@Query("select e from EventoPresencialLog e order by e.data desc")

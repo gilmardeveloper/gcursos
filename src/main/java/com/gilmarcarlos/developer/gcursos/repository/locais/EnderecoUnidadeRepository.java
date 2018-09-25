@@ -10,6 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gilmarcarlos.developer.gcursos.model.locais.EnderecoUnidade;
 
+/**
+ * Interface para crud da entidade (EnderecoUnidade)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface EnderecoUnidadeRepository extends CrudRepository<EnderecoUnidade, Long> {
 	
 	@Query("select e from EnderecoUnidade e")

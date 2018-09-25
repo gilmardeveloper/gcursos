@@ -2,6 +2,12 @@ package com.gilmarcarlos.developer.gcursos.model.usuarios;
 
 import java.io.Serializable;
 
+/**
+ * Classe auxiliar da entidade usuario
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public class UsuarioDTO implements Serializable{
 
 	/**

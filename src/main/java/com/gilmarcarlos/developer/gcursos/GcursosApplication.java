@@ -24,8 +24,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Ticker;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
-import br.com.safeguard.check.SafeguardCheck;
-
 @SpringBootApplication
 @EnableCaching
 public class GcursosApplication {
@@ -35,18 +33,6 @@ public class GcursosApplication {
 		SpringApplication.run(GcursosApplication.class, args);
 	}
 	
-	/*@Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry
-			.addResourceHandler("/resources/**")
-			.addResourceLocations("/resources/")
-			.setCachePeriod(31556926);
-	}*/
-	
-	@Bean 
-	public SafeguardCheck safeguardCheck() {
-		return new SafeguardCheck();
-	}
 		
 	@Bean
 	public LocaleResolver localeResolver() {

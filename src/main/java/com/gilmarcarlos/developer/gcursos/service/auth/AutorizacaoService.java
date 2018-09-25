@@ -8,6 +8,12 @@ import org.springframework.stereotype.Service;
 import com.gilmarcarlos.developer.gcursos.model.auth.Autorizacao;
 import com.gilmarcarlos.developer.gcursos.repository.auth.AutorizacaoRepository;
 
+/**
+ * Classe com serviços de persistência para entidade (Autorizacao) crud básico
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class AutorizacaoService {
 

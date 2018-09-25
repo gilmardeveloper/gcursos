@@ -11,6 +11,12 @@ import com.gilmarcarlos.developer.gcursos.repository.usuarios.SexoRepository;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineService;
 import com.gilmarcarlos.developer.gcursos.service.eventos.presencial.EventoPresencialService;
 
+/**
+ * Classe com serviços de persistência para entidade (SexoService)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 @Service
 public class SexoService {
 
@@ -26,6 +32,14 @@ public class SexoService {
 	@Autowired
 	private EventoPresencialService eventoPresencialService;
 	
+	/**
+	 * Método que salva uma opção na base 
+	 * 
+	 * @param sexo entidade que representa uma opção 
+	 * @return Sexo retorna um sexo
+	 * @throws SexoExisteException se essa opção estiver presente nas permissões, no cadastro de usuários ou eventos
+	 * 
+	 */
 	public Sexo salvar(Sexo sexo) throws SexoExisteException {
 		
 		if(usuarioService.sexoExiste(sexo.getNome())){
@@ -42,7 +56,14 @@ public class SexoService {
 		
 		return repository.save(sexo);
 	}
-		
+	
+	/**
+	 * Método que deleta uma opção na base 
+	 * 
+	 * @param id id de uma opção 
+	 * @throws SexoExisteException se essa opção estiver presente nas permissões, no cadastro de usuários ou eventos
+	 * 
+	 */
 	public void deletar(Long id) throws SexoExisteException {
 		
 		Sexo sexo = buscarPor(id);
@@ -65,11 +86,24 @@ public class SexoService {
 		
 		repository.deleteById(id);
 	}
-			
+	
+	/**
+	 * Método que retorna uma lista com todas as opções
+	 * 
+	 * @return List retorna uma lista
+	 * 
+	 */
 	public List<Sexo> listarTodos(){
 		return repository.listAll();
 	}
-
+	
+	/**
+	 * Método para buscar uma opção na base por id
+	 * 
+	 * @param id id de uma opção 
+	 * @return Sexo retorna um sexo
+	 * 
+	 */
 	public Sexo buscarPor(Long id) {
 		return repository.buscarPor(id);
 	}

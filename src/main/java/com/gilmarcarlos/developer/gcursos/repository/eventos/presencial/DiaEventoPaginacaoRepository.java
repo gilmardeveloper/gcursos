@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.gilmarcarlos.developer.gcursos.model.eventos.presencial.DiaEvento;
 
+/**
+ * Interface para crud da entidade (DiaEvento)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface DiaEventoPaginacaoRepository extends PagingAndSortingRepository<DiaEvento, Long> {
 	
 	

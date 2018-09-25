@@ -10,6 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gilmarcarlos.developer.gcursos.model.locais.TelefoneUnidade;
 
+/**
+ * Interface para crud da entidade (TelefoneUnidade)
+ * 
+ * @author Gilmar Carlos
+ *
+ */
 public interface TelefoneUnidadeRepository extends CrudRepository<TelefoneUnidade, Long> {
 	
 	@Query("select t from TelefoneUnidade t")
