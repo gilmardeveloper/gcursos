@@ -28,4 +28,11 @@ public interface DadosPessoaisRepository extends CrudRepository<DadosPessoais, L
 	@Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM DadosPessoais d WHERE d.cpf = :pcpf and d.usuario.id != :pid")
 	boolean existsByCpf(@Param("pcpf") String cpf, @Param("pid") Long id);
 
+	@Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM DadosPessoais d WHERE d.sexo = :psexo")
+	boolean existsBySexo(@Param("psexo") String sexo);
+
+	@Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM DadosPessoais d WHERE d.escolaridade = :pescolaridade")
+	boolean existsByEscolaridade(@Param("pescolaridade") String escolaridade);
+	
+
 }

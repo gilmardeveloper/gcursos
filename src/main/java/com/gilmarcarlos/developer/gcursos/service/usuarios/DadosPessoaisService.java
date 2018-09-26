@@ -107,5 +107,26 @@ public class DadosPessoaisService {
 	public Boolean cpfExiste(String cpf, Usuario usuario) {
 		return repository.existsByCpf(cpf, usuario.getId());
 	}
-
+	
+	/**
+	 * Método para validar um usuario por sexo
+	 * 
+	 * @param nome representa uma opção sexual
+	 * @return boolean retorna <code>true</code> se verdadeiro 
+	 * 
+	 */
+	public boolean sexoExiste(String nome) {
+		return repository.existsBySexo(nome);
+	}
+	
+	/**
+	 * Método para validar um usuario por escolaridade
+	 * 
+	 * @param nome representa uma opção sexual
+	 * @return boolean retorna <code>true</code> se verdadeiro 
+	 * 
+	 */
+	public boolean escolaridadeExiste(String nome) {
+		return repository.existsByEscolaridade(nome);
+	}
 }
