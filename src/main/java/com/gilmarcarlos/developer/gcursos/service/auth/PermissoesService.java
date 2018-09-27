@@ -46,7 +46,7 @@ public class PermissoesService {
 
 	public boolean temDepartamento(Departamento departamento) {
 		
-		if(departamento.getId() == null) return false;
+		if(departamento == null) return false;
 		
 		return listarTodos().stream().anyMatch( p -> p.getDepartamento() == departamento.getId());
 	}

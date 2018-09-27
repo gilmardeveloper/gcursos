@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.gilmarcarlos.developer.gcursos.model.usuarios.DadosPessoais;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.TelefoneUsuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.UsuarioDeleteException;
 import com.gilmarcarlos.developer.gcursos.repository.usuarios.TelefoneUsuarioRepository;
 
 /**
@@ -36,9 +38,18 @@ public class TelefoneUsuarioService {
 	 * Método que deleta um telefone relacionado a um usuario na base 
 	 * 
 	 * @param id representa o id de um TelefoneUsuario 
+	 * @throws UsuarioDeleteException se for responsavel por eventos e tiver apenas um telefone cadastrado
 	 * 
 	 */
-	public void deletar(Long id) {
+	public void deletar(Long id) throws UsuarioDeleteException {
+		
+		TelefoneUsuario telefone = buscarPor(id);
+		DadosPessoais dados = telefone.getDadosPessoais();
+		
+		if(dados.getTelefones().size() == 1 && (!dados.getUsuario().getEventoOnline().isEmpty() || !dados.getUsuario().getEventoPresencial().isEmpty())) {
+			throw new UsuarioDeleteException("usuário é reponsável por eventos, e precisa ter pelo menos um telefone cadastrado!");			
+		}
+		
 		repository.deleteById(id);
 	}
 	
@@ -82,7 +93,13 @@ public class TelefoneUsuarioService {
 	 */
 	public void deletar(Usuario usuario) {
 		if (!usuario.getDadosPessoais().getTelefones().isEmpty()) {
-			usuario.getDadosPessoais().getTelefones().forEach(t -> deletar(t.getId()));
+			usuario.getDadosPessoais().getTelefones().forEach(t -> {
+				try {
+					deletar(t.getId());
+				} catch (UsuarioDeleteException e) {
+					e.printStackTrace();
+				}
+			});
 		}
 	}
 

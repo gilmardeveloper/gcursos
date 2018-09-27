@@ -129,4 +129,6 @@ public class DadosPessoaisService {
 	public boolean escolaridadeExiste(String nome) {
 		return repository.existsByEscolaridade(nome);
 	}
+
+	
 }

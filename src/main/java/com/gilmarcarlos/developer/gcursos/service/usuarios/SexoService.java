@@ -82,17 +82,17 @@ public class SexoService {
 			throw new SexoExisteException("opção sexual não foi encontrada");
 		}
 
-		if (dadosService.sexoExiste(buscarPor(sexo.getId()).getNome())) {
+		if (dadosService.sexoExiste(sexo.getNome())) {
 			throw new SexoExisteException(
 					"para deletar essa opção é necessário antes alterar os usuários selecionados com essa opção");
 		}
 
-		if (eventoOnlineService.sexoExiste(buscarPor(sexo.getId()).getNome())) {
+		if (eventoOnlineService.sexoExiste(sexo.getNome())) {
 			throw new SexoExisteException(
 					"para deletar essa opção é necessário antes excluir ou alterar as permissões dos eventos online");
 		}
 
-		if (eventoPresencialService.sexoExiste(buscarPor(sexo.getId()).getNome())) {
+		if (eventoPresencialService.sexoExiste(sexo.getNome())) {
 			throw new SexoExisteException(
 					"para deletar essa opção é necessário antes excluir ou alterar as permissões dos eventos presenciais");
 		}

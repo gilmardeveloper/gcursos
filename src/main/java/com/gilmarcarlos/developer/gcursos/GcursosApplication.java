@@ -93,7 +93,7 @@ public class GcursosApplication {
 			e.printStackTrace();
 		}
 		
-		dataSource.setJdbcUrl("jdbc:mysql://localhost/zeus?useUnicode=yes&characterEncoding=UTF-8");
+		dataSource.setJdbcUrl("jdbc:mysql://localhost/gcursos?useUnicode=yes&characterEncoding=UTF-8");
 
 		dataSource.setMinPoolSize(1);
 		dataSource.setMaxPoolSize(10);

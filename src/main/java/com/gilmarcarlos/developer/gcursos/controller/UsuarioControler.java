@@ -35,6 +35,7 @@ import com.gilmarcarlos.developer.gcursos.model.notifications.Mensagens;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.TelefoneUsuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.Usuario;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.CpfExisteException;
+import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.UsuarioDeleteException;
 import com.gilmarcarlos.developer.gcursos.model.usuarios.exceptions.UsuarioExisteException;
 import com.gilmarcarlos.developer.gcursos.security.exception.SenhaNotNullException;
 import com.gilmarcarlos.developer.gcursos.service.eventos.online.EventoOnlineService;
@@ -218,9 +219,14 @@ public class UsuarioControler {
 	public String telefonesExcluir(@RequestParam("id") Long id, RedirectAttributes model) {
 
 		Usuario usuarioLogado = getUsuario();
-		telefoneService.deletar(id);
-		NotificacaoUtils.sucesso(notificacaoService, usuarioLogado, "Telefone excluído",
-				"telefone removido com sucesso");
+		try {
+			telefoneService.deletar(id);
+			NotificacaoUtils.sucesso(notificacaoService, usuarioLogado, "Telefone excluído",
+					"telefone removido com sucesso");
+		} catch (UsuarioDeleteException e) {
+			NotificacaoUtils.error(notificacaoService, usuarioLogado, "Falha ao excluir telefone",
+					"você é reponsável por eventos, é necessário ter pelo menos um telefone cadastrado");
+		}
 		return "redirect:" + UrlUtils.DASHBOARD_USUARIO_PERFIL;
 	}
 

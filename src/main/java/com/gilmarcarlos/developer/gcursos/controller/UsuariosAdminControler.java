@@ -497,14 +497,18 @@ public class UsuariosAdminControler {
 		}
 
 		TelefoneUsuario telefone = telefoneUsuarioService.buscarPor(id);
+		Usuario usuario = telefone.getDadosPessoais().getUsuario();
 
-		NotificacaoUtils.sucesso(notificacaoService, telefone.getDadosPessoais().getUsuario(),
-				"Administrador alterou seus dados", "Um telefone foi excluido por " + getUsuario().getNome());
-		NotificacaoUtils.sucesso(notificacaoService, getUsuario(), "Alterou os dados do usuário",
-				"Excluido telefone do usuário com email: " + telefone.getDadosPessoais().getUsuario());
-
-		telefoneUsuarioService.deletar(id);
-		RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
+		try {
+			telefoneUsuarioService.deletar(id);
+			NotificacaoUtils.sucesso(notificacaoService, usuario,
+					"Administrador alterou seus dados", "Um telefone foi excluido por " + usuarioLogado.getNome());
+			NotificacaoUtils.sucesso(notificacaoService, usuarioLogado, "Alterou os dados do usuário",
+					"Excluido telefone do usuário com email: " + usuario.getEmail());
+			RedirectUtils.mensagemSucesso(model, ConfUtils.ALERTA_SUCESSO_REMOVER);
+		} catch (UsuarioDeleteException e) {
+			RedirectUtils.mensagemError(model, e.getMessage());
+		}
 
 		return "redirect:" + UrlUtils.DASHBOARD_ADMIN_USUARIOS + "/atuais";
 	}
