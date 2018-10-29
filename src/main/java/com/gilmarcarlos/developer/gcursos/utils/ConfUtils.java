@@ -11,7 +11,7 @@ import java.io.File;
  */
 public class ConfUtils {
 	
-	public final static String BASE_DOMINIO = "http://35.188.89.234";
+	public final static String BASE_DOMINIO = "http://localhost";
 	public final static String BASE_ARQUIVOS_EXTERNOS = System.getProperty("user.dir") + File.separator + "jasper" + File.separator; 
 
 	public final static String EMAIL_EVIAR_TITULO_FINALIZAR_REGISTRO = "Confirmação de registro";

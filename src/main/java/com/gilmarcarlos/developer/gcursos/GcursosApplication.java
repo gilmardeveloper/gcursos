@@ -84,7 +84,7 @@ public class GcursosApplication {
 	public DataSource getDataSource() {
 		ComboPooledDataSource dataSource = new ComboPooledDataSource();
 
-		dataSource.setUser("rooot");
+		dataSource.setUser("root");
 		dataSource.setPassword("toor");
 		
 		try {

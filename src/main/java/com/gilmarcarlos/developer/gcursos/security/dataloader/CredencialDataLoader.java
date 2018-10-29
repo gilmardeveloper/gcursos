@@ -63,8 +63,8 @@ public class CredencialDataLoader implements ApplicationListener<ContextRefreshe
 
 		Usuario user = new Usuario();
 		user.setNome("Administrador");
-		user.setSenha(passwordCrypt.encode("zeus_1234@5"));
-		user.setEmail("zeus.donotreply@gmail.com");
+		user.setSenha(passwordCrypt.encode("admin"));
+		user.setEmail("admin_email@gmail.com");
 		user.setAutorizacoes(Arrays.asList(adminRole));
 		user.setHabilitado(true);
 
